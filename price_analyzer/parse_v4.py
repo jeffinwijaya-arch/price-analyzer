@@ -192,6 +192,9 @@ AP_REFS_DB = {
     '26715OR': {'model': 'Royal Oak Chrono RG', 'family': 'Royal Oak', 'retail': 75000, 'dials': ['Blue', 'Grey'], 'case_mm': 41},
     '15407OR': {'model': 'Royal Oak Skeleton RG', 'family': 'Royal Oak', 'retail': 89900, 'dials': ['Blue'], 'case_mm': 41},
     '26579CE': {'model': 'Royal Oak Perpetual Calendar', 'family': 'Royal Oak', 'retail': 120000, 'dials': ['Black'], 'case_mm': 41},
+    '15450ST': {'model': 'Royal Oak Selfwinding 37', 'family': 'Royal Oak', 'retail': 29000, 'dials': ['Silver', 'Grey', 'Blue'], 'case_mm': 37},
+    '26331OR': {'model': 'Royal Oak Chrono RG', 'family': 'Royal Oak', 'retail': 50000, 'dials': ['Blue', 'Brown'], 'case_mm': 41},
+    '15500OR': {'model': 'Royal Oak 41 RG', 'family': 'Royal Oak', 'retail': 47000, 'dials': ['Black'], 'case_mm': 41},
 }
 
 VC_REFS_DB = {
@@ -3538,15 +3541,23 @@ _BRAND_MODEL_DIAL = {
     # AP 15500ST Royal Oak 41
     '15500ST.OO.1220ST.01': 'Blue', '15500ST.OO.1220ST.02': 'Grey',
     '15500ST.OO.1220ST.03': 'Black', '15500ST.OO.1220ST.04': 'White',
+    # AP 15500OR Royal Oak 41 RG
+    '15500OR.OO.1220OR.01': 'Black',
+    # AP 15450ST Royal Oak Selfwinding 37
+    '15450ST.OO.1256ST.01': 'Silver', '15450ST.OO.1256ST.02': 'Grey',
+    '15450ST.OO.1256ST.03': 'Blue',
     # AP 15400ST Royal Oak 41
     '15400ST.OO.1220ST.01': 'Blue', '15400ST.OO.1220ST.02': 'Grey',
     '15400ST.OO.1220ST.03': 'Black', '15400ST.OO.1220ST.04': 'White',
-    # AP 26331ST Royal Oak Chrono
-    '26331ST.OO.1220ST.01': 'White', '26331ST.OO.1220ST.02': 'Blue',
-    '26331ST.OO.1220ST.03': 'Black',
-    # AP 26470ST Royal Oak Offshore Chrono
-    '26470ST.OO.A027CA.01': 'White', '26470ST.OO.A104CR.01': 'Blue',
-    '26470ST.OO.A801CR.01': 'Black',
+    # AP 26331ST Royal Oak Chrono (discontinued SS 41mm)
+    '26331ST.OO.1220ST.01': 'Blue', '26331ST.OO.1220ST.02': 'Black',
+    '26331ST.OO.1220ST.03': 'White/Silver',
+    # AP 26331OR Royal Oak Chrono RG 41mm
+    '26331OR.OO.1220OR.01': 'Blue', '26331OR.OO.1220OR.02': 'Brown',
+    # AP 26470ST Royal Oak Offshore Chrono 42mm
+    '26470ST.OO.A027CA.01': 'Blue', '26470ST.OO.A104CR.01': 'Blue',
+    '26470ST.OO.A801CR.01': 'Black', '26470ST.OO.A028CR.01': 'Black',
+    '26470ST.OO.A099CR.01': 'Brown',
     # AP 15720ST Royal Oak Offshore Diver
     '15720ST.OO.A009CA.01': 'Blue', '15720ST.OO.A052CA.01': 'Green',
     '15720ST.OO.A062CA.01': 'Khaki',
@@ -4873,13 +4884,13 @@ def cmd_parse(args):
         'Steel': '',                                                 # Case material, not dial (126539TBR)
         'Rose Gold': '',                                             # Case material, not dial
         'Golden Brown': 'Brown',                                     # Patek Nautilus
-        'White/Silver': 'White',                                     # AP catalog (RO 41 .04 = white grande tapisserie)
+        'White/Silver': 'Silver',                                    # AP catalog
         'Anthracite Grey': 'Grey',                                   # AP catalog
         'Blue-Grey': 'Grey',                                         # AP catalog
         'Mint green': 'Green',                                       # Case mismatch
         'Med blue': 'Med Blue',                                      # Case mismatch
         'Khaki': 'Khaki Green',                                      # AP/VC shorthand
-        'Beige': 'Sand',                                             # AP 15510ST beige = sand (canonical)
+        'Sand': 'Beige',                                             # AP 15510ST sand = beige
     }
     # Ref-specific dial aliases: for diamond-default refs, normalize vi/Roman variants
     _REF_DIAL_ALIASES = {
