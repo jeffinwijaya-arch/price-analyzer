@@ -106,6 +106,9 @@
     "001": "Anthracite Grey",
     "012": "Blue"
   },
+  "5167R": {
+    "001": "Chocolate"
+  },
   "5205G": {
     "013": "Blue"
   },
@@ -132,7 +135,7 @@
     "010": "Blue",
     "011": "White",
     "014": "Olive Green",
-    "018": "Green"
+    "018": "Tiffany Blue"
   },
   "5711/1R": {
     "001": "Brown"
@@ -147,9 +150,9 @@
     "001": "Blue"
   },
   "5726/1A": {
-    "014": "Blue-Grey",
-    "001": "Blue-Grey",
-    "010": "Blue"
+    "001": "Black",
+    "010": "Blue",
+    "014": "Blue"
   },
   "5726A": {
     "001": "Anthracite Grey"
@@ -182,7 +185,7 @@
     "001": "Black"
   },
   "5980R": {
-    "001": "Blue"
+    "001": "Chocolate"
   },
   "5990/1400G": {
     "001": "Anthracite Grey"
@@ -221,6 +224,11 @@
   "7118/1R": {
     "001": "Silver",
     "010": "Golden Brown"
+  },
+  "7010/1G": {
+    "001": "White",
+    "010": "Grey",
+    "013": "Blue"
   },
   "126500": {
     "1": "White",

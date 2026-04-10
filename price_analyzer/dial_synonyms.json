@@ -29,7 +29,8 @@
         "Gold Roman"
     ],
     "Chocolate": [
-        "Brown"
+        "Brown",
+        "Havana"
     ],
     "Chocolate Diamond": [
         "Brown Diamond"
@@ -45,6 +46,29 @@
     ],
     "Blue": [
         "Dark Blue"
+    ],
+    "Blue-Grey": [
+        "Blue/Grey",
+        "Grey-Blue",
+        "Blue gray",
+        "Dark blue grey"
+    ],
+    "Anthracite Grey": [
+        "Anthracite",
+        "Dark grey",
+        "Charcoal grey",
+        "Charcoal"
+    ],
+    "Tiffany Blue": [
+        "Tiffany",
+        "Tiffany green"
+    ],
+    "Olive Green": [
+        "Olive",
+        "Dark olive"
+    ],
+    "Golden Brown": [
+        "Golden brown"
     ],
     "Sundust Diamond": [
         "Sundust set with diamonds"
