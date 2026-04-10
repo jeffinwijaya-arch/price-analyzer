@@ -409,5 +409,99 @@
     "Silver Roman VI",
     "Chocolate Roman VI",
     "Grey Roman VI"
+  ],
+
+  "_comment_dj31_run2": "Datejust 31 (278xxx) — 278273/278274 are diamond-default refs (plain colour → Colour Diamond in extract_dial)",
+  "278274": [
+    "Silver Diamond", "Black Diamond", "Blue Diamond", "White Diamond",
+    "Green Diamond", "Champagne Diamond", "Pink Diamond", "Aubergine Diamond",
+    "MOP",
+    "Silver Roman VI", "Aubergine Roman VI", "Pink Roman VI", "Green Roman VI",
+    "Chocolate Roman VI", "Grey Roman VI", "White Roman VI"
+  ],
+  "278273": [
+    "Champagne Diamond", "Chocolate Diamond", "White Diamond", "Silver Diamond",
+    "Green Diamond", "Pink Diamond", "MOP",
+    "Champagne Roman VI", "Chocolate Roman VI", "Silver Roman VI",
+    "Green Roman VI", "White Roman VI", "Grey Roman VI", "Aubergine Roman VI"
+  ],
+  "278275": [
+    "Chocolate", "Sundust", "White", "MOP", "Silver", "Pink"
+  ],
+  "278278": [
+    "Champagne", "Green", "White", "MOP", "Black"
+  ],
+
+  "_comment_ldj28_run2": "Lady-Datejust 28 (279xxx) — 279384RBR is diamond-default",
+  "279174": [
+    "Silver", "Silver Diamond", "White", "Pink", "Pink Diamond",
+    "Black", "Grey Diamond", "MOP"
+  ],
+  "279175": [
+    "Chocolate", "Sundust", "White", "MOP", "Silver", "Pink"
+  ],
+  "279161": [
+    "MOP", "Chocolate", "Sundust", "Pink", "Silver"
+  ],
+  "279171": [
+    "Champagne", "White", "MOP", "Chocolate", "Silver"
+  ],
+  "279384RBR": [
+    "Silver Diamond", "Pink Diamond", "Grey Diamond", "MOP",
+    "White Diamond", "Black Diamond", "Green Diamond",
+    "Champagne Diamond", "Chocolate Diamond"
+  ],
+
+  "_comment_g_suffix_run2": "G-suffix DJ36/41 — G = diamond hour markers; extract_dial appends Diamond to colour",
+  "126231G": [
+    "Chocolate Diamond", "Sundust Diamond", "Silver Diamond",
+    "White Diamond", "MOP Diamond", "Slate Diamond"
+  ],
+  "126233G": [
+    "Champagne Diamond", "Black Diamond", "White Diamond",
+    "Silver Diamond", "Green Diamond"
+  ],
+  "126234G": [
+    "Black Diamond", "Blue Diamond", "Silver Diamond", "White Diamond",
+    "Pink Diamond", "Grey Diamond", "Mint Green Diamond"
+  ],
+  "126331G": [
+    "Chocolate Diamond", "Sundust Diamond", "Black Diamond",
+    "Slate Diamond", "White Diamond"
+  ],
+  "126333G": [
+    "Champagne Diamond", "Black Diamond", "White Diamond",
+    "Silver Diamond", "Green Diamond"
+  ],
+  "126334G": [
+    "Black Diamond", "Blue Diamond", "Silver Diamond", "White Diamond",
+    "Green Diamond", "Grey Diamond", "Slate Diamond"
+  ],
+
+  "_comment_rbr_run2": "DJ36 RBR (diamond-set bezel) — diamond-default refs; MOP excluded from auto-Diamond conversion",
+  "126281RBR": [
+    "MOP", "Chocolate Diamond", "Sundust Diamond", "Pink Diamond",
+    "Silver Diamond", "White Diamond",
+    "Chocolate Roman VI", "Pink Roman VI", "Silver Roman VI", "White Roman VI"
+  ],
+  "126283RBR": [
+    "Champagne Diamond", "Black Diamond", "White Diamond",
+    "Silver Diamond", "Green Diamond", "MOP"
+  ],
+  "126284RBR": [
+    "Silver Diamond", "Black Diamond", "Blue Diamond", "White Diamond",
+    "Green Diamond", "Pink Diamond", "MOP"
+  ],
+
+  "_comment_prevgen_daytona_run2": "Previous-gen Daytona (116xxx) — multi-dial models not in FIXED_DIAL",
+  "116508": [
+    "Green", "Champagne", "Black", "White", "MOP", "Meteorite"
+  ],
+  "116519": [
+    "Black", "Silver", "Grey", "Meteorite", "MOP",
+    "Turquoise Beach", "Green Beach", "Yellow MOP"
+  ],
+  "116503": [
+    "Black", "White", "Champagne"
   ]
 }
