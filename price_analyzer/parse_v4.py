@@ -1504,6 +1504,7 @@ FIXED_DIAL = {
     '116659SABR':'Black',  # Sub Rainbow — always black
     '126555':'Black',    # YM37 Rainbow — always black
     '126598':'Black',    # Daytona Rainbow new — always black
+    '126506':'Ice Blue',    # Daytona Platinum — only comes in Ice Blue
     '126595':'Sundust',  # Daytona Rainbow Everose — sundust dial
     '126579':'MOP',      # Daytona Rainbow WG — MOP dial
     '126589':'MOP',      # Daytona Rainbow WG Oysterflex — MOP dial
