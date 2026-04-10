@@ -4960,11 +4960,33 @@ def cmd_parse(args):
         print(f"  ⚠️ Removed {_pre_floor - len(listings)} below-floor listings (bad price parses)")
     if len(listings) < _pre_junk:
         print(f"  ⚠️ Removed {_pre_junk - len(listings)} junk-ref entries (prices parsed as refs)")
+    # ── Merge with existing listings (keep old data outside the parse window) ──
+    raw_path = BASE_DIR / 'rolex_listings.json'
+    if raw_path.exists():
+        try:
+            with open(raw_path, 'r', encoding='utf-8') as f:
+                existing = json.load(f)
+            # Build dedup key for new listings
+            new_keys = set()
+            for l in listings:
+                key = (l.get('ref',''), l.get('seller',''), l.get('ts',''), str(l.get('price',0)))
+                new_keys.add(key)
+            # Keep old listings that aren't duplicated by new ones
+            kept = 0
+            for old in existing:
+                key = (old.get('ref',''), old.get('seller',''), old.get('ts',''), str(old.get('price',0)))
+                if key not in new_keys:
+                    listings.append(old)
+                    kept += 1
+            if kept:
+                print(f"  📦 Merged {kept:,} older listings with {len(listings)-kept:,} new ({len(listings):,} total)")
+        except Exception as e:
+            print(f"  ⚠️ Could not merge old listings: {e}")
+
     index = build_index(listings)
     idx_path = BASE_DIR / 'rolex_wholesale.json'
     with open(idx_path, 'w') as f: json.dump(index, f, indent=1)
-    # Also save raw listings (all brands combined)
-    raw_path = BASE_DIR / 'rolex_listings.json'
+    # Save raw listings (all brands combined — includes merged old data)
     with open(raw_path, 'w') as f: json.dump(listings, f, indent=1, default=str)
 
     # Save per-brand listing files

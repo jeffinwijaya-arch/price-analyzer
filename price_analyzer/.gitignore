@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.db
+*.pickle
+venv/
+.flask_secret
