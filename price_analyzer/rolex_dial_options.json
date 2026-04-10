@@ -1,507 +1,188 @@
 {
-  "126300": [
-    "Black",
-    "Blue",
-    "Silver",
-    "White",
-    "Green",
-    "Mint Green",
-    "Slate",
-    "Bright Blue",
-    "Palm"
-  ],
-  "126331": [
-    "Black",
-    "Chocolate",
-    "Sundust",
-    "Slate",
-    "White",
-    "Wimbledon"
-  ],
-  "126333": [
-    "Black",
-    "Champagne",
-    "White",
-    "Silver",
-    "Green",
-    "Wimbledon"
-  ],
-  "126334": [
-    "Black",
-    "Blue",
-    "Silver",
-    "White",
-    "Green",
-    "Slate",
-    "Mint Green",
-    "Bright Blue",
-    "Palm",
-    "Fluted",
-    "Azzurro"
-  ],
-  "126200": [
-    "Black",
-    "Blue",
-    "Silver",
-    "White",
-    "Turquoise",
-    "Coral",
-    "Yellow",
-    "Bright Blue",
-    "Palm",
-    "Mint Green"
-  ],
-  "126231": [
-    "MOP",
-    "Chocolate",
-    "Sundust",
-    "Pink",
-    "Silver",
-    "White",
-    "Slate"
-  ],
-  "126233": [
-    "Black",
-    "Champagne",
-    "White",
-    "Silver",
-    "Green",
-    "Golden"
-  ],
-  "126234": [
-    "Black",
-    "Blue",
-    "Silver",
-    "White",
-    "Pink",
-    "Mint Green",
-    "Palm",
-    "Fluted",
-    "Azzurro",
-    "Bright Blue"
-  ],
-  "126610LN": [
-    "Black"
-  ],
-  "126610LV": [
-    "Green"
-  ],
-  "126613LB": [
-    "Blue"
-  ],
-  "126613LN": [
-    "Black"
-  ],
-  "126618LB": [
-    "Blue"
-  ],
-  "126618LN": [
-    "Black"
-  ],
-  "126619LB": [
-    "Black"
-  ],
-  "126710BLNR": [
-    "Black"
-  ],
-  "126710BLRO": [
-    "Black"
-  ],
-  "126710GRNR": [
-    "Black"
-  ],
-  "126711CHNR": [
-    "Black"
-  ],
-  "126713GRNR": [
-    "Black"
-  ],
-  "126720VTNR": [
-    "Black"
-  ],
-  "126729VTNR": [
-    "Black"
-  ],
-  "126500LN": [
-    "White",
-    "Black"
-  ],
-  "116500LN": [
-    "White",
-    "Black"
-  ],
-  "126508": [
-    "Green",
-    "Champagne",
-    "Black"
-  ],
-  "126515LN": [
-    "Black",
-    "Sundust",
-    "Pink",
-    "Chocolate"
-  ],
-  "126518LN": [
-    "Black",
-    "Champagne",
-    "Green",
-    "MOP",
-    "Paul Newman"
-  ],
-  "126519LN": [
-    "Black",
-    "Silver",
-    "Blue",
-    "MOP",
-    "Meteorite"
-  ],
-  "228235": [
-    "Olive Green",
-    "Chocolate",
-    "Sundust",
-    "Eisenkiesel",
-    "Silver",
-    "Ombre Slate",
-    "Bright Green"
-  ],
-  "228238": [
-    "Black",
-    "Champagne",
-    "Green",
-    "Silver",
-    "White",
-    "Turquoise",
-    "Bright Green",
-    "Onyx",
-    "Malachite",
-    "Lapis Lazuli",
-    "Tiger Eye"
-  ],
-  "228239": [
-    "Black",
-    "Silver",
-    "Blue",
-    "White",
-    "Olive Green",
-    "Bright Blue"
-  ],
-  "228206": [
-    "Ice Blue",
-    "Meteorite"
-  ],
-  "128235": [
-    "Olive Green",
-    "Chocolate",
-    "Sundust",
-    "Eisenkiesel"
-  ],
-  "128238": [
-    "Black",
-    "Champagne",
-    "Green",
-    "White",
-    "Onyx",
-    "Malachite",
-    "Lapis Lazuli",
-    "Tiger Eye"
-  ],
-  "128239": [
-    "Black",
-    "Silver",
-    "Blue",
-    "White"
-  ],
-  "124270": [
-    "Black"
-  ],
-  "224270": [
-    "Black"
-  ],
-  "226570": [
-    "Black",
-    "White"
-  ],
-  "126600": [
-    "Black"
-  ],
-  "126603": [
-    "Black"
-  ],
-  "136660": [
-    "Black"
-  ],
-  "136660DB": [
-    "D-Blue"
-  ],
-  "336934": [
-    "Blue",
-    "Black",
-    "White",
-    "Green",
-    "Silver",
-    "Bright Blue",
-    "Mint Green"
-  ],
-  "336935": [
-    "Blue",
-    "Champagne",
-    "White",
-    "Black",
-    "Green"
-  ],
-  "336938": [
-    "Champagne",
-    "Green",
-    "Black",
-    "Blue"
-  ],
-  "226658": [
-    "Black"
-  ],
-  "226659": [
-    "Black"
-  ],
-  "268655": [
-    "Black"
-  ],
-  "126900": [
-    "Black"
-  ],
-  "124300": [
-    "Black",
-    "Blue",
-    "Green",
-    "Yellow",
-    "Coral",
-    "Turquoise",
-    "Silver",
-    "Red"
-  ],
-  "126000": [
-    "Black",
-    "Blue",
-    "Green",
-    "Yellow",
-    "Coral",
-    "Turquoise",
-    "Silver",
-    "Red",
-    "Pink"
-  ],
-  "127334": [
-    "White"
-  ],
-  "127335": [
-    "White"
-  ],
-  "127235": [
-    "White"
-  ],
-  "127236": [
-    "Ice Blue"
-  ],
-  "127234": [
-    "White"
-  ],
-  "126598": [
-    "Black"
-  ],
-  "126595": [
-    "Sundust"
-  ],
-  "126579": [
-    "MOP"
-  ],
-  "126589": [
-    "MOP"
-  ],
-  "126539": [
-    "Black"
-  ],
-  "126525LN": [
-    "Black"
-  ],
-  "126529LN": [
-    "Black"
-  ],
-  "126503": [
-    "Black",
-    "White",
-    "Champagne"
-  ],
-  "126505": [
-    "Black",
-    "Chocolate",
-    "Sundust"
-  ],
-  "126506": [
-    "Ice Blue"
-  ],
-  "126301": [
-    "Black",
-    "Chocolate",
-    "Sundust",
-    "Slate",
-    "White",
-    "Wimbledon",
-    "MOP"
-  ],
-  "126303": [
-    "Black",
-    "Champagne",
-    "White",
-    "Silver",
-    "Green",
-    "Wimbledon"
-  ],
-  "134300": [
-    "Black",
-    "Silver",
-    "Green",
-    "Blue",
-    "Pistachio",
-    "Beige",
-    "Lavender",
-    "Candy Pink",
-    "Med Blue"
-  ],
-  "276200": [
-    "Black",
-    "Blue",
-    "Silver",
-    "Candy Pink"
-  ],
-  "277200": [
-    "Turquoise",
-    "Candy Pink",
-    "Silver",
-    "Yellow",
-    "Beige",
-    "Pistachio",
-    "Blue",
-    "Lavender"
-  ],
-  "336933": [
-    "Black",
-    "Champagne",
-    "White",
-    "Green",
-    "Blue"
-  ],
-  "278271": [
-    "Aubergine Roman VI",
-    "Pink Roman VI",
-    "Green Roman VI",
-    "Silver Roman VI",
-    "White Roman VI",
-    "Chocolate Roman VI",
-    "Grey Roman VI",
-    "Aubergine Roman VI IX Diamond",
-    "Pink Roman VI IX Diamond",
-    "Green Roman VI IX Diamond",
-    "Grey Roman VI IX Diamond",
-    "Chocolate Roman VI IX Diamond"
-  ],
-  "278341": [
-    "Aubergine Roman VI",
-    "Pink Roman VI",
-    "Green Roman VI",
-    "Silver Roman VI",
-    "Chocolate Roman VI",
-    "Grey Roman VI"
-  ],
-
-  "_comment_dj31_run2": "Datejust 31 (278xxx) — 278273/278274 are diamond-default refs (plain colour → Colour Diamond in extract_dial)",
-  "278274": [
-    "Silver Diamond", "Black Diamond", "Blue Diamond", "White Diamond",
-    "Green Diamond", "Champagne Diamond", "Pink Diamond", "Aubergine Diamond",
-    "MOP",
-    "Silver Roman VI", "Aubergine Roman VI", "Pink Roman VI", "Green Roman VI",
-    "Chocolate Roman VI", "Grey Roman VI", "White Roman VI"
-  ],
-  "278273": [
-    "Champagne Diamond", "Chocolate Diamond", "White Diamond", "Silver Diamond",
-    "Green Diamond", "Pink Diamond", "MOP",
-    "Champagne Roman VI", "Chocolate Roman VI", "Silver Roman VI",
-    "Green Roman VI", "White Roman VI", "Grey Roman VI", "Aubergine Roman VI"
-  ],
-  "278275": [
-    "Chocolate", "Sundust", "White", "MOP", "Silver", "Pink"
-  ],
-  "278278": [
-    "Champagne", "Green", "White", "MOP", "Black"
-  ],
-
+  "126300": ["Black","Blue","Silver","White","Green","Mint Green","Slate","Bright Blue","Palm"],
+  "126331": ["Black","Chocolate","Sundust","Slate","White","Wimbledon"],
+  "126333": ["Black","Champagne","White","Silver","Green","Wimbledon"],
+  "126334": ["Black","Blue","Silver","White","Green","Slate","Mint Green","Bright Blue","Palm","Fluted","Azzurro"],
+  "126200": ["Black","Blue","Silver","White","Turquoise","Coral","Yellow","Bright Blue","Palm","Mint Green"],
+  "126231": ["MOP","Chocolate","Sundust","Pink","Silver","White","Slate"],
+  "126233": ["Black","Champagne","White","Silver","Green","Golden"],
+  "126234": ["Black","Blue","Silver","White","Pink","Mint Green","Palm","Fluted","Azzurro","Bright Blue"],
+  "126610LN": ["Black"],
+  "126610LV": ["Green"],
+  "126613LB": ["Blue"],
+  "126613LN": ["Black"],
+  "126618LB": ["Blue"],
+  "126618LN": ["Black"],
+  "126619LB": ["Black"],
+  "126710BLNR": ["Black"],
+  "126710BLRO": ["Black"],
+  "126710GRNR": ["Black"],
+  "126711CHNR": ["Black"],
+  "126713GRNR": ["Black"],
+  "126720VTNR": ["Black"],
+  "126729VTNR": ["Black"],
+  "126500LN": ["White","Black"],
+  "116500LN": ["White","Black"],
+  "126508": ["Green","Champagne","Black"],
+  "126515LN": ["Black","Sundust","Pink","Chocolate"],
+  "126518LN": ["Black","Champagne","Green","MOP","Paul Newman"],
+  "126519LN": ["Black","Silver","Blue","MOP","Meteorite"],
+  "228235": ["Olive Green","Chocolate","Sundust","Eisenkiesel","Silver","Ombre Slate","Bright Green"],
+  "228238": ["Black","Champagne","Green","Silver","White","Turquoise","Bright Green","Onyx","Malachite","Lapis Lazuli","Tiger Eye"],
+  "228239": ["Black","Silver","Blue","White","Olive Green","Bright Blue"],
+  "228206": ["Ice Blue","Meteorite"],
+  "128235": ["Olive Green","Chocolate","Sundust","Eisenkiesel"],
+  "128238": ["Black","Champagne","Green","White","Onyx","Malachite","Lapis Lazuli","Tiger Eye"],
+  "128239": ["Black","Silver","Blue","White"],
+  "124270": ["Black"],
+  "224270": ["Black"],
+  "226570": ["Black","White"],
+  "126600": ["Black"],
+  "126603": ["Black"],
+  "136660": ["Black"],
+  "136660DB": ["D-Blue"],
+  "336934": ["Blue","Black","White","Green","Silver","Bright Blue","Mint Green"],
+  "336935": ["Blue","Champagne","White","Black","Green"],
+  "336938": ["Champagne","Green","Black","Blue"],
+  "226658": ["Black"],
+  "226659": ["Black"],
+  "268655": ["Black"],
+  "126900": ["Black"],
+  "124300": ["Black","Blue","Green","Yellow","Coral","Turquoise","Silver","Red"],
+  "126000": ["Black","Blue","Green","Yellow","Coral","Turquoise","Silver","Red","Pink"],
+  "127334": ["White"],
+  "127335": ["White"],
+  "127235": ["White"],
+  "127236": ["Ice Blue"],
+  "127234": ["White"],
+  "126598": ["Black"],
+  "126595": ["Sundust"],
+  "126579": ["MOP"],
+  "126589": ["MOP"],
+  "126539": ["Black"],
+  "126525LN": ["Black"],
+  "126529LN": ["Black"],
+  "126503": ["Black","White","Champagne"],
+  "126505": ["Black","Chocolate","Sundust"],
+  "126506": ["Ice Blue"],
+  "126301": ["Black","Chocolate","Sundust","Slate","White","Wimbledon","MOP"],
+  "126303": ["Black","Champagne","White","Silver","Green","Wimbledon"],
+  "134300": ["Black","Silver","Green","Blue","Pistachio","Beige","Lavender","Candy Pink","Med Blue"],
+  "276200": ["Black","Blue","Silver","Candy Pink"],
+  "277200": ["Turquoise","Candy Pink","Silver","Yellow","Beige","Pistachio","Blue","Lavender"],
+  "336933": ["Black","Champagne","White","Green","Blue"],
+  "278271": ["Aubergine Roman VI","Pink Roman VI","Green Roman VI","Silver Roman VI","White Roman VI","Chocolate Roman VI","Grey Roman VI","Aubergine Roman VI IX Diamond","Pink Roman VI IX Diamond","Green Roman VI IX Diamond","Grey Roman VI IX Diamond","Chocolate Roman VI IX Diamond"],
+  "278341": ["Aubergine Roman VI","Pink Roman VI","Green Roman VI","Silver Roman VI","Chocolate Roman VI","Grey Roman VI"],
+  "_comment_dj31_run2": "Datejust 31 (278xxx) — 278273/278274 diamond-default refs",
+  "278274": ["Silver Diamond","Black Diamond","Blue Diamond","White Diamond","Green Diamond","Champagne Diamond","Pink Diamond","Aubergine Diamond","MOP","Silver Roman VI","Aubergine Roman VI","Pink Roman VI","Green Roman VI","Chocolate Roman VI","Grey Roman VI","White Roman VI"],
+  "278273": ["Champagne Diamond","Chocolate Diamond","White Diamond","Silver Diamond","Green Diamond","Pink Diamond","MOP","Champagne Roman VI","Chocolate Roman VI","Silver Roman VI","Green Roman VI","White Roman VI","Grey Roman VI","Aubergine Roman VI"],
+  "278275": ["Chocolate","Sundust","White","MOP","Silver","Pink"],
+  "278278": ["Champagne","Green","White","MOP","Black"],
   "_comment_ldj28_run2": "Lady-Datejust 28 (279xxx) — 279384RBR is diamond-default",
-  "279174": [
-    "Silver", "Silver Diamond", "White", "Pink", "Pink Diamond",
-    "Black", "Grey Diamond", "MOP"
-  ],
-  "279175": [
-    "Chocolate", "Sundust", "White", "MOP", "Silver", "Pink"
-  ],
-  "279161": [
-    "MOP", "Chocolate", "Sundust", "Pink", "Silver"
-  ],
-  "279171": [
-    "Champagne", "White", "MOP", "Chocolate", "Silver"
-  ],
-  "279384RBR": [
-    "Silver Diamond", "Pink Diamond", "Grey Diamond", "MOP",
-    "White Diamond", "Black Diamond", "Green Diamond",
-    "Champagne Diamond", "Chocolate Diamond"
-  ],
-
-  "_comment_g_suffix_run2": "G-suffix DJ36/41 — G = diamond hour markers; extract_dial appends Diamond to colour",
-  "126231G": [
-    "Chocolate Diamond", "Sundust Diamond", "Silver Diamond",
-    "White Diamond", "MOP Diamond", "Slate Diamond"
-  ],
-  "126233G": [
-    "Champagne Diamond", "Black Diamond", "White Diamond",
-    "Silver Diamond", "Green Diamond"
-  ],
-  "126234G": [
-    "Black Diamond", "Blue Diamond", "Silver Diamond", "White Diamond",
-    "Pink Diamond", "Grey Diamond", "Mint Green Diamond"
-  ],
-  "126331G": [
-    "Chocolate Diamond", "Sundust Diamond", "Black Diamond",
-    "Slate Diamond", "White Diamond"
-  ],
-  "126333G": [
-    "Champagne Diamond", "Black Diamond", "White Diamond",
-    "Silver Diamond", "Green Diamond"
-  ],
-  "126334G": [
-    "Black Diamond", "Blue Diamond", "Silver Diamond", "White Diamond",
-    "Green Diamond", "Grey Diamond", "Slate Diamond"
-  ],
-
-  "_comment_rbr_run2": "DJ36 RBR (diamond-set bezel) — diamond-default refs; MOP excluded from auto-Diamond conversion",
-  "126281RBR": [
-    "MOP", "Chocolate Diamond", "Sundust Diamond", "Pink Diamond",
-    "Silver Diamond", "White Diamond",
-    "Chocolate Roman VI", "Pink Roman VI", "Silver Roman VI", "White Roman VI"
-  ],
-  "126283RBR": [
-    "Champagne Diamond", "Black Diamond", "White Diamond",
-    "Silver Diamond", "Green Diamond", "MOP"
-  ],
-  "126284RBR": [
-    "Silver Diamond", "Black Diamond", "Blue Diamond", "White Diamond",
-    "Green Diamond", "Pink Diamond", "MOP"
-  ],
-
-  "_comment_prevgen_daytona_run2": "Previous-gen Daytona (116xxx) — multi-dial models not in FIXED_DIAL",
-  "116508": [
-    "Green", "Champagne", "Black", "White", "MOP", "Meteorite"
-  ],
-  "116519": [
-    "Black", "Silver", "Grey", "Meteorite", "MOP",
-    "Turquoise Beach", "Green Beach", "Yellow MOP"
-  ],
-  "116503": [
-    "Black", "White", "Champagne"
-  ]
+  "279174": ["Silver","Silver Diamond","White","Pink","Pink Diamond","Black","Grey Diamond","MOP"],
+  "279175": ["Chocolate","Sundust","White","MOP","Silver","Pink"],
+  "279161": ["MOP","Chocolate","Sundust","Pink","Silver"],
+  "279171": ["Champagne","White","MOP","Chocolate","Silver"],
+  "279384RBR": ["Silver Diamond","Pink Diamond","Grey Diamond","MOP","White Diamond","Black Diamond","Green Diamond","Champagne Diamond","Chocolate Diamond"],
+  "_comment_g_suffix_run2": "G-suffix DJ36/41 — G = diamond hour markers",
+  "126231G": ["Chocolate Diamond","Sundust Diamond","Silver Diamond","White Diamond","MOP Diamond","Slate Diamond"],
+  "126233G": ["Champagne Diamond","Black Diamond","White Diamond","Silver Diamond","Green Diamond"],
+  "126234G": ["Black Diamond","Blue Diamond","Silver Diamond","White Diamond","Pink Diamond","Grey Diamond","Mint Green Diamond"],
+  "126331G": ["Chocolate Diamond","Sundust Diamond","Black Diamond","Slate Diamond","White Diamond"],
+  "126333G": ["Champagne Diamond","Black Diamond","White Diamond","Silver Diamond","Green Diamond"],
+  "126334G": ["Black Diamond","Blue Diamond","Silver Diamond","White Diamond","Green Diamond","Grey Diamond","Slate Diamond"],
+  "_comment_rbr_run2": "DJ36 RBR (diamond-set bezel) — MOP excluded from auto-Diamond conversion",
+  "126281RBR": ["MOP","Chocolate Diamond","Sundust Diamond","Pink Diamond","Silver Diamond","White Diamond","Chocolate Roman VI","Pink Roman VI","Silver Roman VI","White Roman VI"],
+  "126283RBR": ["Champagne Diamond","Black Diamond","White Diamond","Silver Diamond","Green Diamond","MOP"],
+  "126284RBR": ["Silver Diamond","Black Diamond","Blue Diamond","White Diamond","Green Diamond","Pink Diamond","MOP"],
+  "_comment_prevgen_daytona_run2": "Previous-gen Daytona (116xxx) — multi-dial models",
+  "116508": ["Green","Champagne","Black","White","MOP","Meteorite"],
+  "116519": ["Black","Silver","Grey","Meteorite","MOP","Turquoise Beach","Green Beach","Yellow MOP"],
+  "116503": ["Black","White","Champagne"],
+  "_comment_prev_sub": "Previous-gen Submariner (116xxx, 2010-2020) — all single-dial",
+  "116610LN": ["Black"],
+  "116610LV": ["Green"],
+  "116613LB": ["Blue"],
+  "116613LN": ["Black"],
+  "116618LB": ["Blue"],
+  "116618LN": ["Black"],
+  "116619LB": ["Black"],
+  "_comment_prev_gmt": "Previous-gen GMT-Master II (116xxx, 2007-2019)",
+  "116710BLNR": ["Black"],
+  "116710BLRO": ["Black"],
+  "116710LN": ["Black"],
+  "116718LN": ["Black"],
+  "116719BLRO": ["White"],
+  "_comment_prevdd36": "Previous-gen Day-Date 36 (118xxx, 2003-2021)",
+  "118205": ["Chocolate","Sundust","Olive Green","Eisenkiesel","Pink","Black"],
+  "118206": ["Ice Blue"],
+  "118235": ["Chocolate","Sundust","Eisenkiesel","Olive Green","Pink","Black"],
+  "118238": ["Black","White","Champagne","MOP","Onyx","Meteorite","Green","Blue","Silver","Tiger Eye","Lapis Lazuli","Malachite"],
+  "118239": ["Black","Silver","Blue","White","Olive Green","Ice Blue","Champagne"],
+  "118209": ["Black","Champagne","White","Silver"],
+  "_comment_prevdj41": "Previous-gen Datejust II 41mm (116xxx, 2009-2016)",
+  "116300": ["Black","Blue","Silver","White"],
+  "116301": ["Chocolate","Sundust","Silver","Slate"],
+  "116303": ["Black","Champagne","Silver","White"],
+  "116331": ["Chocolate","Sundust","Black","Slate"],
+  "116333": ["Black","Champagne","White","Silver"],
+  "116334": ["Black","White"],
+  "_comment_prevdj36": "Previous-gen Datejust 36 (116xxx, 2002-2015) — high-volume resale",
+  "116200": ["Black","Blue","Silver","White","Champagne","MOP"],
+  "116201": ["Chocolate","Silver","MOP","Champagne","White"],
+  "116203": ["Black","Champagne","White","Silver","MOP"],
+  "116209": ["Black","White","Champagne","Silver","MOP"],
+  "116219": ["Black","White","Champagne","Silver","Blue"],
+  "116231": ["Chocolate","Silver","MOP","Slate","White"],
+  "116233": ["Black","Champagne","Silver","White","MOP"],
+  "116234": ["Black","Blue","Silver","White","Champagne","MOP"],
+  "116238": ["Black","Champagne","White","Silver","MOP"],
+  "116239": ["Black","White","Silver","Champagne","MOP","Blue"],
+  "_comment_prevdaytona": "Previous-gen Daytona steel (116xxx) — 116520 is most traded",
+  "116520": ["Black","White"],
+  "116523": ["Black","White","Champagne"],
+  "116506": ["Ice Blue","Black"],
+  "_comment_milgauss": "Milgauss (116xxx, 2007-2023) — green sapphire crystal",
+  "116400": ["Black","White","Green"],
+  "116400GV": ["Black"],
+  "_comment_prevym40": "Previous-gen Yacht-Master 40 (116xxx, 2003-2019)",
+  "116621": ["Rhodium","Black"],
+  "116622": ["Rhodium"],
+  "116623": ["Black","Ivory","Rhodium"],
+  "116655": ["Dark Rhodium","Black"],
+  "_comment_ymii": "Yacht-Master II (116xxx, 2007-present) — regatta countdown",
+  "116681": ["Black"],
+  "116688": ["White"],
+  "116689": ["White"],
+  "_comment_prevex": "Previous-gen Explorer I (114xxx / 214xxx)",
+  "114270": ["Black"],
+  "214270": ["Black"],
+  "_comment_prevex2": "Previous-gen Explorer II (116xxx / 216xxx)",
+  "116570": ["White","Black"],
+  "216570": ["White","Black"],
+  "_comment_cellini": "Cellini (50xxx, 2014-present) — under-covered in parser",
+  "50505": ["Silver","Black"],
+  "50515": ["White","Black","Blue"],
+  "50519": ["Ivory","Black"],
+  "50525": ["Black","White"],
+  "50529": ["White"],
+  "_comment_op_older": "Oyster Perpetual (older gen + OP34 current) — popular resale",
+  "124200": ["Black","Blue","Silver","Yellow","Coral","Turquoise"],
+  "116000": ["Black","Blue","Silver","Green"],
+  "114300": ["Black","Blue","Silver","Green","White"],
+  "177200": ["Silver","Pink","White","Blue","MOP"],
+  "_comment_addl_dj31": "Datejust 31 (278xxx) — additional steel and mixed-metal refs",
+  "278240": ["Black","Blue","Silver","White","Champagne","MOP"],
+  "278243": ["Black","Champagne","Silver","White","MOP"],
+  "278244": ["Black","Champagne","Silver","White"],
+  "278246": ["Black","White","Silver","Champagne"],
+  "278249": ["Chocolate","Sundust","Silver","Pink"],
+  "_comment_addl_ldj28": "Lady-Datejust 28 (279xxx) — additional refs",
+  "279166": ["Silver","White","Champagne","Blue","Black","MOP","Pink"],
+  "279176": ["Black","Silver","White","Champagne"],
+  "279381": ["Champagne","White","MOP","Silver","Pink"],
+  "_comment_prevsd": "Previous-gen Sky-Dweller (326xxx, 2012-2020) — replaced by 336xxx",
+  "326934": ["Blue","Black","Silver","White","Green"],
+  "326935": ["Chocolate","Champagne","Black"],
+  "326938": ["Champagne","Black","Green","Blue"]
 }
