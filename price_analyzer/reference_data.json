@@ -1,0 +1,141 @@
+{
+  "valid_dials": {
+    "126500LN": [
+      "Black",
+      "White",
+      "Panda"
+    ],
+    "126500": [
+      "Black",
+      "White",
+      "Panda"
+    ],
+    "228235": [
+      "Olive",
+      "Green",
+      "Ombr\u00e9 Slate",
+      "Ombr\u00e9",
+      "Chocolate",
+      "Sundust",
+      "Mint Green",
+      "Eisenkiesel",
+      "Pav\u00e9",
+      "MOP",
+      "Pink"
+    ],
+    "228238": [
+      "Olive",
+      "Green",
+      "Champagne",
+      "Black",
+      "Blue",
+      "Silver",
+      "Eisenkiesel"
+    ],
+    "126508": [
+      "Green",
+      "Champagne",
+      "Black",
+      "Paul Newman",
+      "White",
+      "Yellow MOP",
+      "Black Champagne"
+    ],
+    "126334G": [
+      "Grey",
+      "Black",
+      "Blue"
+    ],
+    "126334": [
+      "Black",
+      "Blue",
+      "Green",
+      "Silver",
+      "Champagne",
+      "White"
+    ],
+    "126610LN": [
+      "Black"
+    ],
+    "126610LV": [
+      "Green"
+    ],
+    "116500LN": [
+      "Black",
+      "White",
+      "Panda"
+    ],
+    "126713GRNR": [
+      "Green",
+      "Champagne"
+    ],
+    "126711CHNR": [
+      "Black",
+      "Champagne"
+    ],
+    "126710BLNR": [
+      "Blue Black"
+    ],
+    "126710BLRO": [
+      "Blue Red"
+    ],
+    "268622": [
+      "Dark",
+      "Slate",
+      "Rhodium",
+      "Slate / Rhodium"
+    ]
+  },
+  "ref_models": {
+    "116505": "Daytona RG",
+    "116503": "Daytona TT RG",
+    "116523": "Daytona TT YG",
+    "116528": "Daytona YG",
+    "116520": "Daytona Steel",
+    "116579": "Daytona WG Diamond",
+    "116588": "Daytona YG Diamond",
+    "116589": "Daytona WG Sapphire",
+    "116595": "Daytona RG Rainbow",
+    "116598": "Daytona YG Sapphire",
+    "116599": "Daytona WG Sapphire",
+    "116576": "Daytona WG Pave",
+    "116578": "Daytona YG Pave",
+    "116285": "Daytona RG Rainbow",
+    "16520": "Daytona Zenith",
+    "16523": "Daytona TT Zenith",
+    "16528": "Daytona YG Zenith",
+    "16568": "Daytona YG Diamond Zenith",
+    "16518": "Daytona YG Leather",
+    "16519": "Daytona WG Leather",
+    "126285": "Daytona RG Rainbow",
+    "126707": "GMT YG/RG",
+    "126579": "Daytona WG Sapphire",
+    "126589": "Daytona WG Sapphire",
+    "118205": "DD36 RG",
+    "118208": "DD36 YG",
+    "118209": "DD36 WG",
+    "118235": "DD36 Everose",
+    "118135": "DD36 RG Diamond Bezel",
+    "118138": "DD36 YG Diamond Bezel",
+    "118139": "DD36 WG Diamond Bezel",
+    "118346": "DD36 RG Gem-Set",
+    "118348": "DD36 YG Gem-Set",
+    "118349": "DD36 WG Gem-Set",
+    "118365": "DD36 WG Diamond",
+    "118388": "DD36 YG Diamond",
+    "118389": "DD36 WG Diamond",
+    "128159": "DD36 WG Diamond",
+    "15210": "Date 34",
+    "15200": "Date 34",
+    "15000": "Date 34",
+    "68628": "DJ31 YG",
+    "16808": "Sub YG",
+    "16803": "Sub TT",
+    "16613": "Sub TT",
+    "16618": "Sub YG",
+    "16628": "Sub YG",
+    "16710": "GMT-II Steel",
+    "16713": "GMT-II TT",
+    "16718": "GMT-II YG"
+  }
+}

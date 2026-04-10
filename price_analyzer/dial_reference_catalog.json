@@ -1,0 +1,249 @@
+{
+  "15202ST": {
+    "01": "Blue"
+  },
+  "15400ST": {
+    "01": "Blue",
+    "02": "Grey",
+    "03": "Black",
+    "04": "White/Silver"
+  },
+  "15500ST": {
+    "01": "Blue",
+    "02": "Grey",
+    "03": "Black",
+    "04": "White/Silver"
+  },
+  "15510ST": {
+    "01": "Blue",
+    "02": "Grey",
+    "03": "Black",
+    "04": "White/Silver",
+    "05": "Green",
+    "06": "Khaki Green",
+    "07": "Black",
+    "08": "Silver",
+    "09": "Sand",
+    "10": "Brown"
+  },
+  "15550ST": {
+    "01": "Blue",
+    "02": "Grey",
+    "03": "White",
+    "04": "Salmon",
+    "06": "Green",
+    "07": "Khaki Green",
+    "08": "Silver"
+  },
+  "15550SR": {
+    "01": "Blue",
+    "02": "Grey",
+    "03": "White"
+  },
+  "15551ST": {
+    "01": "Blue",
+    "02": "Grey",
+    "03": "Black",
+    "04": "White",
+    "05": "Green",
+    "06": "Salmon"
+  },
+  "15720ST": {
+    "01": "Khaki"
+  },
+  "26238ST": {
+    "01": "Blue"
+  },
+  "26240ST": {
+    "01": "Grey",
+    "02": "Blue",
+    "03": "Black",
+    "04": "Green",
+    "05": "Silver",
+    "06": "Sand",
+    "07": "Salmon",
+    "08": "Brown"
+  },
+  "26331ST": {
+    "01": "White",
+    "02": "Blue",
+    "03": "Black"
+  },
+  "26470ST": {
+    "01": "Black"
+  },
+  "15407OR": {
+    "01": "Blue"
+  },
+  "26715OR": {
+    "01": "Grey",
+    "02": "Blue"
+  },
+  "77350SR": {
+    "01": "Silver"
+  },
+  "15452OR": {
+    "01": "Brown"
+  },
+  "15300ST": {
+    "01": "Blue",
+    "02": "Grey",
+    "03": "Black"
+  },
+  "26579CE": {
+    "01": "Black"
+  },
+  "5164G": {
+    "001": "Blue-Grey"
+  },
+  "5164R": {
+    "001": "Brown"
+  },
+  "5164A": {
+    "001": "Anthracite Grey"
+  },
+  "5167A": {
+    "001": "Anthracite Grey",
+    "012": "Blue"
+  },
+  "5205G": {
+    "013": "Blue"
+  },
+  "5205R": {
+    "011": "Olive Green"
+  },
+  "5212A": {
+    "001": "Silver"
+  },
+  "5711/110P": {
+    "001": "Anthracite Grey"
+  },
+  "5711/111P": {
+    "001": "Anthracite Grey"
+  },
+  "5711/112P": {
+    "001": "Anthracite Grey"
+  },
+  "5711/113P": {
+    "001": "Anthracite Grey"
+  },
+  "5711/1A": {
+    "001": "Blue",
+    "010": "Blue",
+    "011": "White",
+    "014": "Olive Green",
+    "018": "Green"
+  },
+  "5711/1R": {
+    "001": "Brown"
+  },
+  "5712/1R": {
+    "001": "Brown"
+  },
+  "5712/1A": {
+    "001": "Blue"
+  },
+  "5712G": {
+    "001": "Blue"
+  },
+  "5726/1A": {
+    "014": "Blue-Grey",
+    "001": "Blue-Grey",
+    "010": "Blue"
+  },
+  "5726A": {
+    "001": "Anthracite Grey"
+  },
+  "5740/1G": {
+    "001": "Blue"
+  },
+  "5811/1G": {
+    "001": "Blue"
+  },
+  "5968A": {
+    "001": "Anthracite Grey"
+  },
+  "5968G": {
+    "001": "Blue"
+  },
+  "5968R": {
+    "001": "Brown"
+  },
+  "5980/1400G": {
+    "010": "Black"
+  },
+  "5980/60G": {
+    "001": "Blue-Grey"
+  },
+  "5980/1A": {
+    "001": "Blue"
+  },
+  "5980/1R": {
+    "001": "Black"
+  },
+  "5980R": {
+    "001": "Blue"
+  },
+  "5990/1400G": {
+    "001": "Anthracite Grey"
+  },
+  "5990/1421G": {
+    "001": "Anthracite Grey"
+  },
+  "5990/1422G": {
+    "001": "Anthracite Grey"
+  },
+  "5990/1423G": {
+    "001": "Anthracite Grey"
+  },
+  "5990/1A": {
+    "011": "Blue-Grey",
+    "001": "Blue-Grey"
+  },
+  "5990/1R": {
+    "001": "Blue"
+  },
+  "7118/1200A": {
+    "001": "Blue",
+    "011": "Grey"
+  },
+  "7118/1200R": {
+    "001": "Silver",
+    "010": "Golden Brown"
+  },
+  "7118/1300R": {
+    "001": "Rose Gold"
+  },
+  "7118/1A": {
+    "001": "Blue",
+    "011": "Grey"
+  },
+  "7118/1R": {
+    "001": "Silver",
+    "010": "Golden Brown"
+  },
+  "126500": {
+    "1": "White",
+    "2": "Black"
+  },
+  "126610": {
+    "1": "Black",
+    "2": "Black"
+  },
+  "127234": {
+    "1": "Intense white"
+  },
+  "126234": {
+    "51": "Mint green",
+    "31": "Pink set with diamonds"
+  },
+  "126300": {
+    "5": "White"
+  },
+  "134300": {
+    "1": "Silver",
+    "8": "Black",
+    "4": "Green",
+    "9": "Med blue"
+  }
+}

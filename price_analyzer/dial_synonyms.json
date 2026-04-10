@@ -1,0 +1,188 @@
+{
+    "_comment": "Canonical dial → synonyms. Applied at data load + search. Use _ref_specific for per-ref overrides.",
+    "Grey": [
+        "Slate",
+        "Rhodium",
+        "Steel"
+    ],
+    "Grey Diamond": [
+        "Rhodium Diamond",
+        "Slate Diamond"
+    ],
+    "Grey Roman": [
+        "Rhodium Roman"
+    ],
+    "Grey Stick": [
+        "Rhodium Stick"
+    ],
+    "Grey Ombré": [
+        "Ombré Slate"
+    ],
+    "Champagne": [
+        "Golden",
+        "Gold"
+    ],
+    "Champagne Diamond": [
+        "Gold Diamond"
+    ],
+    "Champagne Roman": [
+        "Gold Roman"
+    ],
+    "Chocolate": [
+        "Brown"
+    ],
+    "Chocolate Diamond": [
+        "Brown Diamond"
+    ],
+    "Chocolate Roman": [
+        "Brown Roman"
+    ],
+    "Chocolate Stick": [
+        "Brown Stick"
+    ],
+    "White": [
+        "Intense white"
+    ],
+    "Blue": [
+        "Dark Blue"
+    ],
+    "Sundust Diamond": [
+        "Sundust set with diamonds"
+    ],
+    "Champagne Diamond": [
+        "Golden set with diamonds"
+    ],
+    "Candy Pink": [
+        "Pink set with diamonds"
+    ],
+    "Aubergine Roman VI": [
+        "vi Aubergine"
+    ],
+    "Pink Roman VI": [
+        "vi Pink"
+    ],
+    "Grey Roman VI": [
+        "vi Grey"
+    ],
+    "Chocolate Roman VI": [
+        "vi Chocolate"
+    ],
+    "MOP": [
+        "White and black mother-of-pearl set with diamonds",
+        "Black and white mother-of-pearl set with diamonds"
+    ],
+    "_ref_specific": {
+        "_comment": "On these refs, Pink is a mislabel for Sundust (Everose gold models where 'pink' = sundust dial)",
+        "126505": {
+            "Pink": "Sundust"
+        },
+        "126505LN": {
+            "Pink": "Sundust"
+        },
+        "126515": {
+            "Pink": "Sundust"
+        },
+        "126515A": {
+            "Pink": "Sundust"
+        },
+        "126515LN": {
+            "Pink": "Sundust"
+        },
+        "126535": {
+            "Pink": "Sundust"
+        },
+        "128235": {
+            "Pink": "Sundust"
+        },
+        "228235": {
+            "Pink": "Sundust"
+        },
+        "_comment2": "On fluted DJ41 (126334), Azzurro Blue = Blue Roman (same dial)",
+        "126334": {
+            "Azzurro Blue": "Blue Roman"
+        },
+        "_comment3": "On OP refs, 'Pink' is a mislabel for Candy Pink",
+        "126000": {
+            "Pink": "Candy Pink"
+        },
+        "134300": {
+            "Pink": "Candy Pink"
+        },
+        "277200": {
+            "Pink": "Candy Pink"
+        },
+        "276200": {
+            "Pink": "Candy Pink"
+        },
+        "124200": {
+            "Pink": "Candy Pink"
+        },
+        "278274": {
+            "Pink Diamond": "Pink",
+            "Black Diamond": "Black",
+            "Blue Diamond": "Blue",
+            "Grey Diamond": "Grey",
+            "Silver Diamond": "Silver",
+            "White Diamond": "White",
+            "Green Diamond": "Green",
+            "Champagne Diamond": "Champagne",
+            "Chocolate Diamond": "Chocolate"
+        },
+        "279174": {
+            "Pink Diamond": "Pink",
+            "Black Diamond": "Black",
+            "Blue Diamond": "Blue",
+            "Grey Diamond": "Grey",
+            "Silver Diamond": "Silver",
+            "White Diamond": "White",
+            "Green Diamond": "Green",
+            "Champagne Diamond": "Champagne",
+            "Chocolate Diamond": "Chocolate"
+        },
+        "279384RBR": {
+            "Pink Diamond": "Pink",
+            "Black Diamond": "Black",
+            "Blue Diamond": "Blue",
+            "Grey Diamond": "Grey",
+            "Silver Diamond": "Silver",
+            "White Diamond": "White",
+            "Green Diamond": "Green",
+            "Champagne Diamond": "Champagne",
+            "Chocolate Diamond": "Chocolate"
+        },
+        "278384RBR": {
+            "Pink Diamond": "Pink",
+            "Black Diamond": "Black",
+            "Blue Diamond": "Blue",
+            "Grey Diamond": "Grey",
+            "Silver Diamond": "Silver",
+            "White Diamond": "White",
+            "Green Diamond": "Green",
+            "Champagne Diamond": "Champagne",
+            "Chocolate Diamond": "Chocolate"
+        },
+        "_comment4": "Rainbow Daytonas — fixed dial models, override any misparsed catalog descriptions",
+        "126598": {
+            "Champagne Diamond": "Black",
+            "Champagne Pavé": "Black",
+            "Golden set with diamonds": "Black",
+            "Rainbow": "Black"
+        },
+        "126595": {
+            "Sundust Diamond": "Sundust",
+            "Sundust Pavé": "Sundust",
+            "Sundust set with diamonds": "Sundust",
+            "Rainbow": "Sundust"
+        },
+        "126579": {
+            "Black and white mother-of-pearl set with diamonds": "MOP"
+        },
+        "126589": {
+            "White and black mother-of-pearl set with diamonds": "MOP"
+        },
+        "126539": {
+            "Grey": "Black",
+            "Steel": "Black"
+        }
+    }
+}
