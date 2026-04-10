@@ -4873,13 +4873,13 @@ def cmd_parse(args):
         'Steel': '',                                                 # Case material, not dial (126539TBR)
         'Rose Gold': '',                                             # Case material, not dial
         'Golden Brown': 'Brown',                                     # Patek Nautilus
-        'White/Silver': 'Silver',                                    # AP catalog
+        'White/Silver': 'White',                                     # AP catalog (RO 41 .04 = white grande tapisserie)
         'Anthracite Grey': 'Grey',                                   # AP catalog
         'Blue-Grey': 'Grey',                                         # AP catalog
         'Mint green': 'Green',                                       # Case mismatch
         'Med blue': 'Med Blue',                                      # Case mismatch
         'Khaki': 'Khaki Green',                                      # AP/VC shorthand
-        'Sand': 'Beige',                                             # AP 15510ST sand = beige
+        'Beige': 'Sand',                                             # AP 15510ST beige = sand (canonical)
     }
     # Ref-specific dial aliases: for diamond-default refs, normalize vi/Roman variants
     _REF_DIAL_ALIASES = {
