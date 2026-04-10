@@ -52,19 +52,19 @@
     "01": "Blue"
   },
   "26240ST": {
-    "01": "Grey",
-    "02": "Blue",
-    "03": "Black",
-    "04": "Green",
-    "05": "Silver",
-    "06": "Sand",
-    "07": "Salmon",
-    "08": "Brown"
+    "01": "Blue",
+    "02": "Black",
+    "03": "White",
+    "04": "Khaki Green",
+    "05": "Blue",
+    "06": "Black",
+    "07": "White",
+    "08": "Khaki Green"
   },
   "26331ST": {
-    "01": "White",
-    "02": "Blue",
-    "03": "Black"
+    "01": "Blue",
+    "02": "Black",
+    "03": "White"
   },
   "15407OR": {
     "01": "Blue"
@@ -88,9 +88,6 @@
     "01": "Black"
   },
   "26579CS": {
-    "01": "Blue"
-  },
-  "16202ST": {
     "01": "Blue"
   },
   "5164G": {
@@ -253,5 +250,19 @@
     "8": "Black",
     "4": "Green",
     "9": "Med blue"
+  },
+  "15202IP": {
+    "01": "Blue"
+  },
+  "15720ST": {
+    "A009CA.01": "Grey",
+    "A027CA.01": "Blue",
+    "A052CA.01": "Khaki Green"
+  },
+  "26470ST": {
+    "A027CA.01": "Blue",
+    "A028CR.01": "Black",
+    "A099CR.01": "Chocolate",
+    "A104CR.01": "Grey"
   }
 }

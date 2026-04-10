@@ -1981,13 +1981,16 @@ def extract_dial(text, ref='', raw_ref=''):
 
     # ── Catalog-based fallback: use official AP/Patek ref suffix → dial mapping ──
     if not dial and raw_ref:
-        # AP: "15500ST.OO.1220ST.03" → base=15500ST, suffix=03 → Black
-        ap_m = re.search(r'(\d{5}[A-Z]{2})\.OO\.\w+\.(\d{2})', raw_ref)
+        # AP: "15500ST.OO.1220ST.03" → base=15500ST, mid=1220ST, suffix=03 → Black
+        # Or "15720ST.OO.A052CA.01" → base=15720ST, mid=A052CA, suffix=01 → Khaki Green
+        ap_m = re.search(r'(\d{5}[A-Z]{2})\.OO\.(\w+)\.(\d{2})', raw_ref)
         if ap_m:
             _cb = ap_m.group(1)
-            _cs = ap_m.group(2)
-            if _cb in AP_SUFFIX_DIALS and _cs in AP_SUFFIX_DIALS[_cb]:
-                dial = AP_SUFFIX_DIALS[_cb][_cs]
+            _cm = ap_m.group(2)  # middle code (bracelet/strap variant)
+            _cs = ap_m.group(3)  # dial suffix
+            if _cb in AP_SUFFIX_DIALS:
+                # Middle-code.suffix key first (Offshore models where all variants share .01)
+                dial = AP_SUFFIX_DIALS[_cb].get(f'{_cm}.{_cs}') or AP_SUFFIX_DIALS[_cb].get(_cs, '')
         # Patek: "5711/1A-014" → base=5711/1A, suffix=014 → Olive Green
         if not dial:
             pk_m = re.search(r'(\d{4}/\d+[A-Z])-(\d{3})', raw_ref)
