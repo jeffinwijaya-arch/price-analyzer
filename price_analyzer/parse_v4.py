@@ -1425,7 +1425,7 @@ DIAL_PATS = [
     (r'\bice\s*blue\b|\bib\b', 'Ice Blue'),
     (r'\bmediterranean\s*blue\b|\bmed\s*blue\b', 'Mediterranean Blue'),
     (r'\btiffany\b|\bturquoise\b', 'Turquoise Blue'),
-    (r'\bmint\s*green\b|\bmint\b', 'Mint Green'),
+    (r'\bmint\s*green\b', 'Mint Green'),
     (r'\bolive\s*green\b|\bolive\b', 'Olive Green'),
     (r'\bpistachio\b|\bpis\b', 'Pistachio'),
     (r'\blavender\b', 'Lavender'),
@@ -1786,7 +1786,7 @@ def extract_dial(text, ref='', raw_ref=''):
         else:
             dial = 'Tiffany Blue'
     elif re.search(r'\bcornflower\b', t): dial = 'Cornflower Blue'
-    elif re.search(r'\bmint\s*green\b|\bmint\b', t): dial = 'Mint Green'
+    elif re.search(r'\bmint\s*green\b', t): dial = 'Mint Green'
     elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
     elif re.search(r'\bpistachio\b|\bpis\b', t): dial = 'Pistachio'
     elif re.search(r'\bcandy\s*pink\b', t): dial = 'Candy Pink'
