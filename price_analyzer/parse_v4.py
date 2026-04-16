@@ -1473,11 +1473,13 @@ FIXED_DIAL = {
     '126710BLNR':'Black','126710BLRO':'Black','126710GRNR':'Black','126720VTNR':'Black',
     '126711CHNR':'Black','126713GRNR':'Black',
     '126525LN':'Black','126529LN':'Black',
-    '126067':'Black','126707':'Black','126755':'Black','136660':'Black',
+    '126067':'Black','126707':'Black','126755':'Black',
+    # 136660 (Deepsea) has Black AND D-Blue — NOT fixed; handled by text/suffix detection
     '126729VTNR':'Black',
     # Prev gen
     '116610LN':'Black','116610LV':'Green','116600':'Black',
-    '116660':'Black','114060':'Black','114270':'Black',
+    # 116660 (prev-gen Deepsea) has Black AND D-Blue — NOT fixed
+    '114060':'Black','114270':'Black',
     # 116500LN has both white and black dials — NOT fixed
     '116710LN':'Black','116710BLNR':'Black','116710BLRO':'Black',
     '116711':'Black','116713LN':'Black',
@@ -1502,7 +1504,7 @@ FIXED_DIAL = {
     '116759SN':'Black',  # GMT Saphir WG — always black
     '116695SATS':'Black',  # Daytona Rainbow — always black
     '116659SABR':'Black',  # Sub Rainbow — always black
-    '126555':'Black',    # YM37 Rainbow — always black
+    # 126555 (YM37 WG) has multiple exotic dials (Grossular/Tiger Eye/Leopard/Meteorite) — NOT fixed
     '126598':'Black',    # Daytona Rainbow new — always black
     '126595':'Sundust',  # Daytona Rainbow Everose — sundust dial
     '126579':'MOP',      # Daytona Rainbow WG — MOP dial
@@ -1531,15 +1533,26 @@ def extract_dial(text, ref='', raw_ref=''):
 
     # ── SUFFIX-BASED DIAL INFERENCE ──
     # If raw_ref has a known suffix, use SUFFIX_DIAL mapping
-    # e.g., 126231NG → MOP, 126515LN → Black, 126710BLNR → Black
+    # e.g., 126231NG → MOP, 126610LN → Black, 126710BLNR → Black
+    # EXCEPTION: on Daytona refs, the "LN" suffix denotes Oysterflex bracelet — NOT dial color.
+    # Those refs must fall through to text-based detection.
+    _DAYTONA_LN_EXEMPT = {
+        '126505','126515','126518','126519','126520','126528','126529',
+        '116505','116515','116518','116519','116528','116529',
+        '126595',  # Everose Rainbow Oysterflex
+    }
     if raw_ref and ref:
         _suffix = raw_ref[len(re.match(r'\d+', raw_ref).group(0)):] if re.match(r'\d+', raw_ref) else ''
+        _base_for_exempt = re.match(r'\d+', raw_ref).group(0) if re.match(r'\d+', raw_ref) else ''
         if _suffix and _suffix in SUFFIX_DIAL:
-            return SUFFIX_DIAL[_suffix]
+            if not (_suffix == 'LN' and _base_for_exempt in _DAYTONA_LN_EXEMPT):
+                return SUFFIX_DIAL[_suffix]
         # Check for suffix in the ref itself (already canonicalized)
         _ref_suffix = ref[len(re.match(r'\d+', ref).group(0)):] if re.match(r'\d+', ref) else ''
+        _base_for_exempt_ref = re.match(r'\d+', ref).group(0) if re.match(r'\d+', ref) else ''
         if _ref_suffix and _ref_suffix in SUFFIX_DIAL:
-            return SUFFIX_DIAL[_ref_suffix]
+            if not (_ref_suffix == 'LN' and _base_for_exempt_ref in _DAYTONA_LN_EXEMPT):
+                return SUFFIX_DIAL[_ref_suffix]
 
     # ── DIAL OPTIONS VALIDATION ──
     # Load known dial options for this ref to validate later
@@ -1563,7 +1576,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bsodalit[eo]?\b', 'sodalite', t)
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
+    t = re.sub(r'\btiger\s*iron\b', '__tigeriron__', t)  # protect before generic tiger→tiger eye
     t = re.sub(r'\btiger\b', 'tiger eye', t)
+    t = re.sub(r'__tigeriron__', 'tiger iron', t)
     # Typo/shorthand fixes
     t = re.sub(r'\bbule\b', 'blue', t)
     t = re.sub(r'\bsliver\b', 'silver', t)
@@ -1596,6 +1611,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\baub\b', 'aubergine', t)   # "aub" = aubergine
     t = re.sub(r'\bpurp\b', 'aubergine', t)  # "purp" = purple/aubergine
     t = re.sub(r'\bcham\b|\bchm\b', 'champagne', t)  # "cham/chm" = champagne
+    t = re.sub(r'\bsd\b', 'sundust', t)             # "sd" = Sundust (Daytona/Day-Date shorthand)
+    t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
+    t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b', 'd-blue', t)  # normalise d-blue variants
     # Separate color glued to ref: "116508green" → "116508 green"
     t = re.sub(r'(\d{5,6})(green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|chocolate|meteorite|panda|ceramic|giraffe|grossular|polar|yml|tiffany|wimbledon)', r'\1 \2', t)
     ref_upper = ref.upper() if ref else ''
@@ -1615,6 +1633,9 @@ def extract_dial(text, ref='', raw_ref=''):
         if _bd:
             _sfx = _check_ref[len(_bd.group(1)):]
             if _sfx in SUFFIX_DIAL:
+                # LN on Daytona = Oysterflex bracelet, not dial color — skip
+                if _sfx == 'LN' and _bd.group(1) in _DAYTONA_LN_EXEMPT:
+                    continue
                 return SUFFIX_DIAL[_sfx]
     base_digits = re.match(r'(\d+)', ref_upper)
     is_g_suffix = False  # G suffix = diamond hour markers
@@ -1641,6 +1662,8 @@ def extract_dial(text, ref='', raw_ref=''):
         is_baguette = bool(ref and re.search(r'\b' + re.escape(ref_upper) + r'\s*A\b', text, re.I))
 
     # Special dials (check before generic colors)
+    # D-Blue (Deepsea gradient dial — normalised to "d-blue" above)
+    if re.search(r'\bd-blue\b', t): return 'D-Blue'
     # Puzzles (DD special)
     if re.search(r'\bpuzzle', t): return 'Puzzles'
     # Celebration Tiffany Blue (CTB/CLTB) — MUST precede generic Celebration check
@@ -1679,6 +1702,14 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bopal\b', t): return 'Opal'
     # Grossular / Giraffe (same stone — Rolex official name is "Grossular")
     if re.search(r'\bgrossular\b|\bgiraffe\b', t): return 'Grossular'
+    # Leopard (Yacht-Master 37 / Day-Date exotic stone dial)
+    if re.search(r'\bleopard\b', t): return 'Leopard'
+    # Zebra (Day-Date exotic dial — 228235)
+    if re.search(r'\bzebra\b', t): return 'Zebra'
+    # Wave (Day-Date lacquer motif dial — 228235)
+    if re.search(r'\bwave\b', t) and not re.search(r'\bwave\s*fluted\b', t): return 'Wave'
+    # Tiger Iron (126718 Yacht-Master 40) — must precede Tiger Eye
+    if re.search(r'\btiger\s*iron\b', t): return 'Tiger Iron'
     # Tiger Eye
     if re.search(r'\btiger\s*eye\b', t): return 'Tiger Eye'
     # Ceramic (Daytona ceramic dial)
@@ -1719,8 +1750,16 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bpanda\b', t): return 'White'
 
     # Wimbledon — specific dial, NOT just slate or green
-    # "wim"/"wimb"/"wimbo" are common HK dealer shorthands for the Wimbledon dial
-    if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b|\bwim\b', t): return 'Wimbledon'
+    # Full-word shorthands (wimbledon/wimbo/wimb) fire on any ref; bare "wim" is ref-gated
+    # to avoid false positives on non-Wimbledon models (subs, daytonas, etc.)
+    _WIM_REFS = {
+        '126300','126301','126303','126331','126333','126334',
+        '126200','126201','126203','126231','126233','126234',
+        '126283','126284','116300','116333','116334','116234',
+    }
+    _ref_base_wim = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+    if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t): return 'Wimbledon'
+    if re.search(r'\bwim\b', t) and (_ref_base_wim in _WIM_REFS or not ref): return 'Wimbledon'
 
     # Diamond dial variants — "blue diamond", "diamond blue", "grey diamond", etc.
     # These are dials with diamond hour markers + specific color (common on DJ/DD)
@@ -1830,6 +1869,11 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bbeige\b', t): dial = 'Beige'
     elif re.search(r'\bsalmon\b', t): dial = 'Salmon'
     elif re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
+    elif re.search(r'\bbb\b', t) and _rb_ice in {
+        '126300','126301','126303','126200','126201','126203',
+        '126334','126333','126331','126234','126233','126231',
+        '116300','116234','116334',
+    }: dial = 'Bright Blue'
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
     elif re.search(r'\bblack\b|\bblk\b', t): dial = 'Black'
     elif re.search(r'\bblue\b|\bblu\b', t): dial = 'Blue'
