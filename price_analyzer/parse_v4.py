@@ -1940,10 +1940,10 @@ FIXED_DIAL = {
     # ── Audemars Piguet single-dial refs ──
     '15202ST':'Blue',    # Royal Oak Jumbo Extra-Thin SS — always blue
     '16202ST':'Blue',    # Royal Oak Jumbo Extra-Thin SS (new gen) — always blue
-    '26238ST':'Blue',    # Royal Oak Offshore Chrono SS — always blue
+    # NOTE: 26238ST removed — ROO Chrono SS has 11 dials (Blue/Grey/Black/White/Orange/Green/etc) — NOT fixed
     '26579CE':'Black',   # Royal Oak Perpetual Calendar Ceramic — always black
     '15407OR':'Blue',    # Royal Oak Double Balance Wheel RG — always blue
-    '26715OR':'Blue',    # Royal Oak Offshore Diver RG — always blue
+    # NOTE: 26715OR removed — ROO Offshore Diver RG has both Grey and Blue dials — NOT fixed
     # ── Rolex additional single-dial refs ──
     '116506A':'Ice Blue',  # Prev-gen Daytona Platinum A-variant — always Ice Blue
     # NOTE: 116576 removed — Day-Date 36 Platinum Arabic has Black, Pavé, Ice Blue, Blue variants
@@ -2469,6 +2469,20 @@ def extract_dial(text, ref='', raw_ref=''):
                     r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', _otbl_t):
                 return 'Official Tiffany Blue'
 
+    # ── EARLY OVERRIDE: Tiffany Blue for AP Royal Oak Offshore refs ──
+    # AP ROO refs that offer Tiffany Blue: 26238ST, 26331ST, 26400ST, 15510ST, 15720ST, 15500ST.
+    # These refs are NOT in the OP OTB block above, so "tiffany" / "otb" shorthand would otherwise
+    # fall through and produce the wrong dial.  Fire before suffix inference.
+    if text and ref:
+        _rb_ap_roo = re.match(r'(\d+)', ref)
+        _ap_roo_tb_bases = frozenset({'26238', '26331', '26400', '15510', '15720', '15500'})
+        if _rb_ap_roo and _rb_ap_roo.group(1) in _ap_roo_tb_bases:
+            _ap_roo_t = text.lower()
+            if re.search(r'\btiffany(?:a|anya)?\b|\btiff(?:iny|any)?\b|\btifany\b|\btiffy\b', _ap_roo_t):
+                return 'Tiffany Blue'
+            if re.search(r'(?<![a-zA-Z0-9])otb(?![a-zA-Z0-9])|(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', _ap_roo_t):
+                return 'Tiffany Blue'
+
     # ── EARLY OVERRIDE: "Pumpkin" orange enamel dial for Rolex 116578 Daytona Everose Gold ──
     # 116578SACO/SANR = Daytona 40mm Everose Gold with sapphire crystal. Standard dial = Black.
     # BUT the rare "Pumpkin" burnt-orange enamel dial variant commands a very large premium.
@@ -2729,8 +2743,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\baerolite\b|\bsikhote\b|\bmuonio\b', 'meteorite', t)  # Aerolite/stone subtypes = meteorite
     # "celeste" = Tiffany Blue (Italian/Spanish dealers for robin's-egg-blue OP dials)
     t = re.sub(r'\bceleste\b', 'tiffany', t)
-    # "Tiffiny" / "Tiffaney" / "Tifany" → tiffany (frequent HK/SG dealer typos for AP 26238ST etc.)
-    t = re.sub(r'\btiffiny\b|\btiffaney\b|\btifany\b|\btifanny\b|\btiffny\b|\btifanie\b|\btifffany\b|\btiffanay\b', 'tiffany', t)
+    # "Tiffiny" / "Tiffaney" / "Tifany" / "Tiffanya" → tiffany (frequent HK/SG dealer typos for AP 26238ST etc.)
+    t = re.sub(r'\btiffiny\b|\btiffaney\b|\btifany\b|\btifanny\b|\btiffny\b|\btifanie\b|\btifffany\b|\btiffanay\b|\btiffanya\b', 'tiffany', t)
     # "tiffanys" (possessive/plural) → tiffany (\btiffany\b misses the trailing 's' word char boundary)
     t = re.sub(r'\btiffanys\b', 'tiffany', t)
     # Additional Tiffany typo variants from HK/SG/CN dealer groups
@@ -2795,7 +2809,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bno\s+white\b', '', t)
     t = re.sub(r'\bwt\b', 'white', t)       # "wt" = white (HK dealer shorthand, e.g. "326238 wt")
     t = re.sub(r'\blvory\b', 'ivory', t)  # typo: lvory → ivory
-    t = re.sub(r'\bivory\b', 'champagne', t)  # ivory ≈ champagne (cream-tone dial)
+    t = re.sub(r'\bivory\b|\bivoire\b', 'champagne', t)  # ivory/ivoire ≈ champagne (cream-tone dial)
+    t = re.sub(r'\bcamel\b|\blinen\b|\becru\b|\bstraw\b|\bbuttercup\b|\bbuttermilk\b', 'champagne', t)  # warm cream tones → champagne
+    t = re.sub(r'\bhoney\b', 'champagne', t)   # honey = warm golden = champagne (AP/Rolex)
+    t = re.sub(r'\bmint\s*-\s*green\b|\bmint\s+green\b|\bmintgreen\b', 'mint green', t)  # normalise hyphenated/compound
     t = re.sub(r'\bpinky\b', 'pink', t)   # pinky → pink (HK dealer shorthand)
     t = re.sub(r'\bchoco\b', 'chocolate', t)  # choco → chocolate
     t = re.sub(r'\bchcoo\b', 'chocolate', t)  # "chcoo" typo → chocolate (HK shorthand)
@@ -3558,8 +3575,10 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bflamingo\b', 'pink', t)  # standalone flamingo = pink (AP etc.)
     # Plum / wine / bordeaux → aubergine (Day-Date stone/lacquer dark purple dials)
     t = re.sub(r'\bplum\b|\bwine\s*(?:red)?\b|\bbordeaux\b', 'aubergine', t)
-    # Cotton candy / bubblegum → pink (OP/Lady DJ casual descriptors)
-    t = re.sub(r'\bcotton\s*candy\b|\bbubblegum\b', 'pink', t)
+    # Cotton candy / bubblegum → candy pink (OP/Lady DJ casual descriptors)
+    t = re.sub(r'\bcotton\s*candy\b|\bbubblegum\b', 'candy pink', t)
+    # Baby/pale/blush/pastel/soft pink → candy pink (same dial family on OP/DJ refs)
+    t = re.sub(r'\b(?:baby|pale|blush|pastel|soft)\s+pink\b', 'candy pink', t)
     # Nacre → MOP (mother-of-pearl, French/European dealer shorthand)
     t = re.sub(r'\bnacre\b', 'mop', t)
     # Straw → champagne (vintage Daytona/Datejust cream-straw lacquer dials)
@@ -4417,6 +4436,9 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_op = re.match(r'(\d+)', ref)
         _rb_op_b = _rb_op.group(1) if _rb_op else ''
         if _rb_op_b in ('126000', '124300', '134300', '277200', '276200', '126034', '124200', '126031'):
+            dial = 'Candy Pink'
+        # Data-driven fallback: if this ref has Candy Pink but NOT plain Pink, remap
+        elif _valid_dials and 'Candy Pink' in _valid_dials and 'Pink' not in _valid_dials:
             dial = 'Candy Pink'
     # ── "Blue" → "Tiffany Blue" on OP refs that lack a plain Blue dial option ──
     # The OP line (126000, 134300, 277200, 276200, 124200, 124300) does NOT include a standard
