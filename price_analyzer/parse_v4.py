@@ -2999,6 +2999,11 @@ def extract_dial(text, ref='', raw_ref=''):
         if _rb_pur_base in _op_pur_exact or _rb_pur_base[:3] in _op_pur_prefix:
             t = re.sub(r'\bpurple\b', 'grape', t)
             t = re.sub(r'\bviolet\b', 'grape', t)
+    # "aubergine" on refs where Grape is valid but Aubergine is NOT → remap to "grape".
+    # Refs with BOTH options (126000, 277200) keep "aubergine" as-is.
+    # Data-driven: follows rolex_dial_options.json so no hardcoded ref list needed.
+    if _valid_dials and 'Grape' in _valid_dials and 'Aubergine' not in _valid_dials:
+        t = re.sub(r'\baubergine\b', 'grape', t)
     # "mingreen" / "mintgrn" / "minty" → "mint green"
     # "minty" is a common dealer shorthand for mint green (distinct from "mint" condition descriptor)
     t = re.sub(r'\bmingreen\b|\bmintgrn\b|\bmint\s*grn\b|\bminty\b', 'mint green', t)
