@@ -2866,14 +2866,19 @@ def extract_dial(text, ref='', raw_ref=''):
         _op_cn_pfx = ('277', '276', '124')
         if _rb_cn_tb_b in _op_cn_exact or _rb_cn_tb_b[:3] in _op_cn_pfx:
             t = re.sub(r'天[藍蓝]色?|天空[藍蓝]色?|水[藍蓝]色?|淡[藍蓝]色?', 'tiffany', t)
+    # 地中海藍/蓝 = Mediterranean Blue — MUST come BEFORE generic [藍蓝]色 → blue below.
+    # 地中海藍色: [藍蓝]色 fires on 藍色 first → 地中海blue, then 地中海[藍蓝]色? can't match.
+    t = re.sub(r'地中海[藍蓝]色?', 'mediterranean blue', t)   # 地中海藍 = Mediterranean Blue (OP36/41 2024+ dial)
     # 白/黑/藍/綠/灰/銀/玫瑰 = white/black/blue/green/grey/silver/rose (common color chars)
     t = re.sub(r'白色|白盤|白面', 'white', t)   # 白色/白盤/白面 = white dial
     t = re.sub(r'黑色|黑盤|黑面', 'black', t)   # 黑色/黑盤/黑面 = black dial
     t = re.sub(r'[藍蓝]色|[藍蓝]盤|[藍蓝]面', 'blue', t)    # 藍色/蓝色 = blue
-    t = re.sub(r'[綠绿]色|[綠绿]盤|[綠绿]面', 'green', t)   # 綠色/绿色 = green
+    t = re.sub(r'[綠绿緑]色|[綠绿緑]盤|[綠绿緑]面', 'green', t)   # 綠色/绿色/緑色 = green (incl. Japanese 緑 U+7DD1)
     t = re.sub(r'灰色|灰盤|灰面', 'grey', t)    # 灰色 = grey
     t = re.sub(r'[銀银]色|[銀银]盤|[銀银]面', 'silver', t)  # 銀色/银色 = silver
     t = re.sub(r'棕色|咖啡色|棕盤|咖啡盤', 'chocolate', t)  # 棕色/咖啡色 = brown/chocolate
+    t = re.sub(r'茶色|茶盤|茶面', 'chocolate', t)            # 茶色 = tea-brown/chocolate (Japanese/Chinese)
+    t = re.sub(r'青色|青盤|青面', 'blue', t)                 # 青色 = blue/cyan (Japanese dealer shorthand)
     # MUST come BEFORE generic 粉[紅红] → pink below; 粉紅 is a substring of 淡粉紅/嫩粉紅
     # and would be consumed first, leaving 淡pink/嫩pink that the candy-pink subs can't match.
     t = re.sub(r'淡粉[紅红]?|淡粉色', 'candy pink', t)  # 淡粉/淡粉紅 = light/candy pink
@@ -2900,7 +2905,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # ── Chinese Ombré dial terms (Day-Date gradient dials — HK/TW/CN dealer groups) ──
     t = re.sub(r'綠烟|绿烟|綠煙|绿煙', 'green ombré', t)                # 绿烟/綠煙 = green smoke = Green Ombré
     t = re.sub(r'巧克力烟|巧克力煙', 'chocolate ombré', t)              # 巧克力烟 = chocolate smoke = Chocolate Ombré
-    t = re.sub(r'灰烟|灰煙|石板烟|石板煙|板岩烟|板岩煙', 'ombré slate', t)  # 灰烟/石板烟 = slate smoke = Ombré Slate
+    t = re.sub(r'灰烟|灰煙|石板烟|石板煙|板岩烟|板岩煙|煙灰|烟灰', 'ombré slate', t)  # 灰烟/石板烟/煙灰 = slate smoke = Ombré Slate
     t = re.sub(r'紅烟|红烟|紅煙|红煙', 'red ombré', t)                 # 紅烟/红煙 = red smoke = Red Ombré
     t = re.sub(r'漸變|渐变', 'ombré', t)                               # 漸變/渐变 = gradient = Ombré
     t = re.sub(r'煙熏|烟熏', 'ombré', t)                               # 煙熏/烟熏 = smoky = Ombré
@@ -2946,8 +2951,8 @@ def extract_dial(text, ref='', raw_ref=''):
             t = re.sub(r'\botb\b', 'tiffany', t)
     # "pn exotic" / "exotic pn" → paul newman (concatenated PN+Exotic shorthand)
     t = re.sub(r'\bpn\s*exotic\b|\bexotic\s*pn\b', 'paul newman', t)
-    # "wimbelon" / "wimbledn" → wimbledon (additional typo variants)
-    t = re.sub(r'\bwimbelon\b|\bwimbledn\b', 'wimbledon', t)
+    # "wimbelon" / "wimbledn" / "wimbeldon" / "wibledon" → wimbledon (additional typo variants)
+    t = re.sub(r'\bwimbelon\b|\bwimbledn\b|\bwimbeldon\b|\bwibledon\b', 'wimbledon', t)
     # "wimbledo" (truncated — missing trailing 'n') → wimbledon (common HK shorthand truncation)
     t = re.sub(r'\bwimbledo\b(?!n)', 'wimbledon', t)
     # "wm dial" / "wim dial" → wimbledon (abbreviated Wimbledon shorthand)
