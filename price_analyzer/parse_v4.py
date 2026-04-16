@@ -2191,8 +2191,9 @@ def extract_dial(text, ref='', raw_ref=''):
         # Without this, the word boundary \b fails between a digit (word char) and a letter (word char).
         # Covers the most common premium dial keywords seen concatenated in HK/SG dealer messages.
         text = re.sub(
-            r'(?<=\d)(giraffe|grossular|tiffany|wimbledon|meteorite|champagne|chocolate|panda|'
-            r'turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon)\b',
+            r'(?<=\d)(giraffe|grossular|tiffany|tiff|wimbledon|wimbo|meteorite|champagne|chocolate|panda|'
+            r'turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon|'
+            r'pistachio|lavender|aubergine|grape|beige|medblue|celebration)\b',
             r' \1', text, flags=re.I
         )
     # ── FIXED-DIAL MODELS: return IMMEDIATELY, no pattern matching ──
@@ -2354,6 +2355,12 @@ def extract_dial(text, ref='', raw_ref=''):
                 if re.search(r'\bopal\b', _fd_t): return 'Opal'
                 if re.search(r'\bcarnelian\b', _fd_t): return 'Carnelian'
                 if re.search(r'\bonyx\b', _fd_t): return 'Onyx'
+            # Wimbledon override — when text explicitly names Wimbledon for a fixed-dial ref,
+            # it almost certainly means the message includes a Wimbledon listing alongside a
+            # fixed-dial listing (multi-ref contamination). We do NOT override FIXED_DIAL here
+            # because FIXED_DIAL refs (Sub, GMT, etc.) never have a Wimbledon option.
+            # The correct approach is to let the FIXED_DIAL value stand; no change needed.
+            # (This comment block is intentional — documents the deliberate non-override.)
             # Champagne override — 126598 (Everose Rainbow Daytona) has two dial variants:
             # Black (dominant) and Champagne. Since 126598 is in FIXED_DIAL as 'Black', the
             # general keyword path is never reached. Explicit "champagne" in text → Champagne.
@@ -2829,18 +2836,24 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'[銀银]色|[銀银]盤|[銀银]面', 'silver', t)  # 銀色/银色 = silver
     t = re.sub(r'棕色|咖啡色|棕盤|咖啡盤', 'chocolate', t)  # 棕色/咖啡色 = brown/chocolate
     t = re.sub(r'粉色|粉[紅红]|粉盤', 'pink', t)             # 粉色/粉紅 = pink
-    t = re.sub(r'香[檳槟]', 'champagne', t)                  # 香檳/香槟 = champagne
+    # IMPORTANT: 香[槟檳]綠/绿 (champagne green) must come BEFORE the generic 香[檳槟] → champagne
+    # replacement, otherwise 香槟绿 → champagne绿 before the wimbledon pattern can match.
+    t = re.sub(r'香[槟檳]綠|香[槟檳]绿', 'wimbledon', t)    # 香檳綠/香槟绿 = champagne green = Wimbledon (DJ/DJ41 dealer slang in HK/TW/CN groups)
+    t = re.sub(r'香[檳槟]', 'champagne', t)                  # 香檳/香槟 = champagne (must come AFTER 香[槟檳]綠 above)
     t = re.sub(r'隕石|陨石', 'meteorite', t)                 # 隕石/陨石 = meteorite
     t = re.sub(r'蒂芙[尼]藍|蒂芙[尼]蓝', 'tiffany', t)      # 蒂芙尼藍/蓝 = Tiffany blue
+    t = re.sub(r'蒂芙[尼](?![藍蓝])', 'tiffany', t)          # 蒂芙尼 standalone (no 藍/蓝) — still = Tiffany Blue (Patek guard fires later)
     t = re.sub(r'冰[藍蓝]', 'ice blue', t)                  # 冰藍/冰蓝 = ice blue
     t = re.sub(r'珍珠母|珠光盤', 'mop', t)                  # 珍珠母/珠光盤 = MOP
     t = re.sub(r'溫布[爾尔]頓|温布[爾尔]顿', 'wimbledon', t)  # 溫布爾頓/温布尔顿 = Wimbledon (TW/HK/CN)
-    t = re.sub(r'香[槟檳]綠|香[槟檳]绿', 'champagne', t)    # 香檳綠/香槟绿 = champagne green (Wimbledon dealer slang)
     t = re.sub(r'葡萄(?:紫|色)?', 'grape', t)               # 葡萄 = Grape (OP/DJ Grape dial — Chinese)
     t = re.sub(r'\bgrapes\b', 'grape', t)                  # "grapes" (plural) → grape (dealer plural form)
     t = re.sub(r'珊瑚[紅红]?|珊瑚色', 'coral', t)           # 珊瑚/珊瑚色 = coral (OP/DJ Coral dial)
     # "official tiffany" / "tiffany official" → tiffany (explicit premium dial label)
     t = re.sub(r'\bofficial\s+tiffany\b|\btiffany\s+official\b', 'tiffany', t)
+    # "champagne green" already converted to 'wimbledon' above; reinforce for any split form
+    # that may have been lowercased before reaching the earlier normalization
+    t = re.sub(r'\bchamp(?:agne)?\s+green\b', 'wimbledon', t)
     # "CTB" / "CLTB" = Celebration Tiffany Blue (HK/SG dealer compound shorthand)
     # Expands to "celebration tiffany" so the celebration detection block resolves it
     # as 'Celebration Tiffany Blue' via the existing _has_tiff_signal check.
@@ -2976,10 +2989,17 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_ml_b = _rb_ml.group(1) if _rb_ml else ''
         if _rb_ml_b in ('116508', '126508', '116518', '126518', '116528', '126528'):
             t = re.sub(r'\bmineral\s+lacquer\b', 'yml', t)
+    # "champagne green" (English) = Wimbledon — same logic as Chinese 香槟绿; common in EU/SG groups
+    t = re.sub(r'\bchampagne\s+green\b|\bchamp(?:agne)?\s*grn\b|\bchgrn\b', 'wimbledon', t)
     # Wimbledon shorthands — "wb" only when NOT preceded by "w/" (watch box)
     # Also catch common typos: wimbeldon, wimbelton, wimbeldan (very frequent in dealer messages)
     t = re.sub(r'\bwim\b|\bwimb\b|\bwimbo\b|\bwimbeld[oe]n\b|\bwimbelton\b|\bwimbeldan\b|\bwimbledone\b', 'wimbledon', t)
     t = re.sub(r'(?<!/)\bwb\b', 'wimbledon', t)
+    # "wm" standalone → wimbledon (ultra-short code used in some HK/SG dealer groups).
+    # Guard: only when Wimbledon is a valid dial for this ref — prevents "wm" false hits
+    # on non-Wimbledon refs (e.g. RM/AP/Daytona refs where "wm" could be a part-number token).
+    if not _valid_dials or 'Wimbledon' in _valid_dials:
+        t = re.sub(r'\bwm\b', 'wimbledon', t)
     # "wimbledon" glued to ref digits: "126334wimbledon" → "126334 wimbledon"
     t = re.sub(r'(\d{5,6})(wimbledon|wimb|wim\b)', r'\1 \2', t)
     # "wim grn" / "wim green" → wimbledon (the Wimbledon dial IS the slate-green motif — HK compound shorthand)
@@ -3119,6 +3139,17 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bmedit(?:erranean)?\s+(?:blue|bl)\b', 'mediterranean blue', t)
     # "medblue" concatenated (no space) → mediterranean blue (HK WhatsApp shorthand)
     t = re.sub(r'\bmedblue\b|\bmed_blue\b', 'mediterranean blue', t)
+    # "mb" standalone → Mediterranean Blue on OP refs that carry the Med Blue dial.
+    # OP refs: 126000/126031/126034/134300 and prefix families 124xxx/277xxx/276xxx.
+    # Guard: only apply for confirmed OP family to prevent false hits on other brands
+    # where "mb" could be a variant code or abbreviation.
+    if ref:
+        _rb_mb = re.match(r'(\d+)', ref)
+        _rb_mb_b = _rb_mb.group(1) if _rb_mb else ''
+        _op_mb_exact = {'126000', '126031', '126034', '134300'}
+        _op_mb_pfx = ('124', '277', '276')
+        if _rb_mb_b in _op_mb_exact or _rb_mb_b[:3] in _op_mb_pfx:
+            t = re.sub(r'\bmb\b', 'mediterranean blue', t)
     # "grossular" truncations → grossular (stone dial shorthand, e.g. "126555 grossul")
     t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)  # safe: require "grossul" prefix
     # "carnelian" truncations → carnelian (Day-Date stone dial; NOT "carn"/"carnival")

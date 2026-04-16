@@ -76,22 +76,42 @@
         "Robins Egg Blue",
         "Eggshell Blue",
         "Duck Egg Blue",
-        "Celeste Blue"
+        "Celeste Blue",
+        "Light Blue",
+        "Baby Blue",
+        "Sky Blue",
+        "Powder Blue",
+        "Pale Blue",
+        "Aqua Blue",
+        "Aquamarine Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
         "Celebration Tiffany",
-        "CLTB"
+        "CLTB",
+        "Jubilee Tiffany Blue",
+        "Jubilee Tiffany",
+        "Celeb Tiffany Blue",
+        "Celeb Tiffany"
     ],
     "Paul Newman": [
         "PN Daytona",
         "Newman Daytona",
-        "Exotic Newman"
+        "Exotic Newman",
+        "PN Exotic",
+        "Exotic Daytona",
+        "Newman Exotic",
+        "PND"
     ],
     "Wimbledon": [
         "Wimbledo",
         "Wimbledn",
-        "Wimbo Dial"
+        "Wimbo Dial",
+        "Champagne Green",
+        "Champ Green",
+        "Champ Grn",
+        "Wim Grn",
+        "Wim Green"
     ],
     "_ref_specific": {
         "_comment": "On these refs, Pink is a mislabel for Sundust (Everose gold models where 'pink' = sundust dial)",
