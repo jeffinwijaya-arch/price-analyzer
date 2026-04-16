@@ -20,7 +20,12 @@
     ],
     "Champagne": [
         "Golden",
-        "Gold"
+        "Gold",
+        "Ecru",
+        "Ivory",
+        "Ivoire",
+        "Butterscotch",
+        "Straw"
     ],
     "Champagne Diamond": [
         "Gold Diamond",
@@ -30,7 +35,13 @@
         "Gold Roman"
     ],
     "Chocolate": [
-        "Brown"
+        "Brown",
+        "Marron",
+        "Braun",
+        "Mocha",
+        "Espresso",
+        "Cognac",
+        "Coffee"
     ],
     "Chocolate Diamond": [
         "Brown Diamond"
@@ -58,6 +69,8 @@
         "Robin Egg Blue",
         "Robins Egg Blue",
         "Robin's Egg Blue",
+        "Robin Blue",
+        "Egg Blue",
         "Eggshell Blue",
         "Duck Egg Blue",
         "Celeste Blue",
@@ -74,6 +87,8 @@
         "Tiff Blue",
         "Tiff",
         "TB",
+        "T.Blue",
+        "T-Blue",
         "OTB",
         "Official Tiffany",
         "Tiffany Official",
@@ -82,6 +97,7 @@
         "Flamingo Blue",
         "Turquoise Blue",
         "T Blue",
+        "Candy Blue",
         "Tiffany Blue Dial"
     ],
     "Celebration Tiffany Blue": [
@@ -182,6 +198,20 @@
         "CandyPink",
         "Pale Pink",
         "Baby Pink"
+    ],
+    "Olive Green": [
+        "Olive",
+        "Olive Grn",
+        "Olv",
+        "Olv Grn",
+        "Olive-Green",
+        "Verde Oliva",
+        "Olivgrün"
+    ],
+    "Salmon": [
+        "Saumon",
+        "Salmon Pink",
+        "Rosé Saumon"
     ],
     "Grape": [
         "Aubergine Purple",
