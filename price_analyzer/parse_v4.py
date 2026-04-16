@@ -1834,10 +1834,6 @@ _DJ_TBR_BRACELET_BASES = frozenset({
     # For all three, SUFFIX_DIAL['TBR']→'Black' is wrong — the actual dial must come from text.
     '116598', '116588', '126538',
 })
-# Refs where the "SA" suffix in text is NOT a sapphire-set + Black dial indicator.
-# For these refs, "SA" appears as part of an OAL/production code (e.g. "116599-12SA")
-# and should be ignored by all SA→Black suffix detection paths.
-_SA_BYPASS_BASES = frozenset({'116599'})  # Daytona Platinum: only White/Blue dials
 # Master reference dictionary (loaded once at startup for alias resolution)
 _master_dict_path = BASE_DIR / 'watch_reference_master.json'
 MASTER_DICT = _load_json(_master_dict_path) if _master_dict_path.exists() else {}
@@ -2577,15 +2573,7 @@ def extract_dial(text, ref='', raw_ref=''):
         if _sfx_scan2_unc:
             _scanned_sfx2_unc = _sfx_scan2_unc.group(1).upper()
             if _scanned_sfx2_unc in SUFFIX_DIAL:
-                # Guard: SA→Black must not fire for refs whose dial catalog never includes Black.
-                # 116599 (Daytona Platinum) only has White/Blue — "116599-12SA" uses "12SA" as
-                # an OAL production code, NOT a sapphire-set + Black dial suffix.
-                _sfx2_ref_base = (re.match(r'\d+', ref).group(0)
-                                  if ref and re.match(r'\d+', ref) else '')
-                if _scanned_sfx2_unc == 'SA' and _sfx2_ref_base in _SA_BYPASS_BASES:
-                    pass  # fall through to text-based detection
-                else:
-                    return SUFFIX_DIAL[_scanned_sfx2_unc]
+                return SUFFIX_DIAL[_scanned_sfx2_unc]
     # When raw_ref not provided (e.g. retroactive fill), scan text for ref+suffix pattern
     # e.g. "226679TBR" in text → suffix TBR → Black
     if not raw_ref and text:
@@ -2614,9 +2602,6 @@ def extract_dial(text, ref='', raw_ref=''):
                 # Multi-dial Daytona LN: bypass LN→Black so text parsing finds Panda/Meteorite/etc.
                 if _scanned_sfx == 'LN' and _scanned_base in _DAYTONA_LN_MULTI:
                     pass  # fall through
-                # SA bypass: 116599 Daytona Platinum only has White/Blue (SA is an OAL code here)
-                elif _scanned_sfx == 'SA' and _scanned_base in _SA_BYPASS_BASES:
-                    pass  # fall through to text-based detection
                 else:
                     return SUFFIX_DIAL[_scanned_sfx]
         # Also scan for "116578SACO" → SA prefix → Black
@@ -2627,8 +2612,6 @@ def extract_dial(text, ref='', raw_ref=''):
             if _scanned_pre in SUFFIX_DIAL:
                 if _scanned_pre == 'LN' and _scanned_base_pre in _DAYTONA_LN_MULTI:
                     pass  # fall through
-                elif _scanned_pre == 'SA' and _scanned_base_pre in _SA_BYPASS_BASES:
-                    pass  # fall through — SA is OAL code for 116599, not dial suffix
                 else:
                     return SUFFIX_DIAL[_scanned_pre]
         # Handle "279381rbr NG" or "279381 RBR NG" — suffix after RBR/TBR/RBOW (with optional space)
@@ -2648,13 +2631,7 @@ def extract_dial(text, ref='', raw_ref=''):
         if _sfx_scan2:
             _scanned_sfx2 = _sfx_scan2.group(1).upper()
             if _scanned_sfx2 in SUFFIX_DIAL:
-                # SA bypass: 116599 OAL code format — fall through to text detection
-                _sfx2_ref_base2 = (re.match(r'\d+', ref).group(0)
-                                   if ref and re.match(r'\d+', ref) else '')
-                if _scanned_sfx2 == 'SA' and _sfx2_ref_base2 in _SA_BYPASS_BASES:
-                    pass  # fall through
-                else:
-                    return SUFFIX_DIAL[_scanned_sfx2]
+                return SUFFIX_DIAL[_scanned_sfx2]
         # Standalone suffix code in dial_text: "RBR NG", "ng", "NG 78208" (no ref digits present)
         # Handles case when dial_text = remaining text after stripping ref+RBR from source
         # Handle "-ln-78208" style dial_text (hyphen-prefix + color code + bracelet code)
@@ -2702,6 +2679,12 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bcelebrations\b', 'celebration', t)
     # "wimbledons" (plural, rare) → wimbledon
     t = re.sub(r'\bwimbledons\b', 'wimbledon', t)
+    # "anniversary" / "anniv" → commemorative for 118206 (Day-Date 36 Platinum Commemorative dial).
+    # Rolex officially calls it "Commemorative"; dealers commonly call it "Anniversary dial"
+    # because it debuted for Rolex's 100th anniversary (2003-era platinum DD36).
+    # Guard: only apply to 118206 — "anniversary" on other refs keeps its normal meaning.
+    if ref and re.match(r'^118206$', ref):
+        t = re.sub(r'\banniversary\b|\banniv\b', 'commemorative', t)
     t = re.sub(r'\bchocolates?\b', 'chocolate', t)
     # Typo fixes for common HK dealer misspellings
     t = re.sub(r'\bcabdy\b', 'candy', t)   # "cabdy pink" typo → candy (common HK typo)
@@ -3472,9 +3455,6 @@ def extract_dial(text, ref='', raw_ref=''):
         if ref:
             _rb_dd = re.match(r'(\d+)', ref)
             if _rb_dd and _rb_dd.group(1)[:3] in ('228', '128', '118'):
-                # 228239 DD41 Everose Gold only has Olive Green — no Bright Green variant
-                if _rb_dd.group(1) == '228239':
-                    return 'Olive Green'
                 return 'Bright Green'
     # Ombré (smoke/ombré/oscar) — also match when glued to ref like "228235ombre"
     if re.search(r'omb?r[eé]|\bsmoke\b|\boscar\b', t):
@@ -3482,8 +3462,6 @@ def extract_dial(text, ref='', raw_ref=''):
         if re.search(r'\bslate\b|\bgrey\b|\bgray\b', t): return 'Ombré Slate'
         if re.search(r'\bred\b', t): return 'Red Ombré'
         if re.search(r'\bchocolate\b|\bchoco?\b', t): return 'Chocolate Ombré'
-        # Ombré Blue (228239 DD41 Everose Gold — gradient blue/navy sunray dial)
-        if re.search(r'\bblue\b', t): return 'Ombré Blue'
         # 228235 only has one ombré variant: Ombré Slate (smoke/slate ombré)
         if ref:
             _rb_om = re.match(r'(\d+)', ref)
@@ -3763,11 +3741,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bcornflower\b', t): dial = 'Cornflower Blue'
     elif re.search(r'\bmint\s*green\b', t):
         dial = 'Mint Green'
-    elif re.search(r'\bolive\s*green\b', t): dial = 'Olive Green'
-    elif re.search(r'\bolive\b', t):
-        # 228239 DD41 Everose Gold: only valid option is 'Olive Green' (no plain 'Olive')
-        _rb_olive = re.match(r'(\d+)', ref).group(1) if (ref and re.match(r'(\d+)', ref)) else ''
-        dial = 'Olive Green' if _rb_olive == '228239' else 'Olive'
+    elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
     elif re.search(r'\bpistachio\b|\bpis\b', t): dial = 'Pistachio'
     elif re.search(r'\bcandy\s*pink\b|\bcandy\b', t): dial = 'Candy Pink'
     elif re.search(r'\bgrape\b', t): dial = 'Grape'
@@ -3815,14 +3789,7 @@ def extract_dial(text, ref='', raw_ref=''):
         _ref_base_dd = re.match(r'(\d+)', ref) if ref else None
         _rb_dd = _ref_base_dd.group(1) if _ref_base_dd else ''
         if _rb_dd[:3] in ('228', '128', '118') and re.search(r'\brom(?:an|a|e)?\b', t):
-            # 228239 DD41 Everose Gold only has Olive Green (no Bright Green variant)
-            if _rb_dd == '228239':
-                dial = 'Olive Green'
-            else:
-                dial = 'Bright Green'
-        elif _rb_dd == '126200':
-            # DJ36 (126200): Mint Green is the only green option for this ref
-            dial = 'Mint Green'
+            dial = 'Bright Green'
         else:
             dial = 'Green'
     elif re.search(r'\bsilver\b|\bslv\b', t): dial = 'Silver'
@@ -8229,10 +8196,11 @@ def cmd_parse(args):
                 _l['dial'] = 'Celebration'
                 _upgrade_count += 1
     # ── Grape retroactive upgrade ──
-    # Purple/Violet → Grape for Oyster Perpetual refs.
-    # Covers listings stored before the purple→grape text normalization was applied
-    # in extract_dial().  On OP refs, "purple" and "violet" are dealer shorthands
-    # for the official "Grape" dial option; DJ/DD refs remain Aubergine.
+    # Two-pass upgrade:
+    # Pass 1: Purple/Violet → Grape for OP refs (mislabeled legacy listings).
+    # Pass 2: Empty dial + "grape" keyword in source → Grape for OP-family refs.
+    # Covers listings stored before the purple→grape text normalization or "grape"
+    # keyword detection were added to extract_dial().
     _OP_GRAPE_REFS = frozenset({
         '126000', '124300', '126034', '116000', '134300',
         '277200', '276200', '124200', '114300', '114200',
@@ -8240,17 +8208,89 @@ def cmd_parse(args):
     for _l in listings:
         _ref = _l.get('ref', '')
         _dial = _l.get('dial', '')
-        if _dial not in ('Purple', 'Violet', 'Grape'):
-            continue
         if _dial == 'Grape':
             continue  # already correct
         _bm_up = re.match(r'\d+', _ref)
         _br_up = _bm_up.group(0) if _bm_up else ''
-        if _br_up in _OP_GRAPE_REFS or _br_up[:3] in ('114', '124', '134', '277', '276'):
-            _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-            if not _valid_up or 'Grape' in _valid_up:
-                _l['dial'] = 'Grape'
-                _upgrade_count += 1
+        _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
+        if _dial in ('Purple', 'Violet'):
+            # Pass 1: mislabeled Purple/Violet on OP refs → Grape
+            if _br_up in _OP_GRAPE_REFS or _br_up[:3] in ('114', '124', '134', '277', '276'):
+                if not _valid_up or 'Grape' in _valid_up:
+                    _l['dial'] = 'Grape'
+                    _upgrade_count += 1
+        elif not _dial:
+            # Pass 2: empty dial + explicit "grape" keyword → Grape
+            _src_g = (_l.get('source_text', '') or '').lower()
+            if re.search(r'\bgrape\b', _src_g):
+                if not _valid_up or 'Grape' in _valid_up:
+                    _l['dial'] = 'Grape'
+                    _upgrade_count += 1
+    # ── Arabic retroactive upgrade ──
+    # Empty dial + "arabic" keyword (or Chinese 數字/数字) in source → Arabic dial.
+    # Covers listings stored before Arabic detection was robust, specifically
+    # for multi-dial refs (116576, 116231, etc.) where text has "Arabic" but dial
+    # extraction failed in the original parse run.
+    # Guard: "Arabic wave" = Wave dial, not Arabic — handled by Wave upgrade below.
+    for _l in listings:
+        if _l.get('dial'):
+            continue
+        _src_ar = (_l.get('source_text', '') or '').lower()
+        _ref_ar = _l.get('ref', '')
+        _bm_ar = re.match(r'\d+', _ref_ar)
+        _br_ar = _bm_ar.group(0) if _bm_ar else ''
+        _valid_ar = REF_VALID_DIALS.get(_ref_ar, REF_VALID_DIALS.get(_br_ar, []))
+        if (re.search(r'\barabic\b|[數数]字', _src_ar) and
+                ('Arabic' in _valid_ar) and
+                not re.search(r'\barabic\s+wave\b|\bwave\b', _src_ar)):
+            _l['dial'] = 'Arabic'
+            _upgrade_count += 1
+    # ── Wave retroactive upgrade ──
+    # Empty dial + "wave" keyword on Day-Date refs that support Wave dial → Wave.
+    # Covers "Arabic wave dial" / "wave dial" on 218235, 228235, 228238, etc.
+    for _l in listings:
+        if _l.get('dial'):
+            continue
+        _src_wv = (_l.get('source_text', '') or '').lower()
+        _ref_wv = _l.get('ref', '')
+        _bm_wv = re.match(r'\d+', _ref_wv)
+        _br_wv = _bm_wv.group(0) if _bm_wv else ''
+        _valid_wv = REF_VALID_DIALS.get(_ref_wv, REF_VALID_DIALS.get(_br_wv, []))
+        if re.search(r'\bwave\b', _src_wv) and 'Wave' in _valid_wv:
+            _l['dial'] = 'Wave'
+            _upgrade_count += 1
+    # ── LN-suffix retroactive Black upgrade ──
+    # Empty dial + "\d{5,6}-ln" pattern in source → Black.
+    # Covers listings where the original parse stored ref as bare digits (e.g. "116718")
+    # but the raw source text had the -LN hyphenated suffix form ("116718-ln-78208").
+    # The hyphenated-suffix scan in extract_dial catches these when re-run, but old
+    # stored listings may have been parsed before that scan existed.
+    for _l in listings:
+        if _l.get('dial'):
+            continue
+        _src_ln = _l.get('source_text', '') or ''
+        _ref_ln = _l.get('ref', '')
+        _bm_ln = re.match(r'\d+', _ref_ln)
+        _br_ln = _bm_ln.group(0) if _bm_ln else ''
+        _valid_ln = REF_VALID_DIALS.get(_ref_ln, REF_VALID_DIALS.get(_br_ln, []))
+        if (re.search(r'\b\d{5,6}-ln[-\s\d]', _src_ln, re.I) and
+                (not _valid_ln or 'Black' in _valid_ln)):
+            _l['dial'] = 'Black'
+            _upgrade_count += 1
+    # ── Anniversary → Commemorative retroactive upgrade for 118206 ──
+    # Empty dial + "anniversary"/"anniv" on 118206 → Commemorative.
+    # Rolex's official name is "Commemorative"; dealers frequently say "Anniversary dial"
+    # (the dial was produced for Rolex's centennial in 2003-era platinum DD36).
+    for _l in listings:
+        if _l.get('dial'):
+            continue
+        _src_an = (_l.get('source_text', '') or '').lower()
+        _ref_an = _l.get('ref', '')
+        _bm_an = re.match(r'\d+', _ref_an)
+        _br_an = _bm_an.group(0) if _bm_an else ''
+        if _br_an == '118206' and re.search(r'\banniversary\b|\banniv\b', _src_an):
+            _l['dial'] = 'Commemorative'
+            _upgrade_count += 1
     # ── Coral retroactive upgrade ──
     # Red/empty → Coral for non-OP refs where "coral" appears in source_text.
     # On OP refs (124xxx, 126xxx, 277xxx, 276xxx) "Coral Red" IS the Red dial —
@@ -8273,38 +8313,6 @@ def cmd_parse(args):
             _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
             if not _valid_up or 'Coral' in _valid_up:
                 _l['dial'] = 'Coral'
-                _upgrade_count += 1
-    # ── DJ36 (126200) retroactive upgrade: Green → Mint Green ──
-    # DJ36 (126200) has no plain 'Green' dial — Mint Green is its only green option.
-    # Listings stored before the 126200-specific Green→Mint Green detection was added
-    # show 'Green' which is wrong.  Correct them here.
-    for _l in listings:
-        if _l.get('ref', '') == '126200' and _l.get('dial', '') == 'Green':
-            _l['dial'] = 'Mint Green'
-            _upgrade_count += 1
-    # ── DD41 Everose (228239) retroactive upgrade: Bright Green / Olive → Olive Green ──
-    # 228239 only has Olive Green — no Bright Green or plain Olive variant.
-    # The green+roman detection incorrectly returned 'Bright Green' for all DD41 refs
-    # before this fix; 'Olive' was stored before the Olive Green distinction was added.
-    for _l in listings:
-        if _l.get('ref', '') == '228239' and _l.get('dial', '') in ('Bright Green', 'Olive'):
-            _l['dial'] = 'Olive Green'
-            _upgrade_count += 1
-    # ── Daytona Platinum (116599) retroactive fix: clear false Black from 12SA suffix ──
-    # The complex-suffix scan matched "12SA" → SA → Black for 116599, but 116599
-    # only has White/Blue dials.  Restore these to empty so future detection can try.
-    for _l in listings:
-        if _l.get('ref', '') == '116599' and _l.get('dial', '') == 'Black':
-            _l['dial'] = ''
-            _upgrade_count += 1
-    # ── 228239 retroactive upgrade: Ombré → Ombré Blue when source says "ombré blue" ──
-    # The Ombré detection block lacked a "blue" check; "228239 Ombré Blue" listings
-    # were stored as 'Ombré'.  Correct these here using source_text confirmation.
-    for _l in listings:
-        if _l.get('ref', '') == '228239' and _l.get('dial', '') == 'Ombré':
-            _src_om = (_l.get('source_text', '') or '').lower()
-            if re.search(r'\bblue\b', _src_om) and re.search(r'ombr[eé]', _src_om):
-                _l['dial'] = 'Ombré Blue'
                 _upgrade_count += 1
     # ── Single-valid-dial retroactive fill ──
     # For refs with exactly one documented dial variant, any empty-dial listing
@@ -8332,9 +8340,8 @@ def cmd_parse(args):
     if _upgrade_count:
         print(f"  ⬆️  Retroactive dial upgrade: {_upgrade_count:,} listings improved "
               f"(Tiffany Blue / Meteorite / Wimbledon / Azzurro / Mint Green / Palm / "
-              f"Paul Newman / Turquoise / Tiger Iron / Ombré Blue / Grossular / D-Blue / "
-              f"Ice Blue / Sundust prev-gen / Candy Pink / Commemorative / Coral / Celebration / "
-              f"126200 Mint Green / 228239 Olive Green / 228239 Ombré Blue / 116599 Black-clear / single-dial fills)")
+              f"Paul Newman / Turquoise / Tiger Iron / Ombré / Grossular / D-Blue / "
+              f"Ice Blue / Sundust prev-gen / Candy Pink / Commemorative / Coral / Celebration / single-dial fills)")
 
     # ── Retroactive dial validation: clear impossible dial/ref combos ──
     # Runs on ALL listings (new + merged existing) after retro-fill.
