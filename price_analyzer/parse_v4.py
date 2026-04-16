@@ -1622,6 +1622,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bkermit\b', 'green', t)  # Kermit = green dial/bezel Sub
     t = re.sub(r'\bsmurf\b', 'blue', t)  # Smurf = blue dial Sub WG
     t = re.sub(r'\bghost\b', 'grey', t)  # Ghost = grey dial Daytona (126519LN etc.)
+    t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
+    t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
+    t = re.sub(r'\borig(?:inal)?\s*tiff(?:any)?\b|\bgenuine\s*tiff(?:any)?\b|\bauth(?:entic)?\s*tiff(?:any)?\b|\breal\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
     # NG (standalone) = MOP dial + diamond markers — common HK shorthand for NG suffix ref
     # e.g. "279381 RBR NG" → MOP; distinct from N1/N12 (new, month code)
     t = re.sub(r'\bng\b', 'mop', t)
@@ -1651,7 +1655,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # Ref-gated "met" → meteorite (only on known Meteorite-capable models; too ambiguous elsewhere)
     _METEORITE_BASE = {'116508','116518','116519','126508','126518','126519','126503','126719',
                        '128238','228238','228239','128239','228235','128235','126555','228236',
-                       '116500','126500','228206','228349','128349'}
+                       '116500','126500','228206','228349','128349',
+                       '126505','116505','126515','116515','126509','116509'}
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
     # Separate color glued to ref: "116508green" → "116508 green"
@@ -1748,6 +1753,8 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bzebra\b', t): return 'Zebra'
     # Wave (Day-Date lacquer motif dial — 228235)
     if re.search(r'\bwave\b', t) and not re.search(r'\bwave\s*fluted\b', t): return 'Wave'
+    # Falcon's Eye (226659 Yacht-Master 40 WG — chatoyant blue-grey stone dial)
+    if re.search(r"\bfalcon's\s*eye\b", t): return "Falcon's Eye"
     # Tiger Iron (126718 Yacht-Master 40) — must precede Tiger Eye
     if re.search(r'\btiger\s*iron\b', t): return 'Tiger Iron'
     # Tiger Eye
@@ -1785,14 +1792,14 @@ def extract_dial(text, ref='', raw_ref=''):
     # Paul Newman — no trailing \b: "Paul Newman2023Y" glued to year is still a PN dial
     # Also: standalone "newman"/"pnd" unambiguous in watch context; "exotic" ref-gated to Daytona
     _DAYTONA_PN_BASES = {'116508','116518','116519','116520','126508','126518','126519','126520',
-                         '116503','126503','6239','6241','6240','6262','6263','6264','6265'}
+                         '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
     if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.\B|\bpn\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
-    if re.search(r'\bpanda\b', t): return 'White'
+    if re.search(r'\bpanda\b', t): return 'Panda'
 
     # Wimbledon — specific dial, NOT just slate or green
     # Full-word shorthands (wimbledon/wimbo/wimb) fire on any ref; bare "wim" is ref-gated
@@ -1901,18 +1908,30 @@ def extract_dial(text, ref='', raw_ref=''):
         elif _rb == '126200':
             # DJ36 SS: Rolex official dial is "Turquoise" — dealers say "Tiffany" but it's Turquoise here
             dial = 'Turquoise'
-        elif _rb == '126000' and not re.search(r'\baftermarket\b|\bcustom\b|\bmod(?:ified)?\b|\bservice\b', t):
-            # OP36: the ONLY Tiffany-colored dial is the official Tiffany & Co. stamped edition
-            dial = 'Official Tiffany Blue'
+        elif _rb == '126000':
+            # OP36 has two distinct blue-ish dials:
+            #   "Turquoise" = greenish-blue official dial (no Tiffany stamp)
+            #   "Official Tiffany Blue" = Tiffany & Co. stamped special edition (massive premium)
+            if re.search(r'\bturquoise\b|\bturq\b|\bmint\b', t) and not re.search(r'\btiffany\b|\btiff\b', t):
+                dial = 'Turquoise'
+            elif not re.search(r'\baftermarket\b|\bcustom\b|\bmod(?:ified)?\b|\bservice\b', t):
+                dial = 'Official Tiffany Blue'
+            else:
+                dial = 'Tiffany Blue'
         else:
             dial = 'Tiffany Blue'
     elif re.search(r'\bcornflower\b', t): dial = 'Cornflower Blue'
-    elif re.search(r'\bmint\s*green\b|\bmint\b', t): dial = 'Mint Green'
+    elif re.search(r'\bmint\s*green\b|\bmint\b', t):
+        if _ref_base_norm in _OP_TIFF_REFS:
+            dial = 'Turquoise'  # OP "mint/mint-green" = the official turquoise dial
+        else:
+            dial = 'Mint Green'
     elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
     elif re.search(r'\bpistachio\b|\bpis\b', t): dial = 'Pistachio'
     elif re.search(r'\bcandy\s*pink\b|\bbaby\s*pink\b|\bblush\s*pink\b|\bpastel\s*pink\b|\bsoft\s*pink\b', t): dial = 'Candy Pink'
     elif re.search(r'\blavender\b|\blave?\b|\blanv', t): dial = 'Lavender'
     elif re.search(r'\baubergine\b|\bviolet\b', t): dial = 'Aubergine'
+    elif re.search(r'\bgrape\b', t): dial = 'Grape'
     elif re.search(r'\byml\b', t): dial = 'YML'
     elif re.search(r'\byellow\s*m(?:other)?[\s-]*o(?:f)?[\s-]*p(?:earl)?\b|\byellow\s*mop\b', t): dial = 'Yellow MOP'
     elif re.search(r'\bmother[\s-]*of[\s-]*pearl\b|\bmop\b', t): dial = 'MOP'

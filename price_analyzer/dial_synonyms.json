@@ -157,7 +157,16 @@
         "Tiffany Co Stamp",
         "OfficialTB",
         "Off. Tiffany",
-        "Tiff Stamp"
+        "Tiff Stamp",
+        "Original Tiffany",
+        "Genuine Tiffany",
+        "Authentic Tiffany",
+        "Auth Tiffany",
+        "Orig Tiff",
+        "Real Tiffany",
+        "Real Tiff",
+        "Auth Tiff",
+        "Gen Tiff"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -289,7 +298,13 @@
     "Grape": [
         "Aubergine Purple",
         "Grape Purple",
-        "Grpe"
+        "Grpe",
+        "Deep Purple",
+        "Dark Grape",
+        "Grape Lacquer",
+        "Vino",
+        "Purple Lacquer",
+        "Dark Purple"
     ],
     "Aubergine": [
         "Eggplant",
@@ -431,6 +446,22 @@
         "Tiger Iron Dial",
         "Tiger Iron Stone",
         "TigerIron"
+    ],
+    "Falcon's Eye": [
+        "Falcon Eye",
+        "Falcons Eye",
+        "FalconEye",
+        "Falcon Stone",
+        "Falcon's Eye Dial",
+        "Blue Stone YM"
+    ],
+    "Panda": [
+        "White Panda",
+        "Panda Dial",
+        "Panda Daytona",
+        "Panda White",
+        "WPanda",
+        "W Panda"
     ],
     "Celebration": [
         "Jubilee Motif",
