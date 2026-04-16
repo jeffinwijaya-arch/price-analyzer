@@ -3289,6 +3289,11 @@ def extract_dial(text, ref='', raw_ref=''):
         _op_mb_pfx = ('124', '277', '276')
         if _rb_mb_b in _op_mb_exact or _rb_mb_b[:3] in _op_mb_pfx:
             t = re.sub(r'\bmb\b', 'mediterranean blue', t)
+    # "med" standalone → mediterranean blue for refs that offer Med Blue as a dial option.
+    # Guard: _valid_dials must confirm Med Blue is available; avoids false hits on other
+    # models where "med" is ambiguous (medium size, medication, etc.).
+    if _valid_dials and 'Med Blue' in _valid_dials:
+        t = re.sub(r'\bmed\b(?!\s*(?:blue|bl|ium|ical|iterranean))', 'mediterranean blue', t)
     # "grossular" truncations → grossular (stone dial shorthand, e.g. "126555 grossul")
     t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)  # safe: require "grossul" prefix
     # "carnelian" truncations → carnelian (Day-Date stone dial; NOT "carn"/"carnival")
