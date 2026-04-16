@@ -2874,7 +2874,11 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'灰色|灰盤|灰面', 'grey', t)    # 灰色 = grey
     t = re.sub(r'[銀银]色|[銀银]盤|[銀银]面', 'silver', t)  # 銀色/银色 = silver
     t = re.sub(r'棕色|咖啡色|棕盤|咖啡盤', 'chocolate', t)  # 棕色/咖啡色 = brown/chocolate
-    t = re.sub(r'粉色|粉[紅红]|粉盤', 'pink', t)             # 粉色/粉紅 = pink
+    # MUST come BEFORE generic 粉[紅红] → pink below; 粉紅 is a substring of 淡粉紅/嫩粉紅
+    # and would be consumed first, leaving 淡pink/嫩pink that the candy-pink subs can't match.
+    t = re.sub(r'淡粉[紅红]?|淡粉色', 'candy pink', t)  # 淡粉/淡粉紅 = light/candy pink
+    t = re.sub(r'嫩粉[紅红]?|嫩粉色', 'candy pink', t)  # 嫩粉/嫩粉紅 = tender/baby pink = Candy Pink
+    t = re.sub(r'粉色|粉[紅红]|粉盤', 'pink', t)             # 粉色/粉紅 = pink (must come AFTER 淡粉/嫩粉)
     # IMPORTANT: 香[槟檳]綠/绿 (champagne green) must come BEFORE the generic 香[檳槟] → champagne
     # replacement, otherwise 香槟绿 → champagne绿 before the wimbledon pattern can match.
     t = re.sub(r'香[槟檳]綠|香[槟檳]绿', 'wimbledon', t)    # 香檳綠/香槟绿 = champagne green = Wimbledon (DJ/DJ41 dealer slang in HK/TW/CN groups)
@@ -2892,8 +2896,6 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'薄荷[綠绿]', 'mint green', t)  # 薄荷綠/薄荷绿 = Mint Green
     t = re.sub(r'薰衣草', 'lavender', t)         # 薰衣草 = Lavender
     t = re.sub(r'開心果|开心果', 'pistachio', t) # 開心果/开心果 = Pistachio (lit. "happy fruit")
-    t = re.sub(r'淡粉[紅红]?|淡粉色', 'candy pink', t)  # 淡粉/淡粉紅 = light/candy pink
-    t = re.sub(r'嫩粉[紅红]?|嫩粉色', 'candy pink', t)  # 嫩粉/嫩粉紅 = tender/baby pink = Candy Pink
     t = re.sub(r'奶白色?|乳白色?', 'white', t)  # 奶白/乳白 = cream/milky white
     # ── Chinese Ombré dial terms (Day-Date gradient dials — HK/TW/CN dealer groups) ──
     t = re.sub(r'綠烟|绿烟|綠煙|绿煙', 'green ombré', t)                # 绿烟/綠煙 = green smoke = Green Ombré
