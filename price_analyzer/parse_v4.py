@@ -2749,6 +2749,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # "tiger" alone (without "iron") = Tiger Eye stone dial (chatoyant quartz)
     t = re.sub(r'\btiger\b(?!\s+iron)', 'tiger eye', t)
     # Typo/shorthand fixes
+    t = re.sub(r'\bnavy(?:\s+blue)?\b', 'blue', t)   # navy/navy blue → blue (common color descriptor)
     t = re.sub(r'\bbule\b', 'blue', t)
     t = re.sub(r'\bsliver\b', 'silver', t)
     t = re.sub(r'\bwhe\b', 'white', t)
@@ -2866,9 +2867,13 @@ def extract_dial(text, ref='', raw_ref=''):
         _op_cn_pfx = ('277', '276', '124')
         if _rb_cn_tb_b in _op_cn_exact or _rb_cn_tb_b[:3] in _op_cn_pfx:
             t = re.sub(r'天[藍蓝]色?|天空[藍蓝]色?|水[藍蓝]色?|淡[藍蓝]色?', 'tiffany', t)
-    # 地中海藍/蓝 = Mediterranean Blue — MUST come BEFORE generic [藍蓝]色 → blue below.
-    # 地中海藍色: [藍蓝]色 fires on 藍色 first → 地中海blue, then 地中海[藍蓝]色? can't match.
+    # Compound patterns MUST come BEFORE the single-character generic subs below.
+    # 地中海藍色: [藍蓝]色 fires on 藍色 first → 地中海blue; 地中海[藍蓝]色? can't match.
+    # 煙灰色: 灰色 fires on 灰色 first → 煙grey; 煙灰 can't match.
     t = re.sub(r'地中海[藍蓝]色?', 'mediterranean blue', t)   # 地中海藍 = Mediterranean Blue (OP36/41 2024+ dial)
+    t = re.sub(r'深[藍蓝]色?', 'blue', t)                     # 深藍/深藍色 = deep blue
+    t = re.sub(r'寶[藍蓝]色?', 'blue', t)                     # 寶藍/寶藍色 = royal/sapphire blue
+    t = re.sub(r'煙灰色?|烟灰色?', 'ombré slate', t)          # 煙灰色/烟灰色 = smoky grey = Ombré Slate (before 灰色→grey)
     # 白/黑/藍/綠/灰/銀/玫瑰 = white/black/blue/green/grey/silver/rose (common color chars)
     t = re.sub(r'白色|白盤|白面', 'white', t)   # 白色/白盤/白面 = white dial
     t = re.sub(r'黑色|黑盤|黑面', 'black', t)   # 黑色/黑盤/黑面 = black dial
@@ -2898,7 +2903,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bgrapes\b', 'grape', t)                  # "grapes" (plural) → grape (dealer plural form)
     t = re.sub(r'珊瑚[紅红]?|珊瑚色', 'coral', t)           # 珊瑚/珊瑚色 = coral (OP/DJ Coral dial)
     # ── Additional Chinese dial color normalizations ──────────────────────────
-    t = re.sub(r'薄荷[綠绿]', 'mint green', t)  # 薄荷綠/薄荷绿 = Mint Green
+    t = re.sub(r'薄荷[綠绿緑]?', 'mint green', t)  # 薄荷綠/薄荷绿/薄荷 = Mint Green (incl. 薄荷 alone)
     t = re.sub(r'薰衣草', 'lavender', t)         # 薰衣草 = Lavender
     t = re.sub(r'開心果|开心果', 'pistachio', t) # 開心果/开心果 = Pistachio (lit. "happy fruit")
     t = re.sub(r'奶白色?|乳白色?', 'white', t)  # 奶白/乳白 = cream/milky white
@@ -2991,6 +2996,10 @@ def extract_dial(text, ref='', raw_ref=''):
             t = re.sub(r'\begg\s*blue\b', 'tiffany', t)
             # "candy blue" on OP refs = Tiffany Blue (sweet-shade shorthand for robin's-egg blue)
             t = re.sub(r'\bcandy\s*blue\b', 'tiffany', t)
+    # Pre-normalize purple synonyms → aubergine BEFORE the OP purple→grape guard fires.
+    # This ensures eggplant/plum/purp arrive as "aubergine" so the data-driven guard can remap.
+    t = re.sub(r'\beggplant\b', 'aubergine', t)   # eggplant = aubergine (US slang)
+    t = re.sub(r'\bpurp\b|\baust\b|\baub\b', 'aubergine', t)  # purp/aust/aub shorthands
     # "purple" / "violet" on OP family refs = Grape (official Rolex OP dial name).
     # On DJ/DD refs these remain Aubergine. OP refs: 114xxx, 124xxx, 134xxx,
     # 126000/126034, 277xxx, 276xxx.
@@ -3004,6 +3013,11 @@ def extract_dial(text, ref='', raw_ref=''):
         if _rb_pur_base in _op_pur_exact or _rb_pur_base[:3] in _op_pur_prefix:
             t = re.sub(r'\bpurple\b', 'grape', t)
             t = re.sub(r'\bviolet\b', 'grape', t)
+    # "aubergine" on non-OP refs where Grape is valid but Aubergine is NOT → remap to "grape".
+    # Refs with BOTH options keep "aubergine" as-is (e.g. 126000 has both).
+    # Data-driven: follows rolex_dial_options.json so no hardcoded ref list needed.
+    if _valid_dials and 'Grape' in _valid_dials and 'Aubergine' not in _valid_dials:
+        t = re.sub(r'\baubergine\b', 'grape', t)
     # "mingreen" / "mintgrn" / "minty" → "mint green"
     # "minty" is a common dealer shorthand for mint green (distinct from "mint" condition descriptor)
     t = re.sub(r'\bmingreen\b|\bmintgrn\b|\bmint\s*grn\b|\bminty\b', 'mint green', t)
@@ -3141,9 +3155,6 @@ def extract_dial(text, ref='', raw_ref=''):
         # "wim slate" / "slate wim" = Wimbledon compound shorthand (common in DJ/DD group messages)
         t = re.sub(r'\bwim\s+slate\b|\bslate\s+wim\b', 'wimbledon', t)
     # Aubergine shorthands
-    t = re.sub(r'\baust\b|\baub\b|\bpurp\b', 'aubergine', t)
-    # "eggplant" → aubergine (American English slang for purple/aubergine dials, common in US dealer groups)
-    t = re.sub(r'\beggplant\b', 'aubergine', t)
     # "plum" already handled earlier via \bplum\b → aubergine; reinforce here for completeness
     # Lavender shorthand — "laven" / "lavend" (HK dealer truncation, e.g. "277200 laven")
     t = re.sub(r'\blaven(?:d)?\b', 'lavender', t)
