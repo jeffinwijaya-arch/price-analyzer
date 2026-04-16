@@ -1572,6 +1572,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpolar\b', 'white', t)  # Polar = White dial (Explorer II)
     # Wimbledon compound-color shorthands — MUST precede champ→champagne so "champ green" isn't lost
     t = re.sub(r'\bchamp(?:agne)?\s*(?:slate\s*)?(?:green|grn)\b', 'wimbledon', t)
+    t = re.sub(r'\b(?:green|grn)\s*champ(?:agne)?\b', 'wimbledon', t)  # "green champ" word-order variant
     t = re.sub(r'\bchamp(?:agne)?\s*slate\b|\bslate\s*champ(?:agne)?\b', 'wimbledon', t)
     t = re.sub(r'\bwim\s*(?:green|grn|gr)\b', 'wimbledon', t)
     t = re.sub(r'\bwimb?\s*dial\b|\bwm\s*dial\b|\bwb\s*dial\b', 'wimbledon', t)
@@ -1650,7 +1651,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Ref-gated "met" → meteorite (only on known Meteorite-capable models; too ambiguous elsewhere)
     _METEORITE_BASE = {'116508','116518','116519','126508','126518','126519','126503','126719',
                        '128238','228238','228239','128239','228235','128235','126555','228236',
-                       '116500','126500'}
+                       '116500','126500','228206','228349','128349'}
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
     # Separate color glued to ref: "116508green" → "116508 green"
@@ -1804,6 +1805,10 @@ def extract_dial(text, ref='', raw_ref=''):
     _ref_base_wim = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t): return 'Wimbledon'
     if re.search(r'\bwim\b', t) and (_ref_base_wim in _WIM_REFS or not ref): return 'Wimbledon'
+    # Standalone "wm"/"wb" = Wimbledon only on known Wimbledon-capable refs (too ambiguous otherwise)
+    if re.search(r'\bwm\b|\bwb\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
+    # "slate green" / "green slate" on DJ refs = Wimbledon (no plain slate-green DJ dial exists)
+    if re.search(r'\bslate\s*green\b|\bgreen\s*slate\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
 
     # Diamond dial variants — "blue diamond", "diamond blue", "grey diamond", etc.
     # These are dials with diamond hour markers + specific color (common on DJ/DD)
@@ -1874,14 +1879,15 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\botb\b|\bot\/b\b|\botbl\b'
                    r'|\bofficial\s*tiff(?:any)?\b|\btiff(?:any)?\s*official\b'
                    r'|\btiffany\s*stamp(?:ed)?\b'
-                   r'|\btiffany\s*&\s*co\b|\btiff\s*&\s*co\b|\bt\s*&\s*co\s*blue\b'
+                   r'|\btiffany\s*&\s*co\b|\btiff\s*&\s*co\b|\bt\s*&\s*co\b'
+                   r'|\btiffany\s*and\s*co\b|\btiff\s*co\b|\btiffany\s*co\b'
                    r'|\boff\s*tiff\s*blue\b|\boffi\s*tiffany\b'
                    r'|\btiffany\s*co\s*blue\b|\bofficial\s*tiff\s*blue\b', t):
         # Official Tiffany Blue = Tiffany & Co stamped dial (massive premium vs plain TB)
         # DD refs (128/228) don't carry OTB — remap to their actual Turquoise dial
         _ref_base_otb = re.match(r'(\d+)', ref) if ref else None
         _rb_otb = _ref_base_otb.group(1) if _ref_base_otb else ''
-        if _rb_otb.startswith('128') or _rb_otb.startswith('228'):
+        if _rb_otb.startswith('128') or _rb_otb.startswith('228') or _rb_otb.startswith('118'):
             dial = 'Turquoise'
         else:
             dial = 'Official Tiffany Blue'
@@ -1890,7 +1896,7 @@ def extract_dial(text, ref='', raw_ref=''):
         # DD/prev-DD (128xxx, 228xxx) have an actual "Turquoise" dial — NOT Tiffany
         _ref_base = re.match(r'(\d+)', ref) if ref else None
         _rb = _ref_base.group(1) if _ref_base else ''
-        if _rb.startswith('128') or _rb.startswith('228'):
+        if _rb.startswith('128') or _rb.startswith('228') or _rb.startswith('118'):
             dial = 'Turquoise'
         elif _rb == '126200':
             # DJ36 SS: Rolex official dial is "Turquoise" — dealers say "Tiffany" but it's Turquoise here
