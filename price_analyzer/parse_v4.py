@@ -4537,10 +4537,13 @@ def extract_dial(text, ref='', raw_ref=''):
             dial = 'Olive Green'
 
     # ── 126300/126334 Blue dial reclassification ──
-    # These Datejust refs each have TWO official blue dials:
-    #   "Azzurro Blue" (126300) / "Azzurro" (126334) = Roman numeral markers (dominant market)
-    #   "Bright Blue" = Stick/bar markers (distinct, usually lower demand)
-    # When dealers say just "blue" without specifying, it's almost always Azzurro (Roman).
+    # Both refs offer multiple official blue dials; selection is data-driven via _valid_dials:
+    #   "Azzurro Blue" (126300) / "Azzurro" (126334) = dominant blue config; default when
+    #       no explicit index type is present or when index maps to no specific named variant.
+    #   "Bright Blue" = electric/vivid blue (distinct option for both refs)
+    #   "Blue Stick" (126334 only) = blue dial with stick/bar markers
+    #   "Blue Roman" (126334 only) = blue dial with Roman numerals (distinct from Azzurro)
+    # When dealers say just "blue" without any qualifier, default to Azzurro (most common).
     # 126334 (DJ41 Fluted Bezel): Rolex official name is "Azzurro" (without "Blue" suffix).
     # NOTE: 126200 is kept as plain "Blue" by default — its primary blue dial is NOT branded
     # "Azzurro Blue" in the market; only upgrade to Azzurro Blue when explicitly stated.
@@ -4548,11 +4551,21 @@ def extract_dial(text, ref='', raw_ref=''):
     if _ref_base in ('126300', '126334'):
         if dial == 'Blue':
             if _index_type == 'Stick':
-                dial = 'Bright Blue'
+                # Prefer 'Blue Stick' over 'Bright Blue' when the ref catalog lists it.
+                # 126334 has both 'Blue Stick' and 'Bright Blue' as distinct valid dials.
+                if _valid_dials and 'Blue Stick' in _valid_dials:
+                    dial = 'Blue Stick'
+                else:
+                    dial = 'Bright Blue'
                 _index_type = ''  # consumed — don't append again
             elif _index_type == 'Roman':
-                # 126334 uses official name "Azzurro" (not "Azzurro Blue")
-                dial = 'Azzurro' if _ref_base == '126334' else 'Azzurro Blue'
+                # Prefer 'Blue Roman' over Azzurro when the ref catalog lists it explicitly.
+                # 126334 has both 'Azzurro' (dominant) and 'Blue Roman' as distinct dials.
+                if _valid_dials and 'Blue Roman' in _valid_dials:
+                    dial = 'Blue Roman'
+                else:
+                    # 126334 uses official name "Azzurro" (not "Azzurro Blue")
+                    dial = 'Azzurro' if _ref_base == '126334' else 'Azzurro Blue'
                 _index_type = ''  # consumed — don't append again
             else:
                 # No index specified — default to Azzurro/Azzurro Blue (Roman, the popular config)
@@ -4577,7 +4590,16 @@ def extract_dial(text, ref='', raw_ref=''):
     if dial == 'Azzurro Blue' and _ref_base in ('126334', '126234'):
         dial = 'Azzurro'
 
-    # Append index type for Datejust family (Roman, Stick, Fluted Motif, Palm)
+    # ── Palm is a standalone dial — never combines with a base color ─────────────
+    # rolex_dial_options.json lists only "Palm" (no "Green Palm", "Champagne Palm" etc.).
+    # "126200 palm green dial" = Palm dial (green is incidental description), NOT "Green Palm".
+    # Return 'Palm' directly if the ref supports it; otherwise preserve the base color.
+    if _is_dj_family and _index_type == 'Palm':
+        if not _valid_dials or 'Palm' in _valid_dials:
+            return 'Palm'
+        _index_type = ''  # Palm not valid for this ref; don't corrupt base color
+
+    # Append index type for Datejust family (Roman, Stick, Fluted Motif)
     # Only for plain color dials — NOT for special dials (already returned above),
     # diamond variants, or dials that already encode the index type
     if _is_dj_family and _index_type and dial not in (
