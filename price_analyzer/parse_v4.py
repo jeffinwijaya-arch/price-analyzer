@@ -1591,6 +1591,11 @@ def extract_dial(text, ref='', raw_ref=''):
     # NG (standalone) = MOP dial + diamond markers — common HK shorthand for NG suffix ref
     # e.g. "279381 RBR NG" → MOP; distinct from N1/N12 (new, month code)
     t = re.sub(r'\bng\b', 'mop', t)
+    # HK/dealer colour shorthands not covered above
+    t = re.sub(r'\bgg\b', 'green', t)        # "gg" = green dial (HK shorthand)
+    t = re.sub(r'\baub\b', 'aubergine', t)   # "aub" = aubergine
+    t = re.sub(r'\bpurp\b', 'aubergine', t)  # "purp" = purple/aubergine
+    t = re.sub(r'\bcham\b|\bchm\b', 'champagne', t)  # "cham/chm" = champagne
     # Separate color glued to ref: "116508green" → "116508 green"
     t = re.sub(r'(\d{5,6})(green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|chocolate|meteorite|panda|ceramic|giraffe|grossular|polar|yml|tiffany|wimbledon)', r'\1 \2', t)
     ref_upper = ref.upper() if ref else ''
@@ -1638,6 +1643,15 @@ def extract_dial(text, ref='', raw_ref=''):
     # Special dials (check before generic colors)
     # Puzzles (DD special)
     if re.search(r'\bpuzzle', t): return 'Puzzles'
+    # Celebration Tiffany Blue (CTB/CLTB) — MUST precede generic Celebration check
+    # so "Celebration Tiffany" is not swallowed into plain "Celebration"
+    if re.search(r'\bctb\b|\bcltb\b|\bceltb\b'
+                 r'|\bclt\/b\b|\bcl\s*t\/b\b|\bct\/b\b'
+                 r'|\bcelebration\s*tiff(?:any)?\b|\bcelebration\s*tb\b'
+                 r'|\bcelebration\s*t\/b\b|\bceleb\s*tiff(?:any)?\b'
+                 r'|\bceleb\s*tb\b|\bceleb\s*t\/b\b'
+                 r'|\bjubilee\s*tiff(?:any)?\b|\bjubilee\s*tb\b', t):
+        return 'Celebration Tiffany Blue'
     # Celebration (Jubilee motif)
     if re.search(r'\bcelebration\b|\bcele\b', t):
         if has_vi: return 'vi Celebration'
@@ -1772,8 +1786,22 @@ def extract_dial(text, ref='', raw_ref=''):
             (_valid_dials and 'Ice Blue' in _valid_dials and len(_valid_dials) <= 3)):
         dial = 'Ice Blue'
     elif re.search(r'\bmediterranean\b|\bmed\s*blue\b', t): dial = 'Med Blue'
+    elif re.search(r'\botb\b|\bot\/b\b|\botbl\b'
+                   r'|\bofficial\s*tiff(?:any)?\b|\btiff(?:any)?\s*official\b'
+                   r'|\btiffany\s*stamp(?:ed)?\b'
+                   r'|\btiffany\s*&\s*co\b|\bt\s*&\s*co\s*blue\b'
+                   r'|\boff\s*tiff\s*blue\b|\boffi\s*tiffany\b'
+                   r'|\btiffany\s*co\s*blue\b', t):
+        # Official Tiffany Blue = Tiffany & Co stamped dial (massive premium vs plain TB)
+        # DD refs (128/228) don't carry OTB — remap to their actual Turquoise dial
+        _ref_base_otb = re.match(r'(\d+)', ref) if ref else None
+        _rb_otb = _ref_base_otb.group(1) if _ref_base_otb else ''
+        if _rb_otb.startswith('128') or _rb_otb.startswith('228'):
+            dial = 'Turquoise'
+        else:
+            dial = 'Official Tiffany Blue'
     elif re.search(r'\btiffany\b|\bturquoise\b|\btiff\b|\bturq\b', t) or (
-        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126')):
+        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126','134')):
         # DD/prev-DD (128xxx, 228xxx) have an actual "Turquoise" dial — NOT Tiffany
         _ref_base = re.match(r'(\d+)', ref) if ref else None
         _rb = _ref_base.group(1) if _ref_base else ''
