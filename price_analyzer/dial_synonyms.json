@@ -274,6 +274,46 @@
     "Chocolate Roman VI": [
         "vi Chocolate"
     ],
+    "Fluted": [
+        "Fluted Dial",
+        "Fluted Motif",
+        "Fluted Motif Dial",
+        "Fluted Pattern",
+        "Engraved Fluted",
+        "Wave Fluted"
+    ],
+    "Palm": [
+        "Palm Dial",
+        "Palm Tree Dial",
+        "Palm Tree",
+        "Palm Motif",
+        "Palm Motif Dial",
+        "Palm Green",
+        "PalmDial"
+    ],
+    "Bright Green": [
+        "Money Green",
+        "Casino Green",
+        "Bright Grn",
+        "Bright-Green",
+        "BrGreen",
+        "Brt Green",
+        "Brt Grn",
+        "Neon Green",
+        "Vivid Green",
+        "Electric Green"
+    ],
+    "YML": [
+        "Yellow Mineral Lacquer",
+        "Yellow Mineral",
+        "Yellow Lacquer",
+        "Mineral Yellow",
+        "Mineral Lacquer Yellow",
+        "YM Lacquer",
+        "YM Yellow",
+        "Lac Yellow",
+        "Lacquer Yellow"
+    ],
     "_ref_specific": {
         "_comment": "On these refs, Pink is a mislabel for Sundust (Everose gold models where 'pink' = sundust dial)",
         "126505": {

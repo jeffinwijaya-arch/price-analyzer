@@ -3025,6 +3025,9 @@ def extract_dial(text, ref='', raw_ref=''):
     # "mingreen" / "mintgrn" / "minty" → "mint green"
     # "minty" is a common dealer shorthand for mint green (distinct from "mint" condition descriptor)
     t = re.sub(r'\bmingreen\b|\bmintgrn\b|\bmint\s*grn\b|\bminty\b', 'mint green', t)
+    # "bright grn" / "bright grne" / "brgrn" / "brightgrn" → "bright green"
+    # Day-Date 40/36 Bright Green (casino/money green solid lacquer dial) shorthand
+    t = re.sub(r'\bbright\s+gr[ne]n?\b|\bbrgrn\b|\bbrightgrn\b|\bbgrn\b(?=\s|$)', 'bright green', t)
     # "br blue" / "bright bl" → "bright blue" (DJ Bright Blue shorthand)
     t = re.sub(r'\bbr\s*blue\b|\bbright\s*bl\b', 'bright blue', t)
     # "blusy" / "blsy" → "blue" (Blue Sunray shorthand used in US/SG dealer groups)
@@ -3810,6 +3813,15 @@ def extract_dial(text, ref='', raw_ref=''):
         return 'Ceramic'
     # Money Green / Casino Green (slang for Bright Green on Day-Date)
     if re.search(r'\bmoney\s*green\b|\bcasino\s*green\b', t): return 'Bright Green'
+    # "bright green" explicit keyword — Day-Date 40/36 RG/WG/TT/YG Bright Green dial
+    # Must fire BEFORE the generic \bgreen\b check which would return plain 'Green'.
+    # Refs with Bright Green as a valid dial: 228235, 228236, 228238, 228239, 228345, 228348,
+    # 228398, 128235, 128238 (see rolex_dial_options.json).
+    if re.search(r'\bbright\s*green\b|\bbright\s*grn\b|\bbgrn\b', t):
+        if ref:
+            _rb_bgg = re.match(r'(\d+)', ref)
+            if _rb_bgg and _rb_bgg.group(1)[:3] in ('228', '128', '118', '218'):
+                return 'Bright Green'
     # Bright Green (Day-Date specific — solid bright/casino green, often with roman indices)
     if re.search(r'\bgreen\s*rom(?:an|a|e)?\b|\brom(?:an|a|e)?\s*green\b', t):
         if ref:
@@ -3830,6 +3842,14 @@ def extract_dial(text, ref='', raw_ref=''):
         return 'Ombré'
     # Rainbow
     if re.search(r'\brainbow\b', t): return 'Rainbow'
+    # Fluted dial (engraved alternating-flute motif — distinct from the fluted bezel case feature).
+    # Only a handful of DJ/DD refs officially offer a "Fluted" lacquer dial (126234, 126334).
+    # Guard: skip "fluted bezel" / "fluted motif bezel" — those describe the case, not the dial.
+    # Guard: only return 'Fluted' when the ref's dial catalog explicitly lists it as an option.
+    if re.search(r'\bfluted\b', t) and not re.search(r'\bfluted\s+bezel\b|\bfluted\s+case\b', t) and ref:
+        _rb_fl = re.match(r'(\d+)', ref)
+        if _rb_fl and _valid_dials and 'Fluted' in _valid_dials:
+            return 'Fluted'
     # Pavé (full diamond dial)
     if re.search(r'\bpav[eé]\b|\bfull\s*diamond\b', t):
         _ref_base_pv = re.match(r'(\d+)', ref) if ref else None
@@ -4032,7 +4052,8 @@ def extract_dial(text, ref='', raw_ref=''):
         r'turquoise|aventurine|grossular|sodalite|malachite|lapis|opal|carnelian|onyx|'
         r'champagne|chocolate|silver|white|black|blue|green|grey|gray|pink|red|orange|'
         r'yellow|coral|lavender|aubergine|pistachio|sundust|salmon|beige|mop|pave|pavé|'
-        r'bright\s*blue|dark\s*blue|ice\s*blue|mint\s*green|olive|bright\s*green)\b',
+        r'bright\s*blue|dark\s*blue|ice\s*blue|mint\s*green|olive|bright\s*green|'
+        r'azzurro(?:\s*blue)?|palm|celebration|fluted|wimbledon|rainbow|d[\s-]*blue)\b',
         t)
     if _dial_lbl_m:
         _lbl = _dial_lbl_m.group(1).strip()
@@ -4047,13 +4068,20 @@ def extract_dial(text, ref='', raw_ref=''):
             'pave': 'Pavé', 'pavé': 'Pavé', 'mint green': 'Mint Green',
             'bright blue': 'Bright Blue', 'dark blue': 'Dark Blue',
             'bright green': 'Bright Green', 'grey': 'Grey', 'gray': 'Grey',
+            # Newly added structured-label overrides
+            'azzurro': 'Azzurro Blue', 'azzurro blue': 'Azzurro Blue',
+            'palm': 'Palm', 'celebration': 'Celebration',
+            'fluted': 'Fluted', 'rainbow': 'Rainbow',
+            'd-blue': 'D-Blue', 'd blue': 'D-Blue',
         }
         if _lbl in _lbl_overrides:
             # Prepend to t so standard detection chain picks it up, OR return directly for
             # unambiguous dials that don't need index-type enrichment.
             if _lbl in ('grape', 'arabic', 'wimbledon', 'tiffany', 'paul newman', 'meteorite',
                         'ice blue', 'turquoise', 'aventurine', 'grossular', 'sodalite',
-                        'malachite', 'lapis', 'opal', 'carnelian', 'onyx'):
+                        'malachite', 'lapis', 'opal', 'carnelian', 'onyx',
+                        'palm', 'bright green', 'fluted', 'rainbow', 'd-blue', 'd blue',
+                        'azzurro', 'azzurro blue'):
                 return _lbl_overrides[_lbl]
             # For generic colors, inject into t so index-type + diamond suffix still work
             t = _lbl + ' ' + t
@@ -4333,7 +4361,7 @@ def extract_dial(text, ref='', raw_ref=''):
                 _rb_choc_base[:3] in ('126', '116', '278', '279', '228', '128', '118', '218', '268', '326', '336', '114', '124', '134', '226', '216')):
             dial = 'Chocolate'
 
-    # ── YML normalization: Daytona YG refs (126508 / 116508) ──
+    # ── YML normalization: Daytona YG refs (126508 / 116508 / 126518 / 116518) ──
     # Rolex's official name for the yellow-toned Daytona dial is "YML" (Yellow Mineral Lacquer).
     # Dealers frequently write "champagne" to describe this dial; normalize to the official name
     # so pricing and search functions correctly identify the YML premium over standard Champagne.
@@ -4341,6 +4369,13 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_yml = re.match(r'(\d+)', ref)
         if _rb_yml and _rb_yml.group(1) in ('126508', '116508'):
             dial = 'YML'
+    # Dealers also write "yellow" for the YML mineral-lacquer Daytona dial.
+    # Only apply when the ref's valid-dial catalog includes YML (avoids false hits on DD yellow dials).
+    if dial == 'Yellow' and ref:
+        _rb_yml_y = re.match(r'(\d+)', ref)
+        if _rb_yml_y and _rb_yml_y.group(1) in ('126508', '116508', '126518', '116518'):
+            if _valid_dials and 'YML' in _valid_dials:
+                dial = 'YML'
     # ── Olive Green normalization: Day-Date RG refs (228235, 128235) ──
     # Rolex officially markets this dial as "Olive Green" — dealers often shorten to "olive" OR
     # just "green". For these RG Day-Date refs the standard green offering is Olive Green;
