@@ -89,6 +89,12 @@
         "TB",
         "T.Blue",
         "T-Blue",
+        "T/B",
+        "OT/B",
+        "T.B.",
+        "Tiff-Blue",
+        "Tiffany-Blue",
+        "Tifb",
         "OTB",
         "Official Tiffany",
         "Tiffany Official",
@@ -103,12 +109,17 @@
         "Aqua Dial",
         "Robin Egg",
         "Duck Egg",
-        "Egg Shell Blue"
+        "Egg Shell Blue",
+        "Ciel Blue",
+        "Tiffany Blu"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
         "Celebration Tiffany",
         "CLTB",
+        "CELTB",
+        "CLT/B",
+        "CT/B",
         "Jubilee Tiffany Blue",
         "Jubilee Tiffany",
         "Celeb Tiffany Blue",
@@ -116,7 +127,9 @@
         "CLT Blue",
         "Celebration TB",
         "Celeb TB",
-        "Official CTB"
+        "Official CTB",
+        "Celeb T/B",
+        "Celeb Tiff"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -129,7 +142,12 @@
         "Newman",
         "PN Dial",
         "Daytona PN",
-        "Exotic PN"
+        "Exotic PN",
+        "PaulN",
+        "P.N.",
+        "paul n.",
+        "Paul N Daytona",
+        "P.N Daytona"
     ],
     "Wimbledon": [
         "Wimbledo",
@@ -160,7 +178,10 @@
         "Slate Wim",
         "Champ Slate Green",
         "Slate Champ Green",
-        "WB"
+        "WB",
+        "WBL",
+        "Wimbly",
+        "Wimbld"
     ],
     "Med Blue": [
         "Mediterranean Blue",
@@ -176,7 +197,10 @@
         "Meteoric",
         "Aerolite",
         "Iron Meteorite",
-        "Stone Dial Meteorite"
+        "Stone Dial Meteorite",
+        "Meteorit",
+        "Met Stone",
+        "Meteoryte"
     ],
     "Grossular": [
         "Giraffe",
@@ -188,7 +212,8 @@
         "Avent",
         "Aventurine Green",
         "Aventurine Blue",
-        "Aventurin"
+        "Aventurin",
+        "Adventurine"
     ],
     "D-Blue": [
         "Gradient Blue",
@@ -260,10 +285,6 @@
         "Stella Turquoise",
         "Stella"
     ],
-    "Ombr\u00e9": [
-        "Ombre",
-        "Smoky"
-    ],
     "Green Ombr\u00e9": [
         "Green Smoke",
         "Smoke Green"
@@ -309,18 +330,6 @@
         "Palm Motif Dial",
         "Palm Green",
         "PalmDial"
-    ],
-    "Bright Green": [
-        "Money Green",
-        "Casino Green",
-        "Bright Grn",
-        "Bright-Green",
-        "BrGreen",
-        "Brt Green",
-        "Brt Grn",
-        "Neon Green",
-        "Vivid Green",
-        "Electric Green"
     ],
     "YML": [
         "Yellow Mineral Lacquer",
