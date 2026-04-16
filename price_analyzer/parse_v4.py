@@ -2348,6 +2348,15 @@ def extract_dial(text, ref='', raw_ref=''):
                 if re.search(r'\bopal\b', _fd_t): return 'Opal'
                 if re.search(r'\bcarnelian\b', _fd_t): return 'Carnelian'
                 if re.search(r'\bonyx\b', _fd_t): return 'Onyx'
+            # Champagne override — 126598 (Everose Rainbow Daytona) has two dial variants:
+            # Black (dominant) and Champagne. Since 126598 is in FIXED_DIAL as 'Black', the
+            # general keyword path is never reached. Explicit "champagne" in text → Champagne.
+            _fd_champ_refs = frozenset({'126598'})
+            _fd_rb_champ = re.match(r'(\d+)', ref)
+            _fd_rb_champ_s = _fd_rb_champ.group(1) if _fd_rb_champ else ''
+            if _fd_rb_champ_s in _fd_champ_refs and _fd_current_val == 'Black':
+                if re.search(r'\bchampagne\b|\bchamp\b|\bchmpg?\b|\bchp\b', _fd_t):
+                    return 'Champagne'
         return FIXED_DIAL[ref]
     # Also check SKU DB single-dial refs (dynamic, covers refs not in FIXED_DIAL)
     if ref and ref in SKU_SINGLE_DIAL:
@@ -8096,10 +8105,30 @@ def cmd_parse(args):
         _bm_up = re.match(r'\d+', _ref)
         _br_up = _bm_up.group(0) if _bm_up else ''
         if _dial == 'Black' and (_br_up in _DBLUE_DEEPSEA_BASES or _ref in ('136660DB', '116660DB')):
-            if re.search(r'\bd[\s-]*blue\b|\bdblue\b|\bjames\s*cameron\b'
+            # Unconditional: ref suffix "DB" = D-Blue by definition — no text check needed.
+            # The canonicalizer only produces 136660DB/116660DB for the D-Blue variant,
+            # so a Black dial on these refs is always a stale parse error.
+            if _ref in ('136660DB', '116660DB'):
+                _l['dial'] = 'D-Blue'
+                _upgrade_count += 1
+            elif re.search(r'\bd[\s-]*blue\b|\bdblue\b|\bjames\s*cameron\b'
                          r'|\bdeep\s*sea\s*blue\b|\bdeepsea\s*blue\b', _src):
                 _l['dial'] = 'D-Blue'
                 _upgrade_count += 1
+    # ── 126598 Champagne retroactive upgrade ──
+    # 126598 (Everose Rainbow Daytona) is in FIXED_DIAL as 'Black' but also has a Champagne
+    # dial variant. Listings parsed before the Champagne override was added defaulted to Black.
+    # Upgrade Black → Champagne when source text explicitly says "champagne" for ref 126598.
+    for _l in listings:
+        if _l.get('dial') != 'Black': continue
+        _ref_ch = _l.get('ref', '')
+        _bm_ch = re.match(r'\d+', _ref_ch)
+        _br_ch = _bm_ch.group(0) if _bm_ch else ''
+        if _br_ch != '126598': continue
+        _src_ch = (_l.get('source_text', '') or '').lower()
+        if re.search(r'\bchampagne\b|\bchamp\b|\bchmpg?\b|\bchp\b', _src_ch):
+            _l['dial'] = 'Champagne'
+            _upgrade_count += 1
     # ── Ice Blue retroactive upgrade ──
     # Two sub-cases:
     # (a) FIXED_DIAL=Ice Blue refs (126506, 116506, 116506A) stored as 'Blue' — unconditional

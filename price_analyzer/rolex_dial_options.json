@@ -291,7 +291,9 @@
     "Black",
     "White",
     "Champagne",
-    "MOP"
+    "MOP",
+    "Black Diamond",
+    "White Diamond"
   ],
   "116503": [
     "Black",
@@ -532,7 +534,8 @@
   "116523": [
     "White",
     "MOP",
-    "Champagne"
+    "Champagne",
+    "Black"
   ],
   "126538": [
     "Champagne",
@@ -548,7 +551,8 @@
     "Sundust"
   ],
   "126598": [
-    "Black"
+    "Black",
+    "Champagne"
   ],
   "126595": [
     "Sundust"
@@ -564,7 +568,12 @@
   ],
   "116599": [
     "White",
-    "Blue"
+    "Blue",
+    "Black",
+    "Rainbow",
+    "MOP",
+    "Pavé",
+    "Black Diamond"
   ],
   "116578": [
     "Black",
@@ -577,14 +586,25 @@
   ],
   "116595": [
     "Rainbow",
-    "Black"
+    "Black",
+    "Pavé",
+    "Blue Diamond",
+    "Black Diamond",
+    "White Diamond"
   ],
   "116588": [
-    "Tiger Eye"
+    "Tiger Eye",
+    "Black",
+    "White",
+    "Pavé"
   ],
   "116589": [
     "Tiger Eye",
-    "MOP"
+    "MOP",
+    "Black",
+    "Pavé",
+    "Rainbow",
+    "White"
   ],
   "116589SACI": [
     "MOP"
@@ -681,7 +701,9 @@
     "Sundust",
     "Slate",
     "White",
-    "Wimbledon"
+    "Wimbledon",
+    "Pink",
+    "MOP"
   ],
   "126333": [
     "Black",
@@ -733,12 +755,22 @@
   ],
   "126201": [
     "White",
-    "Silver"
+    "Silver",
+    "Wimbledon",
+    "White Roman",
+    "White Stick",
+    "Silver Roman",
+    "Champagne Roman",
+    "Champagne Stick"
   ],
   "126203": [
     "Champagne",
     "Green",
-    "Wimbledon"
+    "Wimbledon",
+    "Green Roman VI IX Diamond",
+    "Black",
+    "Black Diamond",
+    "Champagne Roman VI IX Diamond"
   ],
   "126231": [
     "Blue",
@@ -761,7 +793,10 @@
     "Sundust",
     "White",
     "White Roman VI IX Diamond",
-    "Wimbledon"
+    "Wimbledon",
+    "Black",
+    "Black Roman VI",
+    "Pink Diamond"
   ],
   "126233": [
     "Aubergine",
@@ -839,7 +874,12 @@
     "Silver Roman VI IX Diamond",
     "White Diamond",
     "White Roman VI",
-    "White Roman VI IX Diamond"
+    "White Roman VI IX Diamond",
+    "Pink Roman VI",
+    "Silver Diamond",
+    "Silver Diamond Roman VI",
+    "Grey Diamond",
+    "Champagne Diamond"
   ],
   "126283": [
     "Aubergine",
@@ -859,7 +899,10 @@
     "Silver Roman VI IX Diamond",
     "White",
     "White Roman VI",
-    "Wimbledon"
+    "Wimbledon",
+    "Black Diamond",
+    "Silver Diamond",
+    "Silver Stick Diamond"
   ],
   "126284": [
     "Aubergine",
@@ -884,7 +927,9 @@
     "Silver Roman VI",
     "Silver Roman VI IX Diamond",
     "White",
-    "White Roman VI"
+    "White Roman VI",
+    "Green Stick Diamond",
+    "Wimbledon"
   ],
   "124300": [
     "Black",
@@ -1059,7 +1104,11 @@
     "Pink Roman VI",
     "Pink Roman VI IX Diamond",
     "Silver Roman VI",
-    "White Roman VI"
+    "White Roman VI",
+    "Pink Stick",
+    "Champagne Stick",
+    "Silver Stick",
+    "Green Stick"
   ],
   "278341": [
     "Aubergine Roman VI",
@@ -1073,7 +1122,10 @@
     "Pink",
     "Green",
     "Blue",
-    "Grey"
+    "Grey",
+    "Pink Roman",
+    "Pink Stick",
+    "Green Stick"
   ],
   "278243": [
     "Green",
@@ -1094,7 +1146,10 @@
     "Olive Roman VI",
     "White Diamond",
     "Black Diamond",
-    "Blue Diamond"
+    "Blue Diamond",
+    "Champagne Stick Diamond",
+    "Silver Stick Diamond",
+    "Olive Stick Diamond"
   ],
   "278274": [
     "Pink Diamond",
@@ -1113,7 +1168,12 @@
     "Blue Diamond",
     "Champagne Diamond",
     "Chocolate Roman VI",
-    "Blue Roman VI"
+    "Blue Roman VI",
+    "Pink Stick Diamond",
+    "Green Stick Diamond",
+    "White Stick Diamond",
+    "Olive Stick Diamond",
+    "Grey Stick Diamond"
   ],
   "278275": [
     "MOP",
@@ -1129,7 +1189,8 @@
     "Grey",
     "MOP",
     "Red",
-    "Red Ombré"
+    "Red Ombré",
+    "Green Roman VI IX Diamond"
   ],
   "278285": [
     "MOP"
@@ -1271,7 +1332,15 @@
     "MOP",
     "Champagne",
     "Silver",
-    "White"
+    "White",
+    "Champagne Roman",
+    "Champagne Stick",
+    "Silver Roman",
+    "Silver Stick",
+    "MOP Diamond",
+    "White Roman",
+    "Champagne Diamond",
+    "Silver Diamond"
   ],
   "279174": [
     "Pink",
@@ -1308,7 +1377,12 @@
     "Aubergine"
   ],
   "279178": [
-    "Silver"
+    "Silver",
+    "MOP",
+    "Champagne",
+    "Champagne Diamond",
+    "Silver Diamond",
+    "MOP Diamond"
   ],
   "279381": [
     "Green Diamond",
@@ -1473,7 +1547,9 @@
     "Pavé",
     "Ombré",
     "Grossular",
-    "Celebration"
+    "Celebration",
+    "MOP",
+    "MOP Diamond"
   ],
   "228239": [
     "Black",
@@ -1484,7 +1560,8 @@
     "Bright Blue",
     "Celebration",
     "Meteorite",
-    "Ombré Blue"
+    "Bright Green",
+    "Ombré"
   ],
   "228206": [
     "Ice Blue",
@@ -1512,7 +1589,9 @@
     "MOP",
     "Chocolate",
     "Sundust",
-    "Wave"
+    "Wave",
+    "Chocolate Baguette",
+    "Salmon Baguette"
   ],
   "228348": [
     "Black",
@@ -1605,8 +1684,7 @@
     "Ombré",
     "Ombré Slate",
     "Silver",
-    "Celebration",
-    "Blue"
+    "Celebration"
   ],
   "128236": [
     "Ice Blue",
@@ -1644,7 +1722,14 @@
     "Silver",
     "Blue",
     "White",
-    "Celebration"
+    "Celebration",
+    "Rainbow",
+    "Ombré",
+    "MOP",
+    "Pavé",
+    "Puzzles",
+    "Carnelian",
+    "Pink"
   ],
   "128345": [
     "Rainbow"
@@ -1660,14 +1745,20 @@
     "Pink",
     "Salmon",
     "Ice Blue",
-    "Ice Blue Baguette"
+    "Ice Blue Baguette",
+    "Pink Roman VI IX Diamond",
+    "Pavé",
+    "Blue Baguette",
+    "Green Pavé"
   ],
   "128398": [
     "Green",
     "Carnelian",
     "Black",
     "Green Ombré",
-    "Champagne"
+    "Champagne",
+    "Green Baguette",
+    "Carnelian Baguette"
   ],
   "128155": [
     "Pavé"
@@ -1709,7 +1800,11 @@
     "MOP",
     "Black",
     "Grossular",
-    "Celebration"
+    "Celebration",
+    "Champagne Baguette",
+    "White",
+    "Green",
+    "White Baguette"
   ],
   "118239": [
     "Champagne",
@@ -1745,7 +1840,11 @@
     "Blue",
     "Black",
     "White",
-    "Champagne"
+    "Champagne",
+    "Blue Baguette",
+    "Champagne Baguette",
+    "White Baguette",
+    "Silver Baguette"
   ],
   "118348": [
     "Aubergine",
@@ -1771,7 +1870,8 @@
     "Champagne",
     "White",
     "Black",
-    "Green"
+    "Green",
+    "Grey"
   ],
   "336938": [
     "Champagne",
@@ -1816,7 +1916,11 @@
     "Grey",
     "White",
     "Black",
-    "Sundust"
+    "Sundust",
+    "Chocolate",
+    "Green",
+    "Blue Diamond",
+    "Blue"
   ],
   "326938": [
     "Black",
@@ -1826,7 +1930,8 @@
   "326933": [
     "Black",
     "White",
-    "Champagne"
+    "Champagne",
+    "Green"
   ],
   "326939": [
     "Black",
@@ -2069,7 +2174,10 @@
   ],
   "127386": [
     "Ice Blue",
-    "Ice Blue Baguette"
+    "Ice Blue Baguette",
+    "Black",
+    "White",
+    "Silver"
   ],
   "52506": [
     "Ice Blue"
@@ -2117,14 +2225,22 @@
     "Silver",
     "Beige",
     "Ombre",
-    "MOP"
+    "MOP",
+    "Red",
+    "Champagne"
   ],
   "15223": [
     "Champagne"
   ],
   "116579": [
     "Black",
-    "Salmon"
+    "Salmon",
+    "Blue Diamond",
+    "MOP",
+    "Rainbow",
+    "Pavé",
+    "Black Diamond",
+    "White Diamond"
   ],
   "116139": [
     "Blue",
