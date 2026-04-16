@@ -2837,13 +2837,22 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'溫布[爾尔]頓|温布[爾尔]顿', 'wimbledon', t)  # 溫布爾頓/温布尔顿 = Wimbledon (TW/HK/CN)
     t = re.sub(r'香[槟檳]綠|香[槟檳]绿', 'champagne', t)    # 香檳綠/香槟绿 = champagne green (Wimbledon dealer slang)
     t = re.sub(r'葡萄(?:紫|色)?', 'grape', t)               # 葡萄 = Grape (OP/DJ Grape dial — Chinese)
+    t = re.sub(r'\bgrapes\b', 'grape', t)                  # "grapes" (plural) → grape (dealer plural form)
     t = re.sub(r'珊瑚[紅红]?|珊瑚色', 'coral', t)           # 珊瑚/珊瑚色 = coral (OP/DJ Coral dial)
     # "official tiffany" / "tiffany official" → tiffany (explicit premium dial label)
     t = re.sub(r'\bofficial\s+tiffany\b|\btiffany\s+official\b', 'tiffany', t)
+    # "CTB" / "CLTB" = Celebration Tiffany Blue (HK/SG dealer compound shorthand)
+    # Expands to "celebration tiffany" so the celebration detection block resolves it
+    # as 'Celebration Tiffany Blue' via the existing _has_tiff_signal check.
+    # On non-OP refs, falls through to plain 'Celebration' (safe default).
+    t = re.sub(r'\bctb\b', 'celebration tiffany', t)
+    t = re.sub(r'\bcltb\b', 'celebration tiffany', t)
     # "pn exotic" / "exotic pn" → paul newman (concatenated PN+Exotic shorthand)
     t = re.sub(r'\bpn\s*exotic\b|\bexotic\s*pn\b', 'paul newman', t)
     # "wimbelon" / "wimbledn" → wimbledon (additional typo variants)
     t = re.sub(r'\bwimbelon\b|\bwimbledn\b', 'wimbledon', t)
+    # "wimbledo" (truncated — missing trailing 'n') → wimbledon (common HK shorthand truncation)
+    t = re.sub(r'\bwimbledo\b(?!n)', 'wimbledon', t)
     # "wm dial" / "wim dial" → wimbledon (abbreviated Wimbledon shorthand)
     t = re.sub(r'\bwm\s+dial\b|\bwim\s+dial\b', 'wimbledon', t)
     # Typo fixes for colour words (HK/SG dealer groups)
@@ -2867,7 +2876,7 @@ def extract_dial(text, ref='', raw_ref=''):
     if ref:
         _rb_lb = re.match(r'(\d+)', ref)
         _rb_lb_base = _rb_lb.group(1) if _rb_lb else ''
-        _op_lb_exact = {'126000', '126034', '134300'}
+        _op_lb_exact = {'126000', '126034', '134300', '126031'}  # 126031 = OP36 variant
         _op_lb_prefix = ('277', '276', '124')
         if _rb_lb_base in _op_lb_exact or _rb_lb_base[:3] in _op_lb_prefix:
             t = re.sub(r'\blight\s*blue\b', 'tiffany', t)
@@ -2929,6 +2938,13 @@ def extract_dial(text, ref='', raw_ref=''):
     # "paul newman2023y" / "newman2023" — seller glues year/condition code directly to "newman".
     # \b fails between "n" and digit (both word chars), so inject a space before any trailing digits.
     t = re.sub(r'\b(paul\s*newman)(\d)', r'\1 \2', t)
+    # "paul n" alone (2-char abbreviation of Newman) → paul newman — guard: Daytona refs only.
+    # Too short for global mapping; "paul n 2022" on a non-Daytona ref is ambiguous.
+    # Daytona 1165xx / 1265xx: "paul n" is unambiguously Paul Newman dial shorthand.
+    if ref:
+        _rb_pauln = re.match(r'(\d+)', ref)
+        if _rb_pauln and _rb_pauln.group(1)[:4] in ('1165', '1265'):
+            t = re.sub(r'\bpaul\s+n\b(?!\s*ew)', 'paul newman', t)
     # "exo" shorthand → "exotic" (abbreviation used in some dealer groups for PN exotic dial)
     t = re.sub(r'\bexo\b(?!\s*(?:terra|tic))', 'exotic', t)  # guard against "exoterra" (RM brand)
     # "smoky" → ombré (gradient/smoky finishes on Day-Date ombré dials)
