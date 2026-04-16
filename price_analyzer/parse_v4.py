@@ -2318,8 +2318,14 @@ def extract_dial(text, ref='', raw_ref=''):
             _fd_base_bag = re.match(r'(\d+)', ref)
             _fd_rb_bag = _fd_base_bag.group(1) if _fd_base_bag else ''
             if _fd_rb_bag in _baguette_fd_map:
-                if (re.search(r'\b' + re.escape(_fd_rb_bag) + r'\w*\s+A\b', text, re.I) or
-                        re.search(r'\b' + re.escape(ref) + r'\s*A\b', text, re.I)):
+                # Fire when A-suffix pattern present ("127286 A", "127386TBR A") OR
+                # when "baguette" / "bag" is mentioned explicitly in the listing text.
+                _baguette_in_text = bool(
+                    re.search(r'\b' + re.escape(_fd_rb_bag) + r'\w*\s+A\b', text, re.I) or
+                    re.search(r'\b' + re.escape(ref) + r'\s*A\b', text, re.I) or
+                    re.search(r'\bbaguette\b|\bbag\b', _fd_t)
+                )
+                if _baguette_in_text:
                     return _baguette_fd_map[_fd_rb_bag]
             # ── Stone / exotic dial overrides ──────────────────────────────────────
             # Certain fixed-dial refs also offer exotic stone variants (e.g. 126555 Daytona YG:
@@ -2747,8 +2753,11 @@ def extract_dial(text, ref='', raw_ref=''):
     # since colour context is overwhelmingly dominant in watch listings, the mapping is safe.
     t = re.sub(r'\bcarol\b', 'coral', t)        # "carol" → coral (HK typo, e.g. "124300 carol 11")
     t = re.sub(r'\bcorral\b', 'coral', t)       # "corral" → coral (typo)
+    t = re.sub(r'\bcorl\b|\bcrrl\b|\bcrlo\b', 'coral', t)  # "corl"/"crrl"/"crlo" typos → coral (SG/TW shorthand)
     # "pistacho" → pistachio (Spanish-influenced misspelling common in EU/Latin dealer groups)
     t = re.sub(r'\bpistacho\b', 'pistachio', t)
+    # Additional pistachio typos from HK/EU dealer groups
+    t = re.sub(r'\bpistacheo\b|\bpistagio\b|\bpistaccio\b', 'pistachio', t)
     # "lavander" / "lavander" → lavender (common misspelling)
     t = re.sub(r'\blavander\b|\blawander\b', 'lavender', t)
     t = re.sub(r'\bgreay\b', 'grey', t)        # "greay" typo → grey
@@ -2825,6 +2834,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'蒂芙[尼]藍|蒂芙[尼]蓝', 'tiffany', t)      # 蒂芙尼藍/蓝 = Tiffany blue
     t = re.sub(r'冰[藍蓝]', 'ice blue', t)                  # 冰藍/冰蓝 = ice blue
     t = re.sub(r'珍珠母|珠光盤', 'mop', t)                  # 珍珠母/珠光盤 = MOP
+    t = re.sub(r'溫布[爾尔]頓|温布[爾尔]顿', 'wimbledon', t)  # 溫布爾頓/温布尔顿 = Wimbledon (TW/HK/CN)
+    t = re.sub(r'香[槟檳]綠|香[槟檳]绿', 'champagne', t)    # 香檳綠/香槟绿 = champagne green (Wimbledon dealer slang)
+    t = re.sub(r'葡萄(?:紫|色)?', 'grape', t)               # 葡萄 = Grape (OP/DJ Grape dial — Chinese)
+    t = re.sub(r'珊瑚[紅红]?|珊瑚色', 'coral', t)           # 珊瑚/珊瑚色 = coral (OP/DJ Coral dial)
     # "official tiffany" / "tiffany official" → tiffany (explicit premium dial label)
     t = re.sub(r'\bofficial\s+tiffany\b|\btiffany\s+official\b', 'tiffany', t)
     # "pn exotic" / "exotic pn" → paul newman (concatenated PN+Exotic shorthand)
@@ -2896,12 +2909,23 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\beisenkies(?:el)?\b', 'eisenkiesel', t)
     # "jubilee dial" → "celebration" (Jubilee Motif / Celebration dial)
     t = re.sub(r'\bjubilee\s+dial\b', 'celebration', t)
+    # "jubilee motif" → "celebration" (official alternate name for the Jubilee Motif dial)
+    t = re.sub(r'\bjubilee\s+motif\b', 'celebration', t)
+    # "clt" shorthand → "celebration" (very short HK code for Celebration dial, e.g. "126000 clt tb")
+    # Guard: only map when followed by space+color or at end to avoid corrupting "clt" part-numbers.
+    t = re.sub(r'\bclt\b(?=\s+(?:tiff|tb|tiffany|blue|wh|blk|silver|green|pistachio)|\s*$)', 'celebration', t)
     # "pn dial" / "daytona pn" / "pnd" → "paul newman" (Daytona PN shorthand variants)
     t = re.sub(r'\bpn\s+dial\b', 'paul newman', t)
     t = re.sub(r'\bdaytona\s+pn\b', 'paul newman', t)
     t = re.sub(r'\bpnd\b', 'paul newman', t)  # "PND" = Paul Newman Daytona dealer shorthand
     # "p.n." / "p.newman" / "p newman" → "paul newman" (dotted / abbreviated PN forms)
     t = re.sub(r'\bp\.n\.(?=\s|$)|\bp\s*newman\b', 'paul newman', t)
+    # "p/n" with slash on Daytona refs → "paul newman" (slash notation used in some dealer groups)
+    if ref:
+        _rb_pnsl = re.match(r'(\d+)', ref)
+        _pnsl_base = _rb_pnsl.group(1) if _rb_pnsl else ''
+        if _pnsl_base[:4] in ('1165', '1265'):
+            t = re.sub(r'\bp/n\b', 'paul newman', t)
     # "paul newman2023y" / "newman2023" — seller glues year/condition code directly to "newman".
     # \b fails between "n" and digit (both word chars), so inject a space before any trailing digits.
     t = re.sub(r'\b(paul\s*newman)(\d)', r'\1 \2', t)
@@ -2928,6 +2952,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\brbow\b', 'rainbow', t)
     # YML (Yellow Mineral Lacquer) shorthands
     t = re.sub(r'\bywl\b', 'yml', t)
+    # "yellow mineral lacquer" / "yellow mineral" → yml (verbose Daytona YML descriptions)
+    t = re.sub(r'\byellow\s+mineral(?:\s+lacquer)?\b', 'yml', t)
+    # "mineral lacquer" alone → yml (Daytona YG refs where the YML is the only lacquer option)
+    if ref:
+        _rb_ml = re.match(r'(\d+)', ref)
+        _rb_ml_b = _rb_ml.group(1) if _rb_ml else ''
+        if _rb_ml_b in ('116508', '126508', '116518', '126518', '116528', '126528'):
+            t = re.sub(r'\bmineral\s+lacquer\b', 'yml', t)
     # Wimbledon shorthands — "wb" only when NOT preceded by "w/" (watch box)
     # Also catch common typos: wimbeldon, wimbelton, wimbeldan (very frequent in dealer messages)
     t = re.sub(r'\bwim\b|\bwimb\b|\bwimbo\b|\bwimbeld[oe]n\b|\bwimbelton\b|\bwimbeldan\b|\bwimbledone\b', 'wimbledon', t)
@@ -2945,6 +2977,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpist\b(?!ach)', 'pistachio', t)
     # "candy pk" / "candypk" / "candy p" → candy pink (compound shorthand)
     t = re.sub(r'\bcandy\s*pk\b|\bcandypk\b|\bcandy\s*p\b(?!ink)', 'candy pink', t)
+    # "cp" on OP refs = candy pink (very short HK/SG code, e.g. "126000 cp")
+    # Guard: only map for refs that officially offer Candy Pink to avoid "cp" false hits on other refs.
+    if ref:
+        _rb_cp = re.match(r'(\d+)', ref)
+        _rb_cp_b = _rb_cp.group(1) if _rb_cp else ''
+        _op_cp_exact = {'126000', '126034', '134300'}
+        _op_cp_pfx = ('124', '134', '277', '276')
+        if _rb_cp_b in _op_cp_exact or _rb_cp_b[:3] in _op_cp_pfx:
+            t = re.sub(r'\bcp\b(?!\s*u)', 'candy pink', t)  # guard: not "CPU"
     # "mt grn" / "mnt grn" / "mintgrn" / "mt green" / "mnt green" → mint green
     # Note: \bgrn\b → 'green' fires earlier, so also match the already-expanded form
     t = re.sub(r'\bmt\s*gr(?:n|een)\b|\bmnt\s*gr(?:n|een)\b|\bmintgrn\b', 'mint green', t)
@@ -2962,8 +3003,19 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bsd\b', 'sundust', t)
     # "gg" = green (HK dealer shorthand)
     t = re.sub(r'\bgg\b', 'green', t)
-    # "bb" = bright blue (Datejust refs only — 126xxx, 278xxx, 279xxx)
-    if ref and re.match(r'^(126|278|279)', ref):
+    # "grp" = grape on OP refs (short dealer code, e.g. "126000 grp $38k")
+    # Guard: only map for OP family refs to avoid corrupting DJ/DD/Daytona refs where
+    # "grp" could be part of a group/product code.
+    if ref:
+        _rb_grp = re.match(r'(\d+)', ref)
+        _rb_grp_b = _rb_grp.group(1) if _rb_grp else ''
+        _op_grp_exact = {'126000', '126034', '114200', '114300'}
+        _op_grp_pfx = ('124', '134', '277', '276')
+        if _rb_grp_b in _op_grp_exact or _rb_grp_b[:3] in _op_grp_pfx:
+            t = re.sub(r'\bgrp\b', 'grape', t)
+    # "bb" = bright blue (Datejust 126xxx, 278xxx, 279xxx; Pearlmaster 336xxx/326xxx)
+    # 336934 Sky-Dweller and 326934/326935 Pearlmaster refs offer a genuine Bright Blue dial.
+    if ref and re.match(r'^(126|278|279|336|326)', ref):
         t = re.sub(r'\bbb\b', 'bright blue', t)
     # "silv" = silver
     t = re.sub(r'\bsilv\b', 'silver', t)
@@ -3049,6 +3101,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bmed(?:iterranean)?\s+bl(?:ue)?\b', 'mediterranean blue', t)
     # "medit" standalone → mediterranean blue (truncation used by some EU dealers)
     t = re.sub(r'\bmedit(?:erranean)?\s+(?:blue|bl)\b', 'mediterranean blue', t)
+    # "medblue" concatenated (no space) → mediterranean blue (HK WhatsApp shorthand)
+    t = re.sub(r'\bmedblue\b|\bmed_blue\b', 'mediterranean blue', t)
     # "grossular" truncations → grossular (stone dial shorthand, e.g. "126555 grossul")
     t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)  # safe: require "grossul" prefix
     # "carnelian" truncations → carnelian (Day-Date stone dial; NOT "carn"/"carnival")
@@ -3613,12 +3667,25 @@ def extract_dial(text, ref='', raw_ref=''):
         # Diamond mentioned but no color — just "Diamond"
         return 'Diamond'
     
-    # Baguette dial variants — "black baguette", etc.
+    # Baguette dial variants — "black baguette", "ice blue baguette", etc.
+    # ORDERING IS CRITICAL: Ice Blue must precede generic Blue — "ice blue" contains \bblue\b
+    # which would cause "Ice Blue Baguette" to be misclassified as "Blue Baguette" if
+    # the generic blue check fires first.
     has_baguette_dial = bool(re.search(r'\bbaguette\b|\bbag\b', t))
     if has_baguette_dial and not is_baguette:
+        if re.search(r'\bice\s*blue\b', t): return 'Ice Blue Baguette'   # MUST precede Blue
+        if re.search(r'\bmint\s*green\b', t): return 'Mint Green Baguette'  # MUST precede Green
         if re.search(r'\bblack\b', t): return 'Black Baguette'
         if re.search(r'\bblue\b', t): return 'Blue Baguette'
         if re.search(r'\bchampagne\b', t): return 'Champagne Baguette'
+        if re.search(r'\bsundust\b', t): return 'Sundust Baguette'
+        if re.search(r'\bpink\b', t): return 'Pink Baguette'
+        if re.search(r'\bcarnelian\b', t): return 'Carnelian Baguette'
+        if re.search(r'\bgreen\b', t): return 'Green Baguette'
+        if re.search(r'\bwhite\b', t): return 'White Baguette'
+        if re.search(r'\bsilver\b', t): return 'Silver Baguette'
+        if re.search(r'\bsalmon\b', t): return 'Salmon Baguette'
+        if re.search(r'\bchocolate\b', t): return 'Chocolate Baguette'
     
     # ── Index type detection for Datejust family ──
     # Detect Roman/Stick/Fluted Motif/Palm index types — only for DJ refs
@@ -3894,11 +3961,17 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_gold = re.match(r'(\d+)', ref)
         if _rb_gold and _rb_gold.group(1)[:3] in ('126', '128', '228', '116', '118', '278', '279', '336'):
             dial = 'Champagne'
-    # "Coral" on OP = Red (Rolex official is "coral red" but dealers call it "Red")
+    # "Coral" on OP refs: preserve as "Coral" when the ref explicitly lists Coral as a distinct
+    # valid dial (separate from Red). Only remap to Red when Coral is not in the valid dial list
+    # but Red is — meaning the dealer's "coral" description points to the Red SKU.
+    # NOTE: rolex_dial_options.json lists BOTH "Coral" AND "Red" for most OP refs (they are
+    # genuinely different dial finishes: Coral = soft orange-red, Red = vivid candy red).
     if dial == 'Coral' and ref:
         _rb_coral = re.match(r'(\d+)', ref)
         if _rb_coral and _rb_coral.group(1)[:3] in ('124', '126', '277'):
-            dial = 'Red'
+            # Only remap Coral → Red when this ref has no Coral option but does have Red
+            if _valid_dials and 'Coral' not in _valid_dials and 'Red' in _valid_dials:
+                dial = 'Red'
     # "Rhodium" → "Grey" (Rolex uses both, industry prefers Grey)
     if dial and dial.startswith('Rhodium'):
         dial = dial.replace('Rhodium', 'Grey')
