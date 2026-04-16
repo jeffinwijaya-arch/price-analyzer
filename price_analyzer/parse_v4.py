@@ -3060,6 +3060,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)
     # "eisenk" → "eisenkiesel" (Day-Date 40 pebble/flint stone dial)
     t = re.sub(r'\beisenkies(?:el)?\b', 'eisenkiesel', t)
+    # "eisen" alone → "eisenkiesel" for DD refs (228235/128235/228238/128238/218235/228236).
+    # Standalone "eisen" (German for "iron") uniquely identifies the Eisenkiesel stone dial on
+    # Day-Date refs. NOT applied globally — "eisen" could appear in other contexts (e.g. brand names).
+    if ref:
+        _rb_eisen = re.match(r'(\d+)', ref)
+        _rb_eisen_b = _rb_eisen.group(1) if _rb_eisen else ''
+        if _rb_eisen_b in ('228235', '128235', '228238', '128238', '218235', '228236'):
+            t = re.sub(r'\beisen\b(?!kiesel)', 'eisenkiesel', t)
     # "jubilee dial" → "celebration" (Jubilee Motif / Celebration dial)
     t = re.sub(r'\bjubilee\s+dial\b', 'celebration', t)
     # "jubilee motif" → "celebration" (official alternate name for the Jubilee Motif dial)
@@ -3134,6 +3142,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bywl\b', 'yml', t)
     # "yellow mineral lacquer" / "yellow mineral" → yml (verbose Daytona YML descriptions)
     t = re.sub(r'\byellow\s+mineral(?:\s+lacquer)?\b', 'yml', t)
+    # "mineral yellow" → yml (reversed word order seen in some EU/SG dealer listings)
+    t = re.sub(r'\bmineral\s+yellow\b', 'yml', t)
     # "mineral lacquer" alone → yml (Daytona YG refs where the YML is the only lacquer option)
     if ref:
         _rb_ml = re.match(r'(\d+)', ref)
@@ -3218,7 +3228,7 @@ def extract_dial(text, ref='', raw_ref=''):
         _op_grp_exact = {'126000', '126031', '126034', '114200', '114300'}
         _op_grp_pfx = ('124', '134', '277', '276')
         if _rb_grp_b in _op_grp_exact or _rb_grp_b[:3] in _op_grp_pfx:
-            t = re.sub(r'\bgrp\b', 'grape', t)
+            t = re.sub(r'\bgrp\b|\bgrpe\b', 'grape', t)
     # "bb" = bright blue (Datejust 126xxx, 278xxx, 279xxx; Pearlmaster 336xxx/326xxx)
     # 336934 Sky-Dweller and 326934/326935 Pearlmaster refs offer a genuine Bright Blue dial.
     if ref and re.match(r'^(126|278|279|336|326)', ref):
@@ -4419,10 +4429,11 @@ def extract_dial(text, ref='', raw_ref=''):
             dial = 'Bright Blue'
             _index_type = ''
         # else: keep as 'Blue' — 126200 plain Blue is a distinct valid dial
-    # ── 126334 Azzurro Blue → Azzurro normalization ──
-    # Rolex's official dial name for the DJ41 Fluted Bezel blue dial is "Azzurro" (not "Azzurro Blue").
-    # "Azzurro Blue" appears in market shorthand but the catalog-correct term is "Azzurro".
-    if dial == 'Azzurro Blue' and _ref_base == '126334':
+    # ── 126334 / 126234 Azzurro Blue → Azzurro normalization ──
+    # Rolex's official dial name for the DJ41 Fluted Bezel (126334) and DJ36 Fluted Bezel (126234)
+    # blue dial is "Azzurro" (not "Azzurro Blue"). "Azzurro Blue" appears in market shorthand
+    # but the catalog-correct term is "Azzurro" for both fluted-bezel DJ refs.
+    if dial == 'Azzurro Blue' and _ref_base in ('126334', '126234'):
         dial = 'Azzurro'
 
     # Append index type for Datejust family (Roman, Stick, Fluted Motif, Palm)
