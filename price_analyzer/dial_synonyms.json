@@ -1,5 +1,5 @@
 {
-    "_comment": "Canonical dial → synonyms. Applied at data load + search. Use _ref_specific for per-ref overrides.",
+    "_comment": "Canonical dial \u2192 synonyms. Applied at data load + search. Use _ref_specific for per-ref overrides.",
     "Grey": [
         "Slate",
         "Rhodium",
@@ -15,8 +15,8 @@
     "Grey Stick": [
         "Rhodium Stick"
     ],
-    "Grey Ombré": [
-        "Ombré Slate"
+    "Grey Ombr\u00e9": [
+        "Ombr\u00e9 Slate"
     ],
     "Champagne": [
         "Golden",
@@ -208,7 +208,11 @@
         "Candy P",
         "CandyPink",
         "Pale Pink",
-        "Baby Pink"
+        "Baby Pink",
+        "Cotton Candy",
+        "Soft Pink",
+        "Blush Pink",
+        "Pastel Pink"
     ],
     "Olive Green": [
         "Olive",
@@ -217,16 +221,31 @@
         "Olv Grn",
         "Olive-Green",
         "Verde Oliva",
-        "Olivgrün"
+        "Olivgr\u00fcn"
     ],
     "Salmon": [
         "Saumon",
         "Salmon Pink",
-        "Rosé Saumon"
+        "Ros\u00e9 Saumon"
     ],
     "Grape": [
         "Aubergine Purple",
-        "Grape Purple"
+        "Grape Purple",
+        "Grpe"
+    ],
+    "Aubergine": [
+        "Eggplant",
+        "Eggplant Purple",
+        "Egg Plant",
+        "Auber",
+        "Aubergine Dial"
+    ],
+    "Pistachio": [
+        "Pistachio Green",
+        "Pistache",
+        "Pistachio Grn",
+        "Pist Green",
+        "Pistacchio"
     ],
     "Ice Blue": [
         "Glacier Blue",
@@ -241,24 +260,24 @@
         "Stella Turquoise",
         "Stella"
     ],
-    "Ombré": [
+    "Ombr\u00e9": [
         "Ombre",
         "Smoky"
     ],
-    "Green Ombré": [
+    "Green Ombr\u00e9": [
         "Green Smoke",
         "Smoke Green"
     ],
-    "Chocolate Ombré": [
+    "Chocolate Ombr\u00e9": [
         "Chocolate Smoke",
         "Choco Smoke"
     ],
-    "Ombré Slate": [
+    "Ombr\u00e9 Slate": [
         "Slate Smoke",
         "Grey Smoke",
         "Smoke Slate"
     ],
-    "Red Ombré": [
+    "Red Ombr\u00e9": [
         "Red Smoke",
         "Smoke Red"
     ],
@@ -413,13 +432,13 @@
         "_comment4": "Rainbow Daytonas — fixed dial models, override any misparsed catalog descriptions",
         "126598": {
             "Champagne Diamond": "Black",
-            "Champagne Pavé": "Black",
+            "Champagne Pav\u00e9": "Black",
             "Golden set with diamonds": "Black",
             "Rainbow": "Black"
         },
         "126595": {
             "Sundust Diamond": "Sundust",
-            "Sundust Pavé": "Sundust",
+            "Sundust Pav\u00e9": "Sundust",
             "Sundust set with diamonds": "Sundust",
             "Rainbow": "Sundust"
         },
