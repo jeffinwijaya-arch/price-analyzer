@@ -38,7 +38,7 @@ def _load_config():
     """Load config.json, falling back to defaults if missing."""
     cfg_path = BASE_DIR / 'config.json'
     defaults = {
-        'exchange_rates': {'USD':1.0,'HKD':0.1282,'AED':0.272,'CAD':0.72,'EUR':1.08,'GBP':1.27,'SGD':0.75,'USDT':1.0},
+        'exchange_rates': {'USD':1.0,'HKD':0.128,'AED':0.272,'CAD':0.72,'EUR':1.08,'GBP':1.27,'SGD':0.75,'USDT':1.0},
         'import_fees': {'HK':{'tiers':[{'max_usd':10000,'fee':250},{'max_usd':30000,'fee':350},{'max_usd':75000,'fee':450},{'max_usd':150000,'fee':550},{'max_usd':999999999,'fee':700}]},'EU':{'wc_adder':300},'US':{'wc_adder':250}},
         'bnib_age_cap_months': 18,
         'stale_listing_days': 5,
@@ -114,31 +114,6 @@ REF_MODELS = _ref_data.get('ref_models', {})
 REF_VALID_BRACELETS = _ref_data.get('ref_bracelets', {})
 DIAL_TO_OFFICIAL = _ref_data.get('dial_to_official', {})
 
-# ── Populate REF_VALID_DIALS from rolex_dial_options.json ────────────
-# reference_data.json['ref_dials'] is empty; rolex_dial_options.json is
-# the authoritative per-ref dial catalogue.  Expand each option to also
-# include its canonical name (if the options file uses a synonym, e.g.
-# "Slate" for canonical "Grey") and all known synonyms (so stored values
-# like "Tiffany Blue" validate against a ref whose options list says
-# "Turquoise").
-_rolex_dial_opts_raw = _load_json(BASE_DIR / 'rolex_dial_options.json')
-_dial_syn_raw_rdv    = _load_json(BASE_DIR / 'dial_synonyms.json')
-_syn_to_can_rdv  = {}   # synonym  → canonical
-_can_to_syns_rdv = {}   # canonical → [synonyms]
-for _c, _ss in _dial_syn_raw_rdv.items():
-    if _c.startswith('_') or not isinstance(_ss, list): continue
-    _can_to_syns_rdv[_c] = _ss
-    for _s in _ss:
-        _syn_to_can_rdv[_s] = _c
-for _r, _dials in _rolex_dial_opts_raw.items():
-    if _r not in REF_VALID_DIALS and isinstance(_dials, list):
-        _exp = set(_dials)
-        for _d in list(_dials):
-            if _d in _syn_to_can_rdv:  _exp.add(_syn_to_can_rdv[_d])      # e.g. Slate→Grey
-            if _d in _can_to_syns_rdv: _exp.update(_can_to_syns_rdv[_d])  # e.g. Grey→all synonyms
-        REF_VALID_DIALS[_r] = list(_exp)
-del _rolex_dial_opts_raw, _dial_syn_raw_rdv
-
 # ── Per-ref dial/bracelet from SKU DB (dynamic, not hardcoded) ──
 # Single-option refs: auto-fill. Multi-option refs: require or omit.
 MULTI_DIAL_REFS = set()    # refs where dial is REQUIRED (>1 option)
@@ -181,170 +156,42 @@ for _r, _d in (_cat.get('refs', {})).items():
 # ── Multi-Brand Support: Patek Philippe & Audemars Piguet ────
 # Brand detection: returns 'Rolex', 'Patek', 'AP', or None
 PATEK_REFS_DB = {
-    # ── Aquanaut ──
-    '5164A': {'model': 'Aquanaut Travel Time SS', 'family': 'Aquanaut', 'retail': 40700, 'dials': ['Anthracite Grey'], 'case_mm': 41},
-    '5164G': {'model': 'Aquanaut Travel Time WG', 'family': 'Aquanaut', 'retail': 55000, 'dials': ['Blue-Grey'], 'case_mm': 41},
-    '5164R': {'model': 'Aquanaut Travel Time RG', 'family': 'Aquanaut', 'retail': 52260, 'dials': ['Brown'], 'case_mm': 41},
-    '5167A': {'model': 'Aquanaut', 'family': 'Aquanaut', 'retail': 27550, 'dials': ['Anthracite Grey', 'Brown', 'Blue'], 'case_mm': 40},
+    '5164R': {'model': 'Aquanaut Travel Time', 'family': 'Aquanaut', 'retail': 52260, 'dials': ['Brown'], 'case_mm': 41},
+    '5167A': {'model': 'Aquanaut', 'family': 'Aquanaut', 'retail': 27550, 'dials': ['Black', 'Brown', 'Blue'], 'case_mm': 40},
     '5167R': {'model': 'Aquanaut RG', 'family': 'Aquanaut', 'retail': 44490, 'dials': ['Brown'], 'case_mm': 40},
-    '5168G': {'model': 'Aquanaut WG', 'family': 'Aquanaut', 'retail': 52260, 'dials': ['Blue', 'Green'], 'case_mm': 42.2},
-    '5168R': {'model': 'Aquanaut RG', 'family': 'Aquanaut', 'retail': 49960, 'dials': ['Aqua Blue'], 'case_mm': 42.2},
-    '5968A': {'model': 'Aquanaut Chrono', 'family': 'Aquanaut', 'retail': 47550, 'dials': ['Anthracite Grey', 'Blue', 'Green', 'Orange'], 'case_mm': 42.2},
-    '5968G': {'model': 'Aquanaut Chrono WG', 'family': 'Aquanaut', 'retail': 78870, 'dials': ['Blue'], 'case_mm': 42.2},
-    '5968R': {'model': 'Aquanaut Chrono RG', 'family': 'Aquanaut', 'retail': 72000, 'dials': ['Brown'], 'case_mm': 42.2},
-    '5267/200A': {'model': 'Aquanaut Luce', 'family': 'Aquanaut', 'retail': 28440, 'dials': ['Green'], 'case_mm': 38.8},
-    '5261R': {'model': 'Aquanaut Luce RG', 'family': 'Aquanaut', 'retail': 48000, 'dials': ['Brown'], 'case_mm': 38.8},
-    # ── Nautilus ──
-    '5711/1A': {'model': 'Nautilus', 'family': 'Nautilus', 'retail': 35070, 'dials': ['Blue', 'White', 'Green', 'Olive Green'], 'case_mm': 40, 'discontinued': True},
-    '5711/1R': {'model': 'Nautilus RG', 'family': 'Nautilus', 'retail': 89640, 'dials': ['Green', 'Brown'], 'case_mm': 40},
-    '5711/110P': {'model': 'Nautilus Platinum', 'family': 'Nautilus', 'retail': 0, 'dials': ['Anthracite Grey'], 'case_mm': 40},
+    '5711/1A': {'model': 'Nautilus Blue', 'family': 'Nautilus', 'retail': 35070, 'dials': ['Blue', 'White', 'Green', 'Olive Green'], 'case_mm': 40, 'discontinued': True},
+    '5711/1R': {'model': 'Nautilus RG', 'family': 'Nautilus', 'retail': 89640, 'dials': ['Green'], 'case_mm': 40},
     '5712/1A': {'model': 'Nautilus Moon Phase', 'family': 'Nautilus', 'retail': 44380, 'dials': ['Blue'], 'case_mm': 40},
-    '5712/1R': {'model': 'Nautilus Moon Phase RG', 'family': 'Nautilus', 'retail': 85000, 'dials': ['Brown'], 'case_mm': 40},
-    '5712G': {'model': 'Nautilus Moon Phase WG Leather', 'family': 'Nautilus', 'retail': 55000, 'dials': ['Blue'], 'case_mm': 40},
-    '5712R': {'model': 'Nautilus Moon Phase RG Leather', 'family': 'Nautilus', 'retail': 55000, 'dials': ['Grey'], 'case_mm': 40},
-    '5811/1G': {'model': 'Nautilus WG', 'family': 'Nautilus', 'retail': 69000, 'dials': ['Blue'], 'case_mm': 41},
+    '5811/1G': {'model': 'Nautilus Blue WG', 'family': 'Nautilus', 'retail': 69000, 'dials': ['Blue'], 'case_mm': 41},
     '5980/1A': {'model': 'Nautilus Chrono', 'family': 'Nautilus', 'retail': 60950, 'dials': ['Blue', 'Black'], 'case_mm': 40.5},
     '5980/1R': {'model': 'Nautilus Chrono RG', 'family': 'Nautilus', 'retail': 159530, 'dials': ['Black', 'Chocolate'], 'case_mm': 40.5},
-    '5980R': {'model': 'Nautilus Chrono RG Leather', 'family': 'Nautilus', 'retail': 132030, 'dials': ['Blue', 'Brown', 'Chocolate'], 'case_mm': 40.5},
-    '5990/1A': {'model': 'Nautilus Travel Time Chrono', 'family': 'Nautilus', 'retail': 73030, 'dials': ['Blue-Grey'], 'case_mm': 40.5},
-    '5990/1R': {'model': 'Nautilus Travel Time RG', 'family': 'Nautilus', 'retail': 135000, 'dials': ['Blue'], 'case_mm': 40.5},
-    '5726/1A': {'model': 'Nautilus Annual Cal', 'family': 'Nautilus', 'retail': 47550, 'dials': ['Blue-Grey', 'Blue'], 'case_mm': 40.5},
-    '5726A': {'model': 'Nautilus Annual Cal', 'family': 'Nautilus', 'retail': 42000, 'dials': ['Anthracite Grey'], 'case_mm': 40.5},
-    '5740/1G': {'model': 'Nautilus Perpetual Calendar', 'family': 'Nautilus', 'retail': 159000, 'dials': ['Blue'], 'case_mm': 40},
-    '7118/1200R': {'model': 'Ladies Nautilus RG', 'family': 'Nautilus', 'retail': 56750, 'dials': ['Silver', 'Golden Brown'], 'case_mm': 35.2},
-    '7118/1200A': {'model': 'Ladies Nautilus SS', 'family': 'Nautilus', 'retail': 32880, 'dials': ['Blue', 'Grey'], 'case_mm': 35.2},
-    '7118/1A': {'model': 'Ladies Nautilus SS', 'family': 'Nautilus', 'retail': 30120, 'dials': ['Blue', 'Grey'], 'case_mm': 35.2},
-    '7118/1R': {'model': 'Ladies Nautilus RG', 'family': 'Nautilus', 'retail': 52000, 'dials': ['Silver', 'Golden Brown'], 'case_mm': 35.2},
+    '5980R': {'model': 'Nautilus Chrono RG Leather', 'family': 'Nautilus', 'retail': 132030, 'dials': ['Black', 'Chocolate'], 'case_mm': 40.5},
+    '5990/1A': {'model': 'Nautilus Travel Time Chrono', 'family': 'Nautilus', 'retail': 73030, 'dials': ['Blue'], 'case_mm': 40.5},
+    '5726/1A': {'model': 'Nautilus Annual Cal', 'family': 'Nautilus', 'retail': 47550, 'dials': ['Blue'], 'case_mm': 40.5},
+    '7118/1200R': {'model': 'Ladies Nautilus RG', 'family': 'Nautilus', 'retail': 56750, 'dials': ['Brown'], 'case_mm': 35.2},
     '7010/1G': {'model': 'Ladies Nautilus WG', 'family': 'Nautilus', 'retail': 40970, 'dials': ['Blue'], 'case_mm': 32},
-    # ── Complications ──
-    '5905/1A': {'model': 'Annual Cal Chrono SS', 'family': 'Complications', 'retail': 60000, 'dials': ['Black', 'Blue', 'Green'], 'case_mm': 42},
-    '5905R': {'model': 'Annual Cal Chrono RG', 'family': 'Complications', 'retail': 82000, 'dials': ['Black', 'Blue'], 'case_mm': 42},
-    '5960/1A': {'model': 'Annual Cal Chrono SS', 'family': 'Complications', 'retail': 55000, 'dials': ['Grey', 'Blue'], 'case_mm': 40.5},
-    '5960A': {'model': 'Annual Cal Chrono SS', 'family': 'Complications', 'retail': 52000, 'dials': ['Blue'], 'case_mm': 40.5},
-    '5960R': {'model': 'Annual Cal Chrono RG', 'family': 'Complications', 'retail': 72000, 'dials': ['Grey'], 'case_mm': 40.5},
-    '5935A': {'model': 'World Time Flyback Chrono', 'family': 'Complications', 'retail': 72000, 'dials': ['Black', 'Blue', 'Salmon'], 'case_mm': 41.5},
-    '5205G': {'model': 'Annual Calendar WG', 'family': 'Complications', 'retail': 50000, 'dials': ['Blue', 'Grey'], 'case_mm': 40},
-    '5205R': {'model': 'Annual Calendar RG', 'family': 'Complications', 'retail': 50000, 'dials': ['Grey', 'Brown', 'Olive Green'], 'case_mm': 40},
-    '5212A': {'model': 'Weekly Calendar', 'family': 'Complications', 'retail': 38000, 'dials': ['Silver'], 'case_mm': 40},
-    '5396G': {'model': 'Annual Calendar WG', 'family': 'Complications', 'retail': 52000, 'dials': ['Silver', 'Blue', 'Grey', 'White'], 'case_mm': 38.5},
-    '5396R': {'model': 'Annual Calendar RG', 'family': 'Complications', 'retail': 52000, 'dials': ['Silver', 'Grey', 'Brown', 'Green'], 'case_mm': 38.5},
-    '5524G': {'model': 'Calatrava Pilot Travel Time WG', 'family': 'Complications', 'retail': 55000, 'dials': ['Blue'], 'case_mm': 42},
-    '5524R': {'model': 'Calatrava Pilot Travel Time RG', 'family': 'Complications', 'retail': 55000, 'dials': ['Brown'], 'case_mm': 42},
-    '5230G': {'model': 'World Time WG', 'family': 'Complications', 'retail': 62000, 'dials': ['Blue'], 'case_mm': 38.5},
-    '5230R': {'model': 'World Time RG', 'family': 'Complications', 'retail': 62000, 'dials': ['Grey'], 'case_mm': 38.5},
-    '5146G': {'model': 'Annual Calendar WG', 'family': 'Complications', 'retail': 48000, 'dials': ['Silver', 'Blue'], 'case_mm': 39, 'discontinued': True},
-    '5146R': {'model': 'Annual Calendar RG', 'family': 'Complications', 'retail': 48000, 'dials': ['Silver', 'Grey'], 'case_mm': 39, 'discontinued': True},
-    '6000G': {'model': 'Calatrava Annual Calendar WG', 'family': 'Complications', 'retail': 42000, 'dials': ['Blue', 'Silver', 'Green'], 'case_mm': 37},
-    '6000R': {'model': 'Calatrava Annual Calendar RG', 'family': 'Complications', 'retail': 42000, 'dials': ['Grey'], 'case_mm': 37},
-    '5235/50G': {'model': 'Regulator WG', 'family': 'Complications', 'retail': 48000, 'dials': ['Grey'], 'case_mm': 40.5},
-    # ── Chronograph ──
-    '5170G': {'model': 'Chronograph WG', 'family': 'Chronograph', 'retail': 75000, 'dials': ['Black', 'Silver'], 'case_mm': 39.4},
-    '5170R': {'model': 'Chronograph RG', 'family': 'Chronograph', 'retail': 75000, 'dials': ['Black', 'Silver'], 'case_mm': 39.4},
-    '5170P': {'model': 'Chronograph Pt', 'family': 'Chronograph', 'retail': 110000, 'dials': ['Blue'], 'case_mm': 39.4},
-    '5172G': {'model': 'Chronograph WG', 'family': 'Chronograph', 'retail': 60000, 'dials': ['Blue', 'Silver'], 'case_mm': 41},
-    # ── Grand Complications ──
-    '5270G': {'model': 'Perpetual Calendar Chrono WG', 'family': 'Grand Complications', 'retail': 195000, 'dials': ['Blue', 'White', 'Salmon', 'Green'], 'case_mm': 41},
-    '5270P': {'model': 'Perpetual Calendar Chrono Pt', 'family': 'Grand Complications', 'retail': 210000, 'dials': ['Salmon', 'Blue', 'Green'], 'case_mm': 41},
-    '5270R': {'model': 'Perpetual Calendar Chrono RG', 'family': 'Grand Complications', 'retail': 195000, 'dials': ['Charcoal Grey'], 'case_mm': 41},
-    '5320G': {'model': 'Perpetual Calendar WG', 'family': 'Grand Complications', 'retail': 105000, 'dials': ['Blue'], 'case_mm': 40},
-    '5327G': {'model': 'Perpetual Calendar WG', 'family': 'Grand Complications', 'retail': 98000, 'dials': ['Blue', 'White'], 'case_mm': 39},
-    '5327R': {'model': 'Perpetual Calendar RG', 'family': 'Grand Complications', 'retail': 98000, 'dials': ['Silver'], 'case_mm': 39},
-    '5236P': {'model': 'In-Line Perpetual Calendar Pt', 'family': 'Grand Complications', 'retail': 130000, 'dials': ['Blue'], 'case_mm': 41.3},
-    '5180/1G': {'model': 'Skeleton WG', 'family': 'Grand Complications', 'retail': 120000, 'dials': ['Skeleton'], 'case_mm': 39},
-    '5180/1R': {'model': 'Skeleton RG', 'family': 'Grand Complications', 'retail': 120000, 'dials': ['Skeleton'], 'case_mm': 39},
-    '5140G': {'model': 'Perpetual Calendar WG', 'family': 'Grand Complications', 'retail': 90000, 'dials': ['Silver'], 'case_mm': 37.2, 'discontinued': True},
-    '5140P': {'model': 'Perpetual Calendar Pt', 'family': 'Grand Complications', 'retail': 115000, 'dials': ['Blue'], 'case_mm': 37.2, 'discontinued': True},
-    '3940G': {'model': 'Perpetual Calendar WG', 'family': 'Grand Complications', 'retail': 60000, 'dials': ['Silver'], 'case_mm': 36, 'discontinued': True},
-    '5531R': {'model': 'World Time Minute Repeater RG', 'family': 'Grand Complications', 'retail': 600000, 'dials': ['Brown'], 'case_mm': 40.2},
-    '5531G': {'model': 'World Time Minute Repeater WG', 'family': 'Grand Complications', 'retail': 600000, 'dials': ['Blue'], 'case_mm': 40.2},
-    '6102R': {'model': 'Sky Moon Celestial RG', 'family': 'Grand Complications', 'retail': 450000, 'dials': ['Blue'], 'case_mm': 42},
-    '6102P': {'model': 'Sky Moon Celestial Pt', 'family': 'Grand Complications', 'retail': 450000, 'dials': ['Blue'], 'case_mm': 42},
-    '6102T': {'model': 'Sky Moon Celestial Ti', 'family': 'Grand Complications', 'retail': 380000, 'dials': ['Blue'], 'case_mm': 42},
-    # ── Calatrava ──
-    '5196G': {'model': 'Calatrava WG', 'family': 'Calatrava', 'retail': 27000, 'dials': ['Blue', 'White'], 'case_mm': 37},
-    '5196R': {'model': 'Calatrava RG', 'family': 'Calatrava', 'retail': 27000, 'dials': ['Grey', 'Brown'], 'case_mm': 37},
-    '5227G': {'model': 'Calatrava WG', 'family': 'Calatrava', 'retail': 37000, 'dials': ['Blue', 'White', 'Charcoal Grey'], 'case_mm': 39},
-    '5227R': {'model': 'Calatrava RG', 'family': 'Calatrava', 'retail': 37000, 'dials': ['Brown', 'White', 'Charcoal Grey'], 'case_mm': 39},
-    '5227J': {'model': 'Calatrava YG', 'family': 'Calatrava', 'retail': 37000, 'dials': ['Silver'], 'case_mm': 39},
-    '5119G': {'model': 'Calatrava WG', 'family': 'Calatrava', 'retail': 22000, 'dials': ['White'], 'case_mm': 36, 'discontinued': True},
-    '5120G': {'model': 'Calatrava WG', 'family': 'Calatrava', 'retail': 25000, 'dials': ['Silver'], 'case_mm': 35, 'discontinued': True},
-    # ── Vintage Chronograph ──
-    '5070J': {'model': 'Chronograph YG', 'family': 'Chronograph', 'retail': 55000, 'dials': ['Silver'], 'case_mm': 42, 'discontinued': True},
-    '5070P': {'model': 'Chronograph Pt', 'family': 'Chronograph', 'retail': 80000, 'dials': ['Blue'], 'case_mm': 42, 'discontinued': True},
-    '5070R': {'model': 'Chronograph RG', 'family': 'Chronograph', 'retail': 55000, 'dials': ['Brown'], 'case_mm': 42, 'discontinued': True},
+    '5968A': {'model': 'Aquanaut Chrono', 'family': 'Aquanaut', 'retail': 47550, 'dials': ['Blue', 'Green', 'Orange'], 'case_mm': 42.2},
 }
 
 AP_REFS_DB = {
-    # ── Royal Oak Time Only ──
-    '15202ST': {'model': 'Royal Oak Jumbo', 'family': 'Royal Oak', 'retail': 32900, 'dials': ['Blue', 'Grey'], 'case_mm': 39, 'discontinued': True},
-    '15202IP': {'model': 'Royal Oak Jumbo IP', 'family': 'Royal Oak', 'retail': 61400, 'dials': ['Blue'], 'case_mm': 39},
-    '15202BC': {'model': 'Royal Oak Jumbo BC', 'family': 'Royal Oak', 'retail': 75000, 'dials': ['Blue'], 'case_mm': 39},
-    '15202OR': {'model': 'Royal Oak Jumbo RG', 'family': 'Royal Oak', 'retail': 55000, 'dials': ['Blue', 'Grey'], 'case_mm': 39, 'discontinued': True},
-    '15202XT': {'model': 'Royal Oak Jumbo XT', 'family': 'Royal Oak', 'retail': 65000, 'dials': ['Blue'], 'case_mm': 39},
-    '15300ST': {'model': 'Royal Oak 39', 'family': 'Royal Oak', 'retail': 18900, 'dials': ['Blue', 'Grey', 'Black'], 'case_mm': 39, 'discontinued': True},
-    '15400ST': {'model': 'Royal Oak 41', 'family': 'Royal Oak', 'retail': 22400, 'dials': ['Blue', 'Grey', 'Black', 'White'], 'case_mm': 41, 'discontinued': True},
-    '15400OR': {'model': 'Royal Oak 41 RG', 'family': 'Royal Oak', 'retail': 45000, 'dials': ['Black', 'Grey', 'Silver'], 'case_mm': 41, 'discontinued': True},
-    '15450ST': {'model': 'Royal Oak 37 SS', 'family': 'Royal Oak', 'retail': 22000, 'dials': ['Blue', 'Grey', 'Black', 'Silver'], 'case_mm': 37, 'discontinued': True},
     '15500ST': {'model': 'Royal Oak 41', 'family': 'Royal Oak', 'retail': 27200, 'dials': ['Blue', 'Grey', 'Black', 'White'], 'case_mm': 41},
-    '15500OR': {'model': 'Royal Oak 41 RG', 'family': 'Royal Oak', 'retail': 50000, 'dials': ['Black'], 'case_mm': 41},
-    '15500TI': {'model': 'Royal Oak 41 Ti', 'family': 'Royal Oak', 'retail': 35000, 'dials': ['Blue'], 'case_mm': 41},
-    # 15510ST.OO.1220ST.06 = Royal Oak 41 Tiffany Blue (2022 limited, hallmark Tiffany dial)
-    '15510ST': {'model': 'Royal Oak 41', 'family': 'Royal Oak', 'retail': 29400, 'dials': ['Blue', 'Grey', 'Black', 'White', 'Green', 'Khaki Green', 'Silver', 'Sand', 'Brown', 'Tiffany Blue'], 'case_mm': 41},
-    '15510OR': {'model': 'Royal Oak 41 RG', 'family': 'Royal Oak', 'retail': 52000, 'dials': ['Blue', 'Grey'], 'case_mm': 41},
-    '15510TI': {'model': 'Royal Oak 41 Ti', 'family': 'Royal Oak', 'retail': 38000, 'dials': ['Blue'], 'case_mm': 41},
-    '15550ST': {'model': 'Royal Oak 37', 'family': 'Royal Oak', 'retail': 30000, 'dials': ['Blue', 'Ice Blue', 'Grey', 'White', 'Salmon', 'Green', 'Khaki Green', 'Silver'], 'case_mm': 37},
-    '15550SR': {'model': 'Royal Oak 37 TT', 'family': 'Royal Oak', 'retail': 43500, 'dials': ['Blue', 'Ice Blue', 'Grey', 'White'], 'case_mm': 37},
-    '15550BA': {'model': 'Royal Oak 37 YG', 'family': 'Royal Oak', 'retail': 55000, 'dials': ['Blue'], 'case_mm': 37},
-    '15551ST': {'model': 'Royal Oak 37 Diamond', 'family': 'Royal Oak', 'retail': 38700, 'dials': ['Blue', 'Ice Blue', 'Grey', 'Black', 'White', 'Green', 'Salmon'], 'case_mm': 37},
-    '15551OR': {'model': 'Royal Oak 37 Diamond RG', 'family': 'Royal Oak', 'retail': 60000, 'dials': ['Blue', 'Ice Blue', 'Grey', 'White'], 'case_mm': 37},
-    # ── Royal Oak Skeleton / Double Balance ──
-    '15407ST': {'model': 'Royal Oak Double Balance Wheel', 'family': 'Royal Oak', 'retail': 62000, 'dials': ['Grey'], 'case_mm': 41},
-    '15407OR': {'model': 'Royal Oak Skeleton RG', 'family': 'Royal Oak', 'retail': 89900, 'dials': ['Blue'], 'case_mm': 41},
-    '15412OR': {'model': 'Royal Oak Skeleton RG', 'family': 'Royal Oak', 'retail': 95000, 'dials': ['Grey', 'Blue'], 'case_mm': 41},
-    '15416CE': {'model': 'Royal Oak Skeleton Ceramic', 'family': 'Royal Oak', 'retail': 85000, 'dials': ['Black'], 'case_mm': 41},
-    # ── Royal Oak Chrono ──
-    # 26238ST.OO.1234ST.02 = Royal Oak Chrono Tiffany Blue (2022 limited, ~HKD 330k)
-    '26238ST': {'model': 'Royal Oak Chrono', 'family': 'Royal Oak', 'retail': 38200, 'dials': ['Blue', 'Tiffany Blue'], 'case_mm': 42},
-    '26240ST': {'model': 'Royal Oak Chrono', 'family': 'Royal Oak', 'retail': 40700, 'dials': ['Grey', 'Blue', 'Black', 'Green', 'Silver', 'Sand', 'Salmon', 'Brown'], 'case_mm': 41},
-    '26240OR': {'model': 'Royal Oak Chrono RG', 'family': 'Royal Oak', 'retail': 72000, 'dials': ['Blue', 'Grey'], 'case_mm': 41},
-    '26315ST': {'model': 'Royal Oak Chrono', 'family': 'Royal Oak', 'retail': 34000, 'dials': ['White', 'Blue'], 'case_mm': 38, 'discontinued': True},
-    '26320ST': {'model': 'Royal Oak Chrono', 'family': 'Royal Oak', 'retail': 32000, 'dials': ['White', 'Blue'], 'case_mm': 41, 'discontinued': True},
-    '26320OR': {'model': 'Royal Oak Chrono RG', 'family': 'Royal Oak', 'retail': 60000, 'dials': ['White', 'Brown'], 'case_mm': 41, 'discontinued': True},
+    '15510ST': {'model': 'Royal Oak 41', 'family': 'Royal Oak', 'retail': 29400, 'dials': ['Blue', 'Grey', 'Black', 'White', 'Green', 'Khaki Green', 'Silver', 'Sand', 'Brown'], 'case_mm': 41},
+    '15202ST': {'model': 'Royal Oak Jumbo', 'family': 'Royal Oak', 'retail': 32900, 'dials': ['Blue'], 'case_mm': 39, 'discontinued': True},
+    '15400ST': {'model': 'Royal Oak 41', 'family': 'Royal Oak', 'retail': 22400, 'dials': ['Blue', 'Grey', 'Black', 'White'], 'case_mm': 41, 'discontinued': True},
+    '15300ST': {'model': 'Royal Oak 39', 'family': 'Royal Oak', 'retail': 18900, 'dials': ['Blue', 'Grey', 'Black'], 'case_mm': 39, 'discontinued': True},
+    '26240ST': {'model': 'Royal Oak Chrono', 'family': 'Royal Oak', 'retail': 40700, 'dials': ['White', 'Blue', 'Black', 'Green', 'Grey', 'Sand', 'Salmon', 'Brown'], 'case_mm': 41},
+    '26238ST': {'model': 'Royal Oak Offshore Chrono', 'family': 'Royal Oak Offshore', 'retail': 38200, 'dials': ['Blue'], 'case_mm': 42},
     '26331ST': {'model': 'Royal Oak Chrono', 'family': 'Royal Oak', 'retail': 34800, 'dials': ['White', 'Blue', 'Black'], 'case_mm': 41},
-    '26331OR': {'model': 'Royal Oak Chrono RG', 'family': 'Royal Oak', 'retail': 65000, 'dials': ['Black', 'Blue', 'Brown'], 'case_mm': 41},
+    '77350SR': {'model': 'Ladies Royal Oak', 'family': 'Royal Oak', 'retail': 30200, 'dials': ['Silver'], 'case_mm': 34},
+    '15202IP': {'model': 'Royal Oak Jumbo', 'family': 'Royal Oak', 'retail': 61400, 'dials': ['Blue'], 'case_mm': 39},
+    '26470ST': {'model': 'Royal Oak Offshore Chrono', 'family': 'Royal Oak Offshore', 'retail': 34500, 'dials': ['White', 'Blue', 'Black'], 'case_mm': 42},
+    '15550ST': {'model': 'Royal Oak 37', 'family': 'Royal Oak', 'retail': 30000, 'dials': ['Blue', 'Grey', 'White', 'Salmon', 'Green', 'Khaki Green', 'Silver'], 'case_mm': 37},
+    '15550SR': {'model': 'Royal Oak 37 TT', 'family': 'Royal Oak', 'retail': 43500, 'dials': ['Blue', 'Grey', 'White'], 'case_mm': 37},
+    '15551ST': {'model': 'Royal Oak 37 Diamond', 'family': 'Royal Oak', 'retail': 38700, 'dials': ['Blue', 'Grey', 'Black', 'White', 'Green', 'Salmon'], 'case_mm': 37},
+    '15720ST': {'model': 'Royal Oak Offshore Diver', 'family': 'Royal Oak Offshore', 'retail': 28500, 'dials': ['Blue', 'Green', 'Khaki'], 'case_mm': 42},
     '26715OR': {'model': 'Royal Oak Chrono RG', 'family': 'Royal Oak', 'retail': 75000, 'dials': ['Blue', 'Grey'], 'case_mm': 41},
-    # ── Royal Oak Perpetual Calendar ──
-    '26574ST': {'model': 'Royal Oak Perpetual Calendar', 'family': 'Royal Oak', 'retail': 85000, 'dials': ['Blue', 'White'], 'case_mm': 41},
-    '26579CE': {'model': 'Royal Oak Perpetual Calendar Ceramic', 'family': 'Royal Oak', 'retail': 120000, 'dials': ['Black'], 'case_mm': 41},
-    '26586IP': {'model': 'Royal Oak Perpetual Calendar', 'family': 'Royal Oak', 'retail': 150000, 'dials': ['Black'], 'case_mm': 41},
-    '26606ST': {'model': 'Royal Oak Perpetual Calendar', 'family': 'Royal Oak', 'retail': 90000, 'dials': ['Blue'], 'case_mm': 41},
-    # ── Royal Oak Offshore ──
-    '15710ST': {'model': 'Royal Oak Offshore Diver', 'family': 'Royal Oak Offshore', 'retail': 26500, 'dials': ['Black', 'Blue', 'White', 'Orange', 'Green'], 'case_mm': 42, 'discontinued': True},
-    '15720ST': {'model': 'Royal Oak Offshore Diver', 'family': 'Royal Oak Offshore', 'retail': 28500, 'dials': ['Blue', 'Green', 'Khaki', 'Black', 'Tiffany Blue'], 'case_mm': 42},
-    '26170ST': {'model': 'Royal Oak Offshore Chrono', 'family': 'Royal Oak Offshore', 'retail': 28000, 'dials': ['White', 'Blue', 'Black'], 'case_mm': 42, 'discontinued': True},
-    '26400IO': {'model': 'Royal Oak Offshore Chrono TT', 'family': 'Royal Oak Offshore', 'retail': 45000, 'dials': ['Black', 'Blue'], 'case_mm': 44},
-    '26400SO': {'model': 'Royal Oak Offshore Chrono SS/Ceramic', 'family': 'Royal Oak Offshore', 'retail': 42000, 'dials': ['Black', 'Blue'], 'case_mm': 44},
-    '26400RO': {'model': 'Royal Oak Offshore Chrono RG', 'family': 'Royal Oak Offshore', 'retail': 65000, 'dials': ['Black'], 'case_mm': 44},
-    '26405CE': {'model': 'Royal Oak Offshore Chrono Ceramic', 'family': 'Royal Oak Offshore', 'retail': 48000, 'dials': ['Black'], 'case_mm': 44},
-    '26405NR': {'model': 'Royal Oak Offshore Chrono', 'family': 'Royal Oak Offshore', 'retail': 42000, 'dials': ['Black'], 'case_mm': 44},
-    '26420ST': {'model': 'Royal Oak Offshore Chrono', 'family': 'Royal Oak Offshore', 'retail': 38000, 'dials': ['Blue', 'Grey', 'Green', 'Black'], 'case_mm': 43},
-    '26420OR': {'model': 'Royal Oak Offshore Chrono RG', 'family': 'Royal Oak Offshore', 'retail': 62000, 'dials': ['Black', 'Blue'], 'case_mm': 43},
-    '26420CE': {'model': 'Royal Oak Offshore Chrono Ceramic', 'family': 'Royal Oak Offshore', 'retail': 45000, 'dials': ['Black', 'Blue'], 'case_mm': 43},
-    '26420TI': {'model': 'Royal Oak Offshore Chrono Ti', 'family': 'Royal Oak Offshore', 'retail': 40000, 'dials': ['Blue', 'Grey'], 'case_mm': 43},
-    '26420SO': {'model': 'Royal Oak Offshore Chrono SS/Ceramic', 'family': 'Royal Oak Offshore', 'retail': 42000, 'dials': ['Black'], 'case_mm': 43},
-    '26470ST': {'model': 'Royal Oak Offshore Chrono', 'family': 'Royal Oak Offshore', 'retail': 34500, 'dials': ['White', 'Blue', 'Black', 'Brown'], 'case_mm': 42},
-    '26470OR': {'model': 'Royal Oak Offshore Chrono RG', 'family': 'Royal Oak Offshore', 'retail': 60000, 'dials': ['Black', 'Blue'], 'case_mm': 42},
-    '26400AU': {'model': 'Royal Oak Offshore Chrono YG', 'family': 'Royal Oak Offshore', 'retail': 70000, 'dials': ['Black', 'Blue'], 'case_mm': 44},
-    # ── Ladies Royal Oak ──
-    '77350SR': {'model': 'Ladies Royal Oak 34 TT', 'family': 'Royal Oak', 'retail': 30200, 'dials': ['Silver'], 'case_mm': 34},
-    '77350ST': {'model': 'Ladies Royal Oak 34', 'family': 'Royal Oak', 'retail': 22000, 'dials': ['Blue', 'Silver', 'Green'], 'case_mm': 34},
-    '77351ST': {'model': 'Ladies Royal Oak 34 Diamond', 'family': 'Royal Oak', 'retail': 28000, 'dials': ['Blue', 'Silver'], 'case_mm': 34},
-    '67650ST': {'model': 'Ladies Royal Oak 33', 'family': 'Royal Oak', 'retail': 18000, 'dials': ['Blue', 'Grey', 'Silver'], 'case_mm': 33},
-    # ── Royal Oak 33 Ladies (15210xx series) ──
-    '15210ST': {'model': 'Royal Oak 33 Ladies SS', 'family': 'Royal Oak', 'retail': 20000, 'dials': ['Blue', 'Grey', 'Black', 'Green', 'White'], 'case_mm': 33},
-    '15210OR': {'model': 'Royal Oak 33 Ladies RG', 'family': 'Royal Oak', 'retail': 35000, 'dials': ['Blue', 'Grey', 'Black'], 'case_mm': 33},
-    '15210CR': {'model': 'Royal Oak 33 Ladies WG', 'family': 'Royal Oak', 'retail': 38000, 'dials': ['Blue', 'Grey', 'Black'], 'case_mm': 33},
-    '15210QT': {'model': 'Royal Oak 33 Ladies Quartz', 'family': 'Royal Oak', 'retail': 22000, 'dials': ['Blue', 'Grey', 'Green', 'Gradient'], 'case_mm': 33},
+    '15407OR': {'model': 'Royal Oak Skeleton RG', 'family': 'Royal Oak', 'retail': 89900, 'dials': ['Blue'], 'case_mm': 41},
+    '26579CE': {'model': 'Royal Oak Perpetual Calendar', 'family': 'Royal Oak', 'retail': 120000, 'dials': ['Black'], 'case_mm': 41},
 }
 
 VC_REFS_DB = {
@@ -382,8 +229,7 @@ PATEK_RETAIL = {r: d['retail'] for r, d in PATEK_REFS_DB.items()}
 AP_RETAIL = {r: d['retail'] for r, d in AP_REFS_DB.items()}
 
 # Patek ref pattern: 4-5 digits, optional /digits, optional letter(s), optional -digits
-# [A-Za-z]{0,2} handles lowercase suffixes like '5980/1ar' (= 5980/1A RG rubber)
-PATEK_REF_RE = re.compile(r'\b([3-7]\d{3}(?:/\d{1,4})?[A-Za-z]{0,2})(?:-\d{3})?\b')
+PATEK_REF_RE = re.compile(r'\b([3-7]\d{3}(?:/\d{1,4})?[A-Z]{0,2})(?:-\d{3})?\b')
 # AP ref pattern: 5 digits + 2-letter suffix
 AP_REF_RE = re.compile(r'\b(\d{5}[A-Z]{2})(?:\.\w+)?\b')
 # VC ref pattern: 4-5 digits + optional V + / + 3 digits + letter(s), optional -suffix
@@ -405,38 +251,9 @@ for _r, _d in PATEK_EXPANDED.items():
 for _r, _d in AP_EXPANDED.items():
     if _r not in AP_REFS_DB:
         AP_REFS_DB[_r] = {'model': _d['model'], 'family': _d['family'], 'retail': _d.get('price_mid', 0), 'dials': [], 'case_mm': 0}
-# RM family→default dial: most RM models are skeletonized; exceptions have colored dials
-_RM_FAMILY_DIALS = {
-    'RM 035': ['Skeletonized'], 'RM 030': ['Skeletonized'], 'RM 055': ['Skeletonized'],
-    'RM 027': ['Skeletonized'], 'RM 029': ['Skeletonized'], 'RM 052': ['Skeletonized'],
-    'RM 63': ['Skeletonized'], 'RM 69': ['Skeletonized'], 'RM 88': ['Skeletonized'],
-    'RM UP-01': ['Skeletonized'],
-    # RM 019: Tourbillon Spider — spider web dial
-    'RM 019': ['Spider', 'White', 'Black', 'Pink'],
-    # RM 011: many LEs + NTPT variants
-    'RM 011': ['Black', 'White', 'Silver', 'Blue', 'Grey', 'Orange', 'Red', 'Green'],
-    'RM 010': ['Silver', 'Black', 'White', 'Blue', 'Grey'],
-    'RM 016': ['Silver', 'Black', 'White', 'Blue', 'Grey'],
-    # RM 067/67: many sport editions — Red, White, Blue, Green, Orange, etc.
-    'RM 67': ['Black', 'White', 'Blue', 'Grey', 'Red', 'Green', 'Orange', 'Salmon', 'MOP'],
-    # RM 07: ladies — vast variety of dials
-    'RM 07': ['White', 'Black', 'Blue', 'Pink', 'Red', 'MOP', 'Purple', 'Orange',
-              'Salmon', 'Grey', 'Brown', 'Green'],
-    # RM 037: ladies — similar variety
-    'RM 037': ['White', 'Black', 'Blue', 'Pink', 'Red', 'MOP', 'Purple', 'Orange',
-               'Salmon', 'Grey', 'Brown', 'Green'],
-    # RM 65: many sport/LE versions
-    'RM 65': ['Grey', 'Black', 'White', 'Blue', 'Red', 'Green', 'Orange', 'Brown'],
-    # RM 72: tourbillon — skeleton or coloured
-    'RM 72': ['Grey', 'Black', 'White', 'Skeleton', 'Blue', 'Brown'],
-    # RM 30: various
-    'RM 30': ['Grey', 'Black', 'White', 'Blue', 'Red', 'Brown'],
-}
 for _r, _d in RM_EXPANDED.items():
     if _r not in RM_REFS_DB:
-        _rm_family = _d.get('family', '')
-        _rm_dials = _RM_FAMILY_DIALS.get(_rm_family, ['Skeletonized'])
-        RM_REFS_DB[_r] = {'model': _d['model'], 'family': _d['family'], 'retail': _d.get('price_mid', 0), 'dials': _rm_dials}
+        RM_REFS_DB[_r] = {'model': _d['model'], 'family': _d['family'], 'retail': _d.get('price_mid', 0), 'dials': []}
 # ── Load expanded brand databases for detection (Omega, Breitling, Hublot, Panerai, JLC, Lange) ──
 OMEGA_EXPANDED = _load_json(BASE_DIR / 'omega_expanded.json')
 BREITLING_EXPANDED = _load_json(BASE_DIR / 'breitling_expanded.json')
@@ -1154,12 +971,6 @@ def validate_ref(raw, text=''):
     # return the base ref (e.g. 228238J → 228238, 128238XYZ → 128238)
     if b in ALL_REFS or b in SKU_DB:
         return canonicalize(b, text) or b
-    # Final fallback: accept refs present in rolex_dial_options.json catalogue
-    # (covers 190+ current-gen refs like 126000, 124300, 126334, 228238 that are
-    # absent from ALL_REFS because SKU_DB/RETAIL are currently empty)
-    _rdv_check = ref if ref in REF_VALID_DIALS else (b if b in REF_VALID_DIALS else None)
-    if _rdv_check:
-        return canonicalize(_rdv_check, text) or _rdv_check
     return None
 
 def get_model(ref):
@@ -1191,32 +1002,6 @@ for r, d in SKU_DB.items():
         PLATINUM_REFS.add(r)
         b = re.match(r'(\d+)', r)
         if b: PLATINUM_REFS.add(b.group(1))
-
-def _fuzzy_dial_match(dial, valid_dials):
-    """
-    Return the best matching entry from valid_dials for a parsed dial, or None.
-    Priority:
-      1. Exact case-insensitive match.
-      2. 'XXX Stick' / 'XXX Index' → 'XXX'  (strip marker-type suffix).
-      3. Parsed dial is a generic suffix of a specific valid option
-         (e.g. 'Blue' → 'Bright Blue'), only when the valid option ends
-         with ' <dial>' so 'Blue' doesn't accidentally match 'Blue Diamond'.
-    Deliberately does NOT match 'Grey' in 'Grey Diamond' — a diamond variant
-    is a different product, not just a generic dial.
-    """
-    dl = dial.lower()
-    for v in valid_dials:
-        if dl == v.lower(): return v
-    # Strip stick/index suffix ("Grey Stick" → "Grey")
-    _m = re.match(r'^(.+?)\s+(?:stick|index|indices)s?$', dl)
-    if _m:
-        base = _m.group(1)
-        for v in valid_dials:
-            if v.lower() == base: return v
-    # Generic color is end-word of a specific valid dial ("Blue" → "Bright Blue")
-    for v in valid_dials:
-        if v.lower().endswith(' ' + dl): return v
-    return None
 
 def validate_dial_ref(dial, ref):
     """Return False if dial is impossible for this ref. Also corrects known misidentifications."""
@@ -1283,7 +1068,7 @@ def correct_dial_for_ref(dial, ref):
     return dial
 
 # ── Currency ─────────────────────────────────────────────────
-FX_DEFAULT = CONFIG.get('exchange_rates', {'USD':1.0,'HKD':0.1282,'AED':0.272,'CAD':0.72,'EUR':1.08,'GBP':1.27,'SGD':0.75,'USDT':1.0})
+FX_DEFAULT = CONFIG.get('exchange_rates', {'USD':1.0,'HKD':0.128,'AED':0.272,'CAD':0.72,'EUR':1.08,'GBP':1.27,'SGD':0.75,'USDT':1.0})
 
 def _fetch_live_fx():
     """Fetch live exchange rates from exchangerate-api.com. Returns {curr: rate_to_usd} or None."""
@@ -1359,21 +1144,21 @@ GROUP_CURR = {
     'Luxytimepieces _Fan,Eric':'HKD',
     'The Watch Connect Wholesale Inventory':'HKD',
     'YAMA International Trading':'HKD',
+    'USA UK WATCH DEALERS ONLY':'HKD',
+    'USA_UK WATCH DEALERS ONLY':'HKD',
     'WATCH WORLD':'HKD',
     'Hk❤️watches':'HKD',
+    'Watch Dealer - LXR':'HKD',
+    'WatchFacts B2B Watch Trading Chat':'HKD',
+    'Global Dealers Group (Discussion)':'HKD',
     'Patek Philippe watch':'HKD',
-    # Mixed US/HK groups — DON'T set currency, let per-listing currency decide region:
-    # 'Watch Dealer - LXR' — mixed, has US and HK dealers
-    # 'WatchFacts B2B Watch Trading Chat' — mixed
-    # 'USA UK WATCH DEALERS ONLY' — mixed (despite name, lots of HK dealers)
-    # 'Global Dealers Group (Discussion)' — mixed
 }
 # Add emoji-named groups by keyword matching
 _HK_GROUP_KEYWORDS = ['Edelweiss', 'Crown Watches', 'D.L WATCHES', 'Only AP', '德利', 'Collectors Watch Market HK',
                       'HK Watch Trading', 'HK and Macau', 'Ak(', 'Audemars Piguet watch',
                       '皇御', 'Queen', 'carclina', 'Hung Fa', 'SunShine HK', '⑦⌚',
-                      'YAMA', 'WATCH WORLD', 'Hk❤']
-# Removed from HK keywords (mixed US/HK groups): Watch Dealer - LXR, WatchFacts B2B, Global Dealers, USA UK WATCH
+                      'YAMA', 'WATCH WORLD', 'Hk❤', 'Watch Dealer - LXR', 'WatchFacts B2B',
+                      'Global Dealers', 'USA UK WATCH']
 _EU_GROUP_KEYWORDS = ['UK & EU DEALERS']
 # Note: UK & EU DEALERS is EUR default — European dealers post bare EUR numbers
 def get_group_currency(group):
@@ -1395,63 +1180,19 @@ def get_group_currency(group):
             return 'EUR'
     return 'USD'
 
-# Country code → region override (used when seller phone is known).
-# Ordered so that longer prefixes take precedence over shorter ones.
-_PHONE_REGION_PREFIXES = [
-    ('+852', 'HK'),  # Hong Kong
-    ('+853', 'HK'),  # Macau — same secondary market as HK
-    ('+44',  'EU'),  # UK
-    ('+39',  'EU'),  # Italy
-    ('+31',  'EU'),  # Netherlands
-    ('+34',  'EU'),  # Spain
-    ('+32',  'EU'),  # Belgium
-    ('+1',   'US'),  # US / Canada (NANP: matches +12125551234 and +1 646... formats)
-]
-
-def _phone_region_hint(phone):
-    """Return region inferred from phone country code, or None if ambiguous."""
-    if not phone:
-        return None
-    p = phone.strip()
-    for prefix, rgn in _PHONE_REGION_PREFIXES:
-        if p.startswith(prefix):
-            return rgn
-    return None
-
-
-def get_region(group, phone=None):
-    """Determine listing region from group currency, with phone override.
-
-    Phone country-code takes precedence over group-derived currency so that:
-      • a +852 seller posting in a USD group is tagged 'HK'
-      • a +1  seller posting in an HK  group is tagged 'US'
-
-    Falls back to group-currency logic when phone is absent / ambiguous.
-    """
-    phone_rgn = _phone_region_hint(phone)
-    if phone_rgn is not None:
-        return phone_rgn
+def get_region(group):
     c = get_group_currency(group)
     if c == 'HKD': return 'HK'
     if c in ('EUR', 'GBP'): return 'EU'
     return 'US'
 
-# Match international phone formats: +852 6175 9024, +1 (646) 423-1094, +86 181 1874 3242,
-# +971 50 123 4567, +65 9123 4567, +44 7911 123456, +39 351 239 5744
-_PHONE_RE = re.compile(r'^\+?(?:852|86|1|971|65|44|39|853|60|886|84|90|66|31|34|32)\s*[\d\s\-\(\)]{6,}$|^\+?\d[\d\s\-\(\)]{6,}$')
+_PHONE_RE = re.compile(r'^\+?\d[\d\s\-]{6,}$')
 
 def extract_phone(name):
-    """Extract phone number from sender name if it looks like one.
-    Normalizes parenthesized US format: +1 (646) 423-1094 → +1 646 423 1094"""
+    """Extract phone number from sender name if it looks like one."""
     clean = name.strip()
     if _PHONE_RE.match(clean):
-        # Strip parens and normalize separators
-        normalized = re.sub(r'[()]', '', clean)
-        normalized = re.sub(r'[\s\-]+', ' ', normalized).strip()
-        # Ensure + prefix for international numbers
-        if normalized[0].isdigit() and len(re.sub(r'\D', '', normalized)) > 10:
-            normalized = '+' + normalized
-        return normalized
+        return re.sub(r'\s+', ' ', clean)
     return None
 
 def resolve_seller(name):
@@ -1502,16 +1243,12 @@ def currency_sanity(ref, price, curr):
                 if pusd > hi * 3.0 and lo * 0.5 <= hkd_usd <= hi * 2.0:
                     return price, 'HKD', hkd_usd
 
-    # Method 3: Absolute ceiling — very few sport Rolexes trade above $100K USD.
-    # Guard: skip flip for refs whose market max legitimately exceeds $75K
-    # (Day-Date YG/WG/Platinum, gem-set) — those can trade above $100K in USD.
+    # Method 3: Absolute ceiling — very few Rolexes trade above $100K USD
+    # If "USD" price > $100K and HKD conversion is plausible, it's almost certainly HKD
     if curr == 'USD' and pusd > 100_000:
-        _m3_range = _get_ref_price_range(ref)
-        _m3_ref_max = _m3_range[1] if _m3_range else 0
-        if _m3_ref_max == 0 or _m3_ref_max < 75_000:
-            hkd_usd = to_usd(price, 'HKD')
-            if 5_000 <= hkd_usd <= 200_000:
-                return price, 'HKD', hkd_usd
+        hkd_usd = to_usd(price, 'HKD')
+        if 5_000 <= hkd_usd <= 200_000:
+            return price, 'HKD', hkd_usd
 
     # If price is <10% of retail, it's almost certainly misparsed
     if retail > 0 and pusd < retail * 0.10:
@@ -1622,18 +1359,6 @@ def extract_price(text, default_curr='USD', ref=''):
         elif suffix.startswith('m'): val *= 1_000_000
         if ok(m.group(1), val): return val, mc
 
-    # European thousands-separator: "NNN.NNN" = NNN,NNN (HK/EU dealer format, e.g. 126.500 = HKD 126,500)
-    # Must come BEFORE standalone large number to prevent "126610 ... 98.500" → 126610 (wrong ref as price)
-    _euro_m = re.search(r'(?<![.,\d])(\d{1,3})\.(\d{3})(?![.\d])', text)
-    if _euro_m:
-        _euro_val = int(_euro_m.group(1)) * 1000 + int(_euro_m.group(2))
-        if not (1970 <= _euro_val <= 2030) and 2000 <= _euro_val <= 5_000_000:
-            _euro_raw = str(_euro_val)
-            _ref_digits = re.match(r'\d+', ref).group(0) if ref and re.match(r'\d+', ref) else ''
-            # Skip if the matched number equals the current listing's ref (it's the ref, not a price)
-            if not (_ref_digits and _euro_raw == _ref_digits):
-                return _euro_val, mc
-
     # Fallback: standalone large number
     for m in re.finditer(r'\b(\d[\d,]{2,7})\b', text):
         raw = m.group(1).replace(',','')
@@ -1650,9 +1375,6 @@ def extract_price(text, default_curr='USD', ref=''):
                 raw_s = m.group(1)
                 val = float(raw_s)
                 if val < 1: continue
-                # Skip if this is "NNN" from "NNN.NNN" European thousands format (handled above)
-                if re.match(r'\.\d{3}(?!\d)', text[m.end():]):
-                    continue
                 # "18.5" = $18,500? Check if val*1000 is in range
                 if val < 100 and lo_r >= 5000:
                     candidate = val * 1000
@@ -1692,70 +1414,36 @@ def _get_ref_price_range(ref):
 
 # ── Dial Extraction ──────────────────────────────────────────
 DIAL_PATS = [
-    (r'\bntpt\b', 'Black'),           # RM NTPT carbon-composite = Black
-    (r'\bcarbon\s*tpt\b', 'Black'),   # RM Carbon TPT = Black
-    # RM edition names → dial color (used in _emit_brand_listing for RM/Patek/AP)
-    (r'\bdark\s*night\b|\bbright\s*night\b|\bmisty\s*night\b|\bstarry\s*night\b', 'Black'),
-    (r'\bcherry\s*blossom\b|\bsakura\b', 'Pink'),   # RM07-01 Cherry Blossom / Sakura = Pink
-    (r'\bmancini\b', 'Black'),                       # RM11-01/04 Roberto Mancini = Black
-    # RM67-02 country/athlete editions — Black Carbon TPT skeleton
-    (r'\bitaly\b|\bgermany\b|\bgemeany\b|\bfrance\b|\bswitzer?land\b|\bjapan\b|\bbrasil\b|\bbrazil\b|\bspain\b|\bportugal\b|\bengland\b', 'Black'),
-    (r'\bmcl\b|\bmclaren\b', 'Grey'),   # RM11-03 McLaren — grey Carbon TPT skeleton
-    (r'\blebron\b|\bleborn\b', 'Black'), # RM65-01 LeBron James — Black Carbon TPT
-    (r'\bleclerc\b', 'Red'),             # RM72-01 Charles Leclerc — Red/White Quartz TPT
-    (r'\byohan\s*blake\b', 'Black'),     # RM61-01 Yohan Blake — black ceramic skeleton
-    (r'\bsnow\b', 'White'),              # RM72-01 WG Snow — white
-    # RM model-specific keywords
-    (r'\bnaked\b|\bbare\s*movement\b', 'Skeletonized'),  # RM "naked" = skeleton/transparent
-    (r'\bskull\b', 'Black'),             # RM52-01 Skull Tourbillon
-    (r'\bkiwi\b', 'Green'),              # RM37-01 Kiwi (green)
-    (r'\bspeedtail\b', 'Black'),         # RM40-01 McLaren Speedtail
-    (r'\bnadal\b', 'Skeletonized'),      # RM27-05 Nadal tourbillon
-    (r'\bgraffiti\b', 'Skeletonized'),   # RM68-01 Graffiti by Pharrell Williams
-    (r'\bgradient\b', 'Gradient'),       # AP 15210QT / Lady RO gradient dial
-    (r'\brainbow\b|\brbow\b', 'Rainbow'), # Day-Date / Daytona rainbow variant
-    # Generic
-    (r'\bbulls?\s*eye\b', 'Bulls Eye'), # Day-Date Bulls Eye dial
-    (r'\byellow\b', 'Yellow'),           # Yellow dial (OP, DJ, Daytona)
     (r'\bice\s*blue\b|\bib\b', 'Ice Blue'),
     (r'\bmediterranean\s*blue\b|\bmed\s*blue\b', 'Mediterranean Blue'),
-    (r'\btiffany\b|\btiff\b', 'Tiffany Blue'),    # Official Tiffany Blue dial (RM35-03, Patek 5711/1A-018, AP 15510ST/26238ST, etc.)
-    (r'\bflamingo\s+blue\b', 'Tiffany Blue'),     # Tudor BB Chrono M79360N-0024 "Tiffany Flamingo Blue" = Tiffany Blue family
-    (r'\bturquoise\b|\bturq\b', 'Turquoise'),      # Rolex Day-Date/Daytona turquoise stone/enamel dial
+    (r'\btiffany\b|\bturquoise\b', 'Turquoise Blue'),
     (r'\bmint\s*green\b|\bmint\b', 'Mint Green'),
     (r'\bolive\s*green\b|\bolive\b', 'Olive Green'),
     (r'\bpistachio\b|\bpis\b', 'Pistachio'),
     (r'\blavender\b', 'Lavender'),
-    (r'\bwimbledon\b|\bwimbo\b|\bwimb\b', 'Wimbledon'),
-    (r'\baubergine\b|\bviolet\b|\baub\b|\bpurp\b', 'Aubergine'),
+    (r'\bwimbledon\b|\bwimbo\b', 'Wimbledon'),
+    (r'\baubergine\b|\bviolet\b', 'Aubergine'),
     (r'\bmother[\s-]*of[\s-]*pearl\b|\bmop\b', 'MOP'),
     (r'\brhodium\b', 'Rhodium'),
-    (r'\bsundust\b|\bsun\s*dust\b|\bsd\b', 'Sundust'),
-    (r'\bsalmon\b', 'Salmon'),        # Patek 5935A, 5270P, AP 26240ST etc.
-    (r'\banth?racite\b', 'Anthracite Grey'),  # Patek/AP grey dials
-    (r'\bchocolate\b|\bchoco\b', 'Chocolate'),
-    (r'\bcoffee\b', 'Brown'),              # AP Offshore "coffee" = brown dial
-    (r'\bchampagne\b|\bchamp\b|\bchmpgn\b|\bchp\b', 'Champagne'),
+    (r'\bsundust\b|\bsun\b', 'Sundust'),
+    (r'\bchocolate\b|\bchoco?\b', 'Chocolate'),
+    (r'\bchampagne\b|\bchamp\b', 'Champagne'),
     (r'\bgolden\b', 'Golden'),
-    (r'\bmeteorite\b|\bmeteo\b|\bmete\b', 'Meteorite'),
+    (r'\bmeteorite\b', 'Meteorite'),
     (r'\bazzur+o\b', 'Azzurro Blue'),
     (r'\bbeige\b', 'Beige'),
-    (r'\bkhaki\b', 'Khaki Green'),    # AP khaki variants
     (r'\bpaul\s*newman\b|\bpn\b', 'Paul Newman'),
     (r'\bblack\b|\bblk\b', 'Black'),
     (r'\bdark\s*blue\b|\bdb\b', 'Dark Blue'),
     (r'\bblue\b|\bblu\b', 'Blue'),
     (r'\bwhite\b|\bwht\b', 'White'),
     (r'\bgreen\b|\bgrn\b', 'Green'),
-    (r'\borange\b', 'Orange'),        # Patek 5968A-019, AP 15710ST-04 etc.
-    (r'\bbrown\b', 'Brown'),          # Patek 5980R, AP 26240ST-08, VC 4500V/110R etc.
     (r'\bsilver\b|\bslv\b', 'Silver'),
     (r'\bslate\b', 'Slate'),
     (r'\bgrey\b|\bgray\b|\bgry\b|\bghost\b', 'Grey'),
     (r'\bpink\b', 'Pink'),
     (r'\bred\b', 'Red'),
     (r'\bcoral\b', 'Coral'),
-    (r'\byml\b', 'YML'),    # Rolex Yellow Mineral Lacquer (Daytona YG 116508 etc.)
 ]
 
 # Suffix → dial mappings. G suffix = diamond markers (NOT a dial color — need color from text)
@@ -1766,74 +1454,7 @@ SUFFIX_DIAL = {
     'BLNR': 'Black', 'BLRO': 'Black', 'GRNR': 'Black', 'CHNR': 'Black', 'VTNR': 'Black',
     'DB': 'D-Blue', 'PN': 'Paul Newman',
     'SA': 'Black', 'SATS': 'Black', 'SABR': 'Black', 'SN': 'Black',  # Rainbow/sapphire variants
-    'TBR': 'Black',  # Yacht-Master TBR variant (e.g. 226679TBR) — black dial
-    'GY': 'Grey',   # Dealer shorthand for Grey (e.g. 116519GY, 116508GY)
-    'BLOR': 'Black',  # Typo for BLRO (Batman/Pepsi GMT)
-    'GRNE': 'Black',  # Shorthand for GRNR (Sprite GMT green-black)
-    'RBOW': 'Rainbow',  # Rainbow bezel variant (Daytona Rainbow)
-    'RBW': 'Rainbow',   # Alternative Rainbow shorthand (e.g. 116598RBW) — same as RBOW
-    'SACO': 'Black',  # Daytona Everose Gold sapphire crystal variant (116578SACO) — black dial
-    'SANR': 'Black',  # Daytona Everose Gold sapphire crystal NR variant — black dial
-    'SARO': 'Black',  # Sapphire crystal variant (e.g. 126538SARO, 116759SARO) — black dial
-    'SARU': 'Black',  # Sapphire crystal variant (e.g. 126755SARU, 116759SARU) — black dial
-    'SACI': 'Black',  # Sapphire crystal variant (116589SACI, Daytona WG) — black dial
-    'GLNR': 'Black',  # Typo for GRNR (126710 Sprite GMT green/black bezel) — black dial
-    'GRMR': 'Black',  # Typo for GRNR (126710 Sprite GMT) — black dial
 }
-# Daytona YG/WG refs where LN = black ceramic bezel, NOT necessarily black dial.
-# These refs ship with multiple dial options (Black, Meteorite, Champagne, YML, etc.)
-# so LN suffix must NOT blindly override text-based dial keywords.
-_DAYTONA_LN_MULTI = frozenset({
-    '116515', '116518', '116519', '116520', '116521', '116528',  # prev-gen Everose/YG/WG Daytonas
-    '116508', '116509',  # prev-gen YG/WG Daytona (ceramic bezel): many dial options (Champagne, Meteorite, White…)
-    '126515', '126518', '126519', '126528',                      # curr-gen Everose/YG/WG Daytonas
-    '126508', '126509',  # curr-gen YG/WG Daytona (ceramic bezel): Champagne/YML/Green/Grey/Meteorite…
-    # 116515/126515 = Everose Daytona: LN = black ceramic bezel ONLY,
-    # dial is Sundust/Chocolate/Meteorite/White/etc — NEVER blindly Black from LN suffix.
-    '116500', '126500',  # Steel Daytona: LN = black ceramic bezel ONLY;
-                         # dial is Black OR White (Panda) — must not blindly return Black.
-    '116505', '126505',  # Everose Daytona (bracelet variant): same bezel-only LN rule.
-})
-# GMT refs where BLRO suffix does NOT fix the dial to Black.
-# 126719BLRO (Everose GMT Pepsi) ships with both Black AND Meteorite dial options.
-# BLRO marks the two-colour ceramic bezel only — the dial must be inferred from text.
-_GMT_BLRO_MULTI = frozenset({'126719', '116719'})
-# GMT-Master II YG refs where "GRNR" suffix marks the green/black ceramic bezel only —
-# the dial varies: standard = Black, but 2025 variant = Tiger Iron stone dial.
-# When text explicitly says "tiger iron", bypass GRNR→Black and fall through to text scan.
-_GMT_GRNR_MULTI = frozenset({'126718'})
-# Datejust/Lady-DJ/Day-Date refs where "TBR" in the ref means "Rolesor/Tridor two-tone bracelet"
-# (NOT the Yacht-Master black-dial TBR variant). For these refs, TBR is a bracelet
-# code only — the dial colour is carried by a FOLLOWING suffix (NG=MOP, LN=Black, etc.)
-# or by the text. Ref base digits that can have TBR-as-bracelet:
-_DJ_TBR_BRACELET_BASES = frozenset({
-    '279381', '279383', '279384', '279138', '279139',  # Lady DJ 28
-    '278271', '278273', '278274', '278275', '278288', '278289',  # Lady DJ 28 two-tone
-    '126231', '126233', '126234', '126281', '126283', '126284',  # DJ 36
-    '116231', '116233', '116234',  # DJ 36 prev-gen
-    '126331', '126333', '126334',  # DJ 41
-    # ── Day-Date 36 TT (128xxx TBR = Tridor/Rolesor bracelet code, NOT dial indicator) ──
-    # DD36 TT refs come with many dial options (Ice Blue, Turquoise, Carnelian, Rainbow, etc.)
-    '128158', '128238', '128239', '128240',
-    '128345', '128346', '128347', '128348', '128349', '128350',
-    '128395', '128396', '128397', '128398', '128399',
-    '128458', '128459',
-    # ── Day-Date 40 TT (228xxx TBR = Tridor/Rolesor bracelet code, NOT dial indicator) ──
-    # DD40 TT refs also come with many dial options (Ice Blue, Ombré, Meteorite, etc.)
-    '228238', '228239', '228240',
-    '228345', '228346', '228347', '228348', '228349', '228350',
-    '228396', '228397', '228398', '228399',
-    # ── Day-Date 36 Platinum (116576 TBR = President/Tridor bracelet code, NOT dial indicator) ──
-    # 116576 Day-Date 36 Platinum trades with TBR bracelet suffix but has multiple dial options
-    # (Arabic, Ice Blue, Black, Pavé). TBR must be bypassed so text parsing detects the actual dial.
-    '116576',
-    # ── Daytona gem-set refs where TBR = bracelet/variant code, NOT the YM black-dial marker ──
-    # 116598 = Daytona YG Sapphire baguette-bezel: Tiger Eye or other exotic stone dial options.
-    # 116588 = Daytona YG Diamond baguette-bezel: Tiger Eye, Pavé, or other exotic dial options.
-    # 126538 = Cosmograph Daytona WG: Champagne dial (TBR = bracelet style code in HK dealer groups).
-    # For all three, SUFFIX_DIAL['TBR']→'Black' is wrong — the actual dial must come from text.
-    '116598', '116588', '126538',
-})
 # Master reference dictionary (loaded once at startup for alias resolution)
 _master_dict_path = BASE_DIR / 'watch_reference_master.json'
 MASTER_DICT = _load_json(_master_dict_path) if _master_dict_path.exists() else {}
@@ -1848,8 +1469,7 @@ FIXED_DIAL = {
     '126613LB':'Blue','126613LN':'Black',
     '126618LB':'Blue','126618LN':'Black',
     '126619LB':'Black',  # WG Sub — black dial, blue bezel
-    '126655':'Black',
-    # NOTE: 126660 removed — Sea-Dweller 43mm has Blue (0001) AND Black variants; text detection handles it
+    '126655':'Black','126660':'Blue',
     '126710BLNR':'Black','126710BLRO':'Black','126710GRNR':'Black','126720VTNR':'Black',
     '126711CHNR':'Black','126713GRNR':'Black',
     '126525LN':'Black','126529LN':'Black',
@@ -1864,10 +1484,6 @@ FIXED_DIAL = {
     '116613LB':'Blue','116613LN':'Black',
     '116618LB':'Blue','116618LN':'Black',
     '116619LB':'Black',  # prev-gen WG Sub
-    '116619':'Black',    # WG Sub bare ref (no suffix) — always black
-    # Prev-prev gen Sub (40mm, 1988-2010)
-    '16610':'Black',     # Sub Date SS — always black
-    '16610LV':'Green',   # Sub Date Kermit (2003-2010) — always green
     '116680':'White',  # Yacht-Master II
     '116900':'Black',  # Explorer
     '126900':'Black',  # Air-King
@@ -1876,10 +1492,9 @@ FIXED_DIAL = {
     '127235':'White',  # 1908 39mm WG — only comes in white lacquer
     '127335':'White',  # 1908 39mm RG — white/pink (dealers call it white)
     '127236':'Ice Blue',  # 1908 39mm Platinum — only comes in Ice Blue
-    '136660DB':'D-Blue',   # Sea-Dweller Deepsea D-Blue "James Cameron" — always D-Blue gradient dial
+    '136660DB':'Black',  # Sea-Dweller Deepsea D-Blue (black dial, blue gradient)
     '116681':'White',    # Yacht-Master II SS/RG — always white
     '116688':'White',    # Yacht-Master II YG — always white
-    '116689':'White',    # Yacht-Master II White Gold — always white
     '116655':'Black',    # Yacht-Master 40 Oysterflex — always black
     '126710VTNR':'Black',  # GMT Violet/Black
     '116758SA':'Black',  # GMT Rainbow YG — always black
@@ -1887,15 +1502,9 @@ FIXED_DIAL = {
     '116759SN':'Black',  # GMT Saphir WG — always black
     '116695SATS':'Black',  # Daytona Rainbow — always black
     '116659SABR':'Black',  # Sub Rainbow — always black
-    '126555':'Black',    # Daytona YG Rainbow — default Black; giraffe/grossular text override returns Grossular
+    '126555':'Black',    # YM37 Rainbow — always black
     '126598':'Black',    # Daytona Rainbow new — always black
-    '116506':'Ice Blue',    # Prev-gen Daytona Platinum — only comes in Ice Blue
-    '126506':'Ice Blue',    # Daytona Platinum — only comes in Ice Blue
     '126595':'Sundust',  # Daytona Rainbow Everose — sundust dial
-    '116595':'Sundust',  # Daytona Everose Rainbow prev-gen — sundust dial
-    '116595RBOW':'Sundust',  # full prev-gen ref with RBOW suffix
-    '116285BBR':'Chocolate',  # Daytona Everose brown baguette diamond bezel — chocolate dial
-    '116589':'MOP',      # prev-gen Daytona WG Rainbow (diamond baguette bezel) — always MOP
     '126579':'MOP',      # Daytona Rainbow WG — MOP dial
     '126589':'MOP',      # Daytona Rainbow WG Oysterflex — MOP dial
     '126539':'Black',    # Daytona Rainbow WG bracelet — black dial
@@ -1904,481 +1513,13 @@ FIXED_DIAL = {
     '14060':'Black',     # Sub no-date — always black
     '14060M':'Black',    # Sub no-date — always black
     '116710':'Black',    # GMT-Master II (no bezel suffix) — always black
-    '214270':'Black',    # Explorer 39mm — always black
-    # ── Additional verified Rolex single-dial refs ──
-    '124273':'Black',    # Explorer 36 TT YG — always black
-    '226627':'Black',    # Yacht-Master 42 Titanium — always black
-    '226658':'Black',    # Yacht-Master 42 YG Oysterflex — always black
-    '126715CHNR':'Black',  # GMT-Master II Everose Root Beer — always black
-    '126528LN':'Black',  # Daytona Le Mans YG — always black
-    '136660':'Black',   # Sea-Dweller Deepsea SS 44mm — standard black dial (136660DB = D-Blue handled separately)
-    '116660':'Black',   # Sea-Dweller Deepsea SS 44mm prev-gen — standard black dial
-    '136668':'Blue',    # Sea-Dweller Deepsea YG (bare ref, no suffix) — always blue
-    '136668LB':'Blue',   # Sea-Dweller Deepsea YG — always blue
-    '268622':'Slate',    # Yacht-Master 37 SS/Platinum — always slate/rhodium
-    '52506':'Ice Blue',  # 1908 39mm Platinum — always ice blue
-    # ── Day-Date 36 WG diamond-set single-dial refs ──
-    '116189':'Blue',      # DD36 WG factory diamond bezel — always Blue dial
-    '116189BBR':'Blue',   # DD36 WG factory diamond bezel rubber strap — always Blue dial
-    '118365':'Blue',      # DD36 WG Diamond (full diamond) — always Blue dial
-    # ── Day-Date 36 WG Turquoise Pavé (128159/228159 RBR variants) ──
-    # 128159RBR and 228159RBR are the gem-set bracelet variants trading exclusively as
-    # Turquoise Pavé (turquoise stone dial + pavé diamond surround). The bare 128159/228159
-    # have multiple dial options and are NOT fixed here.
-    '128159RBR':'Turquoise Pavé',  # DD36 WG RBR — always Turquoise Pavé
-    '228159RBR':'Turquoise Pavé',  # DD40 WG RBR — always Turquoise Pavé
-    # ── Lady-Datejust 28 WG factory diamonds (non-RBR) ──
-    '279138':'MOP',       # Lady DJ 28 WG factory diamond bezel (no RBR) — always MOP
-    # ── Pearlmaster 39 single-dial refs ──
-    '326138':'White',     # Pearlmaster 39 YG — always White lacquer dial
-    '326139':'Black',     # Pearlmaster 39 WG — always Black lacquer dial
-    # NOTE: 126719BLRO = black AND blue AND meteorite dials — NOT fixed
-    # NOTE: 126500LN/116500LN = black AND white (panda) — NOT fixed
-    # NOTE: 126515LN/116515LN/126519LN/116519LN/116518LN = multiple dials — NOT fixed
-    # NOTE: 126718GRNR = black (standard) AND tiger iron (2025 variant) — NOT fixed
-    # NOTE: 226659 = black AND falcon's eye — NOT fixed
-    # ── Audemars Piguet single-dial refs ──
-    '15202ST':'Blue',    # Royal Oak Jumbo Extra-Thin SS — always blue
-    '16202ST':'Blue',    # Royal Oak Jumbo Extra-Thin SS (new gen) — always blue
-    # NOTE: 26238ST removed — ROO Chrono SS has 11 dials (Blue/Grey/Black/White/Orange/Green/etc) — NOT fixed
-    '26579CE':'Black',   # Royal Oak Perpetual Calendar Ceramic — always black
-    '15407OR':'Blue',    # Royal Oak Double Balance Wheel RG — always blue
-    # NOTE: 26715OR removed — ROO Offshore Diver RG has both Grey and Blue dials — NOT fixed
-    # ── Rolex additional single-dial refs ──
-    '116506A':'Ice Blue',  # Prev-gen Daytona Platinum A-variant — always Ice Blue
-    # NOTE: 116576 removed — Day-Date 36 Platinum Arabic has Black, Pavé, Ice Blue, Blue variants
-    '116695':'Pavé',       # Daytona Everose Gold — always Pavé (116695SATS=Black handled above)
-    '14270':'Black',       # Explorer I 36mm — always Black
-    '118366':'Ice Blue',   # Day-Date 36 Platinum — only produced in Ice Blue
-    '116621':'Chocolate',  # Yacht-Master 40 TT — always Chocolate
-    '116748':'Black',      # Datejust II 41 Diamond bezel — always Black
-    # ── GMT-Master II bare refs (single Black dial regardless of bezel suffix stated) ──
-    # Dealers sometimes drop the bezel suffix (BLNR/BLRO/GRNR/CHNR/VTNR) when listing.
-    # All current GMT-Master II variants ship with an exclusively Black dial.
-    '126711':'Black',      # GMT-Master II SS/TT CHNR bare ref — always Black
-    '126713':'Black',      # GMT-Master II YG GRNR bare ref — always Black
-    '126715':'Black',      # GMT-Master II Everose Root Beer CHNR bare ref — always Black
-    '126720':'Black',      # GMT-Master II SS VTNR bare ref (Violet/Black) — always Black
-    '126729':'Black',      # GMT-Master II Oysterflex VTNR bare ref — always Black
-    '116713':'Black',      # GMT-Master II SS prev-gen bare ref — always Black
-    '116718LN':'Black',    # GMT-Master II YG LN Root Beer (prev-gen) — always Black
-    '116719':'Black',      # GMT-Master II Everose Pepsi prev-gen bare ref — always Black
-    '116719BLRO':'Black',  # GMT-Master II Everose Pepsi prev-gen BLRO — only Black dial
-    '16710':'Black',       # GMT-Master II SS (1989-2007) — always Black
-    '16710BLNR':'Black',   # GMT-Master II SS Batman (2013-2007 era) — always Black
-    # ── Daytona single-dial refs not yet in FIXED_DIAL ──
-    '116285':'Champagne',  # Daytona YG factory diamond bezel (bare ref, no BBR) — always Champagne
-    '116588':'Tiger Eye',  # Daytona YG Diamond baguette bezel — ONLY Tiger Eye stone dial; no other option
-    # 116589SACI: SACI suffix in SUFFIX_DIAL gives 'Black' which is WRONG for this specific variant.
-    # 116589SACI is a Daytona WG with sapphire-crystal bezel whose ONLY valid dial is MOP.
-    # FIXED_DIAL fires before SUFFIX_DIAL, so this correctly overrides the SACI→Black default.
-    '116589SACI':'MOP',    # Daytona WG Sapphire Crystal bezel variant — ONLY MOP dial
-    # ── Miscellaneous single-dial Rolex refs ──
-    '15223':'Champagne',   # Rolex Date 34mm WG — always Champagne dial
-    '218349':'Silver',     # Day-Date II 40mm Everose Gold — always Silver dial
-    '268655':'Black',      # Yacht-Master 37 Oysterflex — always Black dial
-    '336259':'Black',      # Pearlmaster 39 Everose prev-gen — always Black lacquer dial
-    # NOTE: 116576 Day-Date 36 Platinum Arabic has Black, Pavé, Ice Blue, Blue variants — NOT fixed
-    # NOTE: 14000 has Blue, Black, Skeletonized variants in data — NOT fixed
-    # NOTE: 116528 Daytona YG has MOP, White, Black, Paul Newman — NOT fixed
-    # ── Lady DJ 28 / Day-Date single-dial corrections (suffix-override guard) ──
-    # These refs have ONLY ONE valid dial but their suffix (NG/TBR) would incorrectly
-    # return 'MOP' or 'Black' from SUFFIX_DIAL before reaching text-based detection.
-    # FIXED_DIAL fires before suffix check, so these always return the correct dial.
-    '127286':'Ice Blue',   # Lady DJ 28 TT Platinum (TBR=Rolesor bracelet code) — only Ice Blue
-    '127386':'Ice Blue',   # Lady DJ 28 WG TBR — only Ice Blue
-    '279178':'Silver',     # Lady DJ 28 WG (NG=MOP bezel marker, NOT the dial) — only Silver
-    '279139':'MOP',        # Lady DJ 28 WG RBR — only MOP
-    '278285':'MOP',        # Lady DJ 28 Everose two-tone — only MOP
-    '218206':'Ice Blue',   # Day-Date 36 Platinum prev-gen — only Ice Blue
-    # Day-Date rainbow / gem-set with one dial option
-    '128345':'Rainbow',    # Day-Date 36 Everose Rainbow bezel — only Rainbow
-    '128155':'Pavé',       # Day-Date 36 YG pavé dial — only Pavé
-    '128458':'Turquoise',  # Day-Date 36 Platinum turquoise stone dial — only Turquoise
-    '126535':'Sundust',    # Daytona Everose brown ceramic bezel — only Sundust
-    # ── Patek Philippe single-dial refs ──
-    '5811/1G':'Blue',    # Nautilus WG — always blue
-    '5712/1A':'Blue',    # Nautilus Moonphase SS — always blue
-    '5726/1A':'Blue',    # Nautilus Annual Calendar SS — always blue
-    '5990/1A':'Blue',    # Nautilus Travel Time Chrono SS — always blue
-    '5167A':'Black',     # Aquanaut SS — always black
-    '5167R':'Brown',     # Aquanaut RG — always brown
-    '5164R':'Brown',     # Aquanaut Travel Time RG — always brown
-    '5164A':'Brown',     # Aquanaut Travel Time SS — always brown (khaki-brown mosaic)
-    '5711/1R':'Green',   # Nautilus RG — final edition green dial
-    '5980/1R':'Black',   # Nautilus Chrono RG — always black
-    '5935A':'Salmon',    # Nautilus Travel Time Chrono SS — always salmon mosaic gradient dial
-    # NOTE: 5270P removed — has Salmon (-001), Green (-013/-014) variants; not single-dial
-    '7010/1G':'Blue',    # Ladies Nautilus WG — always blue
-    '5124G':'Blue',      # Gondolo WG — always blue
-    # ── Vacheron Constantin single-dial refs ──
-    '4520V/210A':'Blue', # Overseas SS — always blue (full ref with suffix)
-    # ── Tudor single-dial refs ──
-    'M79030N':'Black',   # Black Bay 58 — always black
-    'M79230N':'Black',   # Black Bay 41 — always black
-    'M79360':'Black',    # Black Bay Chrono — always black
-    'M79363N':'Black',   # Black Bay Chrono TT — always black
-    'M79000N':'Black',   # Black Bay 36 — always black
-    'M79210CNU-0001':'Black',  # Black Bay GMT — always black
-    'M79250BA':'Black',  # Black Bay Chrono 41mm — always black dial
-    'M79250BB':'Black',  # Black Bay Chrono 41mm BB variant — always black
-    'M79250BM':'Black',  # Black Bay Chrono 41mm BM variant — always black
-    'M79250N':'Black',   # Black Bay Chrono 41mm N variant — always black
-    'M79600-0001':'Black',     # Pelagos 39 — always black
-    'M79603-0001':'Black',     # Pelagos 39 TT — always black
-    'M79660-0001':'Black',     # Pelagos — always black
-    'M79680-0001':'Black',     # Pelagos FXD — always black
-    'M79018V-0001':'Green',    # Black Bay 58 18K — always green
-    'M28300-0001':'Black',     # Ranger — always black
-    'M28500-0001':'Black',     # Ranger 39 — always black
-    'M28600-0001':'Black',     # Ranger GMT — always black
-    'M7943A1A0NU-0001':'Black',  # Black Bay Ceramic — always black
-    # ── IWC single-dial refs ──
-    'IW388101':'Black',  # Pilot's Chrono Top Gun — always black
-    'IW389001':'Black',  # Pilot's Chrono Top Gun Ceratanium — always black
-    'IW389101':'Black',  # Pilot's Double Chrono Top Gun — always black
-    'IW389105':'Green',  # Pilot's Double Chrono Top Gun Woodland — always green
-    'IW377714':'Blue',   # Pilot's Chrono Le Petit Prince — always blue
-    'IW371605':'Blue',   # Portugieser Chrono — always blue
-    'IW371606':'Green',  # Portugieser Chrono — always green
-    'IW371620':'Grey',   # Portugieser Chrono — always grey
-    'IW329303':'Blue',   # Pilot's Watch Mark XX — always blue
-    'IW328205':'Silver', # Pilot's Watch Mark XX — always silver
-    'IW358304':'Blue',   # Pilot's Watch Big Pilot — always blue
-    'IW356517':'Green',  # Portofino — always green
-}
-
-# ── Rolex Sub-Catalog Code → Dial ────────────────────────────────────────────
-# Rolex uses 4-5 digit catalog sub-codes (e.g. "126509-0073", "116515-0041")
-# to identify specific dial/bracelet/bezel configurations. When a listing
-# contains "REFNUM-SUBCODE" and the sub-code is known, return the dial directly.
-# Derived from 2+ listings with 85%+ agreement. Covers 204 confirmed mappings.
-ROLEX_SUB_CATALOG = {
-    "114060-0002":"Black","116500-0001":"Black","116503-0004":"Black",
-    "116505-0008":"Champagne","116505-0009":"Pink","116505-0012":"Pink",
-    "116505-0017":"Sundust","116506-0001":"Ice Blue","116508-0001":"White",
-    "116508-0004":"Black","116509-0044":"White","116509-0055":"White",
-    "116509-0063":"White","116509-0071":"Blue","116509-0073":"Meteorite",
-    "116515-0012":"Black","116515-0015":"Chocolate","116515-0041":"Chocolate",
-    "116515-0055":"Meteorite","116515-0059":"Black","116515-0061":"Black",
-    "116518-0048":"YML","116523-0042":"Champagne Stick","116523-0047":"MOP",
-    "116576-0004":"Black","116610-0001":"Black","116610-0002":"Green",
-    "116613-0001":"Black","116618-97208":"Black","116622-78760":"Blue",
-    "116659-0002":"Black","116660-0001":"Black","116660-98210":"Black",
-    "116680-0002":"White","116688-78218":"White","116710-0001":"Black",
-    "116718-0001":"Black","116758-78208":"Black","116759-78209":"Black",
-    "118238-0105":"Champagne","118348-0018":"Champagne",
-    "124060-0001":"Black","124200-0001":"Silver","124270-0001":"Black",
-    # ── Oyster Perpetual 34/41 (124300) confirmed sub-codes ──
-    "124300-0001":"Silver","124300-0002":"Black","124300-0003":"Blue",
-    "124300-0004":"Yellow","124300-0006":"Tiffany Blue","124300-0007":"Red",
-    "124300-0018":"Celebration Tiffany Blue","124300-0019":"Grape",
-    # ── Oyster Perpetual 36 (126000) confirmed sub-codes ──
-    "126000-0001":"Silver","126000-0002":"Black","126000-0003":"Blue",
-    "126000-0004":"Yellow","126000-0005":"Green","126000-0006":"Tiffany Blue",
-    "126000-0007":"Coral","126000-0008":"Pink","126000-0009":"Blue",
-    "126000-0010":"Lavender","126000-0011":"Pistachio","126000-0012":"Turquoise",
-    "126000-0013":"Lavender","126000-0014":"Black",
-    "126000-0015":"Candy Pink","126000-0016":"Turquoise","126000-0017":"Pistachio",
-    "126000-0018":"Celebration Tiffany Blue","126000-0019":"Grape",
-    "126067-0001":"Black","126067-0002":"Black",
-    "126233-0015":"Champagne","126233-0029":"White","126233-0031":"Silver",
-    "126233-0036":"Grey",
-    "126234-0013":"Silver","126234-0015":"Black","126234-0017":"Blue",
-    "126234-0022":"Aubergine Roman","126234-0046":"Grey Roman",
-    "126234-0048":"Olive","126234-0051":"Green",
-    "126284-0029":"Blue Diamond",
-    "126300-0013":"Grey Roman",
-    "126331-0016":"Wimbledon",
-    "126333-0012":"Champagne",
-    "126334-0002":"Blue","126334-0004":"Silver","126334-0009":"White",
-    "126334-0018":"Black","126334-0022":"Wimbledon","126334-0028":"Green",
-    "126500-0001":"Black","126500-0002":"Black",
-    "126503-0001":"White","126503-0002":"Black","126503-0004":"Champagne",
-    "126505-0001":"Black","126505-0005":"Chocolate",
-    "126506-0001":"Ice Blue","126506-0002":"Blue Diamond",
-    "126508-0001":"White","126508-0002":"Black","126508-0004":"Black",
-    "126508-0005":"Champagne","126508-0006":"YML","126508-0008":"Green",
-    "126509-0001":"Black","126509-0003":"Grey",
-    "126515-0004":"Black","126515-0006":"Black",
-    "126518-0004":"Black","126518-0012":"Black",
-    "126519-0002":"Black","126519-0006":"Black",
-    "126528-0001":"Black","126529-0001":"Black",
-    "126600-0001":"Black","126600-0002":"Black","126603-0001":"Black",
-    "126610-0001":"Black","126610-0002":"Green",
-    "126613-0001":"Black",
-    "126621-0001":"Chocolate","126622-0001":"Grey","126622-0002":"Blue",
-    "126655-0002":"Black","126660-0001":"Blue",
-    "126679-0002":"Black",
-    "126710-0001":"Black","126710-0003":"Black",
-    "126711-0002":"Black","126713-0001":"Black",
-    "126715-0001":"Black","126718-0001":"Black","126718-0002":"Black",
-    "126719-0002":"Black","126719-0003":"Black",
-    "126755-0002":"Black","126900-0001":"Black",
-    "127234-0001":"White","127235-0001":"White","127334-0001":"White",
-    "128235-0029":"White","128235-0039":"Pavé","128235-0068":"Olive Green",
-    "128236-0008":"Ice Blue","128236-0009":"Ice Blue","128236-0018":"Ice Blue",
-    "128238-0008":"Champagne","128238-0022":"Brown","128238-0051":"Rainbow",
-    "128238-0071":"Turquoise","128238-0132":"Champagne",
-    "128239-0007":"White",
-    "173159-83139":"MOP Baguette",
-    "218206-8321":"Ice Blue","218206-83216":"Ice Blue",
-    "226658-0001":"Black","226659-0002":"Black",
-    "228206-0004":"Ice Blue",
-    "228235-0001":"Sundust","228235-0002":"Chocolate","228235-0003":"Chocolate",
-    "228235-0032":"White","228235-0045":"Black","228235-0053":"Chocolate",
-    "228236-0006":"Ice Blue","228236-0008":"Olive","228236-0012":"Ice Blue",
-    "228238-0002":"Silver","228238-0003":"Champagne","228238-0004":"Black",
-    "228238-0006":"Champagne","228238-0007":"Black","228238-0008":"Champagne",
-    "228238-0022":"Brown","228238-0042":"White","228238-0051":"Rainbow",
-    "228238-0059":"Onyx","228238-0067":"Black","228238-0071":"Turquoise",
-    "228238-0132":"Champagne",
-    "228239-0006":"White","228239-0007":"Blue","228239-0049":"Pavé",
-    "228239-0055":"Meteorite",
-    "228348-0040":"Green","228349-0001":"Silver Diamond",
-    "228398-0036":"Pavé",
-    "268622-0002":"Slate",
-    "278271-0004":"Chocolate Roman VI",
-    "278274-0025":"Aubergine Roman VI",
-    "279171-0015":"Skeletonized","279173-0014":"White Diamond",
-    "279174-0009":"Pink","279175-0019":"Aubergine",
-    "326138-0004":"Champagne",
-    "326235-0005":"Skeletonized","326235-0006":"Grey",
-    "326933-0001":"Champagne","326933-0002":"Black","326933-0005":"Black",
-    "326934-0001":"White","326934-0005":"Black",
-    "326935-0005":"White","326935-0007":"Grey",
-    "326938-0004":"Black",
-    "336235-0004":"Grey","336239-0002":"Black","336239-0003":"White",
-    "50535-0002":"White","52506-0002":"Ice Blue","52506-0003":"Ice Blue",
-    "52508-0002":"Black","52508-0006":"White","55020-0007":"Blue",
-    "57103-0003":"Champagne",
-    # Tudor / AP / Cartier sub-codes that appear as REFNUM-SUBCODE
-    "79210-0001":"Tiffany Blue","79950-0008":"White",
-    "91210-0002":"Tiffany Blue","91350-0005":"Black","91351-0003":"Black",
-    "91550-0004":"Wimbledon",
-    # ── Additional confirmed sub-catalog mappings (high-frequency listings) ──
-    # Daytona Everose brown ceramic bezel (126535): single-dial = Sundust (sub-codes are bracelet/serial variants)
-    "126535-0002":"Sundust","126535-0003":"Sundust","126535-0004":"Sundust",
-    # WG Submariner (116619): single dial = Black (sub-codes are serial/bracelet config variants)
-    "116619-97209":"Black","116619-97210":"Black",
-    # Oyster Perpetual 41 (124300): -0008 = Candy Pink lacquer dial
-    "124300-0008":"Candy Pink",
-    # ── Oyster Perpetual 41 (134300) confirmed sub-codes ──
-    # OP 41mm: Silver/Black/Green/MedBlue confirmed from reference catalog; CandyPink/Beige/Aubergine from listings
-    "134300-0001":"Silver","134300-0004":"Green","134300-0006":"Candy Pink",
-    "134300-0007":"Beige","134300-0008":"Black","134300-0009":"Med Blue",
-    "134300-0011":"Tiffany Blue","134300-0012":"Aubergine","134300-0013":"Candy Pink",
-    "134300-0018":"Celebration Tiffany Blue","134300-0019":"Grape",
-    # ── Oyster Perpetual 31 (277200) confirmed sub-codes ──
-    "277200-0001":"Silver","277200-0002":"Black","277200-0014":"Lavender",
-    "277200-0015":"Tiffany Blue","277200-0016":"Candy Pink",
-    "277200-0018":"Celebration Tiffany Blue","277200-0019":"Grape",
-    # ── Oyster Perpetual 28 (276200) confirmed sub-codes ──
-    "276200-0001":"Silver","276200-0004":"Champagne",
-    "276200-0007":"Tiffany Blue","276200-0008":"Candy Pink",
-    "276200-0018":"Celebration Tiffany Blue","276200-0019":"Grape",
-    # Lady Datejust 28 WG (279178): -0017 = Silver dial (standard WG smooth bezel config)
-    "279178-0017":"Silver",
-    # Day-Date II (218348): -0089 = Black (wave motif) dial variant
-    "218348-0089":"Black",
-    # Day-Date II (218235): -83215 = White dial (YG smooth bezel)
-    "218235-83215":"White",
-    # Datejust 36 prev-gen (116135): -0050 = specific dial config (Champagne stick)
-    "116135-0050":"Champagne",
 }
 
 def extract_dial(text, ref='', raw_ref=''):
-    # Pre-normalize known ref+suffix typos so all downstream suffix scans catch them
-    if text:
-        text = re.sub(r'(\d{5,6})BLOR\b', r'\1BLRO', text, flags=re.I)  # BLOR → BLRO
-        text = re.sub(r'(\d{5,6})GRNE\b', r'\1GRNR', text, flags=re.I)  # GRNE → GRNR
-        text = re.sub(r'(\d{5,6})GTNR\b', r'\1GRNR', text, flags=re.I)  # GTNR → GRNR (Sprite GMT typo)
-        text = re.sub(r'(\d{5,6})GLNR\b', r'\1GRNR', text, flags=re.I)  # GLNR → GRNR (Sprite GMT typo variant)
-        text = re.sub(r'(\d{5,6})GRMR\b', r'\1GRNR', text, flags=re.I)  # GRMR → GRNR (Sprite GMT typo variant)
-        # Pre-split dial color/name words directly concatenated to ref digits (no space).
-        # e.g. "126555GIRAFFE" → "126555 GIRAFFE" so FIXED_DIAL block's \bgiraffe\b regex fires.
-        # Without this, the word boundary \b fails between a digit (word char) and a letter (word char).
-        # Covers the most common premium dial keywords seen concatenated in HK/SG dealer messages.
-        text = re.sub(
-            r'(?<=\d)(giraffe|grossular|tiffany|tiff|otb|ctb|cltb|tb|ib|cp|mb|wimbledon|wimbo|meteorite|mete|ghost|mintgrn|mintgreen|pn|'
-            r'champagne|chocolate|panda|turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon|'
-            r'pistachio|lavender|aubergine|grape|beige|medblue|medbl|celebration|eggplant|amethyst|jade|stella)\b',
-            r' \1', text, flags=re.I
-        )
     # ── FIXED-DIAL MODELS: return IMMEDIATELY, no pattern matching ──
     # This MUST be first — prevents dial contamination from multi-ref messages
-    # where another ref's dial keywords appear in the same text block.
-    # EXCEPTION: explicit premium dial keywords in text override the fixed value —
-    # catches special-edition / limited-release variants (AP Tiffany ROO, Tudor Tiffany BB, etc.)
+    # where another ref's dial keywords appear in the same text block
     if ref and ref in FIXED_DIAL:
-        if text:
-            _fd_t = text.lower()
-            # Tiffany Blue override — fires when text explicitly names Tiffany dial color.
-            # GUARD: Patek refs (5xxx/7xxx) — "Tiffany" = Tiffany & Co. retailer stamp,
-            # NOT a robin's-egg-blue dial color. The Tiffany-stamped 5711 has a standard
-            # Blue dial; 5712/1A is always Blue. Skip override and return FIXED_DIAL value.
-            # GUARD: "tiffany stamp" / "tiffany stamped" / "tiffany collaboration" patterns
-            # already neutralized by normalization; guard here for FIXED_DIAL path which
-            # runs before normalization on raw _fd_t text.
-            if re.search(r'\btiffany\b|\btiff\b|\btiffiny\b|\btiffaney\b|\btifany\b|\btifanny\b|\btiffny\b|蒂芙[尼]', _fd_t):
-                # Patek guard: don't trigger Tiffany Blue for Patek refs
-                _patek_ref_guard = bool(re.match(r'^[57]\d{3}(?:/|[A-Z]|$)', ref))
-                # Stamp/collaboration guard: neutralize obvious retailer-branding text
-                _stamp_text_guard = bool(re.search(
-                    r'tiffany\s+stamp(?:ed)?|stamp(?:ed)?\s+(?:by\s+)?tiffany|'
-                    r'tiffany\s+(?:collaboration|collab|exclusive|edition|retailer|&)', _fd_t))
-                if not _patek_ref_guard and not _stamp_text_guard:
-                    _fd_base = re.match(r'(\d+)', ref)
-                    _fd_rb = _fd_base.group(1) if _fd_base else ''
-                    # Day-Date family: Tiffany = Turquoise stone dial (official Rolex name)
-                    if _fd_rb.startswith('128') or _fd_rb.startswith('228'):
-                        return 'Turquoise'
-                    return 'Tiffany Blue'
-            # G-suffix (diamond marker) override for fixed-dial refs —
-            # e.g. 126506G = Ice Blue base dial + diamond hour markers → "Ice Blue Diamond"
-            # Also covers 5-digit refs where G = diamond markers in text.
-            if (re.search(r'\b\d{5,6}g\b', _fd_t) and
-                    not re.match(r'^(RM|AP)\d', ref, re.I) and
-                    not re.match(r'^[57]\d{3}', ref)):
-                _fd_g_base = re.match(r'(\d+)', ref)
-                _fd_g_rb = _fd_g_base.group(1) if _fd_g_base else ''
-                _fd_g_color = FIXED_DIAL.get(ref, '')
-                if _fd_g_color and _fd_g_color not in ('MOP', 'Grossular', 'Pavé', 'Rainbow'):
-                    # diamond markers on top of base dial color → "{Color} Diamond"
-                    # Explicit text keywords override base dial color inference
-                    if re.search(r'\bblack\b', _fd_t):
-                        return 'Black Diamond'
-                    if re.search(r'\bice\s*blue\b', _fd_t):
-                        return 'Ice Blue Diamond'
-                    if re.search(r'\bblue\b', _fd_t):
-                        return 'Blue Diamond'
-                    # Fall back to base dial color + Diamond
-                    if _fd_g_color == 'Ice Blue':
-                        return 'Ice Blue Diamond'
-            # Paul Newman override — only for Daytona-family refs
-            if re.search(r'\bpaul\s*newman\b|\bpn\s+dial\b|\bpn\b|\bexotic\b|\bexotica\b|\bpnd\b', _fd_t):
-                _fd_base2 = re.match(r'(\d+)', ref)
-                _fd_rb2 = _fd_base2.group(1) if _fd_base2 else ''
-                if _fd_rb2[:4] in ('1165', '1265'):
-                    return 'Paul Newman'
-            # Meteorite override — Daytona/GMT refs with known meteorite options
-            # Also catches Chinese 隕石/陨石 before normalization runs.
-            # GUARD: skip if the FIXED_DIAL value is already a specialized non-replaceable dial
-            # (Sundust, MOP, Rainbow, Pavé, etc.) — those refs NEVER trade with meteorite dials.
-            _fd_mete_guard = frozenset({'Sundust', 'MOP', 'Rainbow', 'Pavé', 'Turquoise',
-                                        'Ice Blue', 'D-Blue', 'Grossular', 'Tiger Eye',
-                                        'Aventurine', 'Eisenkiesel', 'Lapis Lazuli'})
-            if re.search(r'\bmeteorite\b|\bmeteo\b|\bmete\b|隕石|陨石', _fd_t):
-                _fd_base3 = re.match(r'(\d+)', ref)
-                _fd_rb3 = _fd_base3.group(1) if _fd_base3 else ''
-                if (_fd_rb3[:4] in ('1165', '1265', '1267') and
-                        FIXED_DIAL.get(ref, '') not in _fd_mete_guard):
-                    return 'Meteorite'
-            # D-Blue override — Deepsea "James Cameron" D-Blue variant
-            # Triggers on explicit "D-Blue", "DBlue", or "James Cameron" text.
-            # The Rolex 136660 / 116660 come in standard Black AND the premium D-Blue.
-            # Without this override, FIXED_DIAL returns 'Black' for both variants.
-            if re.search(r'\bd[\s-]*blue\b|\bdblue\b|\bjames\s*cameron\b'
-                         r'|\bdeep\s*sea\s*blue\b|\bdeepsea\s*blue\b'
-                         r'|(?<=\d)d[\s-]blue\b', _fd_t):
-                _fd_base4 = re.match(r'(\d+)', ref)
-                _fd_rb4 = _fd_base4.group(1) if _fd_base4 else ''
-                if _fd_rb4 in ('136660', '116660', '126660'):
-                    return 'D-Blue'
-            # Arabic numeral override — when text explicitly mentions Arabic/number indices
-            # (e.g. "326139 數字" = Pearlmaster 39 WG with Arabic numeral dial, not Black lacquer).
-            # GUARD: Only fires for refs whose FIXED_DIAL value is a plain solid color (Black,
-            # White, Blue, Champagne, etc.) — those are the refs that realistically offer Arabic
-            # variants. Specialized dials (Ice Blue, Turquoise, MOP, Grossular, Pavé, Sundust…)
-            # never have an Arabic variant, so the FIXED_DIAL value takes precedence.
-            # GUARD: skip "arabic day/date/wheel" (date-wheel descriptions) and RM/AP refs.
-            _fd_arabic_plain = frozenset({
-                'Black', 'White', 'Blue', 'Silver', 'Champagne', 'Chocolate',
-                'Green', 'Grey', 'Pink', 'Red', 'Yellow', 'Gold'
-            })
-            if (re.search(r'[數数]字|\barabic\b', _fd_t) and
-                    FIXED_DIAL[ref] in _fd_arabic_plain and
-                    not re.search(r'\barabic\s+(?:day|date|wheel)\b', _fd_t) and
-                    not (re.match(r'^(RM|AP)\d', ref, re.I))):
-                return 'Arabic'
-            # Candy Pink override — 116695 Day-Date 40 YG normally has a Pavé dial,
-            # but the "Candy Pink" variant is a distinct (and rarer) option.
-            # Also catches other fixed-dial DD refs sold with the candy pink LE dial.
-            if re.search(r'\bcandy\b', _fd_t):
-                return 'Candy Pink'
-            # Zebra override — Day-Date exotic Zebra dial (striped black/cream stone dial)
-            if re.search(r'\bzebra\b', _fd_t):
-                return 'Zebra'
-            # Pavé override — refs that normally have a standard dial but also offer a
-            # full-diamond Pavé variant (e.g. YM42 226668/226679, YM37 126755).
-            # Without this, FIXED_DIAL returns the standard color (Black) even when
-            # the listing explicitly mentions "pave" or "full diamond / full set".
-            if re.search(r'\bpav[eé]\b|\bfull\s*(?:diamond|pav[eé])\b', _fd_t):
-                return 'Pavé'
-            # Baguette (A suffix) override — Lady DJ/Day-Date refs with baguette diamond hour markers.
-            # Detects "REFNUM TBR/RBR A" or "REFNUM A" in text (A = baguette marker code).
-            # Maps: 127286 → "Ice Blue Baguette", 127386 → "Ice Blue Baguette".
-            # 228396 / 128396 are NOT in FIXED_DIAL and handled by text-based baguette upgrade below.
-            _baguette_fd_map = {
-                '127286': 'Ice Blue Baguette',  # Lady DJ 28 Platinum TBR + A baguette hours
-                '127386': 'Ice Blue Baguette',  # Lady DJ 28 WG TBR + A baguette hours
-                '126506': 'Ice Blue Baguette',  # Daytona Platinum A-variant = baguette diamond hour markers
-                '116506': 'Ice Blue Baguette',  # Prev-gen Daytona Platinum A-variant = baguette
-            }
-            _fd_base_bag = re.match(r'(\d+)', ref)
-            _fd_rb_bag = _fd_base_bag.group(1) if _fd_base_bag else ''
-            if _fd_rb_bag in _baguette_fd_map:
-                # Fire when A-suffix pattern present ("127286 A", "127386TBR A") OR
-                # when "baguette" / "bag" is mentioned explicitly in the listing text.
-                _baguette_in_text = bool(
-                    re.search(r'\b' + re.escape(_fd_rb_bag) + r'\w*\s+A\b', text, re.I) or
-                    re.search(r'\b' + re.escape(ref) + r'\s*A\b', text, re.I) or
-                    re.search(r'\bbaguette\b|\bbag\b', _fd_t)
-                )
-                if _baguette_in_text:
-                    return _baguette_fd_map[_fd_rb_bag]
-            # ── Stone / exotic dial overrides ──────────────────────────────────────
-            # Certain fixed-dial refs also offer exotic stone variants (e.g. 126555 Daytona YG:
-            # standard = Black, but Grossular stone dial variant is also traded). When text
-            # explicitly names a stone dial, override the FIXED_DIAL default color.
-            # GUARD: only fire the override when the existing FIXED_DIAL value is a plain solid
-            # color (Black, White, Blue, etc.) — NOT when it's already a specialized dial
-            # (Sundust, MOP, Rainbow, Pavé, Ice Blue, etc.) since those are single-option refs.
-            _fd_plain_overridable = frozenset({
-                'Black', 'White', 'Blue', 'Silver', 'Champagne', 'Chocolate',
-                'Green', 'Grey', 'Pink', 'Red', 'Yellow', 'Gold', 'Brown',
-                'Slate', 'Aubergine', 'Coral', 'Orange',
-            })
-            _fd_current_val = FIXED_DIAL.get(ref, '')
-            if _fd_current_val in _fd_plain_overridable or not _fd_current_val:
-                if re.search(r'\bgrossular\b|\bgiraffe\b', _fd_t): return 'Grossular'
-                if re.search(r'\btiger\s+iron\b', _fd_t): return 'Tiger Iron'
-                if re.search(r'\btiger\s*eye\b', _fd_t): return 'Tiger Eye'
-                if re.search(r'\beisenk', _fd_t): return 'Eisenkiesel'
-                if re.search(r'\bleopard\b', _fd_t): return 'Leopard'
-                if re.search(r"\bfalcon['\u2019s]*\s*eye\b|\bfalconeye\b", _fd_t): return "Falcon's Eye"
-                if re.search(r'\baventurine\b', _fd_t): return 'Aventurine'
-                if re.search(r'\bmalachite\b', _fd_t): return 'Malachite'
-                if re.search(r'\blazuli\b|\blapis\b', _fd_t): return 'Lapis Lazuli'
-                if re.search(r'\bsodalite\b', _fd_t): return 'Sodalite'
-                if re.search(r'\bopal\b', _fd_t): return 'Opal'
-                if re.search(r'\bcarnelian\b', _fd_t): return 'Carnelian'
-                if re.search(r'\bonyx\b', _fd_t): return 'Onyx'
-            # Wimbledon override — when text explicitly names Wimbledon for a fixed-dial ref,
-            # it almost certainly means the message includes a Wimbledon listing alongside a
-            # fixed-dial listing (multi-ref contamination). We do NOT override FIXED_DIAL here
-            # because FIXED_DIAL refs (Sub, GMT, etc.) never have a Wimbledon option.
-            # The correct approach is to let the FIXED_DIAL value stand; no change needed.
-            # (This comment block is intentional — documents the deliberate non-override.)
-            # Champagne override — 126598 (Everose Rainbow Daytona) has two dial variants:
-            # Black (dominant) and Champagne. Since 126598 is in FIXED_DIAL as 'Black', the
-            # general keyword path is never reached. Explicit "champagne" in text → Champagne.
-            _fd_champ_refs = frozenset({'126598'})
-            _fd_rb_champ = re.match(r'(\d+)', ref)
-            _fd_rb_champ_s = _fd_rb_champ.group(1) if _fd_rb_champ else ''
-            if _fd_rb_champ_s in _fd_champ_refs and _fd_current_val == 'Black':
-                if re.search(r'\bchampagne\b|\bchamp\b|\bchmpg?\b|\bchp\b', _fd_t):
-                    return 'Champagne'
         return FIXED_DIAL[ref]
     # Also check SKU DB single-dial refs (dynamic, covers refs not in FIXED_DIAL)
     if ref and ref in SKU_SINGLE_DIAL:
@@ -2388,340 +1529,17 @@ def extract_dial(text, ref='', raw_ref=''):
         if _base and _base.group(1) in SKU_SINGLE_DIAL:
             return SKU_SINGLE_DIAL[_base.group(1)]
 
-    # ── ROLEX SUB-CATALOG CODE LOOKUP ──
-    # Rolex uses "REFNUM-SUBCODE" (e.g. "126509-0073", "116515-0041") to identify
-    # specific dial configurations. When the text contains a matching sub-code that
-    # belongs to the current ref, return the known dial immediately.
-    # Guard: only fire when sub-code base matches the current listing's ref digits,
-    # preventing a multi-ref message body from polluting the wrong listing.
-    if text and ref:
-        _sub_base_m = re.match(r'(\d+)', ref)
-        if _sub_base_m:
-            _sub_base_digits = _sub_base_m.group(1)
-            _sub_match = re.search(
-                r'\b(' + re.escape(_sub_base_digits) + r')[A-Z]{0,6}-(\d{4,6})\b',
-                text, re.I)
-            if _sub_match:
-                _sub_key = f'{_sub_match.group(1)}-{_sub_match.group(2)}'
-                if _sub_key in ROLEX_SUB_CATALOG:
-                    return ROLEX_SUB_CATALOG[_sub_key]
-
-    # ── EARLY OVERRIDE: "Paul Newman" text is unambiguous for Daytona family ──
-    # Must fire BEFORE suffix inference — otherwise LN/GY suffix returns 'Black'
-    # and the explicit "Paul Newman" dial name is never reached.
-    if text and ref:
-        _rb_pn_early = re.match(r'(\d+)', ref)
-        if _rb_pn_early and _rb_pn_early.group(1)[:4] in ('1165', '1265'):
-            if re.search(r'\bpaul\s*newman\b', text, re.I):
-                return 'Paul Newman'
-            # Catch concatenated form "126518PN" / "116518PN" in text.
-            # Sellers frequently write the PN variant as ref+PN (no space), e.g.
-            # "126518PN N12 $378k" — the \bpn\b word-boundary check fails because
-            # 'p' is immediately preceded by a digit (no word boundary).
-            # Match any Daytona base (1165xx or 1265xx) directly glued to "PN".
-            if re.search(r'\b(1165\d\d|1265\d\d)PN\b', text, re.I):
-                return 'Paul Newman'
-
-    # ── EARLY OVERRIDE: "Tiger Iron" text for 126718GRNR ──
-    # 126718GRNR ships with two dial options: standard Black AND a 2025 Tiger Iron
-    # stone dial. The GRNR suffix would short-circuit to 'Black' before text parsing
-    # runs, so we intercept 'tiger iron' explicitly here first.
-    if text and ref:
-        _rb_ti_early = re.match(r'(\d+)', ref)
-        if _rb_ti_early and _rb_ti_early.group(1) in _GMT_GRNR_MULTI:
-            if re.search(r'\btiger\s*iron\b', text, re.I):
-                return 'Tiger Iron'
-
-    # ── EARLY OVERRIDE: "Falcon's Eye" for Yacht-Master 42 226659 / 226679 ──
-    # These refs also ship with a Falcon's Eye stone dial option alongside Black.
-    # The TBR suffix would short-circuit to 'Black' via SUFFIX_DIAL before text
-    # parsing runs, so intercept explicit "falcon eye" / "falcon's eye" first.
-    if text and ref:
-        _rb_fe_early = re.match(r'(\d+)', ref)
-        if _rb_fe_early and _rb_fe_early.group(1) in ('226659', '226679', '268622'):
-            if re.search(r"\bfalcon['\u2019s]*\s*eye\b|\bfalconeye\b", text, re.I):
-                return "Falcon's Eye"
-
-    # ── EARLY OVERRIDE: "Official Tiffany Blue" for OP family refs ──
-    # When a listing explicitly names "Official Tiffany", "OTB", "Tiffany & Co.", or
-    # "Tiffany stamp/stamped", the watch carries the Tiffany & Co. retailer-exclusive
-    # variant (6 o'clock stamp) — a significantly higher premium than standard Tiffany Blue.
-    # Must fire BEFORE the normalization block that collapses these phrases → generic "tiffany".
-    # GUARD: not for Patek refs (5xxx/7xxx) where "Tiffany stamp" = retailer engraving only.
-    # GUARD: not when "tiffany stamp [other_color]" — stamp on a non-Tiffany-blue dial.
-    if text and ref:
-        _rb_otbl = re.match(r'(\d+)', ref)
-        _rb_otbl_b = _rb_otbl.group(1) if _rb_otbl else ''
-        _op_otbl_exact = frozenset({'126000', '126031', '126034', '124300', '134300',
-                                    '124200', '277200', '276200', '124260'})
-        _op_otbl_pfx = ('277', '276', '124', '134')
-        if _rb_otbl_b in _op_otbl_exact or _rb_otbl_b[:3] in _op_otbl_pfx:
-            _otbl_t = text.lower()
-            # Stamp-on-other-color guard: "tiffany stamp black/white/etc." = non-TB dial
-            _otbl_stamp_other = bool(re.search(
-                r'\btiffany\s+stamp(?:ed)?\s+(?:black|white|silver|green|blue|grey|gray|'
-                r'pink|red|brown|chocolate|champagne|coral)\b', _otbl_t))
-            if not _otbl_stamp_other and re.search(
-                    r'\bofficial\s+tiff(?:any)?\b|\btiff(?:any)?\s+official\b|'
-                    r'\btiffany\s*&\s*co\.?\b|\bt(?:iffany)?\s+&\s*co\.?\b|'
-                    r'\btiffany\s+stamp(?:ed)?\b|'
-                    r'(?<![a-zA-Z0-9])otb(?![a-zA-Z0-9])|'
-                    r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', _otbl_t):
-                return 'Official Tiffany Blue'
-
-    # ── EARLY OVERRIDE: Tiffany Blue for AP Royal Oak Offshore refs ──
-    # AP ROO refs that offer Tiffany Blue: 26238ST, 26331ST, 26400ST, 15510ST, 15720ST, 15500ST.
-    # These refs are NOT in the OP OTB block above, so "tiffany" / "otb" shorthand would otherwise
-    # fall through and produce the wrong dial.  Fire before suffix inference.
-    if text and ref:
-        _rb_ap_roo = re.match(r'(\d+)', ref)
-        _ap_roo_tb_bases = frozenset({'26238', '26331', '26400', '15510', '15720', '15500'})
-        if _rb_ap_roo and _rb_ap_roo.group(1) in _ap_roo_tb_bases:
-            _ap_roo_t = text.lower()
-            if re.search(r'\btiffany(?:a|anya)?\b|\btiff(?:iny|any)?\b|\btifany\b|\btiffy\b', _ap_roo_t):
-                return 'Tiffany Blue'
-            if re.search(r'(?<![a-zA-Z0-9])otb(?![a-zA-Z0-9])|(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', _ap_roo_t):
-                return 'Tiffany Blue'
-
-    # ── EARLY OVERRIDE: "Pumpkin" orange enamel dial for Rolex 116578 Daytona Everose Gold ──
-    # 116578SACO/SANR = Daytona 40mm Everose Gold with sapphire crystal. Standard dial = Black.
-    # BUT the rare "Pumpkin" burnt-orange enamel dial variant commands a very large premium.
-    # The SACO/SA suffix scan would short-circuit to Black before text-based detection runs.
-    # Intercept "pumpkin" explicitly here to ensure it overrides the SACO→Black return.
-    if text and ref:
-        _rb_pmpk = re.match(r'(\d+)', ref)
-        if _rb_pmpk and _rb_pmpk.group(1) == '116578':
-            if re.search(r'\bpumpkin\b', text, re.I):
-                return 'Orange'
-
     # ── SUFFIX-BASED DIAL INFERENCE ──
     # If raw_ref has a known suffix, use SUFFIX_DIAL mapping
     # e.g., 126231NG → MOP, 126515LN → Black, 126710BLNR → Black
-    # NOTE: For _DAYTONA_LN_MULTI refs (YG/WG Daytonas), LN marks the ceramic
-    # bezel only — NOT the dial color. Fall through to text-based detection for these.
     if raw_ref and ref:
         _suffix = raw_ref[len(re.match(r'\d+', raw_ref).group(0)):] if re.match(r'\d+', raw_ref) else ''
         if _suffix and _suffix in SUFFIX_DIAL:
-            # Multi-dial Daytona LN refs: bypass LN→Black so text parsing finds actual dial
-            _daytona_ln_base = re.match(r'\d+', raw_ref)
-            if _suffix == 'LN' and _daytona_ln_base and _daytona_ln_base.group(0) in _DAYTONA_LN_MULTI:
-                pass  # fall through to text-based detection
-            # Datejust/Lady-DJ TBR: TBR is the Rolesor bracelet code, NOT a dial indicator.
-            # The actual dial is given by a FOLLOWING suffix (NG=MOP, LN=Black, etc.) in text.
-            # Fall through so the unconditional RBR+NG scan can pick up the dial suffix.
-            elif _suffix == 'TBR' and _daytona_ln_base and _daytona_ln_base.group(0) in _DJ_TBR_BRACELET_BASES:
-                pass  # fall through to RBR+NG scan below
-            # GMT Everose BLRO multi-dial refs: bypass BLRO→Black so text parsing finds Meteorite etc.
-            elif _suffix == 'BLRO' and _daytona_ln_base and _daytona_ln_base.group(0) in _GMT_BLRO_MULTI:
-                pass  # fall through to text-based detection
-            else:
-                return SUFFIX_DIAL[_suffix]
-        # Handle complex suffixes like "-12SA" → extract trailing letter codes → "SA"
-        # IMPORTANT: apply same multi-dial bypass here — when raw_ref is lowercase (e.g.
-        # '126519ln', '126719blro') the suffix is lowercase, misses the SUFFIX_DIAL dict
-        # (keys are uppercase), and falls into this branch. Without the bypass below,
-        # refs in _DAYTONA_LN_MULTI/_GMT_BLRO_MULTI incorrectly return 'Black'.
-        if _suffix and _suffix not in SUFFIX_DIAL:
-            _ls = re.search(r'([A-Z]{2,6})$', _suffix.upper())
-            if _ls and _ls.group(1) in SUFFIX_DIAL:
-                _ls_sfx = _ls.group(1)
-                _ls_base_m = re.match(r'\d+', raw_ref)
-                _ls_base_d = _ls_base_m.group(0) if _ls_base_m else ''
-                if _ls_sfx == 'LN' and _ls_base_d in _DAYTONA_LN_MULTI:
-                    pass  # fall through — Daytona LN is ceramic bezel only, not dial
-                elif _ls_sfx == 'BLRO' and _ls_base_d in _GMT_BLRO_MULTI:
-                    pass  # fall through — GMT Everose BLRO has multiple dials (Black, Meteorite)
-                elif _ls_sfx == 'TBR' and _ls_base_d in _DJ_TBR_BRACELET_BASES:
-                    pass  # fall through — DJ/DD TBR is a bracelet code, not dial indicator
-                else:
-                    return SUFFIX_DIAL[_ls_sfx]
-        # Handle suffixes where SA/NG/LN etc. appear at the START (e.g. "SACO" → SA=Black)
-        if _suffix and _suffix not in SUFFIX_DIAL:
-            _sfx_up = _suffix.upper().lstrip('-')
-            for _known_sfx in ('SA', 'NG', 'LN', 'LV', 'LB', 'DB', 'PN', 'GY'):
-                if _sfx_up.startswith(_known_sfx) and _known_sfx in SUFFIX_DIAL:
-                    # Multi-dial Daytona LN refs: bypass LN prefix too
-                    if _known_sfx == 'LN':
-                        _daytona_ln_base2 = re.match(r'\d+', raw_ref)
-                        if _daytona_ln_base2 and _daytona_ln_base2.group(0) in _DAYTONA_LN_MULTI:
-                            continue
-                    return SUFFIX_DIAL[_known_sfx]
+            return SUFFIX_DIAL[_suffix]
         # Check for suffix in the ref itself (already canonicalized)
         _ref_suffix = ref[len(re.match(r'\d+', ref).group(0)):] if re.match(r'\d+', ref) else ''
         if _ref_suffix and _ref_suffix in SUFFIX_DIAL:
-            _daytona_ln_ref = re.match(r'\d+', ref)
-            if _ref_suffix == 'LN' and _daytona_ln_ref and _daytona_ln_ref.group(0) in _DAYTONA_LN_MULTI:
-                pass  # fall through
-            elif _ref_suffix == 'BLRO' and _daytona_ln_ref and _daytona_ln_ref.group(0) in _GMT_BLRO_MULTI:
-                pass  # fall through — GMT Everose BLRO has multiple dials (Black, Meteorite)
-            elif _ref_suffix == 'TBR' and _daytona_ln_ref and _daytona_ln_ref.group(0) in _DJ_TBR_BRACELET_BASES:
-                pass  # fall through — DJ/DD/Daytona TBR is a bracelet code, not a dial indicator
-            else:
-                return SUFFIX_DIAL[_ref_suffix]
-        # Also check SA/NG/LN prefix in ref suffix
-        if _ref_suffix and _ref_suffix not in SUFFIX_DIAL:
-            _rs_up = _ref_suffix.upper()
-            for _known_sfx in ('SA', 'NG', 'LN', 'LV', 'LB', 'DB', 'PN', 'GY'):
-                if _rs_up.startswith(_known_sfx) and _known_sfx in SUFFIX_DIAL:
-                    if _known_sfx == 'LN':
-                        _daytona_ln_ref2 = re.match(r'\d+', ref)
-                        if _daytona_ln_ref2 and _daytona_ln_ref2.group(0) in _DAYTONA_LN_MULTI:
-                            continue
-                    return SUFFIX_DIAL[_known_sfx]
-    # Unconditional scan: after pre-normalization, text has corrected suffixes (BLRO, GRNR).
-    # Run this regardless of raw_ref, catching typo variants like "126710BLRO" (was "126710BLOR").
-    if text:
-        # Priority 1: ref + RBR/TBR/RBOW + dial-suffix.  Must run BEFORE the simple
-        # ref+suffix scan so "279383TBR NG" fires NG→MOP rather than TBR→Black.
-        # e.g. "279381 RBR NG", "279383TBR NG", "126231TBR LN" — bracelet code + dial code.
-        _sfx_rbr_unc = re.search(
-            r'\b(\d{5,6})\s*(?:rbr|tbr|rbow|sn|sats|sabr)\s+(NG|LN|LV|LB|SA|DB|GY|SATS|SABR|SN)\b',
-            text, re.I)
-        if _sfx_rbr_unc:
-            _rbr_sfx = _sfx_rbr_unc.group(2).upper()
-            if _rbr_sfx in SUFFIX_DIAL:
-                _rbr_base = _sfx_rbr_unc.group(1)
-                # Multi-dial Daytona LN: skip LN→Black so text parsing catches actual dial
-                if _rbr_sfx == 'LN' and _rbr_base in _DAYTONA_LN_MULTI:
-                    pass  # fall through
-                else:
-                    return SUFFIX_DIAL[_rbr_sfx]
-        # Also: ref + space + dial-suffix (e.g. "279381 NG", "116578 SACO", "126538 Saro")
-        _sfx_space_unc = re.search(
-            r'\b(\d{5,6})\s+(SACO|SANR|SARO|SARU|SACI|NG|LN|LV|LB|SA|DB|GY)\b', text, re.I)
-        if _sfx_space_unc:
-            _sp_sfx = _sfx_space_unc.group(2).upper()
-            if _sp_sfx in SUFFIX_DIAL:
-                _sp_base = _sfx_space_unc.group(1)
-                if _sp_sfx == 'LN' and _sp_base in _DAYTONA_LN_MULTI:
-                    pass
-                # NG CONDITION-CODE GUARD: for Day-Date refs (128/228/118/228), "NG" in text
-                # frequently means condition code (N/G = New/Good), NOT the MOP dial code.
-                # When "NG" is immediately followed by an explicit non-MOP color word, treat
-                # as condition and fall through to text-based color detection.
-                elif _sp_sfx == 'NG' and _sp_base[:3] in ('128', '228', '118') and re.search(
-                        r'\bng\s+(?:black|blk|white|wht|blue|green|grn|grey|gray|gry|'
-                        r'silver|champagne|chocolate|choco?|pink|red|sundust|olive|brown|salmon)\b',
-                        text, re.I):
-                    pass  # "NG" = condition code here; fall through to text color detection
-                else:
-                    return SUFFIX_DIAL[_sp_sfx]
-        # Priority 2: simple ref+suffix (no space) — excludes TBR for DJ bracelet refs
-        # when text shows a dial suffix immediately after (handled above), to prevent
-        # "279383TBR NG" matching TBR→Black before the NG scan above fires.
-        _sfx_scan_always = re.search(r'\b(\d{5,6})(BLRO|GRNR|BLNR|CHNR|VTNR|TBR|SACO|SANR|GLNR|GRMR|LN|LV|LB|NG|DB|GY)\b', text, re.I)
-        if _sfx_scan_always:
-            _sfx_always = _sfx_scan_always.group(2).upper()
-            if _sfx_always in SUFFIX_DIAL:
-                _sfx_base_m = _sfx_scan_always.group(1)
-                # Multi-dial Daytona LN refs: skip LN→Black so text parsing catches actual dial
-                if _sfx_always == 'LN' and _sfx_base_m in _DAYTONA_LN_MULTI:
-                    pass  # fall through to text-based detection
-                # Datejust TBR is a bracelet code when followed by a dial suffix — already
-                # handled above; skip here to avoid TBR→Black short-circuit.
-                elif _sfx_always == 'TBR' and _sfx_base_m in _DJ_TBR_BRACELET_BASES:
-                    pass  # fall through — dial determined by NG/LN/etc scan above
-                # GMT Everose BLRO multi-dial refs: skip BLRO→Black, detect via text
-                elif _sfx_always == 'BLRO' and _sfx_base_m in _GMT_BLRO_MULTI:
-                    pass  # fall through to text-based detection
-                else:
-                    return SUFFIX_DIAL[_sfx_always]
-        # Unconditional hyphen-suffix scan: "116718-ln-78208" → LN → Black
-        # MUST run regardless of whether raw_ref is provided, since raw_ref is often
-        # just the bare digits (e.g. "116718") without the hyphenated dial code.
-        _sfx_scan_hyph_unc = re.search(r'\b(\d{5,6})-(LN|LV|LB|NG|BLNR|BLRO|GRNR|CHNR|VTNR|DB|SA|GY)\b', text, re.I)
-        if _sfx_scan_hyph_unc:
-            _hyph_sfx = _sfx_scan_hyph_unc.group(2).upper()
-            _hyph_base = _sfx_scan_hyph_unc.group(1)
-            if _hyph_sfx in SUFFIX_DIAL:
-                if _hyph_sfx == 'LN' and _hyph_base in _DAYTONA_LN_MULTI:
-                    pass  # fall through for multi-dial Daytona LN refs
-                elif _hyph_sfx == 'BLRO' and _hyph_base in _GMT_BLRO_MULTI:
-                    pass  # fall through for BLRO multi-dial GMT refs
-                else:
-                    return SUFFIX_DIAL[_hyph_sfx]
-        # Unconditional complex-suffix scan: "116599-12SA", "116135-0050LN" → trailing letters
-        _sfx_scan2_unc = re.search(r'\b\d{5,6}[-\s]\d+([A-Z]{2,6})\b', text, re.I)
-        if _sfx_scan2_unc:
-            _scanned_sfx2_unc = _sfx_scan2_unc.group(1).upper()
-            if _scanned_sfx2_unc in SUFFIX_DIAL:
-                return SUFFIX_DIAL[_scanned_sfx2_unc]
-    # When raw_ref not provided (e.g. retroactive fill), scan text for ref+suffix pattern
-    # e.g. "226679TBR" in text → suffix TBR → Black
-    if not raw_ref and text:
-        # Also detect "116610 LV" pattern (ref + space + suffix)
-        _sfx_scan_space = re.search(r'\b(\d{5,6})\s+(TBR|BLNR|BLRO|GRNR|CHNR|VTNR|SACO|SANR|GLNR|GRMR|LN|LV|LB|NG|SN|SATS|SABR|SA|DB|GY)\b', text, re.I)
-        if _sfx_scan_space:
-            _scanned_sfx_s = _sfx_scan_space.group(2).upper()
-            _scanned_base_s = _sfx_scan_space.group(1)
-            if _scanned_sfx_s in SUFFIX_DIAL:
-                # Multi-dial Daytona LN: bypass LN→Black so text parsing finds Panda/Meteorite/etc.
-                if _scanned_sfx_s == 'LN' and _scanned_base_s in _DAYTONA_LN_MULTI:
-                    pass  # fall through
-                # NG condition-code guard (mirrors unconditional scan above)
-                elif _scanned_sfx_s == 'NG' and _scanned_base_s[:3] in ('128', '228', '118') and re.search(
-                        r'\bng\s+(?:black|blk|white|wht|blue|green|grn|grey|gray|gry|'
-                        r'silver|champagne|chocolate|choco?|pink|red|sundust|olive|brown|salmon)\b',
-                        text, re.I):
-                    pass  # fall through
-                else:
-                    return SUFFIX_DIAL[_scanned_sfx_s]
-        _sfx_scan = re.search(r'\b(\d{5,6})(TBR|BLNR|BLRO|GRNR|CHNR|VTNR|SACO|SANR|SARO|SARU|SACI|GLNR|GRMR|LN|LV|LB|NG|SN|SATS|SABR|SA|DB|GY)\b', text, re.I)
-        if _sfx_scan:
-            _scanned_sfx = _sfx_scan.group(2).upper()
-            _scanned_base = _sfx_scan.group(1)
-            if _scanned_sfx in SUFFIX_DIAL:
-                # Multi-dial Daytona LN: bypass LN→Black so text parsing finds Panda/Meteorite/etc.
-                if _scanned_sfx == 'LN' and _scanned_base in _DAYTONA_LN_MULTI:
-                    pass  # fall through
-                else:
-                    return SUFFIX_DIAL[_scanned_sfx]
-        # Also scan for "116578SACO" → SA prefix → Black
-        _sfx_scan_pre = re.search(r'\b(\d{5,6})(SA|NG|LN|LV|LB|DB|GY)\w*\b', text, re.I)
-        if _sfx_scan_pre:
-            _scanned_pre = _sfx_scan_pre.group(2).upper()
-            _scanned_base_pre = _sfx_scan_pre.group(1)
-            if _scanned_pre in SUFFIX_DIAL:
-                if _scanned_pre == 'LN' and _scanned_base_pre in _DAYTONA_LN_MULTI:
-                    pass  # fall through
-                else:
-                    return SUFFIX_DIAL[_scanned_pre]
-        # Handle "279381rbr NG" or "279381 RBR NG" — suffix after RBR/TBR/RBOW (with optional space)
-        _sfx_scan_rbr = re.search(r'\b\d{5,6}\s*(?:rbr|tbr|rbow)\s+(NG|LN|LV|LB|SA|DB|GY|SATS|SABR|SN)\b', text, re.I)
-        if _sfx_scan_rbr:
-            _scanned_rbr = _sfx_scan_rbr.group(1).upper()
-            if _scanned_rbr in SUFFIX_DIAL:
-                return SUFFIX_DIAL[_scanned_rbr]
-        # Handle "116718-ln-78208" — kept here for backwards compatibility (also covered by unconditional above)
-        _sfx_scan_hyph = re.search(r'\b\d{5,6}-(LN|LV|LB|NG|BLNR|BLRO|GRNR|CHNR|VTNR|DB|SA|GY)\b', text, re.I)
-        if _sfx_scan_hyph:
-            _scanned_hyph = _sfx_scan_hyph.group(1).upper()
-            if _scanned_hyph in SUFFIX_DIAL:
-                return SUFFIX_DIAL[_scanned_hyph]
-        # Also scan for complex patterns: "116599-12SA" or "116599 12SA" → trailing letters "SA"
-        _sfx_scan2 = re.search(r'\b\d{5,6}[-\s]\d+([A-Z]{2,6})\b', text, re.I)
-        if _sfx_scan2:
-            _scanned_sfx2 = _sfx_scan2.group(1).upper()
-            if _scanned_sfx2 in SUFFIX_DIAL:
-                return SUFFIX_DIAL[_scanned_sfx2]
-        # Standalone suffix code in dial_text: "RBR NG", "ng", "NG 78208" (no ref digits present)
-        # Handles case when dial_text = remaining text after stripping ref+RBR from source
-        # Handle "-ln-78208" style dial_text (hyphen-prefix + color code + bracelet code)
-        _sfx_standalone = re.search(r'^-?(?:(?:rbr|tbr|rbow|sn)\s+)?(NG|LN|LV|LB|DB|SA|GY|SATS|SABR)(?:[-\s]\d+)?\s*$', text.strip(), re.I)
-        if _sfx_standalone:
-            _ss_code = _sfx_standalone.group(1).upper()
-            if _ss_code in SUFFIX_DIAL:
-                return SUFFIX_DIAL[_ss_code]
-        # Looser RBR/TBR+NG scan: "RBR NG $173k 09.25" — dial code at start of text followed by price
-        # The strict standalone scan fails because of trailing "$price" content.
-        # Match "RBR/TBR + dial-code" at start, tolerating any trailing content.
-        _sfx_rbr_leading = re.search(
-            r'^\s*(?:rbr|tbr|rbow|sn|sats|sabr)\s+(NG|LN|LV|LB|DB|SA|GY|SATS|SABR|SN)\b',
-            text.strip(), re.I)
-        if _sfx_rbr_leading:
-            _rbl_code = _sfx_rbr_leading.group(1).upper()
-            if _rbl_code in SUFFIX_DIAL:
-                return SUFFIX_DIAL[_rbl_code]
+            return SUFFIX_DIAL[_ref_suffix]
 
     # ── DIAL OPTIONS VALIDATION ──
     # Load known dial options for this ref to validate later
@@ -2731,645 +1549,36 @@ def extract_dial(text, ref='', raw_ref=''):
     _valid_dials = _dial_options_db.get(ref, [])
 
     t = text.lower()
-    # ── EARLY: Official Tiffany Blue signal detection ─────────────────────────
-    # Must run immediately after t = text.lower() while OTB/stamp/collab signals
-    # are still intact — before normalization erases them.
-    # These signals mark the premium T&Co-retailer-stamped OP Tiffany Blue dial,
-    # which commands a significant price premium over a plain (unstamped) Tiffany Blue.
-    _early_op_base_otb = ''
-    if ref:
-        _early_rb_otb = re.match(r'(\d+)', ref)
-        _early_op_base_otb = _early_rb_otb.group(1) if _early_rb_otb else ''
-    _is_official_tiffany_signal = (
-        (
-            _early_op_base_otb in ('126000', '126031', '126034', '124300', '134300',
-                                    '124200', '124260') or
-            _early_op_base_otb[:3] in ('277', '276', '124')
-        ) and bool(re.search(
-            r'\botb\b|\botbl\b|\bofficial\s*tiff(?:any)?\b|\boffi\s+tiff(?:any)?\b|'
-            r'\btiffany\s+stamp(?:ed)?\b|\bstamp(?:ed)?\s+(?:by\s+)?tiffany\b|'
-            r'\btiffany\s*&\s*co\.?\b|\bt\s*&\s*co\b|\bofficial\s+tb\b|'
-            r'\btiff(?:any)?\s+official\b|\boff\s*tiff(?:any)?\b|'
-            r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])',
-            t
-        ))
-    )
-    # Separate color abbreviations glued to ref BEFORE normalization (e.g. 216570BLK → 216570 black)
-    t = re.sub(r'(\d{5,6})(blk|wht|whe|blu|grn|gry|pnk|choco|cho|slv|polar|mete|yml|sun|rbow|ywl|brow|ora|org|turq|tiff|tb|ib|cp|mb|ghost|pn|mintgrn|otb|otbl|wim|wimb|wimbo|ctb|cltb)\b', r'\1 \2', t)
+    # Separate color abbreviations glued to ref BEFORE normalization (e.g. 116508mete → 116508 mete)
+    # Also covers: mete/met=meteorite, yml=YML, tiff=Tiffany, wim=Wimbledon, ib=Ice Blue
+    t = re.sub(r'(\d{5,6})(blk|wht|blu|grn|gry|pnk|cho|slv|polar|mete|met|yml|tiff|wim)\b', r'\1 \2', t)
     # Normalize shorthand for dial detection
     t = re.sub(r'\bblk\b', 'black', t)
     t = re.sub(r'\bbk\b', 'black', t)
     t = re.sub(r'\bwht\b', 'white', t)
     t = re.sub(r'\bpolar\b', 'white', t)  # Polar = White dial (Explorer II)
-    t = re.sub(r'\bchamp\b|\bcham\b', 'champagne', t)  # champ/cham = champagne
-    t = re.sub(r'\bmete\b|\bmet\b|\bmeteor\b|\bmeteroit\b|\bmeteoriter\b|\bmeteoric\b|\bmeteorit\b|\bmeteorite?\b|\bmeteoryte\b', 'meteorite', t)  # met/mete/meteor + typos = meteorite (incl. German "meteorit", y-typo "meteoryte")
-    t = re.sub(r'\baerolite\b|\bsikhote\b|\bmuonio\b', 'meteorite', t)  # Aerolite/stone subtypes = meteorite
-    # "celeste" = Tiffany Blue (Italian/Spanish dealers for robin's-egg-blue OP dials)
-    t = re.sub(r'\bceleste\b', 'tiffany', t)
-    # "Tiffiny" / "Tiffaney" / "Tifany" / "Tiffanya" → tiffany (frequent HK/SG dealer typos for AP 26238ST etc.)
-    t = re.sub(r'\btiffiny\b|\btiffaney\b|\btifany\b|\btifanny\b|\btiffny\b|\btifanie\b|\btifffany\b|\btiffanay\b|\btiffanya\b', 'tiffany', t)
-    # "tiffanys" (possessive/plural) → tiffany (\btiffany\b misses the trailing 's' word char boundary)
-    t = re.sub(r'\btiffanys\b', 'tiffany', t)
-    # Additional Tiffany typo variants from HK/SG/CN dealer groups
-    t = re.sub(r'\btiffani(?:es?)?\b', 'tiffany', t)   # "tiffani"/"tiffanies" → tiffany
-    t = re.sub(r'\btifanni\b|\btifani\b', 'tiffany', t)  # "tifanni"/"tifani" (missing double-f) → tiffany
-    t = re.sub(r'\btifany\b|\btiffanay\b|\btifffany\b', 'tiffany', t)  # additional typos (dedup from above but safe)
-    # "tif blue" / "tif bl" compound (3-char truncation + "blue") → tiffany (common HK shorthand)
-    t = re.sub(r'\btif\s+bl(?:ue)?\b', 'tiffany', t)
-    # "tiffany color/colour" → tiffany (UK/EU dealer phrasing, e.g. "tiffany colour dial")
-    t = re.sub(r'\btiffany\s+colou?r(?:ed)?\b', 'tiffany', t)
-    # "t blue" standalone on OP refs → tiffany (ultra-short HK code; guard to OP family only)
-    # Guard: avoid false hits on "dark blue"/"light blue"/"sky blue" — require word-start only
-    if ref:
-        _rb_tblue = re.match(r'(\d+)', ref)
-        _rb_tblue_b = _rb_tblue.group(1) if _rb_tblue else ''
-        _op_tblue_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
-        _op_tblue_pfx = ('277', '276', '124')
-        if _rb_tblue_b in _op_tblue_exact or _rb_tblue_b[:3] in _op_tblue_pfx:
-            t = re.sub(r'(?<!\w)\bt\s+blue\b(?!\s+(?:dial|bezel|band|strap))', 'tiffany', t)
-    # "celebrations" (plural) → celebration (\bcelebration\b misses plural form used by some dealers)
-    t = re.sub(r'\bcelebrations\b', 'celebration', t)
-    # "wimbledons" (plural, rare) → wimbledon
-    t = re.sub(r'\bwimbledons\b', 'wimbledon', t)
-    # "anniversary" / "anniv" → commemorative for 118206 (Day-Date 36 Platinum Commemorative dial).
-    # Rolex officially calls it "Commemorative"; dealers commonly call it "Anniversary dial"
-    # because it debuted for Rolex's 100th anniversary (2003-era platinum DD36).
-    # Guard: only apply to 118206 — "anniversary" on other refs keeps its normal meaning.
-    if ref and re.match(r'^118206$', ref):
-        t = re.sub(r'\banniversary\b|\banniv\b', 'commemorative', t)
+    t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
+    t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
     t = re.sub(r'\bchocolates?\b', 'chocolate', t)
-    # Typo fixes for common HK dealer misspellings
-    t = re.sub(r'\bcabdy\b', 'candy', t)   # "cabdy pink" typo → candy (common HK typo)
-    t = re.sub(r'\bcadny\b', 'candy', t)   # "cadny pink" typo → candy
-    t = re.sub(r'\bcindy\s*pink\b', 'candy pink', t)  # "cindy pink" typo → candy pink
-    t = re.sub(r'\bpana\b', 'panda', t)    # "pana" = panda (HK dealer shorthand for white/cream Panda dial)
-    t = re.sub(r'\bpumpkin\b', 'orange', t)  # "pumpkin" = orange enamel (116578 Daytona Everose Gold)
     t = re.sub(r'\bsodalit[eo]?\b', 'sodalite', t)
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
-    # "tiger iron" = metamorphic stone dial (126718GRNR-0002 variant) — keep distinct from tiger eye
-    # Must be normalized BEFORE the `tiger → tiger eye` substitution to avoid corruption.
-    t = re.sub(r'\btiger\s+iron\b', 'tiger iron', t)
-    # "tiger" alone (without "iron") = Tiger Eye stone dial (chatoyant quartz)
-    t = re.sub(r'\btiger\b(?!\s+iron)', 'tiger eye', t)
+    t = re.sub(r'\btiger\b', 'tiger eye', t)
     # Typo/shorthand fixes
-    t = re.sub(r'\bnavy(?:\s+blue)?\b', 'blue', t)   # navy/navy blue → blue (common color descriptor)
     t = re.sub(r'\bbule\b', 'blue', t)
     t = re.sub(r'\bsliver\b', 'silver', t)
     t = re.sub(r'\bwhe\b', 'white', t)
-    t = re.sub(r'\bwhtie\b', 'white', t)   # typo: whtie → white (common in HK messages)
-    # Remove "with-tag" annotations before white-dial shorthand fires.
-    # In HK dealer messages "-wt", "(wt", "/wt" = "with hangtag" (condition note), NOT a dial color.
-    # Stripping these first prevents "Green Skydweller (-wt)" → White (false positive).
-    t = re.sub(r'[-/(]\s*wt\b', '', t)
-    # "white tag" / "white hang tag" = physical paper hangtag attached to watch (condition note).
-    # Strip this BEFORE \bwt\b → 'white' and BEFORE general color scan fires.
-    # E.g. "124300 Green Dial 2024 white tag" → must NOT return 'White' dial.
-    t = re.sub(r'\bwhite\s+(?:tag|hangtag|hang\s+tag|swing\s+tag|sticker|price\s+tag)\b', '', t)
-    # "no white" = seller clarifying the watch does NOT have a white-related component
-    # (e.g. "277200 green N12 no white 55K" — NOT a white-dial listing).
-    # Strip before color detection to prevent false-positive White extraction.
-    t = re.sub(r'\bno\s+white\b', '', t)
-    t = re.sub(r'\bwt\b', 'white', t)       # "wt" = white (HK dealer shorthand, e.g. "326238 wt")
     t = re.sub(r'\blvory\b', 'ivory', t)  # typo: lvory → ivory
-    t = re.sub(r'\bivory\b|\bivoire\b', 'champagne', t)  # ivory/ivoire ≈ champagne (cream-tone dial)
-    t = re.sub(r'\bcamel\b|\blinen\b|\becru\b|\bstraw\b|\bbuttercup\b|\bbuttermilk\b', 'champagne', t)  # warm cream tones → champagne
-    t = re.sub(r'\bhoney\b', 'champagne', t)   # honey = warm golden = champagne (AP/Rolex)
-    t = re.sub(r'\bmint\s*-\s*green\b|\bmint\s+green\b|\bmintgreen\b', 'mint green', t)  # normalise hyphenated/compound
-    t = re.sub(r'\bpinky\b', 'pink', t)   # pinky → pink (HK dealer shorthand)
-    t = re.sub(r'\bchoco\b', 'chocolate', t)  # choco → chocolate
-    t = re.sub(r'\bchcoo\b', 'chocolate', t)  # "chcoo" typo → chocolate (HK shorthand)
-    t = re.sub(r'\bgary\s*dial\b', 'grey', t) # "gary dial" → grey (AP Royal Oak HK shorthand)
-    t = re.sub(r'\bbkack\b', 'black', t)       # "bkack" typo → black
-    t = re.sub(r'\bcoffee\b', 'brown', t)      # "coffee" = brown/chocolate (AP Offshore shorthand)
-    t = re.sub(r'\bbrow\b', 'brown', t)        # "brow" dealer shorthand → brown (e.g. 116595brow)
-    t = re.sub(r'\brby\b|\bruby\b|\brubb?y\b|\brubi\b', 'ruby', t) # "ruby"/"rubby"/"rubi" typos → ruby (Day-Date stone dial)
-    t = re.sub(r'\bwhitee\b', 'white', t)      # "whitee" typo → white
-    t = re.sub(r'\bcognac\b', 'chocolate', t)  # "cognac" = warm brown stone → Chocolate (Rolex official)
-    t = re.sub(r'\bceleb\b|\bcelb\b', 'celebration', t) # "celeb"/"celb" = Celebration dial (Day-Date)
-    t = re.sub(r'\bcelebrarion\b|\bcelebation\b|\bcelebraion\b', 'celebration', t)  # common typos for Celebration
-    # "carol" / "corral" → coral (common typo/shorthand for Coral dial on OP/DJ refs).
-    # Guard: must be standalone word — avoid matching "carolina", "carol king", etc.
-    # Only map when no "carol" is a plausible name-word surrounded by non-colour context;
-    # since colour context is overwhelmingly dominant in watch listings, the mapping is safe.
-    t = re.sub(r'\bcarol\b', 'coral', t)        # "carol" → coral (HK typo, e.g. "124300 carol 11")
-    t = re.sub(r'\bcorral\b', 'coral', t)       # "corral" → coral (typo)
-    t = re.sub(r'\bcorl\b|\bcrrl\b|\bcrlo\b', 'coral', t)  # "corl"/"crrl"/"crlo" typos → coral (SG/TW shorthand)
-    # "pistacho" → pistachio (Spanish-influenced misspelling common in EU/Latin dealer groups)
-    t = re.sub(r'\bpistacho\b', 'pistachio', t)
-    # Additional pistachio typos from HK/EU dealer groups
-    t = re.sub(r'\bpistacheo\b|\bpistagio\b|\bpistaccio\b|\bpistachoi\b', 'pistachio', t)
-    # "lavander" / "lawander" / "lavendar" → lavender (common misspellings)
-    t = re.sub(r'\blavander\b|\blawander\b|\blanveder\b|\blanveder\b|\blavendar\b', 'lavender', t)
-    t = re.sub(r'\bgreay\b', 'grey', t)        # "greay" typo → grey
-    t = re.sub(r'\bgreeb\b', 'green', t)       # "greeb" typo → green (common in HK msgs, e.g. "greeb jub")
-    t = re.sub(r'\bgrene\b|\bgreem\b', 'green', t)  # "grene"/"greem" typos → green
-    t = re.sub(r'\bpurpl\b', 'purple', t)      # "purpl" truncated → purple
-    t = re.sub(r'\bblakc\b|\bblcak\b', 'black', t)  # "blakc"/"blcak" typos → black
-    t = re.sub(r'\bwhitle\b|\bwhiet\b', 'white', t)  # "whitle"/"whiet" typos → white
-    # Additional dealer shorthands (HK/China groups)
-    t = re.sub(r'\bslv\b', 'silver', t)         # "slv" = silver (common abbreviation)
-    t = re.sub(r'\bgry\b', 'grey', t)           # "gry" = grey shorthand
-    t = re.sub(r'\bblk\b|\bbk\b', 'black', t)   # "blk"/"bk" = black (already handled above but reinforce)
-    t = re.sub(r'\bgrn\b', 'green', t)          # "grn" = green (very common HK/SG shorthand, e.g. "Sub grn 41")
-    t = re.sub(r'\bbrn\b', 'brown', t)          # "brn" = brown/chocolate (HK dealer shorthand)
-    t = re.sub(r'\bpnk\b', 'pink', t)           # "pnk" = pink (HK shorthand when standalone, not glued to ref)
-    t = re.sub(r'\bora\b', 'orange', t)         # "ora" = orange (HK shorthand, standalone context)
-    t = re.sub(r'\byel\b|\byelw\b|\bylw\b', 'yellow', t)  # "yel"/"yelw"/"ylw" = yellow (Day-Date YG/yellow stone)
-    t = re.sub(r'\bmeteo\b', 'meteorite', t)    # "meteo" = meteorite
-    t = re.sub(r'\bmeteor\b', 'meteorite', t)   # "meteor" = meteorite (6-char truncation, distinct from meteo)
-    t = re.sub(r'\bdblue\b|\bd\s+blue\b', 'd-blue', t)  # "dblue"/"d blue" = D-Blue Deepsea shorthand
-    # Handle "REFd blue" — D glued to ref digits with no space (e.g. "136660d blue").
-    # \b fails here because 'd' is immediately preceded by a word-char digit.
-    t = re.sub(r'(?<=\d)d\s+blue\b', ' d-blue', t)
-    # Also handle hyphenated form glued to ref digits (e.g. "136660d-blue").
-    t = re.sub(r'(?<=\d)d-blue\b', ' d-blue', t)
-    # "James Cameron" = D-Blue Deepsea (nickname universally used in dealer groups)
-    t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t)
-    t = re.sub(r'\bvio\b', 'aubergine', t)      # "vio" = violet/aubergine (DJ/DD shorthand)
-    t = re.sub(r'\baqua\s*blue\b', 'tiffany', t) # "aqua blue" = Tiffany Blue (OP family)
-    # "iceblue" concatenated (no space) → "ice blue" — common HK dealer shorthand
-    t = re.sub(r'\biceblue\b', 'ice blue', t)
-    # "lightblue" / "light blue" → normalize concatenated form first
-    t = re.sub(r'\blightblue\b', 'light blue', t)
-    # "icy blue" → "ice blue" (Ice Blue Platinum Daytona/DD descriptor)
-    t = re.sub(r'\bicy\s*blue\b', 'ice blue', t)
-    # "tiffanyblue" concatenated (no space) → "tiffany blue"
-    t = re.sub(r'\btiffanyblue\b', 'tiffany blue', t)
-    # "ice-blue" hyphenated → "ice blue"
-    t = re.sub(r'\bice-blue\b', 'ice blue', t)
-    # "iceb" shorthand → "ice blue" (very short HK dealer code for Ice Blue, e.g. "228206 iceb")
-    t = re.sub(r'\biceb\b', 'ice blue', t)
-    # "aquamarine" → "ice blue" (color descriptor used for platinum Ice Blue dials)
-    # Guard: only for known platinum/WG refs (126506, 228206, 52506, 127236 etc.)
-    if ref:
-        _rb_aq = re.match(r'(\d+)', ref)
-        _rb_aq_b = _rb_aq.group(1) if _rb_aq else ''
-        if _rb_aq_b in ('126506','116506','228206','52506','127236','118366','126206'):
-            t = re.sub(r'\baquamarine\b|\baqua\s+marine\b', 'ice blue', t)
-    # Standalone "ice" → "ice blue" for WG/Platinum Day-Date refs (228xxx, 128xxx).
-    # In these groups "ice rom" / "ice" alone = Ice Blue Roman / Ice Blue dial (extremely common
-    # HK shorthand for Day-Date 40/36 WG/Platinum Ice Blue dials). Guard to DD family only to
-    # avoid false hits on other brands/refs where "ice" has a different meaning.
-    if ref:
-        _rb_ice = re.match(r'(\d+)', ref)
-        _rb_ice_b = _rb_ice.group(1) if _rb_ice else ''
-        if _rb_ice_b[:3] in ('228', '128') or _rb_ice_b in ('116576', '218206', '218235'):
-            t = re.sub(r'\bice\b(?!\s+blue)', 'ice blue', t)
-    # ── Chinese character normalizations (HK/Taiwan/China dealer groups) ──
-    # 數字/数字 = "numbers" = Arabic numeral indices dial (both trad. & simplified Chinese)
-    t = re.sub(r'[數数]字', 'arabic', t)
-    # 羅馬/罗马 = "Roman" = Roman numeral indices
-    t = re.sub(r'[羅罗][馬马]', 'roman', t)
-    # Sky Blue / Baby Blue in Chinese → Tiffany Blue for OP refs
-    # MUST come BEFORE the generic [藍蓝]色 → blue sub below, because that sub eats
-    # the 藍/色 characters, leaving "天blue" which has no \b before 'blue' (天 is a Unicode
-    # word character), causing the sky-blue compound patterns to never match.
-    # 天藍/天空藍/水藍/淡藍 = sky/light/water blue — OP Tiffany Blue dealer descriptions
-    # Guard: only apply for OP family (these refs officially offer Tiffany Blue)
-    if ref:
-        _rb_cn_tblue = re.match(r'(\d+)', ref)
-        _rb_cn_tb_b = _rb_cn_tblue.group(1) if _rb_cn_tblue else ''
-        _op_cn_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
-        _op_cn_pfx = ('277', '276', '124')
-        if _rb_cn_tb_b in _op_cn_exact or _rb_cn_tb_b[:3] in _op_cn_pfx:
-            t = re.sub(r'天[藍蓝]色?|天空[藍蓝]色?|水[藍蓝]色?|淡[藍蓝]色?', 'tiffany', t)
-    # Compound patterns MUST come BEFORE the single-character generic subs below.
-    # 地中海藍色: [藍蓝]色 fires on 藍色 first → 地中海blue; 地中海[藍蓝]色? can't match.
-    # 煙灰色: 灰色 fires on 灰色 first → 煙grey; 煙灰 can't match.
-    t = re.sub(r'地中海[藍蓝]色?', 'mediterranean blue', t)   # 地中海藍 = Mediterranean Blue (OP36/41 2024+ dial)
-    t = re.sub(r'深[藍蓝]色?', 'blue', t)                     # 深藍/深藍色 = deep blue
-    t = re.sub(r'寶[藍蓝]色?', 'blue', t)                     # 寶藍/寶藍色 = royal/sapphire blue
-    t = re.sub(r'煙灰色?|烟灰色?', 'ombré slate', t)          # 煙灰色/烟灰色 = smoky grey = Ombré Slate (before 灰色→grey)
-    # 白/黑/藍/綠/灰/銀/玫瑰 = white/black/blue/green/grey/silver/rose (common color chars)
-    t = re.sub(r'白色|白盤|白面', 'white', t)   # 白色/白盤/白面 = white dial
-    t = re.sub(r'黑色|黑盤|黑面', 'black', t)   # 黑色/黑盤/黑面 = black dial
-    t = re.sub(r'[藍蓝]色|[藍蓝]盤|[藍蓝]面', 'blue', t)    # 藍色/蓝色 = blue
-    t = re.sub(r'[綠绿緑]色|[綠绿緑]盤|[綠绿緑]面', 'green', t)   # 綠色/绿色/緑色 = green (incl. Japanese 緑 U+7DD1)
-    t = re.sub(r'灰色|灰盤|灰面', 'grey', t)    # 灰色 = grey
-    t = re.sub(r'[銀银]色|[銀银]盤|[銀银]面', 'silver', t)  # 銀色/银色 = silver
-    t = re.sub(r'棕色|咖啡色|棕盤|咖啡盤', 'chocolate', t)  # 棕色/咖啡色 = brown/chocolate
-    t = re.sub(r'茶色|茶盤|茶面', 'chocolate', t)            # 茶色 = tea-brown/chocolate (Japanese/Chinese)
-    t = re.sub(r'青色|青盤|青面', 'blue', t)                 # 青色 = blue/cyan (Japanese dealer shorthand)
-    # MUST come BEFORE generic 粉[紅红] → pink below; 粉紅 is a substring of 淡粉紅/嫩粉紅
-    # and would be consumed first, leaving 淡pink/嫩pink that the candy-pink subs can't match.
-    t = re.sub(r'淡粉[紅红]?|淡粉色', 'candy pink', t)  # 淡粉/淡粉紅 = light/candy pink
-    t = re.sub(r'嫩粉[紅红]?|嫩粉色', 'candy pink', t)  # 嫩粉/嫩粉紅 = tender/baby pink = Candy Pink
-    t = re.sub(r'粉色|粉[紅红]|粉盤', 'pink', t)             # 粉色/粉紅 = pink (must come AFTER 淡粉/嫩粉)
-    # IMPORTANT: 香[槟檳]綠/绿 (champagne green) must come BEFORE the generic 香[檳槟] → champagne
-    # replacement, otherwise 香槟绿 → champagne绿 before the wimbledon pattern can match.
-    t = re.sub(r'香[槟檳]綠|香[槟檳]绿', 'wimbledon', t)    # 香檳綠/香槟绿 = champagne green = Wimbledon (DJ/DJ41 dealer slang in HK/TW/CN groups)
-    t = re.sub(r'香[檳槟]', 'champagne', t)                  # 香檳/香槟 = champagne (must come AFTER 香[槟檳]綠 above)
-    t = re.sub(r'隕石|陨石', 'meteorite', t)                 # 隕石/陨石 = meteorite
-    t = re.sub(r'蒂芙[尼]藍|蒂芙[尼]蓝', 'tiffany', t)      # 蒂芙尼藍/蓝 = Tiffany blue
-    t = re.sub(r'蒂芙[尼](?![藍蓝])', 'tiffany', t)          # 蒂芙尼 standalone (no 藍/蓝) — still = Tiffany Blue (Patek guard fires later)
-    t = re.sub(r'冰[藍蓝]', 'ice blue', t)                  # 冰藍/冰蓝 = ice blue
-    t = re.sub(r'珍珠母|珠光盤', 'mop', t)                  # 珍珠母/珠光盤 = MOP
-    t = re.sub(r'溫布[爾尔]頓|温布[爾尔]顿', 'wimbledon', t)  # 溫布爾頓/温布尔顿 = Wimbledon (TW/HK/CN)
-    t = re.sub(r'葡萄(?:紫|色)?', 'grape', t)               # 葡萄 = Grape (OP/DJ Grape dial — Chinese)
-    t = re.sub(r'\bgrapes\b', 'grape', t)                  # "grapes" (plural) → grape (dealer plural form)
-    t = re.sub(r'珊瑚[紅红]?|珊瑚色', 'coral', t)           # 珊瑚/珊瑚色 = coral (OP/DJ Coral dial)
-    # ── Additional Chinese dial color normalizations ──────────────────────────
-    t = re.sub(r'薄荷[綠绿緑]?', 'mint green', t)  # 薄荷綠/薄荷绿/薄荷 = Mint Green (incl. 薄荷 alone)
-    t = re.sub(r'薰衣草', 'lavender', t)         # 薰衣草 = Lavender
-    t = re.sub(r'開心果|开心果', 'pistachio', t) # 開心果/开心果 = Pistachio (lit. "happy fruit")
-    t = re.sub(r'奶白色?|乳白色?', 'white', t)  # 奶白/乳白 = cream/milky white
-    t = re.sub(r'金色|金盤|金面', 'champagne', t)   # 金色/金盤 = gold-colored dial = Champagne
-    t = re.sub(r'焦糖色?', 'chocolate', t)           # 焦糖 = caramel/toffee = Chocolate
-    t = re.sub(r'香草色?', 'champagne', t)           # 香草 = vanilla = Champagne (cream-tone)
-    t = re.sub(r'奶油色?', 'champagne', t)           # 奶油 = butter/cream = Champagne
-    # ── Chinese Ombré dial terms (Day-Date gradient dials — HK/TW/CN dealer groups) ──
-    t = re.sub(r'綠烟|绿烟|綠煙|绿煙', 'green ombré', t)                # 绿烟/綠煙 = green smoke = Green Ombré
-    t = re.sub(r'巧克力烟|巧克力煙', 'chocolate ombré', t)              # 巧克力烟 = chocolate smoke = Chocolate Ombré
-    t = re.sub(r'灰烟|灰煙|石板烟|石板煙|板岩烟|板岩煙|煙灰|烟灰', 'ombré slate', t)  # 灰烟/石板烟/煙灰 = slate smoke = Ombré Slate
-    t = re.sub(r'紅烟|红烟|紅煙|红煙', 'red ombré', t)                 # 紅烟/红煙 = red smoke = Red Ombré
-    t = re.sub(r'漸變|渐变', 'ombré', t)                               # 漸變/渐变 = gradient = Ombré
-    t = re.sub(r'煙熏|烟熏', 'ombré', t)                               # 煙熏/烟熏 = smoky = Ombré
-    # ── Chinese Olive Green (Day-Date 40 RG / DD 36 RG olive stone dial) ──
-    t = re.sub(r'橄欖綠|橄榄绿|橄欖色|橄榄色', 'olive green', t)       # 橄欖綠/橄榄绿 = olive green
-    # ── Chinese Orange (OP41/OP36/OP31 orange lacquer dial) ──
-    t = re.sub(r'橙色|橙盤|橙面|橙[紅红]', 'orange', t)                # 橙色/橙盤 = orange dial
-    # ── Chinese Yellow (OP/DJ yellow lacquer dial) ──
-    t = re.sub(r'[黃黄]色|[黃黄]盤|[黃黄]面', 'yellow', t)             # 黃色/黄色 = yellow dial
-    # ── Chinese Purple/Aubergine (DJ/DD Aubergine; OP Grape — OP guard fires later) ──
-    t = re.sub(r'紫色|紫盤|紫面|茄子?色', 'purple', t)                  # 紫色/茄子色 = purple/aubergine (OP guard converts to grape)
-    # ── Chinese Beige (OP41/OP31 beige lacquer dial) ──
-    t = re.sub(r'米色|米盤|杏[仁]?色', 'beige', t)                      # 米色/杏色 = beige/cream dial
-    # ── Chinese Celebration dial ──
-    t = re.sub(r'慶典|庆典', 'celebration', t)                          # 慶典/庆典 = Celebration (Jubilee Motif dial)
-    # "official tiffany" / "tiffany official" → tiffany (explicit premium dial label)
-    t = re.sub(r'\bofficial\s+tiffany\b|\btiffany\s+official\b', 'tiffany', t)
-    # "offi tiff" / "official tiff" (misspelled + abbreviated form) → tiffany
-    t = re.sub(r'\bofficial\s+tiff\b|\boffi\s+tiff\b|\boffi\s+tiffany\b', 'tiffany', t)
-    # "tiffany blue dial" / "tiff blue dial" compound label — normalized upstream but reinforce
-    t = re.sub(r'\btiff(?:any)?\s+blue\s+dial\b', 'tiffany', t)
-    # "tiffany op" / "op tiffany" (common HK dealer shorthand for OP36 Tiffany Blue)
-    t = re.sub(r'\btiffany\s+op\b|\bop\s+tiffany\b', 'tiffany', t)
-    # "tiff op" / "op tiff" → tiffany (abbreviated form of the above)
-    t = re.sub(r'\btiff\s+op\b|\bop\s+tiff\b', 'tiffany', t)
-    # "champagne green" already converted to 'wimbledon' above; reinforce for any split form
-    # that may have been lowercased before reaching the earlier normalization
-    t = re.sub(r'\bchamp(?:agne)?\s+green\b', 'wimbledon', t)
-    # "CTB" / "CLTB" = Celebration Tiffany Blue (HK/SG dealer compound shorthand)
-    # Expands to "celebration tiffany" so the celebration detection block resolves it
-    # as 'Celebration Tiffany Blue' via the existing _has_tiff_signal check.
-    # On non-OP refs, falls through to plain 'Celebration' (safe default).
-    t = re.sub(r'\bctb\b', 'celebration tiffany', t)
-    t = re.sub(r'\bcltb\b', 'celebration tiffany', t)
-    t = re.sub(r'\bceltb\b', 'celebration tiffany', t)   # "CELTB" = Celebration Tiffany Blue (dial_synonyms synonym)
-    # "OTB" = "Official Tiffany Blue" (rare HK/SG dealer shorthand for the stamped OP Tiffany Blue dial)
-    # Only valid for OP refs that officially list Tiffany Blue as a dial option.
-    if ref:
-        _rb_otb = re.match(r'(\d+)', ref)
-        _rb_otb_b = _rb_otb.group(1) if _rb_otb else ''
-        _op_otb_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
-        _op_otb_pfx = ('277', '276', '124')
-        if _rb_otb_b in _op_otb_exact or _rb_otb_b[:3] in _op_otb_pfx:
-            t = re.sub(r'\botb\b', 'tiffany', t)
-            # "OTBL" = "Off Tiff Blue Level" / "Official Tiffany Blue" dealer shorthand (dial_synonyms synonym)
-            t = re.sub(r'\botbl\b', 'tiffany', t)
-            # "t/b" / "ot/b" slash notation → tiffany (WhatsApp dealer shorthand for Tiffany Blue / Official TB)
-            # \b fails around '/' so use lookahead/lookbehind approach
-            t = re.sub(r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', 'tiffany', t)
-            t = re.sub(r'(?<![a-zA-Z0-9])t/b(?![a-zA-Z0-9])', 'tiffany', t)
-    # "pn exotic" / "exotic pn" → paul newman (concatenated PN+Exotic shorthand)
-    t = re.sub(r'\bpn\s*exotic\b|\bexotic\s*pn\b', 'paul newman', t)
-    # "wimbelon" / "wimbledn" / "wimbeldon" / "wibledon" → wimbledon (additional typo variants)
-    t = re.sub(r'\bwimbelon\b|\bwimbledn\b|\bwimbeldon\b|\bwibledon\b', 'wimbledon', t)
-    # "wimbledo" (truncated — missing trailing 'n') → wimbledon (common HK shorthand truncation)
-    t = re.sub(r'\bwimbledo\b(?!n)', 'wimbledon', t)
-    # "wm dial" / "wim dial" → wimbledon (abbreviated Wimbledon shorthand)
-    t = re.sub(r'\bwm\s+dial\b|\bwim\s+dial\b', 'wimbledon', t)
-    # Typo fixes for colour words (HK/SG dealer groups)
-    t = re.sub(r'\bazzuro\b|\bazzure\b', 'azzurro', t)          # azzuro/azzure → azzurro (common Italian-speaker typo)
-    t = re.sub(r'\bchampange\b|\bchampaign\b|\bchampainge\b', 'champagne', t)  # champange/champaign → champagne
-    t = re.sub(r'\bturqoise\b|\bturquiose\b', 'turquoise', t)   # turqoise/turquiose → turquoise
-    # "tb" standalone on OP refs = Tiffany Blue shorthand (normalise here for robustness).
-    # NOTE: Daytona refs (1165xx/1265xx) normalize "tb" → "turquoise" separately at line ~3398.
-    # This block fires AFTER the Daytona guard so they can't conflict.
-    if ref:
-        _rb_tb_op = re.match(r'(\d+)', ref)
-        _rb_tb_op_b = _rb_tb_op.group(1) if _rb_tb_op else ''
-        _op_tb_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200', '124260'})
-        _op_tb_pfx = ('277', '276')
-        if _rb_tb_op_b in _op_tb_exact or _rb_tb_op_b[:3] in _op_tb_pfx:
-            t = re.sub(r'\btb\b', 'tiffany', t)
-    t = re.sub(r'\btiffb\b|\btifb\b', 'tiffany', t)              # "tiffb"/"tifb" = Tiffany Blue (HK dealer abbreviation, single/double-f)
-    t = re.sub(r'\btifblu\b|\btiffblu\b', 'tiffany', t)          # "tifblu"/"tiffblu" = Tiffany Blue (HK shorthand, no trailing 'e')
-    t = re.sub(r'\btiffany\s+blu\b(?!e)', 'tiffany', t)          # "tiffany blu" (Italian form) = Tiffany Blue
-    # ── "tiff ib" / "ib tiff" compound — must normalize BEFORE standalone \bib\b fires ──
-    # "tiff ib" is dealer shorthand for Tiffany Blue (NOT Ice Blue).
-    # Without this, \bib\b at the Ice Blue check triggers first, returning 'Ice Blue' incorrectly.
-    # Replace the full compound so the stray "ib" token is removed entirely.
-    t = re.sub(r'\btiff(?:any)?\s+ib\b', 'tiffany', t)          # "tiff ib" / "tiffany ib" → tiffany
-    t = re.sub(r'\bib\s+tiff(?:any)?\b', 'tiffany', t)          # "ib tiff" / "ib tiffany" → tiffany
-    t = re.sub(r'\btiff\s+tb\b|\btb\s+tiff\b', 'tiffany', t)    # "tiff tb" / "tb tiff" compound → tiffany
-    t = re.sub(r'\bblck\b', 'black', t)                         # "blck" typo → black
-    # "light blue" on OP family refs = Tiffany Blue (the official robin's-egg-blue dial).
-    # OP refs that carry a Tiffany Blue dial option: 126000/126034 (OP36),
-    # 277200/276200 (OP31/26), 124200/124300 (OP34/41), 134300 (OP28).
-    # NOTE: 126200 is Datejust 36 (NOT OP) — it stays as Blue/Azzurro, not Tiffany.
-    # For all other refs (DJ, DD, Sub …) keep "light blue" as generic Blue.
-    if ref:
-        _rb_lb = re.match(r'(\d+)', ref)
-        _rb_lb_base = _rb_lb.group(1) if _rb_lb else ''
-        _op_lb_exact = {'126000', '126034', '134300', '126031'}  # 126031 = OP36 variant
-        _op_lb_prefix = ('277', '276', '124')
-        if _rb_lb_base in _op_lb_exact or _rb_lb_base[:3] in _op_lb_prefix:
-            t = re.sub(r'\blight\s*blue\b', 'tiffany', t)
-            # "sky blue" / "baby blue" / "powder blue" / "pale blue" on OP refs = Tiffany Blue.
-            # These are common dealer descriptors for the robin's-egg-blue OP dial color.
-            t = re.sub(r'\bsky\s*blue\b|\bbaby\s*blue\b|\bpowder\s*blue\b|\bpale\s*blue\b', 'tiffany', t)
-            # "robin blue" / "egg blue" on OP refs = Tiffany Blue
-            # Common dealer descriptors: "robin blue OP36", "egg blue dial", etc.
-            t = re.sub(r'\brobin\s+blue\b', 'tiffany', t)
-            t = re.sub(r'\begg\s*blue\b', 'tiffany', t)
-            # "candy blue" on OP refs = Tiffany Blue (sweet-shade shorthand for robin's-egg blue)
-            t = re.sub(r'\bcandy\s*blue\b', 'tiffany', t)
-    # Pre-normalize purple synonyms → aubergine BEFORE the OP purple→grape guard fires.
-    # This ensures eggplant/plum/purp arrive as "aubergine" so the data-driven guard can remap.
-    t = re.sub(r'\beggplant\b', 'aubergine', t)   # eggplant = aubergine (US slang)
-    t = re.sub(r'\bpurp\b|\baust\b|\baub\b', 'aubergine', t)  # purp/aust/aub shorthands
-    # "purple" / "violet" on OP family refs = Grape (official Rolex OP dial name).
-    # On DJ/DD refs these remain Aubergine. OP refs: 114xxx, 124xxx, 134xxx,
-    # 126000/126034, 277xxx, 276xxx.
-    # NOTE: 126200 is Datejust 36 — "violet" there stays Aubergine.
-    # "violet" is safe to map for OP — it is not an official DJ/DD dial word.
-    if ref:
-        _rb_pur = re.match(r'(\d+)', ref)
-        _rb_pur_base = _rb_pur.group(1) if _rb_pur else ''
-        _op_pur_exact = {'126000', '126031', '126034', '114200', '114300', '114270'}
-        _op_pur_prefix = ('124', '134', '277', '276', '114')
-        if _rb_pur_base in _op_pur_exact or _rb_pur_base[:3] in _op_pur_prefix:
-            t = re.sub(r'\bpurple\b', 'grape', t)
-            t = re.sub(r'\bviolet\b', 'grape', t)
-    # "aubergine" on non-OP refs where Grape is valid but Aubergine is NOT → remap to "grape".
-    # Refs with BOTH options keep "aubergine" as-is (e.g. 126000 has both).
-    # Data-driven: follows rolex_dial_options.json so no hardcoded ref list needed.
-    if _valid_dials and 'Grape' in _valid_dials and 'Aubergine' not in _valid_dials:
-        t = re.sub(r'\baubergine\b', 'grape', t)
-    # "mingreen" / "mintgrn" / "minty" → "mint green"
-    # "minty" is a common dealer shorthand for mint green (distinct from "mint" condition descriptor)
-    t = re.sub(r'\bmingreen\b|\bmintgrn\b|\bmint\s*grn\b|\bminty\b', 'mint green', t)
-    # "bright grn" / "bright grne" / "brgrn" / "brightgrn" → "bright green"
-    # Day-Date 40/36 Bright Green (casino/money green solid lacquer dial) shorthand
-    t = re.sub(r'\bbright\s+gr[ne]n?\b|\bbrgrn\b|\bbrightgrn\b|\bbgrn\b(?=\s|$)', 'bright green', t)
-    # "lime" / "lime green" → "bright green" for Day-Date refs
-    # Lime green = Bright Green on Day-Date 40/36 refs (casino/electric green lacquer dial).
-    # Guard: only apply to DD family to avoid corrupting other brands where "lime" could be
-    # a colour descriptor for non-bright-green dials (e.g. lime yellow ≠ bright green on OP).
-    if ref:
-        _rb_lime = re.match(r'(\d+)', ref)
-        _rb_lime_b = _rb_lime.group(1) if _rb_lime else ''
-        if _rb_lime_b[:3] in ('228', '128', '218', '118'):
-            t = re.sub(r'\blime(?:\s*green)?\b', 'bright green', t)
-    # "br blue" / "bright bl" → "bright blue" (DJ Bright Blue shorthand)
-    t = re.sub(r'\bbr\s*blue\b|\bbright\s*bl\b', 'bright blue', t)
-    # "blusy" / "blsy" → "blue" (Blue Sunray shorthand used in US/SG dealer groups)
-    t = re.sub(r'\bblusy\b|\bblsy\b|\bblu\s*sy\b', 'blue', t)
-    # "sund" / "snds" / "sundst" / "sundus" → "sundust" (additional Everose Daytona shorthands)
-    t = re.sub(r'\bsund\b|\bsnds\b|\bsundst\b|\bsundus\b', 'sundust', t)
-    # "sandy" → "sundust" for Everose Daytona / Day-Date refs with Sundust as the dial name.
-    # Dealers in SG/HK occasionally use "sandy" for the warm sand-gold lacquer Sundust dial.
-    # Guard: strictly Everose refs — globally "sandy" could refer to sandy-beige on other brands.
-    if ref:
-        _rb_sandy = re.match(r'(\d+)', ref)
-        _rb_sandy_b = _rb_sandy.group(1) if _rb_sandy else ''
-        if _rb_sandy_b in ('116505', '126505', '116515', '126515', '116595', '126595',
-                           '228235', '128235', '228345', '128345', '228238', '128238'):
-            t = re.sub(r'\bsandy\b', 'sundust', t)
-    # "sunny" / "sunnyside" → "sundust" for Everose Daytona/Day-Date refs
-    # Guard: only fire for Everose refs where Sundust is the canonical dial name.
-    # Not global — "sunny" is too common an English word outside watch context.
-    if ref:
-        _rb_sunny = re.match(r'(\d+)', ref)
-        _rb_sunny_b = _rb_sunny.group(1) if _rb_sunny else ''
-        if _rb_sunny_b in ('116505', '116515', '126505', '126515', '116595', '126595',
-                           '228235', '128235', '228345', '128345', '228238', '128238'):
-            t = re.sub(r'\bsunny(?:side)?\b', 'sundust', t)
-    # "tiffy" / "tif dial" → "tiffany" (playful shorthand used in dealer groups)
-    t = re.sub(r'\btiffy\b', 'tiffany', t)
-    t = re.sub(r'\btif\s+dial\b', 'tiffany', t)
-    # "wimbledun" → "wimbledon" (common typo in WhatsApp dealer messages)
-    t = re.sub(r'\bwimbledun\b', 'wimbledon', t)
-    # "azz" / "azzur" → "azzurro" (Datejust 41 Azzurro Blue shorthand — HK dealer groups)
-    t = re.sub(r'\bazz\b|\bazzur\b', 'azzurro', t)
-    # "aventur" / "avent" → "aventurine" (Day-Date stone dial shorthand — require 5+ chars to avoid false hits)
-    # Also "adventurine" (d→v confusion typo common in EN/SG dealer messages)
-    t = re.sub(r'\baventur(?:ine?)?\b|\badventurine?\b', 'aventurine', t)
-    # "lazuli" → "lapis" (lapis lazuli stone dial shorthand)
-    t = re.sub(r'\blazuli\b', 'lapis', t)
-    # "malach" → "malachite" (require 5+ chars — "mala" alone is too common)
-    t = re.sub(r'\bmalach(?:ite?)?\b', 'malachite', t)
-    # "grossul" → "grossular" (Giraffe stone dial — require 6+ chars)
-    t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)
-    # "eisenk" → "eisenkiesel" (Day-Date 40 pebble/flint stone dial)
-    t = re.sub(r'\beisenkies(?:el)?\b', 'eisenkiesel', t)
-    # "eisen" alone → "eisenkiesel" for DD refs (228235/128235/228238/128238/218235/228236).
-    # Standalone "eisen" (German for "iron") uniquely identifies the Eisenkiesel stone dial on
-    # Day-Date refs. NOT applied globally — "eisen" could appear in other contexts (e.g. brand names).
-    if ref:
-        _rb_eisen = re.match(r'(\d+)', ref)
-        _rb_eisen_b = _rb_eisen.group(1) if _rb_eisen else ''
-        if _rb_eisen_b in ('228235', '128235', '228238', '128238', '218235', '228236'):
-            t = re.sub(r'\beisen\b(?!kiesel)', 'eisenkiesel', t)
-    # "jubilee dial" → "celebration" (Jubilee Motif / Celebration dial)
-    t = re.sub(r'\bjubilee\s+dial\b', 'celebration', t)
-    # "jubilee motif" → "celebration" (official alternate name for the Jubilee Motif dial)
-    t = re.sub(r'\bjubilee\s+motif\b', 'celebration', t)
-    # "jubilee tiffany" / "jubilee tb" → "celebration tiffany" — OP refs ONLY.
-    # dial_synonyms.json lists "Jubilee Tiffany Blue" / "Jubilee Tiffany" as CTB synonyms.
-    # Guard: on DJ/DD refs "jubilee" usually means the Jubilee bracelet, not the Jubilee Motif
-    # (Celebration) dial. OP refs never have a Jubilee bracelet, so "jubilee" unambiguously
-    # references the Celebration dial color. Apply only when ref is confirmed OP family.
-    # "clt blue" / "clt bl" on OP refs → "celebration tiffany"
-    # "CLT Blue" is a HK dealer compound shorthand where "CLT" = Celebration and "Blue" = Tiffany Blue.
-    # Must be resolved BEFORE the generic \bclt\b rule below to avoid producing "celebration blue"
-    # (which lacks a Tiffany signal and would incorrectly return plain "Celebration").
-    if ref:
-        _rb_clt = re.match(r'(\d+)', ref)
-        _clt_rb = _rb_clt.group(1) if _rb_clt else ''
-        if _clt_rb in ('126000', '126034', '126031') or _clt_rb[:3] in ('124', '277', '276', '134'):
-            t = re.sub(r'\bclt\s+(?:blue|bl)\b', 'celebration tiffany', t)
-            t = re.sub(r'\bjubilee\s+tiffany\b', 'celebration tiffany', t)
-            t = re.sub(r'\bjubilee\s+tb\b', 'celebration tiffany', t)
-            # Slash-notation variants from dial_synonyms.json (common in HK/SG WhatsApp dealer groups)
-            # "CLT/B" = Celebration Tiffany Blue, "CT/B" = same, "CELT/B" = abbreviated form
-            t = re.sub(r'(?<![a-zA-Z0-9])clt/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
-            t = re.sub(r'(?<![a-zA-Z0-9])ct/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
-            t = re.sub(r'(?<![a-zA-Z0-9])celt/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
-            t = re.sub(r'(?<![a-zA-Z0-9])celeb\s*t/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
-            t = re.sub(r'(?<![a-zA-Z0-9])cl\s*t/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
-    # "clt" shorthand → "celebration" (very short HK code for Celebration dial, e.g. "126000 clt tb")
-    # Guard: only map when followed by space+color or at end to avoid corrupting "clt" part-numbers.
-    t = re.sub(r'\bclt\b(?=\s+(?:tiff|tb|tiffany|blue|wh|blk|silver|green|pistachio)|\s*$)', 'celebration', t)
-    # "pn dial" / "daytona pn" / "pnd" → "paul newman" (Daytona PN shorthand variants)
-    t = re.sub(r'\bpn\s+dial\b', 'paul newman', t)
-    t = re.sub(r'\bdaytona\s+pn\b', 'paul newman', t)
-    t = re.sub(r'\bpnd\b', 'paul newman', t)  # "PND" = Paul Newman Daytona dealer shorthand
-    # "p.n." / "p.newman" / "p newman" → "paul newman" (dotted / abbreviated PN forms)
-    t = re.sub(r'\bp\.n\.(?=\s|$)|\bp\s*newman\b', 'paul newman', t)
-    # "p/n" with slash on Daytona refs → "paul newman" (slash notation used in some dealer groups)
-    if ref:
-        _rb_pnsl = re.match(r'(\d+)', ref)
-        _pnsl_base = _rb_pnsl.group(1) if _rb_pnsl else ''
-        if _pnsl_base[:4] in ('1165', '1265'):
-            t = re.sub(r'\bp/n\b', 'paul newman', t)
-    # "paul newman2023y" / "newman2023" — seller glues year/condition code directly to "newman".
-    # \b fails between "n" and digit (both word chars), so inject a space before any trailing digits.
-    t = re.sub(r'\b(paul\s*newman)(\d)', r'\1 \2', t)
-    # "paul n" alone (2-char abbreviation of Newman) → paul newman — guard: Daytona refs only.
-    # Too short for global mapping; "paul n 2022" on a non-Daytona ref is ambiguous.
-    # Daytona 1165xx / 1265xx: "paul n" is unambiguously Paul Newman dial shorthand.
-    if ref:
-        _rb_pauln = re.match(r'(\d+)', ref)
-        if _rb_pauln and _rb_pauln.group(1)[:4] in ('1165', '1265'):
-            t = re.sub(r'\bpaul\s+n\b(?!\s*ew)', 'paul newman', t)
-            # "pauln" concatenated (no space) on Daytona refs → paul newman (WhatsApp dealer shorthand)
-            t = re.sub(r'\bpauln\b', 'paul newman', t)
-            # "newman" alone (no "paul" prefix) on Daytona refs → paul newman
-            # Dealers frequently write just the surname: "116518LN newman champagne $210k"
-            # Guard: only Daytona 1165xx / 1265xx — too risky for non-Daytona refs.
-            t = re.sub(r'\bnewman\b', 'paul newman', t)
-    # "exo" shorthand → "exotic" (abbreviation used in some dealer groups for PN exotic dial)
-    t = re.sub(r'\bexo\b(?!\s*(?:terra|tic))', 'exotic', t)  # guard against "exoterra" (RM brand)
-    # "smoky" / "smokey" (alternate spelling) → ombré (gradient/smoky finishes on Day-Date ombré dials)
-    t = re.sub(r'\bsmoky\b|\bsmokey\b', 'ombré', t)
-    # Split color words glued to year numbers (e.g. "black2021" → "black 2021")
-    t = re.sub(r'\b(black|white|blue|green|grey|gray|silver|gold|pink|red|brown|orange)(20\d\d)\b', r'\1 \2', t)
-    # Split color words glued to month/day numbers (e.g. "blue12/2025" → "blue 12/2025")
-    t = re.sub(r'\b(black|white|blue|green|grey|gray|silver|gold|pink|red|brown|orange|champagne|chocolate|salmon|khaki|sundust)(\d{1,2})[/\-]', r'\1 \2/', t)
     # Dealer nicknames → dial color
     t = re.sub(r'\bjohn\s*mayer\b', 'green', t)  # John Mayer = green Daytona
     t = re.sub(r'\bleman\b|\ble\s*mans?\b', 'black', t)  # Le Mans = black Daytona YG
     t = re.sub(r'\bavocado\b', 'green', t)  # Avocado = green AP Offshore Diver
     t = re.sub(r'\bvampire\b', 'blue', t)  # Vampire = blue AP Offshore Chrono
-    t = re.sub(r'\bkiwi\b', 'green', t)          # Kiwi = green (RM37-01 Kiwi edition)
-    t = re.sub(r'\bskull\b', 'black', t)         # Skull = black (RM52-01 Skull Tourbillon)
-    t = re.sub(r'\bgraffiti\b', 'skeletonized', t)  # Graffiti = skeleton display (RM68-01)
     t = re.sub(r'\bcho\b', 'chocolate', t)
-    # Champagne shorthands (HK/China dealer groups)
-    t = re.sub(r'\bchp\b|\bchmpgn\b|\bchmpg\b', 'champagne', t)
-    # Rainbow shorthands
-    t = re.sub(r'\brbow\b', 'rainbow', t)
-    # YML (Yellow Mineral Lacquer) shorthands
-    t = re.sub(r'\bywl\b', 'yml', t)
-    # "yellow mineral lacquer" / "yellow mineral" → yml (verbose Daytona YML descriptions)
-    t = re.sub(r'\byellow\s+mineral(?:\s+lacquer)?\b', 'yml', t)
-    # "mineral yellow" → yml (reversed word order seen in some EU/SG dealer listings)
-    t = re.sub(r'\bmineral\s+yellow\b', 'yml', t)
-    # "mineral lacquer" alone → yml (Daytona YG refs where the YML is the only lacquer option)
-    if ref:
-        _rb_ml = re.match(r'(\d+)', ref)
-        _rb_ml_b = _rb_ml.group(1) if _rb_ml else ''
-        if _rb_ml_b in ('116508', '126508', '116518', '126518', '116528', '126528'):
-            t = re.sub(r'\bmineral\s+lacquer\b', 'yml', t)
-    # "champagne green" (English) = Wimbledon — same logic as Chinese 香槟绿; common in EU/SG groups
-    t = re.sub(r'\bchampagne\s+green\b|\bchamp(?:agne)?\s*grn\b|\bchgrn\b', 'wimbledon', t)
-    # Wimbledon shorthands — "wb" only when NOT preceded by "w/" (watch box)
-    # Also catch common typos: wimbeldon, wimbelton, wimbeldan (very frequent in dealer messages)
-    t = re.sub(r'\bwim\b|\bwimb\b|\bwimbo\b|\bwimbeld[oe]n\b|\bwimbelton\b|\bwimbeldan\b|\bwimbledone\b|\bwbl\b', 'wimbledon', t)
-    t = re.sub(r'(?<!/)\bwb\b', 'wimbledon', t)
-    # "wm" standalone → wimbledon (ultra-short code used in some HK/SG dealer groups).
-    # Guard: only when Wimbledon is a valid dial for this ref — prevents "wm" false hits
-    # on non-Wimbledon refs (e.g. RM/AP/Daytona refs where "wm" could be a part-number token).
-    if not _valid_dials or 'Wimbledon' in _valid_dials:
-        t = re.sub(r'\bwm\b', 'wimbledon', t)
-    # "wimbledon" glued to ref digits: "126334wimbledon" → "126334 wimbledon"
-    t = re.sub(r'(\d{5,6})(wimbledon|wimb|wim\b)', r'\1 \2', t)
-    # "wim grn" / "wim green" → wimbledon (the Wimbledon dial IS the slate-green motif — HK compound shorthand)
-    t = re.sub(r'\bwim\s+gr(?:n|een)\b', 'wimbledon', t)
-    # "Champagne Slate Green" / "Slate Green Champagne" → wimbledon (per dial_synonyms.json)
-    # Guard: only when Wimbledon is a valid dial for this ref (avoid false hits on YM/Daytona/DD refs)
-    if not _valid_dials or 'Wimbledon' in _valid_dials:
-        t = re.sub(r'\bchampagne\s+slate(?:\s+green)?\b|\bslate(?:\s+green)?\s+champagne\b', 'wimbledon', t)
-        # "wim slate" / "slate wim" = Wimbledon compound shorthand (common in DJ/DD group messages)
-        t = re.sub(r'\bwim\s+slate\b|\bslate\s+wim\b', 'wimbledon', t)
-    # Aubergine shorthands
-    # "plum" already handled earlier via \bplum\b → aubergine; reinforce here for completeness
-    # Lavender shorthand — "laven" / "lavend" (HK dealer truncation, e.g. "277200 laven")
-    t = re.sub(r'\blaven(?:d)?\b', 'lavender', t)
-    # "amethyst" → lavender (gemstone name for light purple; used by EU/US dealers for Lavender OP/DD dials)
-    # Amethyst is a lighter purple gemstone, closest to Rolex's Lavender official dial name
-    t = re.sub(r'\bamethyst\b', 'lavender', t)
-    # "jade" → green (jade stone = deep green; used by Asian dealers for green Day-Date stone/lacquer dials)
-    # Guard: not for RM refs where "Jade" could be a model/edition name (e.g. RM037 Jade)
-    if not (ref and re.match(r'^RM', ref, re.I)):
-        t = re.sub(r'\bjade(?:\s+green)?\b', 'green', t)
-    # "stella" → turquoise (AP Royal Oak Offshore "Stella" dial = bright turquoise; also used generically)
-    # "stella turquoise" already in dial_synonyms.json; normalize standalone "stella" to turquoise
-    t = re.sub(r'\bstella\b', 'turquoise', t)
-    # Pistachio shorthand — "pist" / "pistach" (HK/SG dealer truncations)
-    # Guard \bpist\b: only replace standalone (not inside "pistachio")
-    t = re.sub(r'\bpistach\b', 'pistachio', t)   # "pistach" 7-char truncation
-    t = re.sub(r'\bpist\b(?!ach)', 'pistachio', t)
-    # "chmp" → champagne (very short HK dealer code, e.g. "126234 chmp roman")
-    t = re.sub(r'\bchmp\b', 'champagne', t)
-    # "candy pk" / "candypk" / "candy p" → candy pink (compound shorthand)
-    t = re.sub(r'\bcandy\s*pk\b|\bcandypk\b|\bcandy\s*p\b(?!ink)', 'candy pink', t)
-    # "cp" on OP refs = candy pink (very short HK/SG code, e.g. "126000 cp")
-    # Guard: only map for refs that officially offer Candy Pink to avoid "cp" false hits on other refs.
-    if ref:
-        _rb_cp = re.match(r'(\d+)', ref)
-        _rb_cp_b = _rb_cp.group(1) if _rb_cp else ''
-        _op_cp_exact = {'126000', '126031', '126034', '134300'}
-        _op_cp_pfx = ('124', '134', '277', '276')
-        if _rb_cp_b in _op_cp_exact or _rb_cp_b[:3] in _op_cp_pfx:
-            t = re.sub(r'\bcp\b(?!\s*u)', 'candy pink', t)  # guard: not "CPU"
-    # "mt grn" / "mnt grn" / "mintgrn" / "mt green" / "mnt green" → mint green
-    # Note: \bgrn\b → 'green' fires earlier, so also match the already-expanded form
-    t = re.sub(r'\bmt\s*gr(?:n|een)\b|\bmnt\s*gr(?:n|een)\b|\bmintgrn\b', 'mint green', t)
-    # "mintg" / "mint-grn" additional Mint Green shorthand variants
-    t = re.sub(r'\bmintg\b|\bmint[-_]grn\b', 'mint green', t)
-    # "lav" standalone → lavender (HK two-letter shorthand, e.g. "126000 lav")
-    # Guard: only when preceded by space/start or specific separators (not part of "lavender", "slave", etc.)
-    t = re.sub(r'(?<!\w)\blav\b(?!\w)', 'lavender', t)
-    # "pis" → pistachio (already in detection regex but also normalize here for suffix-scan safety)
-    t = re.sub(r'\bpis\b(?!tach)', 'pistachio', t)
-    # Rhodium shorthands → grey (rhodium normalizes to grey)
-    t = re.sub(r'\brhod\b|\brho\b', 'grey', t)
-    # Turquoise shorthand — "turq" standalone (non-beach context resolved later)
-    t = re.sub(r'\bturq\b', 'turquoise', t)  # turq = turquoise
-    # "turqb" = turquoise (HK shorthand where 'b' = blue, e.g. "turqb dial" = Turquoise Blue)
-    t = re.sub(r'\bturqb\b', 'turquoise', t)
-    # Sundust shorthand — "sd" but NOT when ref is Sea-Dweller (126600/136660)
-    if not ref or not re.match(r'^(126600|136660|126603)', ref):
-        t = re.sub(r'\bsd\b', 'sundust', t)
-    # "gg" = green (HK dealer shorthand)
-    t = re.sub(r'\bgg\b', 'green', t)
-    # "grp" = grape on OP refs (short dealer code, e.g. "126000 grp $38k")
-    # Guard: only map for OP family refs to avoid corrupting DJ/DD/Daytona refs where
-    # "grp" could be part of a group/product code.
-    if ref:
-        _rb_grp = re.match(r'(\d+)', ref)
-        _rb_grp_b = _rb_grp.group(1) if _rb_grp else ''
-        _op_grp_exact = {'126000', '126031', '126034', '114200', '114300'}
-        _op_grp_pfx = ('124', '134', '277', '276')
-        if _rb_grp_b in _op_grp_exact or _rb_grp_b[:3] in _op_grp_pfx:
-            t = re.sub(r'\bgrp\b|\bgrpe\b', 'grape', t)
-    # "bb" = bright blue (Datejust 126xxx, 278xxx, 279xxx; Pearlmaster 336xxx/326xxx)
-    # 336934 Sky-Dweller and 326934/326935 Pearlmaster refs offer a genuine Bright Blue dial.
-    if ref and re.match(r'^(126|278|279|336|326)', ref):
-        t = re.sub(r'\bbb\b', 'bright blue', t)
-    # "silv" = silver
-    t = re.sub(r'\bsilv\b', 'silver', t)
-    # Strip "rose gold" (case material) BEFORE converting rose → pink
-    t = re.sub(r'\brose\s*gold\b', '', t)
-    # "ros" / "rose" accent = pink (dial color — only AFTER removing "rose gold")
-    t = re.sub(r'\bros[ée]?\b', 'pink', t)
     # "sun" alone = sundust for Daytona RG (116515, 126515)
     # Don't match "sunshine", "sunset", "sunburst", "sundust" (already correct)
     t = re.sub(r'\bsun\b(?!\s*(?:dust|shine|set|burst|ray|light|day))', 'sundust', t)
     t = re.sub(r'\bpikachu\b', 'yml', t)  # Pikachu = YML (same dial)
-    # "lemon" = YML (Yellow Mineral Lacquer) — HK/Japan dealer shorthand for the
-    # yellow sunburst mineral-lacquer Daytona dial on YG refs that officially offer YML.
-    # Guard: only for 116508/126508/116518/126518 which list YML as a valid option.
-    # NOT 116528/126528 which are different YG configs without a YML dial.
-    if ref:
-        _rb_lemon = re.match(r'(\d+)', ref)
-        _rb_lemon_b = _rb_lemon.group(1) if _rb_lemon else ''
-        if _rb_lemon_b in ('116508', '126508', '116518', '126518'):
-            t = re.sub(r'\blemon\b', 'yml', t)
     t = re.sub(r'\bbarbie\b', 'pink', t)  # Barbie = pink dial Daytona
     t = re.sub(r'\bbatman\b', 'black', t)  # Batman = black dial GMT
     t = re.sub(r'\bpepsi\b', 'black', t)  # Pepsi = black dial GMT (red/blue bezel)
@@ -3378,407 +1587,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bstarbucks\b', 'green', t)  # Starbucks = green dial Sub
     t = re.sub(r'\bkermit\b', 'green', t)  # Kermit = green dial/bezel Sub
     t = re.sub(r'\bsmurf\b', 'blue', t)  # Smurf = blue dial Sub WG
-    # Ghost = grey dial Daytona (126519LN GY slang) — guard RM refs where "ghost" is a model name
-    # (RM011-FM "Ghost" = Flyback Monopusher sub-edition, white dial — substituting grey would be wrong)
-    if not (ref and re.match(r'^RM', ref, re.I)):
-        t = re.sub(r'\bghost\b', 'grey', t)
-    # "gy" standalone in text body = grey (HK dealer shorthand, non-suffix context)
-    # Guard: only apply as whole word to avoid corrupting other tokens (e.g. "legacy", "ugly")
-    t = re.sub(r'\bgy\b', 'grey', t)
-    # ── Additional HK/SG dealer shorthand normalizations ──────────────────────
-    # "tb" standalone (not already caught as Tiffany Blue by ref-specific logic) —
-    # On OP refs (126000/126034/134300/277200/276200/124xxx) "tb" = Tiffany Blue.
-    # Already handled in the tiffany/turquoise detection block later; skip here.
-    # "org" / "ora" alone → orange (short dealer codes for orange dial, e.g. "124300 org")
-    t = re.sub(r'\borg\b|\bora\b(?!l)', 'orange', t)  # guard: not "oral"
-    # "wim" / "wimbo" already handled above; "wmb" extra typo:
-    t = re.sub(r'\bwmb\b', 'wimbledon', t)
-    # "choc" / "chco" typos → chocolate (common HK shorthand extensions)
-    t = re.sub(r'\bchco\b|\bchoc\b(?!olate)', 'chocolate', t)
-    # "bleu" → blue (French dealers; duplicate of later bleu→blue; harmless reinforce)
-    # Already handled below; skip.
-    # "vio" / "violet" → aubergine for DJ/DD family (HK shorthand for purple dial)
-    # Already handled at line ~2721 (\bvio\b → aubergine); reinforce for "viol" typo:
-    t = re.sub(r'\bviol\b', 'aubergine', t)
-    # "met" standalone (without trailing 'eorite') → meteorite
-    # Guard: "met" is common in many words; only apply when standalone (already at line 2633)
-    # "tiff blue" / "tiff b" compound → tiffany (catches space-separated variants)
-    t = re.sub(r'\btiff\s+bl(?:ue)?\b', 'tiffany', t)  # "tiff blue" / "tiff bl" → tiffany
-    # "robin egg" (without apostrophe-s) → tiffany
-    t = re.sub(r'\brobin\s+egg(?:\s+blue)?\b', 'tiffany', t)
-    # "ice bl" (truncated "ice blue") → ice blue
-    t = re.sub(r'\bice\s+bl\b(?!ue)', 'ice blue', t)
-    # "ib" alone → ice blue (HK shorthand; already at line 3490 in detection, but normalize here too)
-    # Guard: not when immediately followed by alpha chars (e.g. "ibiza", "ibis")
-    t = re.sub(r'\bib\b(?![a-z])', 'ice blue', t)
-    # ── New premium shorthand normalizations ──────────────────────────────────
-    # "tiff dial" / "tiffany dial" → tiffany (explicit dial label compound)
-    t = re.sub(r'\btiff(?:any)?\s+dial\b', 'tiffany', t)
-    # "azz" / "azzur" → "azzurro" (DJ41/DJ36 Azzurro Blue shorthand — already handled for
-    # standard "azzur", reinforce single-z "azz" and "azzur" truncations)
-    # Note: existing \bazz\b → azzurro already present at line ~2838; guard against double-apply
-    # "azzuro" (single-z, common Italian-speaker typo) → already handled at line ~2789
-    # "offical tiffany" / "offi tiff" (misspelling of "official tiffany") → tiffany
-    t = re.sub(r'\boffi(?:c(?:i(?:al)?|al))?\s+tiff(?:any)?\b', 'tiffany', t)
-    # "azzuro" → "azzurro" (single-z Italian typo, additional variant)
-    t = re.sub(r'\bazzuro\b', 'azzurro', t)  # already handled but reinforce
-    # "bb blue" / "bright bl" → "bright blue" (compound abbrev for Bright Blue DJ dial)
-    t = re.sub(r'\bbb\s+blue\b', 'bright blue', t)
-    # "pk" standalone → pistachio when following ref digits (HK shorthand for pistachio OP)
-    # Guard: only when followed by end or space, not in a ref suffix context
-    # "min grn" → mint green
-    t = re.sub(r'\bmin\s+gr(?:n|een)\b', 'mint green', t)
-    # "wim dial" → wimbledon (explicit dial type label for Wimbledon dial, any DJ/DD ref)
-    t = re.sub(r'\bwim(?:bledon)?\s+dial\b', 'wimbledon', t)
-    # "ch grn" / "champ grn" → champagne green? No — guard. These are context-specific.
-    # "med blue" / "med bl" → mediterranean blue (OP family 2024+ variant, NOT Tiffany Blue)
-    t = re.sub(r'\bmed(?:iterranean)?\s+bl(?:ue)?\b', 'mediterranean blue', t)
-    # "medit" standalone → mediterranean blue (truncation used by some EU dealers)
-    t = re.sub(r'\bmedit(?:erranean)?\s+(?:blue|bl)\b', 'mediterranean blue', t)
-    # "medblue" / "medbl" concatenated (no space) → mediterranean blue (HK WhatsApp shorthand)
-    t = re.sub(r'\bmedblue\b|\bmed_blue\b|\bmedbl\b', 'mediterranean blue', t)
-    # "mb" standalone → Mediterranean Blue on OP refs that carry the Med Blue dial.
-    # OP refs: 126000/126031/126034/134300 and prefix families 124xxx/277xxx/276xxx.
-    # Guard: only apply for confirmed OP family to prevent false hits on other brands
-    # where "mb" could be a variant code or abbreviation.
-    if ref:
-        _rb_mb = re.match(r'(\d+)', ref)
-        _rb_mb_b = _rb_mb.group(1) if _rb_mb else ''
-        _op_mb_exact = {'126000', '126031', '126034', '134300'}
-        _op_mb_pfx = ('124', '277', '276')
-        if _rb_mb_b in _op_mb_exact or _rb_mb_b[:3] in _op_mb_pfx:
-            t = re.sub(r'\bmb\b', 'mediterranean blue', t)
-    # "grossular" truncations → grossular (stone dial shorthand, e.g. "126555 grossul")
-    t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)  # safe: require "grossul" prefix
-    # "carnelian" truncations → carnelian (Day-Date stone dial; NOT "carn"/"carnival")
-    t = re.sub(r'\bcarnel(?:ian)?\b', 'carnelian', t)  # safe: require "carnel" prefix
-    # "cornelian" → "carnelian" (alternate English spelling of the gemstone)
-    # Common in UK/EU dealer listings; same stone, same dial — Rolex uses "Carnelian"
-    t = re.sub(r'\bcornel(?:ian)?\b', 'carnelian', t)
-    # "puzz" shorthand → "puzzles" (Day-Date Puzzles special dial — HK/SG dealer truncation)
-    t = re.sub(r'\bpuzz\b', 'puzzles', t)
-    # "malach" → malachite (stone dial shorthand; require 6+ chars to avoid "mala"/"malady")
-    t = re.sub(r'\bmalach(?:ite?)?\b', 'malachite', t)
-    # "sodalite" truncations → sodalite (stone dial shorthand)
-    t = re.sub(r'\bsodal(?:ite?)?\b', 'sodalite', t)
-    # "aventur" truncation → aventurine (require "aventur" prefix — avoids "aven"/"avenge")
-    t = re.sub(r'\baventur(?:ine?)?\b', 'aventurine', t)
-    # "faleye" / "hawk eye" → falcon's eye (HK shorthand for YM42 stone dial; NOT bare "fale")
-    t = re.sub(r'\bfalcon\s*eye\b|\bfaleye\b|\bhawk\s*eye\b', "falcon's eye", t)
-    # "te dial" / "te stone" → tiger eye (Daytona YG 116588 / 116518 dealer shorthand)
-    # Guard: require "dial" / "stone" qualifier or context — bare "te" is too ambiguous
-    t = re.sub(r'\bte\s+(?:dial|stone)\b|\bte\s+daytona\b', 'tiger eye', t)
-    # "tiger's eye" (possessive apostrophe variant) → tiger eye
-    t = re.sub(r"\btiger'?s\s+eye\b", 'tiger eye', t)
-    # "golden tiger" → tiger eye (rare dealer description for the golden chatoyant stone)
-    t = re.sub(r'\bgolden\s+tiger\b', 'tiger eye', t)
-    # "paul newm" truncations → paul newman (require "newm" prefix — avoids "paul new price")
-    t = re.sub(r'\bpaul\s+newm(?:an?)?\b', 'paul newman', t)
-    # "trop" shorthand → turquoise (Tropical = turquoise enamel, some Daytona collectors)
-    # Guard: only for Daytona-family refs (1165xx, 1265xx)
-    if ref:
-        _rb_trop = re.match(r'(\d+)', ref)
-        _rb_trop_b = _rb_trop.group(1) if _rb_trop else ''
-        if _rb_trop_b[:4] in ('1165', '1265'):
-            t = re.sub(r'\btrop(?:ical)?\b', 'turquoise', t)
-    # "tb" on Daytona refs (1165xx/1265xx) = Turquoise enamel dial (Rolex official name).
-    # Dealers use "TB" / "T.B." / "Tiffany Blue" shorthand for the Daytona turquoise dial.
-    # Normalizing to "turquoise" here ensures the Daytona-family guard at the detection block
-    # (line ~4041) correctly returns 'Turquoise' rather than 'Tiffany Blue'.
-    if ref:
-        _rb_tb_daytona = re.match(r'(\d+)', ref)
-        if _rb_tb_daytona and _rb_tb_daytona.group(1)[:4] in ('1165', '1265'):
-            t = re.sub(r'\btb\b', 'turquoise', t)
-    # "aqua" standalone → tiffany for OP refs (robin's-egg-blue shorthand; common in Middle Eastern
-    # and European dealer groups where "aqua" = the Tiffany Blue OP dial color).
-    # "aqua blue" → tiffany is already handled globally above; this catches bare "aqua" on OP refs only.
-    # Guard: strictly OP family to avoid false positives on AP, DJ, DD, Sub, GMT refs.
-    if ref:
-        _rb_aqua_op = re.match(r'(\d+)', ref)
-        _rb_aqua_b = _rb_aqua_op.group(1) if _rb_aqua_op else ''
-        _op_aqua_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
-        _op_aqua_pfx = ('277', '276')
-        if _rb_aqua_b in _op_aqua_exact or _rb_aqua_b[:3] in _op_aqua_pfx:
-            t = re.sub(r'\baqua\b(?!\s*(?:blue|marine|terra))', 'tiffany', t)
-    # "wimbldon" (missing 'e', distinct from other handled typos) → wimbledon
-    t = re.sub(r'\bwimbldon\b', 'wimbledon', t)
-    # "purp" / "aub" → aubergine (already handled; reinforce for completeness)
-    # Already at line ~2890; skip duplicate.
-    # "sd" → sundust already handled above; "sund" (extra truncation) already handled.
-    # "panda white" / "white panda" → panda (for Daytona; "panda" = white dial black registers)
-    t = re.sub(r'\bpanda\s+white\b|\bwhite\s+panda\b', 'panda', t)
-    # "inv panda" / "inverse panda" → black (already handled; reinforce "inv panda" form)
-    t = re.sub(r'\binv(?:erse)?\s+panda\b', 'black', t)
-    # "celebration tiffany" → already handled in the celebration block; no extra normalization needed.
-    # Smoke-colour compounds → Ombré variants (Day-Date 40 gradient dials)
-    # "green smoke" / "smoke green" = Green Ombré (228235, 218235)
-    t = re.sub(r'\bgreen\s+smoke\b|\bsmoke\s+green\b', 'green ombré', t)
-    # "chocolate smoke" / "choco smoke" = Chocolate Ombré
-    t = re.sub(r'\bchocolate\s+smoke\b|\bchoco\s+smoke\b', 'chocolate ombré', t)
-    # "slate smoke" / "grey smoke" / "smoke slate" = Ombré Slate (228235 default ombré variant)
-    t = re.sub(r'\bslate\s+smoke\b|\bgrey\s+smoke\b|\bsmoke\s+slate\b', 'ombré slate', t)
-    # "red smoke" / "smoke red" = Red Ombré (Day-Date 40 red gradient dial — 228345/228235 RG variants)
-    t = re.sub(r'\bred\s+smoke\b|\bsmoke\s+red\b', 'red ombré', t)
-    # "ombe" / "omber" / "ombr" typos → ombré (common HK/China dealer misspellings / truncations)
-    t = re.sub(r'\bomber\b|\bombe\b(?!r)|\bombr\b', 'ombré', t)
-    # "grey ombré" / "gray ombré" / "ombré grey" → "ombré slate" (natural alternate phrasing)
-    # Dealers say "grey ombré" instead of the official "Ombré Slate" name.
-    t = re.sub(r'\b(?:grey|gray)\s+ombr[eé]\b|\bombr[eé]\s+(?:grey|gray)\b', 'ombré slate', t)
-    # "ombré grey" already covered above; reinforce "ombr[eé] slate" bidirectional form
-    t = re.sub(r'\bslate\s+ombr[eé]\b|\bombr[eé]\s+slate\b', 'ombré slate', t)
-    # "olive grn" / "olv" / "olv grn" shorthand → olive (Day-Date 40 Olive Green dial)
-    t = re.sub(r'\bolv\b|\bolive\s+grn\b|\bolv\s+grn\b', 'olive', t)
-    # "pikachu" → YML is already handled above; also catch "pkl" (very rare HK shorthand)
-    t = re.sub(r'\bpkl\b', 'yml', t)
-    # ── NEW: expanded dealer shorthand + multi-language normalization ──
-    # ── "Tiffany stamp" / "Tiffany & Co." neutralization (ref-aware) ──
-    # For Patek, Cartier, and non-OP refs: "tiffany stamp" = retailer engraving, NOT a dial color.
-    # For Rolex OP-family refs (126000/124300/277200/276200 etc.): "tiffany stamp" means the watch
-    # has BOTH a genuine Tiffany Blue dial AND the Tiffany & Co. retailer stamp at 6 o'clock.
-    # These are among the most premium OP listings — the dial IS Tiffany Blue.
-    # FIX: preserve "tiffany" signal for OP refs instead of stripping it.
-    _is_op_tiff_family = False
-    if ref:
-        _rb_otf = re.match(r'(\d+)', ref)
-        _rb_otf_b = _rb_otf.group(1) if _rb_otf else ''
-        # OP exact refs + prefix families that officially offer Tiffany Blue
-        _op_tiff_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200', '124260'})
-        _op_tiff_pfx = ('277', '276', '124')
-        _is_op_tiff_family = (_rb_otf_b in _op_tiff_exact or
-                              _rb_otf_b[:3] in _op_tiff_pfx)
-    if _is_op_tiff_family:
-        # OP family: "tiffany stamp/stamped/collaboration/&co" → "tiffany"
-        # The watch has a genuine Tiffany Blue dial; the stamp/collab label is extra context only.
-        t = re.sub(r'\btiffany\s+stamp(?:ed)?(?:\s+(?:blue|green|black|white|silver|grey|gray|brown))?\b', 'tiffany', t)
-        t = re.sub(r'\btiffany\s+(?:blue|green|black|white|grey|gray|silver)\s+stamp(?:ed)?\b', 'tiffany', t)
-        t = re.sub(r'\bstamp(?:ed)?\s+(?:by\s+)?tiffany\b', 'tiffany', t)
-        # "Tiffany & Co." on OP = Tiffany & Co. exclusive OP → still Tiffany Blue dial
-        t = re.sub(r'\btiffany\s+(?:collaboration|collab|exclusive|edition|retailer)\b', 'tiffany', t)
-        t = re.sub(r'\btiffany\s*&\s*co\.?\b', 'tiffany', t)
-    else:
-        # Non-OP refs: neutralize "tiffany stamp/collab/&co" → retailer branding token.
-        # Common for: Patek 5711/1A "Tiffany stamp", 7118/1200A "tiffany stamp blue", etc.
-        # IMPORTANT: preserve any COLOR word that follows "tiffany stamp" — the color describes
-        # the actual dial (e.g. "5711/1A tiffany stamp blue" = Blue dial with Tiffany stamp).
-        # Pattern: replace "tiffany stamp [color]" → "[color]" (keep color, strip tiffany stamp)
-        t = re.sub(r'\btiffany\s+stamp(?:ed)?\s+(blue|green|black|white|silver|grey|gray|brown)\b', r'\1', t)
-        # Pattern without trailing color: "tiffany stamp" alone → "retailer stamp"
-        t = re.sub(r'\btiffany\s+stamp(?:ed)?\b', 'retailer stamp', t)
-        # "tiffany [color] stamp" (color BETWEEN tiffany and stamp) → preserve the color.
-        # E.g. "7118/1200A tiffany blue stamp" = Tiffany & Co. retailer branding on a blue dial.
-        t = re.sub(r'\btiffany\s+(blue|green|black|white|grey|gray|silver)\s+stamp(?:ed)?\b', r'\1', t)
-        t = re.sub(r'\bstamp(?:ed)?\s+(?:by\s+)?tiffany\b', 'retailer stamp', t)
-        # "Tiffany Collaboration" / "Tiffany & Co." / "Tiffany Edition" = retailer branding, NOT a dial color.
-        # E.g.: "5067A-011 white Tiffany Collaboration 2016" → the dial is White (Tiffany-branded piece).
-        # E.g.: "5711/1A Tiffany & Co." → standard Blue dial with Tiffany retailer stamp.
-        t = re.sub(r'\btiffany\s+(?:collaboration|collab|exclusive|edition|retailer)\b', 'retailer collab', t)
-        t = re.sub(r'\btiffany\s*&\s*co\.?\b', 'retailer collab', t)
-    # NOTE: "Tiffany new/used/complete/full/unworn" neutralization is intentionally NOT done here.
-    # For Rolex OP (126000/134300/124300/277200 etc.), AP, Tudor, and all non-Patek refs,
-    # "Tiffany used 2021" / "Tiffany new" simply describes the condition of a Tiffany Blue dial
-    # watch — NOT a Tiffany & Co. retailer-stamped piece. The Patek-specific block below handles
-    # Patek refs (5xxx/7xxx) where "Tiffany" = retailer engraving at 6 o'clock.
-    # ── Patek-specific Tiffany neutralization ──
-    # For Patek refs (5xxx, 7xxx), "Tiffany" = Tiffany & Co. retailer stamp at 6 o'clock.
-    # EXCEPTION: Patek Philippe 5711/1A-018 — the 2021 Tiffany & Co. collaboration released
-    # only 170 pieces with a genuine robin's-egg "Tiffany Blue" dial (NOT a standard Blue
-    # sunburst dial with a stamp). In the secondary market this is identified by:
-    # - ref containing "5711" AND text saying "tiffany blue" (the full compound phrase)
-    # - Standard stamped 5711s just say "tiffany" (the stamp), never "tiffany blue" dial
-    # When "tiffany blue" appears explicitly on a 5711 ref → return 'Turquoise Blue'
-    # (official market classification; distinct from standard Blue + stamp at premium).
-    if ref and re.match(r'^[57]\d{3}(?:/|[A-Z]|$)', ref):
-        if re.match(r'^5711', ref) and re.search(r'\btiffany\s+blue\b', t):
-            # 5711/1A Tiffany Blue collaboration — genuine tiffany-blue stone dial
-            return 'Turquoise Blue'
-        # "tiffany blue" on other Patek → standard blue (Tiffany-stamped pieces have normal dials)
-        t = re.sub(r'\btiffany\s+blue\b', 'blue', t)
-        # standalone "tiffany" / "tiff" on Patek → neutralize before color detection
-        t = re.sub(r'\btiffany\b', 'retailer stamp', t)
-        t = re.sub(r'\btiff\b', 'retailer stamp', t)
-    # Robin's egg / duck egg blue → tiffany (Tiffany Blue OP — very common premium descriptor)
-    t = re.sub(r"\brobin['\u2019s]*\s*egg(?:\s*blue)?\b", 'tiffany', t)
-    t = re.sub(r'\bduck\s*egg(?:\s*blue)?\b', 'tiffany', t)
-    # Flamingo Blue → flamingo blue (Tudor BB Chrono Tiffany Flamingo edition — keep for detection)
-    # "Flamingo" alone → pink for non-Tudor refs; but "flamingo blue" = Tiffany Flamingo Blue
-    # Tudor M79360N-0024 "Tiffany Flamingo Blue" — preserve flamingo blue as tiffany blue mapping
-    if re.search(r'\bflamingo\s*blue\b', t):
-        t = re.sub(r'\bflamingo\s*blue\b', 'tiffany', t)  # flamingo blue = tiffany blue (Tudor)
-    else:
-        t = re.sub(r'\bflamingo\b', 'pink', t)  # standalone flamingo = pink (AP etc.)
-    # Plum / wine / bordeaux → aubergine (Day-Date stone/lacquer dark purple dials)
-    t = re.sub(r'\bplum\b|\bwine\s*(?:red)?\b|\bbordeaux\b', 'aubergine', t)
-    # Cotton candy / bubblegum → candy pink (OP/Lady DJ casual descriptors)
-    t = re.sub(r'\bcotton\s*candy\b|\bbubblegum\b', 'candy pink', t)
-    # Baby/pale/blush/pastel/soft pink → candy pink (same dial family on OP/DJ refs)
-    t = re.sub(r'\b(?:baby|pale|blush|pastel|soft)\s+pink\b', 'candy pink', t)
-    # Nacre → MOP (mother-of-pearl, French/European dealer shorthand)
-    t = re.sub(r'\bnacre\b', 'mop', t)
-    # Straw → champagne (vintage Daytona/Datejust cream-straw lacquer dials)
-    t = re.sub(r'\bstraw(?:\s*(?:dial|colored?))?\b', 'champagne', t)
-    # Cigare / cigar → brown (vintage Patek brown guilloché dial descriptor)
-    t = re.sub(r'\bcigare?\b(?!\s*(?:ring|cutter|case|box))', 'brown', t)
-    # Clementine / tangerine / mango → orange (Daytona/OP/AP orange dial)
-    t = re.sub(r'\bclementine\b|\btangerine\b|\bmango\b', 'orange', t)
-    # Grasshopper → green (AP RO Diver Grasshopper edition)
-    t = re.sub(r'\bgrasshopper\b', 'green', t)
-    # Midnight → blue (midnight blue dials — common across many brands)
-    t = re.sub(r'\bmidnight\s*(?:blue)?\b', 'blue', t)
-    # Nuit / minuit (French for night/midnight) → blue
-    t = re.sub(r'\bnuit\b|\bminuit\b', 'blue', t)
-    # Anthracite → grey (AP Royal Oak anthracite slate dial)
-    t = re.sub(r'\banthracite\b', 'grey', t)
-    # Platine → silver (French silver-toned dial descriptor)
-    t = re.sub(r'\bplatine\b', 'silver', t)
-    # Forest / forêt → green (forest green dials)
-    t = re.sub(r'\bforest(?:\s*green)?\b|\bfor[eê]t\b', 'green', t)
-    # Lilas / lilac / wisteria → lavender (French-speaking dealer groups; wisteria = purple-blue pastel)
-    t = re.sub(r'\blilas?\b|\blilac\b|\bwisteria\b', 'lavender', t)
-    # Saffron → yellow (Day-Date saffron lacquer)
-    t = re.sub(r'\bsaffron\b', 'yellow', t)
-    # Papaya → orange/salmon (OP coral/papaya colorways)
-    t = re.sub(r'\bpapaya\b', 'orange', t)
-    # Rust / terracotta → brown/orange approximation (dealer description)
-    t = re.sub(r'\brust(?:\s*red)?\b|\bterracotta\b', 'brown', t)
-    # French color words (European/francophone HK dealer groups)
-    t = re.sub(r'\bbleu\b', 'blue', t)           # bleu = blue
-    t = re.sub(r'\bvert\b(?!ical)', 'green', t)  # vert = green (not "vertical")
-    t = re.sub(r'\bnoir\b', 'black', t)           # noir = black
-    t = re.sub(r'\bblanc\b', 'white', t)          # blanc = white
-    t = re.sub(r'\brouge\b', 'red', t)            # rouge = red
-    t = re.sub(r'\bgris\b', 'grey', t)            # gris = grey
-    t = re.sub(r'\bargent\b', 'silver', t)        # argent = silver
-    # ── German color words (German-speaking dealer groups; Swiss/German/Austrian markets) ──
-    t = re.sub(r'\bschwarz\b', 'black', t)         # schwarz = black
-    t = re.sub(r'\bblau\b', 'blue', t)             # blau = blue
-    t = re.sub(r'\bweiss\b', 'white', t)           # weiss = white (ASCII form of weiß)
-    t = re.sub(r'\bbraun\b', 'chocolate', t)       # braun = brown → chocolate (watch context)
-    t = re.sub(r'\bgelb\b', 'yellow', t)           # gelb = yellow
-    t = re.sub(r'\bgruen\b|\bgrün\b', 'green', t)  # gruen/grün = green (German, both ASCII and umlaut forms)
-    t = re.sub(r'\brot\b', 'red', t)              # rot = red (German)
-    # ── Additional French color words ──
-    t = re.sub(r'\bmarron\b', 'chocolate', t)      # marron = brown → chocolate
-    t = re.sub(r'\bsaumon\b', 'salmon', t)         # saumon = salmon
-    t = re.sub(r'\bjaune\b', 'yellow', t)          # jaune = yellow
-    t = re.sub(r'\becru\b', 'beige', t)            # écru = off-white → beige
-    t = re.sub(r'\bpistache\b', 'pistachio', t)    # pistache (French) = pistachio
-    t = re.sub(r'\bcorail\b', 'coral', t)          # corail = coral (French)
-    # ── Spanish / Italian / Portuguese color words ──
-    t = re.sub(r'\bverde\b', 'green', t)           # verde = green (ES/IT/PT)
-    t = re.sub(r'\bviolett[ao]?\b', 'aubergine', t)  # violetta/violetto (IT) = violet → aubergine
-    t = re.sub(r'\brojo\b', 'red', t)              # rojo = red (Spanish)
-    t = re.sub(r'\bnaranja\b', 'orange', t)        # naranja = orange (Spanish)
-    t = re.sub(r'\brosa\b', 'pink', t)             # rosa = pink (Spanish/Italian)
-    t = re.sub(r'\bazul\b', 'blue', t)             # azul = blue (Spanish/Portuguese)
-    t = re.sub(r'\bblanco\b', 'white', t)          # blanco = white (Spanish)
-    t = re.sub(r'\bargento\b', 'silver', t)        # argento = silver (Italian)
-    t = re.sub(r'\brosso\b', 'red', t)             # rosso = red (Italian)
-    # ── Food/coffee color shorthands (common in international dealer messages) ──
-    t = re.sub(r'\bmocha\b|\bespresso\b', 'chocolate', t)  # mocha/espresso = dark brown
-    t = re.sub(r'\beggshell\b', 'white', t)        # eggshell = off-white
-    # ── Additional truncated/abbreviated forms ──
-    t = re.sub(r'\bbeig\b', 'beige', t)            # "beig" (truncated) → beige
-    # "T.Blue" / "T-Blue" — punctuated form of "T Blue" (Tiffany Blue shorthand)
-    # Global normalization: dial mapping resolved later by ref-family detection
-    t = re.sub(r'\bt[\.\-]blue\b', 'tiffany', t)   # T.Blue / T-Blue → tiffany
-    # Cerulean / cobalt / sapphire (blue shades → blue for standard ref detection)
-    t = re.sub(r'\bcerulean\b|\bcobalt\b', 'blue', t)
-    # Teal → green (closest standard dial category)
-    t = re.sub(r'\bteal\b', 'green', t)
-    # Khaki / army → khaki (preserves specific AP/Rolex khaki dial name)
-    t = re.sub(r'\barmy\s*green\b', 'khaki', t)
-    # Pistachio shorthand "pista" → pistachio
-    t = re.sub(r'\bpista\b', 'pistachio', t)
-    # Butterscotch → champagne/yellow (vintage warm-tone dial)
-    t = re.sub(r'\bbutterscotch\b', 'champagne', t)
-    # Cream → white (dial finish descriptor)
-    t = re.sub(r'\bcream(?:\s*white)?\b', 'white', t)
-    # "dg" = dark green (HK shorthand for DJ/Sub)
-    t = re.sub(r'\bdg\b', 'green', t)
-    # "og" = olive green
-    t = re.sub(r'\bog\b(?!\w)', 'olive', t)
-    # "pg" = pink gold (material, not dial) — skip; too risky
-    # "wl" = white lacquer (Day-Date / Datejust dial finish descriptor — HK shorthand)
-    # Guard: only apply for DD/DJ families (228xxx, 128xxx, 218xxx, 126xxx, 116xxx) to
-    # avoid false hits on non-watch text where "wl" could be an abbreviation.
-    if ref:
-        _rb_wl = re.match(r'(\d+)', ref)
-        _rb_wl_base = _rb_wl.group(1) if _rb_wl else ''
-        if _rb_wl_base[:3] in ('228', '128', '218', '118', '126', '116'):
-            t = re.sub(r'\bwl\b', 'white', t)  # "wl" = white lacquer
-    # "bl lact" / "blue lact" / "black lact" → lacquer (clarifying shorthand)
-    t = re.sub(r'\blact(?:uer|er)?\b', 'lacquer', t)  # normalize lacquer spelling variants
-    # Exotica → Paul Newman (alternate dealer term for PN exotic dial)
-    t = re.sub(r'\bexotica\b', 'exotic', t)
-    # RM special edition names → dial color
-    t = re.sub(r'\b(ntpt)(\d)', r'\1 \2', t)      # Separate "ntpt12/2021" → "ntpt 12/2021"
-    # Colored NTPT/Carbon TPT variants — must precede blanket ntpt→black substitution.
-    # RM35-01/02 "White NTPT", RM07-01 "Gold TPT", RM72-01 "Red Quartz TPT" etc.
-    # Pattern matches both "COLOR ntpt" and "ntpt COLOR" orders.
-    t = re.sub(r'\bwhite\s+(?:ntpt|carbon\s*tpt)\b|\b(?:ntpt|carbon\s*tpt)\s+white\b', 'white', t)
-    t = re.sub(r'\bgold(?:en)?\s+(?:ntpt|carbon\s*tpt)\b|\b(?:ntpt|carbon\s*tpt)\s+gold(?:en)?\b', 'yellow', t)
-    t = re.sub(r'\bred\s+(?:ntpt|carbon\s*tpt)\b|\b(?:ntpt|carbon\s*tpt)\s+red\b', 'red', t)
-    t = re.sub(r'\bntpt\b', 'black', t)           # NTPT carbon composite = black dial (remaining bare/black)
-    t = re.sub(r'\bbright\s*night\b', 'black', t) # RM07-01/07-04 Bright Night — black NTPT
-    t = re.sub(r'\bdark\s*night\b', 'black', t)   # RM07-01 Dark Night — black NTPT
-    t = re.sub(r'\bmisty\s*night\b', 'black', t)  # RM07-01 Misty Night — black Carbon TPT
-    t = re.sub(r'\bstarry\s*night\b', 'black', t) # RM07-01 Starry Night — black Carbon TPT
-    t = re.sub(r'\bcherry\s*blossom\b', 'pink', t)# RM07-01 Cherry Blossom — pink dial
-    t = re.sub(r'\bsakura\b', 'pink', t)           # RM07-01 Sakura — pink dial
-    t = re.sub(r'\bmancini\b', 'black', t)         # RM11-01/04 Roberto Mancini — black skeleton
-    t = re.sub(r'\bferrari\b', 'red', t)           # RM07-01 Ferrari edition — red dial
-    t = re.sub(r'\bred\s+lips?\b', 'red', t)       # RM037 Red Lips edition — red dial
-    t = re.sub(r'\bsmoked\b', 'grey', t)           # RM smoked = grey
-    # "falcon" alone (without "eye") on YM42/DD refs = Falcon's Eye stone dial shorthand
-    # NOTE: "falcon eye" is preserved as-is for the detect block; only fix concatenated form.
-    t = re.sub(r'\bfalconeye\b', "falcon's eye", t)   # concatenated → spaced
-    # "paving" / "paved" → "pave" (common in HK/SG dealer shorthand, e.g. "paved dial", "paving set")
-    t = re.sub(r'\bpaving\b|\bpaved\b', 'pave', t)
-    # "wave" normalisation — "arabic wave" or "wave dial" on Day-Date = Wave motif
-    # No substitution needed; the wave detect block handles the pattern directly.
-    # Unambiguous color emoji → color (common in HK WhatsApp dealer groups)
-    # NOTE: ❤️ (red heart) intentionally excluded — too often used as enthusiasm/decoration
-    t = t.replace('🖤', ' black ').replace('🤍', ' white ').replace('💚', ' green ')
-    t = t.replace('🩵', ' blue ').replace('🩷', ' pink ')
-    t = t.replace('🔵', ' blue ').replace('🟢', ' green ')
-    t = t.replace('⚫', ' black ').replace('⚪', ' white ')
-    t = t.replace('🐼', ' white ')  # Panda = white dial (Daytona panda variant)
-    # Fix common ref suffix typos before suffix detection runs
-    t = re.sub(r'(\d{5,6})blor\b', r'\1blro', t)   # BLOR → BLRO (GMT Batman typo)
-    t = re.sub(r'(\d{5,6})grne\b', r'\1grnr', t)    # GRNE → GRNR (Sprite GMT shorthand)
-    t = re.sub(r'(\d{5,6})gtnr\b', r'\1grnr', t)    # GTNR → GRNR (Sprite typo variant)
-    # Separate color/variant glued to ref: "116508green" → "116508 green", "228236arabic" → "228236 arabic"
-    t = re.sub(r'(\d{5,6})(yellow|orange|coral|red|green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|choco|chocolate|meteorite|mete|panda|ceramic|giraffe|grossular|polar|yml|rainbow|sundust|salmon|khaki|turquoise|tiffany|otb|otbl|ctb|cltb|lavender|pistachio|beige|aubergine|violet|purple|arabic|eggplant|amethyst|jade|stella|wimbledon|wimbo|wimb|wim)', r'\1 \2', t, flags=re.I)
-    # Dealer shorthands → canonical form
-    t = re.sub(r'\bchmpgn\b|\bchp\b', 'champagne', t)
-    t = re.sub(r'\bwimb\b', 'wimbledon', t)
-    t = re.sub(r'\b(?:aub|purp)\b', 'aubergine', t)
-    t = re.sub(r'\blvory\b|\bivory\b|\bivry\b', 'white', t)   # ivory = white (Daytona cream dial)
-    # RM edition names → dial color
-    t = re.sub(r'\bmcl\b|\bmclaren\b', 'grey', t)        # RM11-03 McLaren — grey Carbon TPT
-    t = re.sub(r'\blebron\b|\bleborn\b', 'black', t)      # RM65-01 LeBron — Black Carbon TPT
-    t = re.sub(r'\blecler[cr]\b|\blecrerc\b', 'red', t)    # RM72-01 Charles Leclerc — Red Quartz TPT (+ typo "lecrerc")
-    t = re.sub(r'\byohan\s*blake\b', 'black', t)          # RM61-01 Yohan Blake — black ceramic
-    t = re.sub(r'\bsnow\b', 'white', t)                   # RM72-01 WG Snow — white
-    t = re.sub(r'\bcarbon\s*tpt\b', 'black', t)           # RM Carbon TPT = black
-    # RM67-02/05 country/athlete editions — skeleton Carbon TPT dials read as Black
-    # e.g. "RM67-02 Italy", "RM67-02 Germany", "RM67-02 France"
-    # GUARD: skip substitution when an explicit dial color word (white, red, blue, etc.) is
-    # already present — e.g. "RM67-02 White France Alexis" has a White NTPT dial, not Black.
-    if ref and re.match(r'^RM67', ref.upper()):
-        _rm67_has_color = bool(re.search(
-            r'\bwhite\b|\bred\b|\bblue\b|\bgreen\b|\bgrey\b|\bgray\b|\byellow\b|\bpink\b', t))
-        if not _rm67_has_color:
-            t = re.sub(r'\bitaly\b', 'black', t)
-            t = re.sub(r'\bgermany\b|\bgemeany\b', 'black', t)  # "gemeany" = common typo
-            t = re.sub(r'\bfrance\b', 'black', t)
-            t = re.sub(r'\bswitzer?land\b', 'black', t)
+    t = re.sub(r'\bghost\b', 'grey', t)  # Ghost = grey dial Daytona (126519LN etc.)
+    # NG (standalone) = MOP dial + diamond markers — common HK shorthand for NG suffix ref
+    # e.g. "279381 RBR NG" → MOP; distinct from N1/N12 (new, month code)
+    t = re.sub(r'\bng\b', 'mop', t)
+    # Separate color glued to ref: "116508green" → "116508 green"
+    t = re.sub(r'(\d{5,6})(green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|chocolate|meteorite|panda|ceramic|giraffe|grossular|polar|yml|tiffany|wimbledon)', r'\1 \2', t)
     ref_upper = ref.upper() if ref else ''
     raw_ref_upper = (raw_ref or '').upper().strip()
-
-    # RM19 Spider editions — return immediately before standard color scan
-    if ref and re.match(r'^RM19', ref.upper()) and re.search(r'\bspider\b', t):
-        return 'Spider'
 
     # PN suffix = Paul Newman dial — return immediately
     if raw_ref_upper.endswith('PN') and re.match(r'\d{6}PN$', raw_ref_upper):
@@ -3794,42 +1610,13 @@ def extract_dial(text, ref='', raw_ref=''):
         if _bd:
             _sfx = _check_ref[len(_bd.group(1)):]
             if _sfx in SUFFIX_DIAL:
-                # Multi-dial Daytona LN refs: bypass LN→Black; fall through to text detection
-                if _sfx == 'LN' and _bd.group(1) in _DAYTONA_LN_MULTI:
-                    continue
-                # GMT Everose BLRO multi-dial refs: bypass BLRO→Black; fall through
-                if _sfx == 'BLRO' and _bd.group(1) in _GMT_BLRO_MULTI:
-                    continue
-                # DJ/DD TBR bracelet refs: TBR = bracelet code, not dial; fall through to text detection
-                if _sfx == 'TBR' and _bd.group(1) in _DJ_TBR_BRACELET_BASES:
-                    continue
                 return SUFFIX_DIAL[_sfx]
-            # Handle complex suffixes like "-12SA" → trailing letters "SA"
-            # Apply multi-dial bypass for safety (e.g. "126518-12LN" ending in LN).
-            if _sfx and _sfx not in SUFFIX_DIAL:
-                _ls2 = re.search(r'([A-Z]{2,6})$', _sfx.upper())
-                if _ls2 and _ls2.group(1) in SUFFIX_DIAL:
-                    _ls2_sfx = _ls2.group(1)
-                    _ls2_base_d = _bd.group(1)
-                    if _ls2_sfx == 'LN' and _ls2_base_d in _DAYTONA_LN_MULTI:
-                        pass  # fall through
-                    elif _ls2_sfx == 'BLRO' and _ls2_base_d in _GMT_BLRO_MULTI:
-                        pass  # fall through
-                    elif _ls2_sfx == 'TBR' and _ls2_base_d in _DJ_TBR_BRACELET_BASES:
-                        pass  # fall through
-                    else:
-                        return SUFFIX_DIAL[_ls2_sfx]
     base_digits = re.match(r'(\d+)', ref_upper)
     is_g_suffix = False  # G suffix = diamond hour markers
     if base_digits:
         suffix = ref_upper[len(base_digits.group(1)):]
         if suffix == 'G':
-            # Patek/AP refs: "G" = gold case material code (e.g. 5205G, 5711G),
-            # NOT diamond hour markers. Only treat "G" as diamond marker for Rolex DJ/DD refs.
-            # Rolex G-suffix refs are 6-digit nums starting with 126xxx/128xxx/278xxx/279xxx.
-            _is_patek_ap_g = bool(re.match(r'^[57]\d{3}', ref_upper))  # Patek: 5xxx/7xxx
-            if not _is_patek_ap_g:
-                is_g_suffix = True  # Will append "Diamond" to color later
+            is_g_suffix = True  # Will append "Diamond" to color later
 
     # "vi" / "viix" / "vixi" prefix = diamond markers (VI/IX Roman numeral diamond hour markers)
     # Applies to Lady DJ (278/279), DJ (126231/126233/126234/126331/126333/126334), DD, etc.
@@ -3842,59 +1629,18 @@ def extract_dial(text, ref='', raw_ref=''):
     # "A" suffix in text = baguette diamond markers
     # BUT NOT for Day-Date refs where "A" is just a variant code (228238A, 228235A, etc.)
     is_baguette = False
-    _dd_a_refs = {'228238','228235','228236','228239','128235','128238','128239',
-                  '228206','128206','228396','128396'}  # Platinum DD40/36: 'A' = bracelet/variant code, NOT baguette
+    _dd_a_refs = {'228238','228235','228236','228239','128235','128238','128239'}
     _ref_base_b = re.match(r'(\d+)', ref_upper)
     _rb_b = _ref_base_b.group(1) if _ref_base_b else ''
     if _rb_b not in _dd_a_refs:
-        # Direct ref+A: "127386A", "127386 A", "228396 A"
-        _is_baguette_direct = bool(ref and re.search(r'\b' + re.escape(ref_upper) + r'\s*A\b', text, re.I))
-        # Ref+TBR/RBR+A: "127286TBR A", "128396TBR A" — TBR/RBR is bracelet code, A = baguette markers
-        _rb_b_base = _rb_b if _rb_b else ref_upper
-        _is_baguette_tbr = bool(re.search(r'\b' + re.escape(_rb_b_base) + r'\w*\s+A\b', text, re.I))
-        is_baguette = _is_baguette_direct or _is_baguette_tbr
+        is_baguette = bool(ref and re.search(r'\b' + re.escape(ref_upper) + r'\s*A\b', text, re.I))
 
     # Special dials (check before generic colors)
-    # Roman Concentric — Day-Date 40 / DD36 special dual-ring Arabic+Roman dial
-    # "Roman Concentric" = two concentric rings of hour numerals (Arabic outer + Roman inner).
-    # Found on DD40 refs (218235, 228235, 228236) with Oyster/President bracelet.
-    # Dealers say "Roman Concentric", "concentric dial", or "Arabic Roman".
-    if re.search(r'\broman\s+concentric\b|\bconcentric\s*(?:dial)?\b', t):
-        return 'Roman Concentric'
-    # Zebra — Day-Date exotic striped stone/enamel dial (alternating black/cream bands)
-    # Used on Day-Date 36 refs (116185BBR, 118178, 218346, 228238, etc.)
-    if re.search(r'\bzebra\b', t): return 'Zebra'
-    # American — rare Day-Date exotic dial with US-flag or Americana motif
-    # Pattern: "am dial" (short for American dial, HK/US dealer shorthand)
-    if re.search(r'\bam\s+dial\b|\bamerican\s*dial\b', t): return 'American'
     # Puzzles (DD special)
     if re.search(r'\bpuzzle', t): return 'Puzzles'
-    # Bulls Eye (Day-Date special)
-    if re.search(r'\bbulls?\s*eye\b', t): return 'Bulls Eye'
     # Celebration (Jubilee motif)
-    if re.search(r'\bcelebration\b|\bceleb\b|\bcele\b', t):
-        if has_vi: return 'Celebration Roman VI'  # canonical "Color Roman VI" form (not "vi Color")
-        # Celebration Tiffany Blue: OP refs (124xxx, 277xxx, 276xxx, 126000/126034, 134xxx)
-        # where the Celebration dial is offered in Tiffany Blue color — a distinct, priceable variant.
-        # e.g. "124300 Celebration Tiffany Blue" = 124300-0018 (official Rolex SKU).
-        # Also catches "celebration tb" where "tb" = Tiffany Blue shorthand on OP refs.
-        if ref:
-            _rb_celeb = re.match(r'(\d+)', ref)
-            if _rb_celeb:
-                _celeb_rb = _rb_celeb.group(1)
-                _celeb_is_op = (_celeb_rb in ('126000', '126034', '126031') or
-                                _celeb_rb[:3] in ('124', '277', '276', '134'))
-                # "tiffany"/"tiff" is universal; "tb" only safe when ref is confirmed OP family
-                _has_tiff_signal = bool(re.search(r'\btiffany\b|\btiff\b', t) or
-                                        (re.search(r'\btb\b', t) and _celeb_is_op))
-                if _has_tiff_signal and _celeb_is_op:
-                    return 'Celebration Tiffany Blue'
-        return 'Celebration'
-    # "motif" on a Day-Date = Jubilee Motif / Celebration dial.
-    # Not for Datejust/OP refs (where "motif" describes dial texture) or "fluted motif".
-    _rb_motif = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
-    if (re.search(r'\bmotif\b', t) and not re.search(r'\bfluted\s*motif\b', t)
-            and _rb_motif[:3] in ('228', '128', '118')):
+    if re.search(r'\bcelebration\b|\bcele\b', t):
+        if has_vi: return 'vi Celebration'
         return 'Celebration'
     # Eisenkiesel
     if re.search(r'\beisenk', t): return 'Eisenkiesel'
@@ -3909,9 +1655,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Beach (Daytona beach dials — green beach, turquoise beach)
     if re.search(r'\bbeach\b', t):
         if re.search(r'\bgreen\b', t): return 'Green Beach'
-        # "Turquoise Beach" — also fired by "tiffany"/"tiff" since dealers use "Beach Tiffany"
-        # to describe the 116519 Turquoise Beach dial (robin's-egg-blue enamel)
-        if re.search(r'\bturquoise\b|\bturq\b|\btiffany\b|\btiff\b', t): return 'Turquoise Beach'
+        if re.search(r'\bturquoise\b|\bturq\b', t): return 'Turquoise Beach'
         return 'Beach'
     # Lapis Lazuli
     if re.search(r'\blapis\b', t): return 'Lapis Lazuli'
@@ -3921,47 +1665,13 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bopal\b', t): return 'Opal'
     # Grossular / Giraffe (same stone — Rolex official name is "Grossular")
     if re.search(r'\bgrossular\b|\bgiraffe\b', t): return 'Grossular'
-    # Leopard (Day-Date exotic spotted stone / lacquer dial — e.g. 116598 "leopard print")
-    # Officially offered on select Day-Date 40/36 refs; commands significant premium.
-    if re.search(r'\bleopard\b', t): return 'Leopard'
-    # Tiger Iron (metamorphic silica stone — 126718GRNR-0002 2025 variant; dark banded)
-    # Must appear BEFORE Tiger Eye to avoid false match from the normalisation above
-    if re.search(r'\btiger\s+iron\b', t): return 'Tiger Iron'
-    # Tiger Eye (golden chatoyant quartz stone dial)
+    # Tiger Eye
     if re.search(r'\btiger\s*eye\b', t): return 'Tiger Eye'
-    # Falcon's Eye (blue-grey chatoyant quartz stone dial — Yacht-Master 42 226659, some Day-Date)
-    # "falcon eye" / "falcon's eye" — premium stone dial, significant price premium over plain black.
-    if re.search(r"\bfalcon['\u2019s]*\s*eye\b|\bfalconeye\b", t): return "Falcon's Eye"
-    # Urushi (hand-painted Japanese lacquer dial — rare premium Day-Date option)
-    # "urushi" is an unambiguous term; always indicates the official Urushi lacquer dial.
-    if re.search(r'\burushi\b', t): return 'Urushi'
-    # Wave (Arabic wave motif dial — Day-Date II/40 and some DD36 stone pattern)
-    # "wave dial" / "arabic wave" → Wave (e.g. 218348 wave, 228345 wave)
-    if re.search(r'\bwave\s*(?:dial)?\b', t) and ref:
-        _rb_wave = re.match(r'(\d+)', ref)
-        if _rb_wave and _rb_wave.group(1)[:3] in ('228', '128', '218', '118'):
-            return 'Wave'
-    # Cloisonné (enamel cloisonné art dial — rare high-premium Day-Date option)
-    if re.search(r'\bcloisonn[eé]\b', t): return 'Cloisonné'
-    # Portrait (hand-painted portrait motif dial — ultra-rare Day-Date)
-    if re.search(r'\bportrait\b', t) and ref:
-        _rb_port = re.match(r'(\d+)', ref)
-        if _rb_port and _rb_port.group(1)[:3] in ('228', '128', '218', '118'):
-            return 'Portrait'
     # Ceramic (Daytona ceramic dial)
     if re.search(r'\bceramic\s*(?:dial)?\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1) in ('126506','116500','116505','116506','116508','116518','116519','126500','126503','126505','126508','126518'):
         return 'Ceramic'
     # Money Green / Casino Green (slang for Bright Green on Day-Date)
     if re.search(r'\bmoney\s*green\b|\bcasino\s*green\b', t): return 'Bright Green'
-    # "bright green" explicit keyword — Day-Date 40/36 RG/WG/TT/YG Bright Green dial
-    # Must fire BEFORE the generic \bgreen\b check which would return plain 'Green'.
-    # Refs with Bright Green as a valid dial: 228235, 228236, 228238, 228239, 228345, 228348,
-    # 228398, 128235, 128238 (see rolex_dial_options.json).
-    if re.search(r'\bbright\s*green\b|\bbright\s*grn\b|\bbgrn\b', t):
-        if ref:
-            _rb_bgg = re.match(r'(\d+)', ref)
-            if _rb_bgg and _rb_bgg.group(1)[:3] in ('228', '128', '118', '218'):
-                return 'Bright Green'
     # Bright Green (Day-Date specific — solid bright/casino green, often with roman indices)
     if re.search(r'\bgreen\s*rom(?:an|a|e)?\b|\brom(?:an|a|e)?\s*green\b', t):
         if ref:
@@ -3982,146 +1692,32 @@ def extract_dial(text, ref='', raw_ref=''):
         return 'Ombré'
     # Rainbow
     if re.search(r'\brainbow\b', t): return 'Rainbow'
-    # Fluted dial (engraved alternating-flute motif — distinct from the fluted bezel case feature).
-    # Only a handful of DJ/DD refs officially offer a "Fluted" lacquer dial (126234, 126334).
-    # Guard: skip "fluted bezel" / "fluted motif bezel" — those describe the case, not the dial.
-    # Guard: only return 'Fluted' when the ref's dial catalog explicitly lists it as an option.
-    if re.search(r'\bfluted\b', t) and not re.search(r'\bfluted\s+bezel\b|\bfluted\s+case\b', t) and ref:
-        _rb_fl = re.match(r'(\d+)', ref)
-        if _rb_fl and _valid_dials and 'Fluted' in _valid_dials:
-            return 'Fluted'
     # Pavé (full diamond dial)
     if re.search(r'\bpav[eé]\b|\bfull\s*diamond\b', t):
-        _ref_base_pv = re.match(r'(\d+)', ref) if ref else None
-        _rb_pv = _ref_base_pv.group(1) if _ref_base_pv else ''
-        # 128159/228159: ALWAYS Turquoise Pavé when "pave" is mentioned (these refs only
-        # trade as Turquoise Pavé in the market; plain "pave" without Tiffany keyword = same dial).
-        _turq_pave_refs_pv = frozenset({'128159', '228159'})
-        if _rb_pv in _turq_pave_refs_pv:
-            return 'Turquoise Pavé'
-        # Tiffany/Turquoise + Pavé compound dials:
-        #   Day-Date (128xxx/228xxx): "tiffany pave" / "turquoise pave" = Turquoise Pavé
-        #   Other refs: "tiffany pave" → Tiffany Blue is the premium signal (return Tiffany Blue)
-        if re.search(r'\btiffany\b|\btiff\b|\bturquoise\b|\bturq\b', t):
-            if _rb_pv.startswith('128') or _rb_pv.startswith('228'):
-                return 'Turquoise Pavé'
-            return 'Tiffany Blue'
         if re.search(r'\bgreen\b', t): return 'Green Pavé'
         if has_vi: return 'vi Pavé'
         return 'Pavé'
-    # Paul Newman (and "exotic"/"exotica" = Paul Newman exotic dial — dealer shorthand for PN Daytona)
-    # "paul newman" is unambiguous — fire on any ref
-    if re.search(r'\bpaul\s*newman\b', t): return 'Paul Newman'
-    # "pn" alone is restricted to Daytona-family refs to prevent false positives (e.g., part-numbers,
-    # phone-number fragments, "PN:" labels in non-Daytona listings).
-    # Daytona 6-digit refs start with 1165xx or 1265xx.
-    if re.search(r'\bpn\b', t) and ref:
-        _rb_pn_text = re.match(r'(\d+)', ref)
-        _pn_base = _rb_pn_text.group(1) if _rb_pn_text else ''
-        if _pn_base[:4] in ('1165', '1265'):  # Daytona 40mm family only
-            return 'Paul Newman'
-    if re.search(r'\bexotic\b', t) and ref:
-        _rb_pn = re.match(r'(\d+)', ref)
-        # "exotic" = Paul Newman only for Daytona refs (116xxx, 126xxx, 116518, 126518, etc.)
-        if _rb_pn and _rb_pn.group(1)[:3] in ('126', '116'):
-            return 'Paul Newman'
+    # Paul Newman — no trailing \b: "Paul Newman2023Y" glued to year is still a PN dial
+    if re.search(r'\bpaul\s*newman|\bpn\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
-    if re.search(r'\bpanda\b', t):
-        # Panda only applies to Daytona family (1165xx / 1265xx) — guard non-Daytona refs
-        _rb_panda_check = re.match(r'(\d+)', ref) if ref else None
-        _panda_base = _rb_panda_check.group(1) if _rb_panda_check else ''
-        if not ref or _panda_base[:4] in ('1165', '1265'):
-            return 'Panda'
-        # For non-Daytona refs, 'panda' is likely false positive — fall through to colour detection
+    if re.search(r'\bpanda\b', t): return 'White'
 
     # Wimbledon — specific dial, NOT just slate or green
-    # Guard: only return Wimbledon if the ref actually supports it (prevents false positives on
-    # Day-Date refs like 228238/228235 that don't offer a Wimbledon dial).
-    if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t):
-        if not _valid_dials or 'Wimbledon' in _valid_dials:
-            return 'Wimbledon'
-        # Fall through — Wimbledon not valid for this ref; let color detection continue
-
-    # ── Arabic numeral indices dial ──────────────────────────────────────────────
-    # IMPORTANT: fire BEFORE the main color scan so explicit "arabic" keyword is not
-    # overridden by a contaminating color (e.g. emoji 🩵 → " blue ", multi-ref bleed).
-    # "Arabic" on Day-Date / Datejust = Arabic numeral hour markers — high-value variant.
-    # Handles both plain "Arabic" and "Color Arabic" compounds ("Black Arabic", "Silver Arabic").
-    # Guards:
-    #   • "arabic day/date/wheel" = date-wheel description, not dial type
-    #   • RM/AP refs — "arabic" can appear in model/edition names, skip for those
-    if re.search(r'\barabic\b', t) and not re.search(r'\barabic\s+(?:day|date|wheel)\b', t):
-        if not (ref and re.match(r'^(RM|AP)\d', ref, re.I)):
-            # Detect Color+Arabic or Arabic+Color compounds — return canonical "Color Arabic"
-            _arabic_color_m = re.search(
-                r'\b(black|white|blue|silver|champagne|grey|gray|chocolate|green|pink|'
-                r'ice\s+blue|coral|salmon|olive|sundust|aubergine|pistachio|lavender)\s+arabic\b|'
-                r'\barabic\s+(black|white|blue|silver|champagne|grey|gray|chocolate|green|pink|'
-                r'ice\s+blue|coral|salmon|olive|sundust|aubergine|pistachio|lavender)\b', t)
-            if _arabic_color_m:
-                _acname = (_arabic_color_m.group(1) or _arabic_color_m.group(2) or '').strip()
-                _ac_map = {
-                    'grey': 'Grey', 'gray': 'Grey', 'ice blue': 'Ice Blue',
-                    'champagne': 'Champagne', 'chocolate': 'Chocolate',
-                    'aubergine': 'Aubergine', 'pistachio': 'Pistachio',
-                    'lavender': 'Lavender',
-                }
-                _acol = _ac_map.get(_acname, _acname.title())
-                return f'{_acol} Arabic'
-            # Standalone Arabic — return 'Arabic' unconditionally.
-            # Any contaminating color words (emoji-injected or multi-ref) do not take
-            # precedence when the explicit "arabic" keyword is present without a color
-            # compound. Refs with no Arabic dial option will get corrected downstream.
-            return 'Arabic'
+    # "wim"/"wimb"/"wimbo" are common HK dealer shorthands for the Wimbledon dial
+    if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b|\bwim\b', t): return 'Wimbledon'
 
     # Diamond dial variants — "blue diamond", "diamond blue", "grey diamond", etc.
     # These are dials with diamond hour markers + specific color (common on DJ/DD)
     # Must check BEFORE standard colors to avoid "blue diamond" → just "Blue"
-    #
-    # GUARD: Suppress diamond-dial detection when "diamond" ONLY describes the bracelet,
-    # bezel, or case lugs — NOT the dial face.  Common false-positive patterns:
-    #   • "bracelet diamond" / "diamond bracelet"  → diamond bracelet, not dial
-    #   • "factory diamond bezel" / "diamond bezel" → factory diamond bezel, not dial
-    #   • "diamond lugs" / "am diamond bezel"       → case/bezel decoration, not dial
-    # EXCEPTION: if "diamond dial", "diamond marker/index", or "baguette" (= baguette
-    # diamond hour markers on dial) also appear, diamond IS a dial feature → allow.
-    _diamond_on_bracelet = bool(re.search(
-        r'(?:bracelet|brac\b)\s+(?:diamond|dia\b|diam\b)|'
-        r'(?:diamond|dia\b|diam\b)\s+(?:bracelet|brac\b)', t))
-    _diamond_on_bezel_only = (
-        bool(re.search(
-            r'(?:factory\s+|double\s+row\s+|am\s+|aftermarket\s+)?'
-            r'(?:diamond\s+bezel|bezel\s+(?:diamond|dia\b))', t)) and
-        not bool(re.search(
-            r'diamond\s+(?:dial|marker|index|hour|baguette)|'
-            r'(?:marker|index|hour|baguette)\s+diamond|'
-            r'\bdiamond\s+dial\b|\bdial\s+diamond\b', t))
-    )
-    has_diamond = (
-        bool(re.search(r'\bdiamond\b|\bdia\b|\bdiam\b', t)) and
-        not re.search(r'\bpav[eé]\b|\bfull\s*diamond\b', t) and
-        not _diamond_on_bracelet and
-        not _diamond_on_bezel_only
-    )
+    has_diamond = bool(re.search(r'\bdiamond\b|\bdia\b|\bdiam\b', t)) and not re.search(r'\bpav[eé]\b|\bfull\s*diamond\b', t)
     if has_diamond and not has_vi:
-        # ORDERING IS CRITICAL: compound colour names containing component words must
-        # be checked BEFORE their generic components, exactly as in the baguette block.
-        # "ice blue" contains \bblue\b — without this guard "228396 ice blue dia" → "Blue Diamond"
-        # (incorrect; "Ice Blue Diamond" does not exist as a Rolex dial option).
-        if re.search(r'\bice\s*blue\b', t): return 'Ice Blue'   # No "Ice Blue Diamond" — preserve base dial
-        # "bright blue" contains \bblue\b — "126333 bright blue diamond" → "Blue Diamond" (wrong)
-        # "Bright Blue Diamond" does not exist; fall through to Bright Blue via standard chain.
-        if re.search(r'\bbright\s*blue\b', t): return 'Bright Blue'  # No "Bright Blue Diamond"
         if re.search(r'\brhodium\b', t): return 'Rhodium Diamond'
         if re.search(r'\bblue\b', t): return 'Blue Diamond'
         if re.search(r'\bgrey\b|\bgray\b', t): return 'Grey Diamond'
         if re.search(r'\bblack\b', t): return 'Black Diamond'
         if re.search(r'\bmint\s*green\b', t): return 'Mint Green Diamond'
-        # "olive" before "green" — "Olive Diamond" is a real Rolex dial (278273/278383 etc.)
-        # Without this guard "olive diamond" falls through to 'Diamond' (no color detected).
-        if re.search(r'\bolive\b', t): return 'Olive Diamond'
         if re.search(r'\bgreen\b', t): return 'Green Diamond'
         if re.search(r'\bsilver\b', t): return 'Silver Diamond'
         if re.search(r'\bwhite\b', t): return 'White Diamond'
@@ -4131,35 +1727,18 @@ def extract_dial(text, ref='', raw_ref=''):
         if re.search(r'\bmop\b|\bmother.of.pearl\b', t): return 'MOP Diamond'
         if re.search(r'\bsundust\b', t): return 'Sundust Diamond'
         if re.search(r'\bslate\b', t): return 'Slate Diamond'
-        if re.search(r'\baubergine\b|\bviolet\b|\bpurple\b', t): return 'Aubergine Diamond'
+        if re.search(r'\baubergine\b|\bviolet\b', t): return 'Aubergine Diamond'
         if re.search(r'\bred\b', t): return 'Red Diamond'
         if re.search(r'\bgold\b|\bgolden\b', t): return 'Champagne Diamond'
-        if re.search(r'\borange\b', t): return 'Orange Diamond'
-        if re.search(r'\bcoral\b', t): return 'Coral Diamond'
-        if re.search(r'\blavender\b', t): return 'Lavender Diamond'
-        if re.search(r'\bturquoise\b', t): return 'Turquoise Diamond'
         # Diamond mentioned but no color — just "Diamond"
         return 'Diamond'
     
-    # Baguette dial variants — "black baguette", "ice blue baguette", etc.
-    # ORDERING IS CRITICAL: Ice Blue must precede generic Blue — "ice blue" contains \bblue\b
-    # which would cause "Ice Blue Baguette" to be misclassified as "Blue Baguette" if
-    # the generic blue check fires first.
+    # Baguette dial variants — "black baguette", etc.
     has_baguette_dial = bool(re.search(r'\bbaguette\b|\bbag\b', t))
     if has_baguette_dial and not is_baguette:
-        if re.search(r'\bice\s*blue\b', t): return 'Ice Blue Baguette'   # MUST precede Blue
-        if re.search(r'\bmint\s*green\b', t): return 'Mint Green Baguette'  # MUST precede Green
         if re.search(r'\bblack\b', t): return 'Black Baguette'
         if re.search(r'\bblue\b', t): return 'Blue Baguette'
         if re.search(r'\bchampagne\b', t): return 'Champagne Baguette'
-        if re.search(r'\bsundust\b', t): return 'Sundust Baguette'
-        if re.search(r'\bpink\b', t): return 'Pink Baguette'
-        if re.search(r'\bcarnelian\b', t): return 'Carnelian Baguette'
-        if re.search(r'\bgreen\b', t): return 'Green Baguette'
-        if re.search(r'\bwhite\b', t): return 'White Baguette'
-        if re.search(r'\bsilver\b', t): return 'Silver Baguette'
-        if re.search(r'\bsalmon\b', t): return 'Salmon Baguette'
-        if re.search(r'\bchocolate\b', t): return 'Chocolate Baguette'
     
     # ── Index type detection for Datejust family ──
     # Detect Roman/Stick/Fluted Motif/Palm index types — only for DJ refs
@@ -4183,138 +1762,30 @@ def extract_dial(text, ref='', raw_ref=''):
         elif re.search(r'\bstick\b|\bbar\b|\bindex\b|\bindices\b|\bmarkers?\b(?!\s*diamond)|\bapplied\b|\bluminous\b|\bsunburst\b|\bsunray\b', t):
             _index_type = 'Stick'
 
-    # ── Explicit "Dial: color" label extraction ──
-    # Handles structured dealer listings like "Dial: grape\nSerial: 8L019"
-    # Also "dial grape" where colon is omitted. Works on both single-line and
-    # multi-line source texts when extract_dial receives the full body.
-    _dial_lbl_m = re.search(
-        r'\bdial\s*[:\s]\s*(official\s+tiffany(?:\s+blue)?|celebration\s+tiffany(?:\s+blue)?|'
-        r'grape|arabic|wimbledon|tiffany|paul\s*newman|meteorite|ice\s*blue|'
-        r'turquoise|aventurine|grossular|sodalite|malachite|lapis|opal|carnelian|onyx|'
-        r'champagne|chocolate|silver|white|black|blue|green|grey|gray|pink|red|orange|'
-        r'yellow|coral|lavender|aubergine|pistachio|sundust|salmon|beige|mop|pave|pavé|'
-        r'bright\s*blue|dark\s*blue|ice\s*blue|mint\s*green|olive|bright\s*green|'
-        r'azzurro(?:\s*blue)?|palm|celebration|fluted|wimbledon|rainbow|d[\s-]*blue)\b',
-        t)
-    if _dial_lbl_m:
-        _lbl = _dial_lbl_m.group(1).strip()
-        _lbl_overrides = {
-            # Premium Tiffany Blue variants — must precede generic 'tiffany' entry
-            'official tiffany': 'Official Tiffany Blue',
-            'official tiffany blue': 'Official Tiffany Blue',
-            'celebration tiffany': 'Celebration Tiffany Blue',
-            'celebration tiffany blue': 'Celebration Tiffany Blue',
-            'grape': 'Grape', 'arabic': 'Arabic', 'wimbledon': 'Wimbledon',
-            'tiffany': 'Tiffany Blue',
-            'paul newman': 'Paul Newman', 'paul  newman': 'Paul Newman',
-            'meteorite': 'Meteorite', 'ice blue': 'Ice Blue', 'turquoise': 'Turquoise',
-            'aventurine': 'Aventurine', 'grossular': 'Grossular', 'sodalite': 'Sodalite',
-            'malachite': 'Malachite', 'lapis': 'Lapis Lazuli', 'opal': 'Opal',
-            'carnelian': 'Carnelian', 'onyx': 'Onyx', 'mop': 'MOP',
-            'pave': 'Pavé', 'pavé': 'Pavé', 'mint green': 'Mint Green',
-            'bright blue': 'Bright Blue', 'dark blue': 'Dark Blue',
-            'bright green': 'Bright Green', 'grey': 'Grey', 'gray': 'Grey',
-            # Newly added structured-label overrides
-            'azzurro': 'Azzurro Blue', 'azzurro blue': 'Azzurro Blue',
-            'palm': 'Palm', 'celebration': 'Celebration',
-            'fluted': 'Fluted', 'rainbow': 'Rainbow',
-            'd-blue': 'D-Blue', 'd blue': 'D-Blue',
-        }
-        if _lbl in _lbl_overrides:
-            # Prepend to t so standard detection chain picks it up, OR return directly for
-            # unambiguous dials that don't need index-type enrichment.
-            if _lbl in ('official tiffany', 'official tiffany blue',
-                        'celebration tiffany', 'celebration tiffany blue',
-                        'grape', 'arabic', 'wimbledon', 'tiffany', 'paul newman', 'meteorite',
-                        'ice blue', 'turquoise', 'aventurine', 'grossular', 'sodalite',
-                        'malachite', 'lapis', 'opal', 'carnelian', 'onyx',
-                        'palm', 'bright green', 'fluted', 'rainbow', 'd-blue', 'd blue',
-                        'azzurro', 'azzurro blue'):
-                return _lbl_overrides[_lbl]
-            # For generic colors, inject into t so index-type + diamond suffix still work
-            t = _lbl + ' ' + t
-
     # Standard color extraction (order matters — specific before generic)
     dial = None
+    _rb_ice = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+    _ice_blue_only_refs = {'228206','228236','128236','127236','116506','126506'}
     if re.search(r'\bice\s*blue\b|\bib\b', t): dial = 'Ice Blue'
+    elif re.search(r'\bice\b', t) and (
+            _rb_ice in _ice_blue_only_refs or
+            (_valid_dials and 'Ice Blue' in _valid_dials and len(_valid_dials) <= 3)):
+        dial = 'Ice Blue'
     elif re.search(r'\bmediterranean\b|\bmed\s*blue\b', t): dial = 'Med Blue'
-    elif re.search(r'\btiffany\b|\bturquoise\b|\btiff\b', t) or (
-        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and
-        re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','134','278','279',
-            '228','128','336','326') or (  # +Day-Date 40/36 (228/128) and Pearlmaster (336/326)
-        # "TB" = Tiffany Blue ONLY for the OP36 refs (126000, 126034, 126031) —
-        # NOT for DJ 36/41 (126231/126233/126234/126331/126333/126334) which never have a
-        # Tiffany Blue dial. This prevents false Tiffany Blue when a multi-ref message body
-        # contains "126000 tb" alongside a DJ listing and the DJ gets the full body text.
-        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and
-        re.match(r'(\d+)', ref).group(1) in ('126000', '126034', '126031'))):
-        # Dial mapping by ref family:
-        #   Day-Date (128xxx, 228xxx) → 'Turquoise' (actual turquoise stone dial, Rolex official)
-        #   Daytona (1165xx, 1265xx) → 'Turquoise' (enamel turquoise dial — Rolex's OFFICIAL name
-        #       for the "Tiffany" Daytona, e.g. 126518LN "Tiffany" collaboration; 116518LN etc.)
-        #   OP/DJ and all other refs → 'Tiffany Blue' (robin's-egg blue; Rolex/AP sell as "Tiffany")
-        # NOTE: "tiffany stamp" pre-normalized → 'retailer stamp' before reaching here, so it
-        # never triggers this block (Patek 5711/1A retailer-stamped pieces stay at correct color).
+    elif re.search(r'\btiffany\b|\bturquoise\b|\btiff\b|\bturq\b', t) or (
+        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126')):
+        # DD/prev-DD (128xxx, 228xxx) have an actual "Turquoise" dial — NOT Tiffany
         _ref_base = re.match(r'(\d+)', ref) if ref else None
         _rb = _ref_base.group(1) if _ref_base else ''
         if _rb.startswith('128') or _rb.startswith('228'):
-            # Day-Date (128xxx/228xxx): official Rolex name is 'Turquoise' for the stone dial.
-            # 128159/228159 are gem-set RBR/bracelet refs whose "tiffany" trading variant has a
-            # Turquoise Pavé dial (turquoise stone + pavé diamond surround).
-            # Rule: if "pave"/"pavé" IS in text → 'Turquoise Pavé'; otherwise → 'Turquoise'.
-            _turq_pave_refs = frozenset({'128159', '228159'})
-            if _rb in _turq_pave_refs and re.search(r'\bpav[eé]\b', t):
-                # Explicit "tiffany pave" or "turquoise pave" for known pavé-turquoise ref
-                dial = 'Turquoise Pavé'
-            elif _rb in _turq_pave_refs:
-                # "tiffany"/"tiff" alone on 128159/228159 → Turquoise Pavé (dominant market variant)
-                dial = 'Turquoise Pavé'
-            else:
-                dial = 'Turquoise'
-            # Validate: not every DD 128/228 ref offers a Turquoise option (e.g. 128235 RG has
-            # none). If _valid_dials is populated and Turquoise is absent, clear the dial so we
-            # don't falsely assign a premium stone dial to a model that never shipped with one.
-            if dial in ('Turquoise', 'Turquoise Pavé') and _valid_dials:
-                if 'Turquoise' not in _valid_dials and 'Turquoise Pavé' not in _valid_dials:
-                    dial = None
-        elif _rb[:4] in ('1165', '1265'):
-            # Daytona family: "tiffany" OR "turquoise" in text = Turquoise enamel dial.
-            # Rolex officially names this dial 'Turquoise' even when dealers say "Tiffany".
-            # This covers the 126518LN Tiffany collaboration, 116518LN Turquoise, etc.
-            dial = 'Turquoise'
-        elif _rb.startswith('336') or _rb.startswith('326') or _rb.startswith('316') or _rb.startswith('296'):
-            # Pearlmaster family (336xxx/326xxx): official Rolex name for the robin's-egg blue
-            # stone dial is 'Turquoise'. Dealers say "Tiffany" but the Rolex SKU is Turquoise.
             dial = 'Turquoise'
         else:
-            # If text explicitly names "turquoise"/"turq" (not just "tiffany"/"tiff"/"tb") AND the
-            # ref offers a genuine Turquoise dial option, preserve it as Turquoise rather than
-            # upgrading to Tiffany Blue.  Handles OP36 (126000) and DJ refs that carry BOTH
-            # Tiffany Blue AND Turquoise as separate, priced-differently variants.
-            _has_tiffany_kw = bool(re.search(r'\btiffany\b|\btiff\b|\btb\b', t))
-            _has_turquoise_kw = bool(re.search(r'\bturquoise\b', t))
-            if _has_turquoise_kw and not _has_tiffany_kw and _valid_dials and 'Turquoise' in _valid_dials:
-                dial = 'Turquoise'
-            else:
-                dial = 'Tiffany Blue'
-                # Guard: some refs (e.g. DJ36/126200) have Turquoise but NOT Tiffany Blue.
-                # If Tiffany Blue is not valid for this ref but Turquoise is, remap.
-                if _valid_dials and 'Tiffany Blue' not in _valid_dials:
-                    if 'Turquoise' in _valid_dials:
-                        dial = 'Turquoise'
-                    else:
-                        dial = None
+            dial = 'Tiffany Blue'
     elif re.search(r'\bcornflower\b', t): dial = 'Cornflower Blue'
-    elif re.search(r'\bmint\s*green\b', t):
-        dial = 'Mint Green'
-    elif re.search(r'\bolive\s*green\b|\bolive\b', t):
-        # 228235/128235 (Day-Date RG) official dial name is 'Olive Green';
-        # 228236/228345/228349 etc. use the shorter 'Olive'. Use valid_dials to decide.
-        dial = 'Olive Green' if (_valid_dials and 'Olive Green' in _valid_dials) else 'Olive'
+    elif re.search(r'\bmint\s*green\b|\bmint\b', t): dial = 'Mint Green'
+    elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
     elif re.search(r'\bpistachio\b|\bpis\b', t): dial = 'Pistachio'
-    elif re.search(r'\bcandy\s*pink\b|\bcandy\b', t): dial = 'Candy Pink'
-    elif re.search(r'\bgrape\b', t): dial = 'Grape'
-    elif re.search(r'\bcommemorative\b', t): dial = 'Commemorative'
+    elif re.search(r'\bcandy\s*pink\b', t): dial = 'Candy Pink'
     elif re.search(r'\blavender\b|\blave?\b|\blanv', t): dial = 'Lavender'
     elif re.search(r'\baubergine\b|\bviolet\b', t): dial = 'Aubergine'
     elif re.search(r'\byml\b', t): dial = 'YML'
@@ -4326,32 +1797,14 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bchampagne\b|\bchamp\b', t):
         if get_family(ref) in ('Cosmograph Daytona','Daytona'): dial = 'Champagne'
         else: dial = 'Champagne'
-    elif re.search(r'\bmeteorite\b|\bmeteo\b|\bmete\b', t): dial = 'Meteorite'
+    elif re.search(r'\bmeteorite\b|\bmeteo\b', t): dial = 'Meteorite'
     elif re.search(r'\ba{1,2}z{1,2}ur+o\b', t): dial = 'Azzurro Blue'
     elif re.search(r'\bbeige\b', t): dial = 'Beige'
     elif re.search(r'\bsalmon\b', t): dial = 'Salmon'
-    elif re.search(r'\bd[\s-]*blue\b', t): dial = 'D-Blue'   # Deepsea D-Blue (James Cameron) — before generic blue
     elif re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
     elif re.search(r'\bblack\b|\bblk\b', t): dial = 'Black'
-    elif re.search(r'\bblue\b|\bblu\b', t):
-        dial = 'Blue'
-        # Guard: "blue" may have been injected by an emoji decoration (e.g. 🩵 → " blue ").
-        # If Blue is not a valid dial for this ref, but another explicit color keyword in the
-        # text IS valid, prefer the explicit color (prevents emoji-blue hijacking).
-        if _valid_dials and 'Blue' not in _valid_dials:
-            _override_map = [
-                (r'\bgreen\b|\bgrn\b', 'Green'), (r'\bblack\b|\bblk\b', 'Black'),
-                (r'\bwhite\b|\bwht\b', 'White'), (r'\bsilver\b', 'Silver'),
-                (r'\bgrey\b|\bgray\b', 'Grey'), (r'\bchampagne\b', 'Champagne'),
-                (r'\bchocolate\b', 'Chocolate'), (r'\bpink\b', 'Pink'),
-                (r'\bsundust\b', 'Sundust'), (r'\bsalmon\b', 'Salmon'),
-                (r'\bturquoise\b', 'Turquoise'), (r'\bmop\b', 'MOP'),
-            ]
-            for _pat, _col in _override_map:
-                if re.search(_pat, t) and _col in _valid_dials:
-                    dial = _col
-                    break
+    elif re.search(r'\bblue\b|\bblu\b', t): dial = 'Blue'
     elif re.search(r'\bwhite\b|\bwht\b', t): dial = 'White'
     elif re.search(r'\bgreen\b|\bgrn\b', t):
         # Day-Date green variants: check for roman indices
@@ -4365,42 +1818,15 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bslate\b', t): dial = 'Slate'
     elif re.search(r'\bgrey\b|\bgray\b|\bgry\b', t): dial = 'Grey'
     elif re.search(r'\bpink\b|\brose\b|\bros[eé]\b', t): dial = 'Pink'
-    elif re.search(r'\bcoral\b', t): dial = 'Coral'  # before 'red' — "Coral Red" → Coral
     elif re.search(r'\bred\b', t): dial = 'Red'
+    elif re.search(r'\bcoral\b', t): dial = 'Coral'
     elif re.search(r'\bgold\b|\bgolden\b', t): dial = 'Gold'
     elif re.search(r'\byellow\b', t): dial = 'Yellow'
     elif re.search(r'\bbrown\b', t): dial = 'Brown'
     elif re.search(r'\bpurple\b|\bviolet\b', t): dial = 'Aubergine'
     elif re.search(r'\borange\b', t): dial = 'Orange'
-    elif re.search(r'\bkhaki\b', t): dial = 'Khaki Green'  # AP Offshore/RO Diver khaki variant
-    elif re.search(r'\bgradient\b', t): dial = 'Gradient'  # AP Lady 15210QT gradient dial
-    elif re.search(r'\bruby\b', t): dial = 'Ruby'          # Day-Date Ruby stone dial
-    elif re.search(r'\bcognac\b', t): dial = 'Brown'       # Cognac ≈ brown stone dial (Day-Date)
-    elif (ref and ref.upper().startswith('RM') and re.search(r'\bcrystal\b', t)):
-        dial = 'Skeletonized'   # RM Crystal models (RM053, RM056 etc.) = transparent/skeleton
-    elif re.search(r'\bskeleton(?:ized)?\b', t): dial = 'Skeletonized'
-    elif re.search(r'\bnaked\b', t) and ref and re.match(r'^RM', ref, re.I):
-        # "naked" = Skeletonized ONLY for Richard Mille (transparent movement visible)
-        # For Rolex/AP/Patek "naked" = watch only / no bracelet (not skeleton)
-        dial = 'Skeletonized'
-    elif re.search(r'\bbulls?\s*eye\b', t): dial = 'Bulls Eye'
-    elif re.search(r'\bmint\b', t) and any('Mint' in _v for _v in _valid_dials):
-        # Standalone "mint" = Mint Green ONLY for refs whose dial catalog includes a Mint variant.
-        # Placed AFTER all explicit colour keywords so that "mint condition" on a black/blue/etc.
-        # listing falls through to the correct colour rather than triggering a false Mint Green.
-        dial = 'Mint Green'
 
     if not dial:
-        # Fluted Motif as standalone dial — return immediately when "fluted motif" was the
-        # only descriptor and no color was given. Prevents the single-dial fallback below from
-        # incorrectly assigning a generic color when the dealer specified this dial type.
-        if _is_dj_family and _index_type == 'Fluted Motif':
-            return 'Fluted Motif'
-        # Palm as standalone dial (no base color detected) — return 'Palm' directly when valid.
-        # This handles listings like "126200 palm n12 2025 68k" where no color is given.
-        if _is_dj_family and _index_type == 'Palm':
-            if not _valid_dials or 'Palm' in _valid_dials:
-                return 'Palm'
         # Check if this is a single-dial ref from catalog before returning empty
         if ref:
             rolex_base = ref.upper()
@@ -4409,43 +1835,17 @@ def extract_dial(text, ref='', raw_ref=''):
                 if rolex_base.endswith(suffix):
                     rolex_base = rolex_base[:-len(suffix)]
                     break
-
+            
             if rolex_base in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[rolex_base], dict):
                 rolex_dials = DIAL_REF_CATALOG[rolex_base]
                 if len(rolex_dials) == 1:
                     dial = list(rolex_dials.values())[0]
                     # Continue with the dial value instead of returning early
                 else:
-                    # Not single-dial in AP/Patek catalog — try Rolex dial-options fallback
-                    _raw_opts = _dial_options_db.get(rolex_base, _dial_options_db.get(ref.upper(), []))
-                    if len(_raw_opts) == 1:
-                        dial = _raw_opts[0]
-                    else:
-                        # Arabic fallback: if "arabic" present and no color found, return 'Arabic'
-                        if (re.search(r'\barabic\b', t) and
-                                not re.search(r'\barabic\s+(?:day|date|wheel)\b', t) and
-                                not (ref and re.match(r'^(RM|AP)\d', ref, re.I))):
-                            return 'Arabic'
-                        return 'Diamond' if is_g_suffix else ''
-            else:
-                # Not in AP/Patek catalog — use rolex_dial_options.json single-dial fallback.
-                # Only apply when the ref has exactly ONE possible dial (not ambiguous).
-                _raw_opts = _dial_options_db.get(rolex_base, _dial_options_db.get(ref.upper(), []))
-                if len(_raw_opts) == 1:
-                    dial = _raw_opts[0]
-                else:
-                    # Arabic fallback before empty return
-                    if (re.search(r'\barabic\b', t) and
-                            not re.search(r'\barabic\s+(?:day|date|wheel)\b', t) and
-                            not (ref and re.match(r'^(RM|AP)\d', ref, re.I))):
-                        return 'Arabic'
                     return 'Diamond' if is_g_suffix else ''
+            else:
+                return 'Diamond' if is_g_suffix else ''
         else:
-            _raw_opts_no_ref = _dial_options_db.get('', [])
-            # Arabic fallback for no-ref case
-            if (re.search(r'\barabic\b', t) and
-                    not re.search(r'\barabic\s+(?:day|date|wheel)\b', t)):
-                return 'Arabic'
             return 'Diamond' if is_g_suffix else ''
 
     # ── Normalize generic dial names to official Rolex names ──
@@ -4454,152 +1854,36 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_gold = re.match(r'(\d+)', ref)
         if _rb_gold and _rb_gold.group(1)[:3] in ('126', '128', '228', '116', '118', '278', '279', '336'):
             dial = 'Champagne'
-    # "Coral" on OP refs: preserve as "Coral" when the ref explicitly lists Coral as a distinct
-    # valid dial (separate from Red). Only remap to Red when Coral is not in the valid dial list
-    # but Red is — meaning the dealer's "coral" description points to the Red SKU.
-    # NOTE: rolex_dial_options.json lists BOTH "Coral" AND "Red" for most OP refs (they are
-    # genuinely different dial finishes: Coral = soft orange-red, Red = vivid candy red).
+    # "Coral" on OP = Red (Rolex official is "coral red" but dealers call it "Red")
     if dial == 'Coral' and ref:
         _rb_coral = re.match(r'(\d+)', ref)
         if _rb_coral and _rb_coral.group(1)[:3] in ('124', '126', '277'):
-            # Only remap Coral → Red when this ref has no Coral option but does have Red
-            if _valid_dials and 'Coral' not in _valid_dials and 'Red' in _valid_dials:
-                dial = 'Red'
+            dial = 'Red'
     # "Rhodium" → "Grey" (Rolex uses both, industry prefers Grey)
     if dial and dial.startswith('Rhodium'):
         dial = dial.replace('Rhodium', 'Grey')
-    # "Pink" on OP refs → "Candy Pink"
-    # Rolex official name for the pink OP dial is "Candy Pink".
-    # Dealers often say just "pink" — this maps to the correct official name.
-    # Covers: OP36 (126000/126034), OP41 (124300/134300), OP34 (124200),
-    #         OP31 (277200), OP28 (276200), and OP36 rhodium (126031).
-    if dial == 'Pink' and ref:
-        _rb_op = re.match(r'(\d+)', ref)
-        _rb_op_b = _rb_op.group(1) if _rb_op else ''
-        if _rb_op_b in ('126000', '124300', '134300', '277200', '276200', '126034', '124200', '126031'):
-            dial = 'Candy Pink'
-        # Data-driven fallback: if this ref has Candy Pink but NOT plain Pink, remap
-        elif _valid_dials and 'Candy Pink' in _valid_dials and 'Pink' not in _valid_dials:
-            dial = 'Candy Pink'
-    # ── "Blue" → "Tiffany Blue" on OP refs that lack a plain Blue dial option ──
-    # The OP line (126000, 134300, 277200, 276200, 124200, 124300) does NOT include a standard
-    # blue sunray dial. Rolex's blue-ish OP dial IS the Tiffany Blue (robin's-egg blue).
-    # When a listing shows "Blue" for these refs without explicit text evidence for another
-    # blue variant (Turquoise, Azzurro, etc.), upgrade it to Tiffany Blue.
-    # GUARD: Only upgrade when no other specific blue sub-type was detected (Turquoise remains
-    # Turquoise, Bright Blue stays Bright Blue, etc.).
-    _OP_TIFF_REFS = frozenset({
-        '126000', '126034', '126031',   # OP 36
-        '134300',                        # OP 28
-        '277200',                        # OP 31
-        '276200',                        # OP 26 (Lady OP)
-        '124200',                        # OP 34
-        '124300',                        # OP 41
-    })
-    if dial == 'Blue' and ref:
-        _rb_op_tiff = re.match(r'(\d+)', ref)
-        if _rb_op_tiff and _rb_op_tiff.group(1) in _OP_TIFF_REFS:
-            # Only upgrade if text doesn't contain an explicit non-Tiffany blue qualifier
-            if not re.search(r'\bbright\s*blue\b|\bdark\s*blue\b|\bturquoise\b|\bazzurro\b', t):
-                dial = 'Tiffany Blue'
-    # Rolex uses 'Chocolate' (never 'Brown') for all warm-brown dials across DJ/DD/OP/Sub/GMT.
-    # Normalize 'Brown' → 'Chocolate' for 6-digit Rolex DJ/DD/Sub/GMT/OP ref families.
-    # Excludes AP (15xxx/16xxx/26xxx/76xxx) and Patek (5xxx/7xxx) which legitimately use 'Brown'.
-    if dial == 'Brown' and ref:
-        _rb_choc = re.match(r'(\d+)', ref)
-        _rb_choc_base = _rb_choc.group(1) if _rb_choc else ''
-        if (len(_rb_choc_base) == 6 and
-                _rb_choc_base[:3] in ('126', '116', '278', '279', '228', '128', '118', '218', '268', '326', '336', '114', '124', '134', '226', '216')):
-            dial = 'Chocolate'
 
-    # ── YML normalization: Daytona YG refs (126508 / 116508 / 126518 / 116518) ──
-    # Rolex's official name for the yellow-toned Daytona dial is "YML" (Yellow Mineral Lacquer).
-    # Dealers frequently write "champagne" to describe this dial; normalize to the official name
-    # so pricing and search functions correctly identify the YML premium over standard Champagne.
-    if dial == 'Champagne' and ref:
-        _rb_yml = re.match(r'(\d+)', ref)
-        if _rb_yml and _rb_yml.group(1) in ('126508', '116508'):
-            dial = 'YML'
-    # Dealers also write "yellow" for the YML mineral-lacquer Daytona dial.
-    # Only apply when the ref's valid-dial catalog includes YML (avoids false hits on DD yellow dials).
-    if dial == 'Yellow' and ref:
-        _rb_yml_y = re.match(r'(\d+)', ref)
-        if _rb_yml_y and _rb_yml_y.group(1) in ('126508', '116508', '126518', '116518'):
-            if _valid_dials and 'YML' in _valid_dials:
-                dial = 'YML'
-    # ── Olive Green normalization: Day-Date RG refs (228235, 128235) ──
-    # Rolex officially markets this dial as "Olive Green" — dealers often shorten to "olive" OR
-    # just "green". For these RG Day-Date refs the standard green offering is Olive Green;
-    # Normalize both "Olive" and plain "Green" → "Olive Green".
-    if dial in ('Olive', 'Green') and ref:
-        _rb_og = re.match(r'(\d+)', ref)
-        if _rb_og and _rb_og.group(1) in ('228235', '128235'):
-            dial = 'Olive Green'
-
-    # ── 126300/126334 Blue dial reclassification ──
-    # Both refs offer multiple official blue dials; selection is data-driven via _valid_dials:
-    #   "Azzurro Blue" (126300) / "Azzurro" (126334) = dominant blue config; default when
-    #       no explicit index type is present or when index maps to no specific named variant.
-    #   "Bright Blue" = electric/vivid blue (distinct option for both refs)
-    #   "Blue Stick" (126334 only) = blue dial with stick/bar markers
-    #   "Blue Roman" (126334 only) = blue dial with Roman numerals (distinct from Azzurro)
-    # When dealers say just "blue" without any qualifier, default to Azzurro (most common).
-    # 126334 (DJ41 Fluted Bezel): Rolex official name is "Azzurro" (without "Blue" suffix).
-    # NOTE: 126200 is kept as plain "Blue" by default — its primary blue dial is NOT branded
-    # "Azzurro Blue" in the market; only upgrade to Azzurro Blue when explicitly stated.
+    # ── 126300/126200 Blue dial reclassification ──
+    # Rolex 126300 (DJ41 smooth bezel) has TWO official blue dials:
+    #   "Azzurro Blue" = Roman numeral markers (the default "blue" in market)
+    #   "Bright Blue"  = Stick/index markers (different watch, different price)
+    # When dealers say just "blue" without specifying, it's almost always Azzurro (Roman).
     _ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
-    if _ref_base in ('126300', '126334'):
+    if _ref_base in ('126300', '126200'):
         if dial == 'Blue':
             if _index_type == 'Stick':
-                # Prefer 'Blue Stick' over 'Bright Blue' when the ref catalog lists it.
-                # 126334 has both 'Blue Stick' and 'Bright Blue' as distinct valid dials.
-                if _valid_dials and 'Blue Stick' in _valid_dials:
-                    dial = 'Blue Stick'
-                else:
-                    dial = 'Bright Blue'
+                dial = 'Bright Blue'
                 _index_type = ''  # consumed — don't append again
             elif _index_type == 'Roman':
-                # Prefer 'Blue Roman' over Azzurro when the ref catalog lists it explicitly.
-                # 126334 has both 'Azzurro' (dominant) and 'Blue Roman' as distinct dials.
-                if _valid_dials and 'Blue Roman' in _valid_dials:
-                    dial = 'Blue Roman'
-                else:
-                    # 126334 uses official name "Azzurro" (not "Azzurro Blue")
-                    dial = 'Azzurro' if _ref_base == '126334' else 'Azzurro Blue'
+                dial = 'Azzurro Blue'
                 _index_type = ''  # consumed — don't append again
             else:
-                # No index specified — default to Azzurro/Azzurro Blue (Roman, the popular config)
-                dial = 'Azzurro' if _ref_base == '126334' else 'Azzurro Blue'
+                # No index specified — default to Azzurro Blue (Roman, the popular config)
+                dial = 'Azzurro Blue'
         elif dial == 'Bright Blue':
             _index_type = ''  # already correct, don't append Stick
-    # ── 126200 Azzurro Blue upgrade (explicit keyword only) ──
-    # 126200 (DJ36 Oyster): 'Azzurro Blue' is a valid dial but the primary blue is plain "Blue".
-    # Only upgrade when "azzurro" is explicitly in the listing text.
-    elif _ref_base == '126200' and dial == 'Blue':
-        if re.search(r'\bazzurr?o\b', t):
-            dial = 'Azzurro Blue'
-        # Stick/Roman index modifiers still apply for 126200
-        elif _index_type == 'Stick':
-            dial = 'Bright Blue'
-            _index_type = ''
-        # else: keep as 'Blue' — 126200 plain Blue is a distinct valid dial
-    # ── 126334 / 126234 Azzurro Blue → Azzurro normalization ──
-    # Rolex's official dial name for the DJ41 Fluted Bezel (126334) and DJ36 Fluted Bezel (126234)
-    # blue dial is "Azzurro" (not "Azzurro Blue"). "Azzurro Blue" appears in market shorthand
-    # but the catalog-correct term is "Azzurro" for both fluted-bezel DJ refs.
-    if dial == 'Azzurro Blue' and _ref_base in ('126334', '126234'):
-        dial = 'Azzurro'
 
-    # ── Palm is a standalone dial — never combines with a base color ─────────────
-    # rolex_dial_options.json lists only "Palm" (no "Green Palm", "Champagne Palm" etc.).
-    # "126200 palm green dial" = Palm dial (green is incidental description), NOT "Green Palm".
-    # Return 'Palm' directly if the ref supports it; otherwise preserve the base color.
-    if _is_dj_family and _index_type == 'Palm':
-        if not _valid_dials or 'Palm' in _valid_dials:
-            return 'Palm'
-        _index_type = ''  # Palm not valid for this ref; don't corrupt base color
-
-    # Append index type for Datejust family (Roman, Stick, Fluted Motif)
+    # Append index type for Datejust family (Roman, Stick, Fluted Motif, Palm)
     # Only for plain color dials — NOT for special dials (already returned above),
     # diamond variants, or dials that already encode the index type
     if _is_dj_family and _index_type and dial not in (
@@ -4608,8 +1892,7 @@ def extract_dial(text, ref='', raw_ref=''):
     ) and 'Diamond' not in dial and 'Baguette' not in dial and 'Pavé' not in dial:
         # For 126334 "Blue Roman" → "Blue Roman" (distinct from "Blue"/Azzurro)
         # For 126300 "Bright Blue Stick" → color would be "Blue", index "Stick" → "Blue Stick"
-        if dial:
-            dial = f'{dial} {_index_type}'
+        dial = f'{dial} {_index_type}'
 
     # Apply G-suffix diamond marker (e.g., 126334G → "Grey" becomes "Grey Diamond")
     if is_g_suffix and dial and 'Diamond' not in dial and 'Pavé' not in dial and 'Baguette' not in dial:
@@ -4664,81 +1947,33 @@ def extract_dial(text, ref='', raw_ref=''):
             return f'{dial} Roman VI IX Diamond'
         if has_viix:
             return f'{dial} Roman VI IX Diamond'
-        # Use canonical "[Color] Roman VI" form (not the synonym "vi [Color]").
-        # dial_synonyms maps "vi Green" → "Green Roman VI" etc.; emit canonical directly.
-        return f'{dial} Roman VI'
+        return f'vi {dial}'
 
     # Apply baguette suffix
     if is_baguette and dial:
         return f'{dial} Baguette'
 
-    # ── Arabic Numeral Modifier ──────────────────────────────────────────────
-    # When "arabic" appears in the listing text it signals Arabic numeral hour
-    # markers — a distinct, often-premium configuration for Datejust, Day-Date,
-    # Daytona, Sky-Dweller, and Air-King refs.  Append " Arabic" to the detected
-    # color so that "Blue Arabic", "Black Arabic", "Chocolate Arabic" etc. are
-    # stored as separate, priceable variants.
-    #
-    # Guards:
-    #  • Skip when "arabic" refers to the day/date disc (e.g. "Arabic day and
-    #    date wheel"), not the dial itself.
-    #  • Skip when the dial is already a compound name that encodes its marker
-    #    style or is a special exotic dial (Pavé, Rainbow, Diamond, Baguette,
-    #    MOP, Wimbledon, Grossular, Tiger Iron, etc.).
-    #  • Skip for Richard Mille and AP refs where "arabic" is a movement-scale
-    #    descriptor, not a dial-type keyword.
-    _has_arabic_text = bool(re.search(r'\barabic\b', t))
-    _arabic_day_wheel = bool(re.search(r'\barabic\s+(?:day|date|wheel|numerals?\s+(?:day|date))\b', t))
-    if _has_arabic_text and not _arabic_day_wheel and dial:
-        _arabic_skip_dials = (
-            'Arabic', 'Diamond', 'Pavé', 'Rainbow', 'Baguette', 'MOP',
-            'Wimbledon', 'Celebration', 'Grossular', 'Tiger Iron', 'Tiger Eye',
-            'Leopard', 'Zebra', 'Meteorite', 'Panda', 'Skeletonized',
-            'D-Blue', 'Turquoise', 'Tiffany',
-        )
-        _is_rm_ap = ref and re.match(r'^(RM|AP)\d|^[12]\d{4}[A-Z]{2}\.', ref, re.I)
-        if not _is_rm_ap and not any(s in dial for s in _arabic_skip_dials):
-            dial = f'{dial} Arabic'
-    elif _has_arabic_text and not _arabic_day_wheel and not dial:
-        # No color detected but "arabic" is present → return generic Arabic indicator
-        # so that the listing is not lost as fully unknown
-        _is_rm_ap2 = ref and re.match(r'^(RM|AP)\d|^[12]\d{4}[A-Z]{2}\.', ref, re.I)
-        if not _is_rm_ap2:
-            dial = 'Arabic'
-
     # Validate dial against reference data (if available for this ref)
     valid = REF_VALID_DIALS.get(ref, REF_VALID_DIALS.get(ref_upper, []))
     if valid and dial not in valid:
         # Try close matches, but be careful:
-        # - "Blue" can match "Blue Diamond" (dial is a prefix of valid)
+        # - "Blue" can match "Dark Blue" (dial is substring of valid)
         # - But "Slate" should NOT match "vi Slate" (different product)
         # - "Azzurro Blue" should NOT downgrade to "Blue"
-        # - "Blue" should NOT match "Turquoise Blue" / "Tiffany Blue Daytona" (substring-only, not prefix)
-        # Only match against CANONICAL names (not synonyms) to prevent returning synonym strings.
-        _canonical_valid = [v for v in valid if v not in _syn_to_can_rdv]
-        for v in _canonical_valid:
+        for v in valid:
             # Exact case-insensitive match
             if dial.lower() == v.lower():
                 return v
-        for v in _canonical_valid:
+        for v in valid:
             # dial is a MORE specific name (e.g., "Azzurro Blue" vs "Blue") — keep dial
             if v.lower() in dial.lower() and len(dial) > len(v):
                 return dial  # Keep the more specific name
-            # valid is more specific: only upgrade when valid STARTS WITH our dial
-            # (e.g., "Blue" → "Blue Diamond", "Blue" → "Blue Roman")
-            # NOT when our dial appears mid-string (prevents "Blue" → "Turquoise Blue")
-            if v.lower().startswith(dial.lower() + ' ') and not v.startswith('vi '):
+            # valid is more specific and dial is a generic match (e.g., "Blue" → "Dark Blue")
+            # Only if valid doesn't have a prefix like "vi " which changes meaning
+            if dial.lower() in v.lower() and not v.startswith('vi '):
                 return v
         # No good match — return as-is (reference data may not be exhaustive)
         pass
-
-    # ── Upgrade Tiffany Blue → Official Tiffany Blue when OTB signal present ────
-    # "Official Tiffany Blue" = OP dial with the Tiffany & Co. retailer stamp at 6 o'clock.
-    # Signals include: OTB, OTBL, "Official Tiffany", "Tiffany stamp", "Tiffany & Co", etc.
-    # These are among the most premium OP listings — stamp adds significant price premium.
-    # Only fires when the early-detection flag (set before normalization) is True.
-    if dial == 'Tiffany Blue' and _is_official_tiffany_signal:
-        dial = 'Official Tiffany Blue'
 
     # ── Catalog-based fallback: use official AP/Patek ref suffix → dial mapping ──
     if not dial and raw_ref:
@@ -4757,18 +1992,6 @@ def extract_dial(text, ref='', raw_ref=''):
                 _cs = pk_m.group(2)
                 if _cb in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[_cb], dict):
                     dial = DIAL_REF_CATALOG[_cb].get(_cs, '')
-        # Patek refs without slash: "5935A-014", "5160R-001", "5968A-010" → suffix lookup
-        # Also scan the full source text for refs with suffix (e.g. "PP 5160R-001, 2015y")
-        if not dial:
-            _search_src = (raw_ref or '') + ' ' + text
-            pk_m2 = re.search(r'\b(\d{4,5}[A-Z]{1,2})-(\d{3})\b', _search_src)
-            if pk_m2:
-                _cb2 = pk_m2.group(1).upper()
-                _cs2 = pk_m2.group(2)
-                if _cb2 in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[_cb2], dict):
-                    _d2 = DIAL_REF_CATALOG[_cb2].get(_cs2, '')
-                    if _d2:
-                        dial = _d2
     
     # ── Rolex: Single-dial fallback from catalog ──
     # ── Rolex: Single-dial fallback from catalog ──
@@ -5047,42 +2270,11 @@ def extract_condition(text, ref='', card_year=None, card_month=None):
     # W+C = missing box, says nothing about whether the watch is new or used
     is_incomplete = bool(re.search(r'\bwatch\s*only\b|\bnaked\b|\bw/?o\b|\bhead\s*only\b|\bw[/&+]c\b|\bwatch\s*(?:and|&|\+)\s*card\b|\bcard\s*only\b|\bno\s*box\b', t))
     # Hard pre-owned signals (explicitly stated as used/worn/damaged)
-    # Audit 3: negation-aware — "no scratches"/"not polished" must NOT trigger pre-owned.
-    # Fixed: \bsecond\b/\b2nd\b narrowed to second-hand/2nd-hand (were too broad).
     # Includes Indonesian/Malay: bekas=used, pakai=worn, lecet=scratched
-    _HP_RE = re.compile(
-        r'pre[\s-]*own|\bused\b|\bpolished\b|\bscratche?[sd]?\b'
-        r'|\bdaily\s*wear\b|\bheavy\s*wear\b|\bwell\s*worn\b'
-        r'|\bbekas\b|\bsecond[\s-]*hand\b|\b2nd[\s-]*hand\b'
-        r'|\bpakai\b|\blecet\b', re.I)
-    _hard_preowned = False
-    for _m in _HP_RE.finditer(t):
-        _pfx = t[max(0, _m.start() - 35):_m.start()]
-        if not re.search(r'\b(?:no|not|never|without|w/?o|non)\b', _pfx):
-            _hard_preowned = True
-            break
-    # Standalone "worn" (not "never worn" / "unworn") is also hard pre-owned (Audit 3)
-    if not _hard_preowned:
-        _wm = re.search(r'\bworn\b', t)
-        if _wm and not re.search(r'\bnever[\s-]*worn\b|\bunworn\b', t):
-            _wpfx = t[max(0, _wm.start() - 35):_wm.start()]
-            if not re.search(r'\b(?:no|not|never|without|w/?o|non)\b', _wpfx):
-                _hard_preowned = True
+    _hard_preowned = bool(re.search(r'pre[\s-]*own|\bused\b|\bpolished\b|\bscratche?[sd]?\b|\bdaily\s*wear\b|\bheavy\s*wear\b|\bwell\s*worn\b|\bbekas\b|\bsecond\b|\b2nd\b|\bpakai\b|\blecet\b', t))
     if _hard_preowned:
         return 'Pre-owned'
-    # Soft worn signals → Like New (not BNIB). Added: "minimal wear", "micro scratches",
-    # "light use", "snap marks" (Audit 3). Must check BEFORE 2025+ shortcut.
-    _soft_worn = bool(re.search(
-        r'\b(?:lightly|slightly|gently|light|very\s+lightly)\s+worn\b'
-        r'|\bwas\s+worn\b|\bsome\s+hairlines?\b|\bhairlines?\b'
-        r'|\bsome\s+(?:light\s+)?(?:marks?|scratches?)\b'
-        r'|\blight\s+(?:marks?|scratches?|wear|use)\b'
-        r'|\bminimal\s+(?:wear|use|usage)\b'
-        r'|\bmicro[\s-]*scratche?[sd]?\b'
-        r'|\bsnap\s+marks?\b', t))
-    if _soft_worn:
-        return 'Like New'
-    # Cards 2025+: default to BNIB unless hard/soft pre-owned (already checked above)
+    # Cards 2025+: default to BNIB unless hard pre-owned (already checked above)
     # "mint", "excellent" on a 2025+ watch = still BNIB (it's basically new)
     if card_year and card_year >= 2025:
         return 'BNIB'
@@ -5169,15 +2361,6 @@ def extract_year(text):
         if 1 <= mm <= 12:
             yr = CURRENT_YEAR if mm <= CURRENT_MONTH + 2 else CURRENT_YEAR - 1
             return f"{str(mm).zfill(2)}/{yr}"
-    # === Modern card batch letters: M=2025, N=2026 ===
-    # HK/dealer groups use "M card" for 2025 batch, "N card"/"N series" for 2026 batch.
-    # Must be checked BEFORE the old Rolex serial-letter table which maps M→2007.
-    _CARD_BATCH_YEARS = {'M': '2025', 'N': '2026'}
-    m = re.search(r'\b([MN])\s*(?:card|series|batch|\u5361|\u65b0|date[d]?)\b'
-                  r'|\b(?:card|series|batch)\s*([MN])\b', text, re.I)
-    if m:
-        letter = (m.group(1) or m.group(2)).upper()
-        return _CARD_BATCH_YEARS[letter]
     # === MM-YY dash format: "11-25" = Nov 2025, "10-25" = Oct 2025 ===
     m = re.search(r'\b(\d{1,2})-(\d{2})\b', text)
     if m:
@@ -5264,14 +2447,13 @@ def extract_year(text):
         yy = int(m.group(1))
         if 15 <= yy <= 29:
             return f'20{m.group(1)}'
-    # === Rolex serial letter → approximate year (pre-2010 era) ===
-    # Note: M is intentionally excluded — it now means 2025 batch card (handled above).
+    # === Rolex serial letter → approximate year ===
     _SERIAL_YEARS = {
-        'D': '2005', 'Z': '2006', 'V': '2009',
+        'D': '2005', 'Z': '2006', 'M': '2007', 'V': '2009',
         'G': '2010', 'K': '2001', 'P': '2000', 'Y': '2002',
         'F': '2003', 'T': '1996',
     }
-    m = re.search(r'\b([DZVGKPYFT])\s*(?:serial|ser\.?|series)\b', text, re.I)
+    m = re.search(r'\b([DZMVGKPYFT])\s*(?:serial|ser\.?|series)\b', text, re.I)
     if m:
         letter = m.group(1).upper()
         if letter in _SERIAL_YEARS:
@@ -5508,17 +2690,11 @@ def _parse_crown_ref_line(line):
     # Clean up: remove stray words like "Index", "Rom" (roman)
     # Map common abbreviations
     dial_text = re.sub(r'\bRom\b', 'Roman', dial_text, flags=re.I)
-    # Wimbledon shorthands — covers typos and the correct spelling for structured parsers
-    dial_text = re.sub(r'\bWim\b|\bWimb\b|\bWimbo\b|\bWimbeldon\b|\bWimbelton\b|\bwimbledon\b',
-                       'Wimbledon', dial_text, flags=re.I)
+    dial_text = re.sub(r'\bWim\b', 'Wimbledon', dial_text, flags=re.I)
     dial_text = re.sub(r'\bVi\b', 'vi', dial_text, flags=re.I)
     dial_text = re.sub(r'\bCho\b', 'Chocolate', dial_text, flags=re.I)
     dial_text = re.sub(r'\bChamp\b', 'Champagne', dial_text, flags=re.I)
     dial_text = re.sub(r'\bVixi\b', 'vi', dial_text, flags=re.I)
-    # Tiffany shorthands — catches "Tiff" and "TB" in structured parser dial_text
-    dial_text = re.sub(r'\bTiff\b(?!\s+iron)', 'Tiffany', dial_text, flags=re.I)
-    # Meteorite shorthands
-    dial_text = re.sub(r'\bMete\b|\bMeteo\b|\bMeteor\b', 'Meteorite', dial_text, flags=re.I)
 
     # Use standard dial extraction on the cleaned text
     dial = extract_dial(dial_text, ref) if dial_text else ''
@@ -5685,7 +2861,7 @@ def _parse_dl_watches(body, sender, ts, group, recent_days, out, seen, global_se
 
             # Map common abbreviations in desc_text
             desc_text = re.sub(r'\brom\b', 'Roman', desc_text, flags=re.I)
-            desc_text = re.sub(r'\bwim\b|\bwimbeldon\b|\bwimbelton\b', 'Wimbledon', desc_text, flags=re.I)
+            desc_text = re.sub(r'\bwim\b', 'Wimbledon', desc_text, flags=re.I)
             desc_text = re.sub(r'\bvixi\b', 'vi', desc_text, flags=re.I)
             desc_text = re.sub(r'\bcho\b', 'Chocolate', desc_text, flags=re.I)
             desc_text = re.sub(r'\bchamp\b', 'Champagne', desc_text, flags=re.I)
@@ -5758,7 +2934,7 @@ def _parse_dl_watches(body, sender, ts, group, recent_days, out, seen, global_se
 
             desc_text = rest
             desc_text = re.sub(r'\brom\b', 'Roman', desc_text, flags=re.I)
-            desc_text = re.sub(r'\bwim\b|\bwimbeldon\b|\bwimbelton\b', 'Wimbledon', desc_text, flags=re.I)
+            desc_text = re.sub(r'\bwim\b', 'Wimbledon', desc_text, flags=re.I)
             desc_text = re.sub(r'\bvixi\b', 'vi', desc_text, flags=re.I)
 
             dial = extract_dial(desc_text, ref)
@@ -6115,15 +3291,15 @@ def _process(sender, body, ts, group, dc, region, recent_days, out, seen, global
             if curr == 'HKD': nick_region = 'HK'
             elif curr in ('EUR', 'GBP'): nick_region = 'EU'
             elif curr == 'USDT': nick_region = 'US'
-            else: nick_region = get_region(group, raw_phone)  # Audit5: phone overrides group region
+            else: nick_region = region
             dial = extract_dial(body, canon_ref)
             # P0-1: Reject impossible dial/ref combinations
             valid_dials = REF_VALID_DIALS.get(canon_ref, [])
-            if not valid_dials:
-                _bm = re.match(r'(\d+)', canon_ref)
-                if _bm: valid_dials = REF_VALID_DIALS.get(_bm.group(1), [])
             if valid_dials and dial and dial not in valid_dials:
-                fuzzy = _fuzzy_dial_match(dial, valid_dials)
+                fuzzy = None
+                for v in valid_dials:
+                    if dial.lower() in v.lower() or v.lower() in dial.lower():
+                        fuzzy = v; break
                 if fuzzy:
                     dial = fuzzy
                 else:
@@ -6182,14 +3358,6 @@ def _process(sender, body, ts, group, dc, region, recent_days, out, seen, global
     raw_refs = REF_RE.findall(body)
     patek_refs = PATEK_REF_RE.findall(body)
     ap_refs = AP_REF_RE.findall(body)
-    # Case-insensitive AP ref scan: catches lowercase-suffix refs like "15210cr", "15210st"
-    # that AP_REF_RE misses (requires uppercase). Only adds refs that are actually in AP_REFS_DB.
-    _ap_re_ci = re.compile(r'\b(\d{5}[A-Za-z]{2})(?:\.\w+)?\b')
-    for _ap_ci_m in _ap_re_ci.findall(body):
-        _ap_ci_up = _ap_ci_m.upper()
-        _ap_ci_norm = _normalize_ap_ref(_ap_ci_up)
-        if _ap_ci_norm in AP_REFS_DB and _ap_ci_up not in ap_refs:
-            ap_refs.append(_ap_ci_up)
     vc_refs = VC_REF_RE.findall(body)
     # Tudor regex returns tuples (group1, group2) — flatten
     _tudor_raw = TUDOR_REF_RE.findall(body)
@@ -6227,12 +3395,6 @@ def _process(sender, body, ts, group, dc, region, recent_days, out, seen, global
                 nr = _normalize_ap_ref(ar)
                 if ('AP', nr) not in _brand_line_map:
                     _brand_line_map[('AP', nr)] = _bl
-            # Case-insensitive AP scan for lowercase-suffix refs (e.g. "15210cr")
-            for _ar_ci in _ap_re_ci.findall(_bl):
-                _ar_ci_up = _ar_ci.upper()
-                _nr_ci = _normalize_ap_ref(_ar_ci_up)
-                if _nr_ci in AP_REFS_DB and ('AP', _nr_ci) not in _brand_line_map:
-                    _brand_line_map[('AP', _nr_ci)] = _bl
             for vr in VC_REF_RE.findall(_bl):
                 nr = _normalize_vc_ref(vr)
                 if ('VC', nr) not in _brand_line_map:
@@ -6321,17 +3483,6 @@ def _process(sender, body, ts, group, dc, region, recent_days, out, seen, global
 
     if not raw_refs: return
 
-    # Suppress Rolex numeric refs whose prefix was claimed by a case-insensitive AP match.
-    # e.g. "15210cr" → AP 15210CR was emitted; don't also emit Rolex "15210".
-    if ap_refs:
-        _ap_claimed_bases = set()
-        for _ar in ap_refs:
-            _m = re.match(r'(\d+)', _ar)
-            if _m:
-                _ap_claimed_bases.add(_m.group(1))
-        raw_refs = [r for r in raw_refs if r not in _ap_claimed_bases]
-    if not raw_refs: return
-
     if len(raw_refs) == 1:
         _emit_listing(raw_refs[0], body, sender, ts, group, dc, region, out, seen, global_seen)
     else:
@@ -6383,35 +3534,6 @@ def _process(sender, body, ts, group, dc, region, recent_days, out, seen, global
 
 # ── Model-code-to-dial mappings for AP/Patek/VC full catalog numbers ──
 _BRAND_MODEL_DIAL = {
-    # AP 15210ST Royal Oak Offshore 42
-    '15210ST.OO.A002CA.01': 'Blue',  '15210ST.OO.A002CA.02': 'Grey',
-    '15210ST.OO.A002CA.03': 'Black', '15210ST.OO.A002CA.04': 'Green',
-    '15210ST.OO.A002CA.05': 'White',
-    '15210ST.OO.A293CR.01': 'Blue',  '15210ST.OO.A293CR.02': 'Grey',
-    '15210ST.OO.A293CR.03': 'Black',
-    '15210ST.OO.A002KB.01': 'Blue',  '15210ST.OO.A002KB.02': 'Grey',
-    '15210ST.OO.A002KB.03': 'Black', '15210ST.OO.A002KB.04': 'Green',
-    '15210ST.OO.A002KB.05': 'White',
-    '15210ST.OO.A008CA.01': 'Blue',  '15210ST.OO.A008CA.02': 'Grey',
-    '15210ST.OO.A008CA.03': 'Black',
-    # AP 15210OR Royal Oak Offshore 42 RG
-    '15210OR.OO.A002KB.01': 'Blue',  '15210OR.OO.A002KB.02': 'Grey',
-    '15210OR.OO.A002KB.03': 'Black',
-    '15210OR.OO.A293CR.01': 'Blue',  '15210OR.OO.A293CR.02': 'Grey',
-    '15210OR.OO.A293CR.03': 'Black',
-    # AP 15210CR Royal Oak Offshore 42 Ceramic
-    '15210CR.OO.A002CR.01': 'Blue',  '15210CR.OO.A002CR.02': 'Grey',
-    '15210CR.OO.A002CR.03': 'Black',
-    '15210CR.OO.A008KB.01': 'Blue',  '15210CR.OO.A008KB.02': 'Grey',
-    '15210CR.OO.A008KB.03': 'Black',
-    '15210cr.oo.a008kb.01': 'Blue',  '15210cr.oo.a008kb.02': 'Grey',
-    '15210cr.oo.a008kb.03': 'Black',
-    # AP 15210QT Royal Oak Offshore 42 Rubber
-    '15210QT.OO.A293CR.01': 'Blue',  '15210QT.OO.A293CR.02': 'Grey',
-    '15210QT.OO.A293CR.03': 'Green', '15210QT.OO.A293CR.04': 'Gradient',
-    # AP 26238ST Royal Oak Chrono 41 (prev-gen — Tiffany Blue limited edition)
-    '26238ST.OO.1234ST.01': 'Blue',             # standard blue dial
-    '26238ST.OO.1234ST.02': 'Tiffany Blue',     # Tiffany & Co. limited edition (2022, HKD ~330k)
     # AP 26240ST Royal Oak Chrono
     '26240ST.OO.1320ST.01': 'Black', '26240ST.OO.1320ST.02': 'Blue',
     '26240ST.OO.1320ST.03': 'Green', '26240ST.OO.1320ST.04': 'Grey',
@@ -6422,7 +3544,7 @@ _BRAND_MODEL_DIAL = {
     '15510ST.OO.1320ST.03': 'Black', '15510ST.OO.1320ST.04': 'White',
     '15510ST.OO.1320ST.05': 'Green', '15510ST.OO.1320ST.06': 'Khaki Green',
     '15510ST.OO.1320ST.07': 'Silver', '15510ST.OO.1320ST.08': 'Sand',
-    '15510ST.OO.1320ST.09': 'Brown', '15510ST.OO.1320ST.10': 'Grey',  # dealers consistently describe .10 as Grey
+    '15510ST.OO.1320ST.09': 'Brown', '15510ST.OO.1320ST.10': 'Salmon',
     # AP 15500ST Royal Oak 41
     '15500ST.OO.1220ST.01': 'Blue', '15500ST.OO.1220ST.02': 'Grey',
     '15500ST.OO.1220ST.03': 'Black', '15500ST.OO.1220ST.04': 'White',
@@ -6434,11 +3556,10 @@ _BRAND_MODEL_DIAL = {
     '26331ST.OO.1220ST.03': 'Black',
     # AP 26470ST Royal Oak Offshore Chrono
     '26470ST.OO.A027CA.01': 'White', '26470ST.OO.A104CR.01': 'Blue',
-    '26470ST.OO.A801CR.01': 'Black', '26470ST.OO.A820CR.01': 'Brown',  # cognac/brown variant
+    '26470ST.OO.A801CR.01': 'Black',
     # AP 15720ST Royal Oak Offshore Diver
     '15720ST.OO.A009CA.01': 'Blue', '15720ST.OO.A052CA.01': 'Green',
     '15720ST.OO.A062CA.01': 'Khaki',
-    '15720ST.OO.A023CA.01': 'Tiffany Blue',  # Tiffany & Co. limited edition 2022
     # AP 15300ST Royal Oak 39
     '15300ST.OO.1220ST.01': 'Blue', '15300ST.OO.1220ST.02': 'Grey',
     '15300ST.OO.1220ST.03': 'Black', '15300ST.OO.1110ST.03': 'Black',
@@ -6463,20 +3584,18 @@ _BRAND_MODEL_DIAL = {
     # Patek 5711/1A Nautilus
     '5711/1A-001': 'White', '5711/1A-010': 'Blue', '5711/1A-011': 'Green',
     '5711/1A-014': 'Olive Green', '5711/1A-018': 'Tiffany Blue',
-    # Patek 5980 Nautilus Chrono — 5980/1R is RG (Black/Chocolate), NOT Blue
-    '5980/1A-019': 'Black', '5980/1A-001': 'Blue',
-    '5980/1R-010': 'Chocolate', '5980/1R-001': 'Black',  # RG: Black not Blue
+    # Patek 5980/1A Nautilus Chrono
+    '5980/1A-001': 'Blue', '5980/1A-019': 'Black', '5980/1R-001': 'Blue',
     '5980/60G-001': 'Blue',
-    # Patek 5167A Aquanaut — -001=Anthracite Grey (khaki textured dial), -010=Brown, -012=Blue
-    '5167A': 'Anthracite Grey', '5167A-001': 'Anthracite Grey', '5167A-010': 'Brown', '5167A-012': 'Blue',
-    # Patek 5968A Aquanaut Chrono — specific first, generic fallback last
-    '5968A-019': 'Orange', '5968A-018': 'Green', '5968A-010': 'Blue',
-    '5968A-001': 'Anthracite Grey', '5968A': 'Anthracite Grey',  # -001 is Anthracite Grey, not Black
+    # Patek 5167A Aquanaut
+    '5167A-001': 'Black', '5167A-012': 'Green',
+    # Patek 5968A Aquanaut Chrono
+    '5968A-001': 'Black', '5968A-003': 'Green',
     # VC 4500V/110A Overseas SS
     '4500V/110A-B126': 'Blue', '4500V/110A-B128': 'Black',
     '4500V/110A-B483': 'Green', '4500V/110A-B705': 'Silver',
-    # VC 4500V/110R Overseas RG — B705=Blue (dealers confirm), B942=Blue rubber, B122=Brown
-    '4500V/110R-B942': 'Blue', '4500V/110R-B122': 'Brown', '4500V/110R-B705': 'Blue',
+    # VC 4500V/110R Overseas RG
+    '4500V/110R-B705': 'Silver',
     # VC 5500V/110A Overseas Chrono
     '5500V/110A-B075': 'Blue', '5500V/110A-B148': 'Silver',
     '5500V/110A-B481': 'Black',
@@ -6484,289 +3603,8 @@ _BRAND_MODEL_DIAL = {
     '4520V/110A-B483': 'Blue',
     # VC 6000V/210T Overseas Ultra-Thin
     '6000V/210T-B935': 'Blue', '6000V/210T-H179': 'Green',
-    # VC 85180/000R Patrimony RG — all variants Silver dial, strap code varies
-    '85180/000R-9248': 'Silver', '85180/000R-9166': 'Silver',
-    '85180/000R-9232': 'Silver', '85180/000R-9231': 'Silver',
-    '85180/000R-9230': 'Silver', '85180/000R-9245': 'Silver',
-    # Rolex 116505 Everose Gold Daytona — dial by Rolex suffix code
-    '116505-0001': 'Black', '116505-0002': 'Paul Newman',
-    '116505-0003': 'Sundust', '116505-0004': 'Chocolate',
-    '116505-0005': 'Pink', '116505-0006': 'Pink',
-    '116505-0007': 'Champagne', '116505-0008': 'Champagne',
-    '116505-0013': 'Sundust', '116505-0014': 'Pink',
-    # Rolex 116506 Platinum Daytona — all variants Ice Blue
-    '116506-0001': 'Ice Blue', '116506-0002': 'Ice Blue Stick',
-    '116506-0003': 'Blue Diamond', '116506-0004': 'Pavé',
-    # Patek 5270P Perpetual Calendar Chrono Pt — 001=Salmon (most common), 014=Green
-    '5270P-014': 'Green', '5270P-001': 'Salmon', '5270P': 'Salmon',  # fallback
-    # Patek 5905/1A Annual Cal Chrono SS — 001=Black, 010=Blue, 011=Green (newer)
-    '5905/1A': 'Black', '5905/1A-001': 'Black', '5905/1A-010': 'Blue', '5905/1A-011': 'Green',
-    # Patek 5905R Annual Cal Chrono RG — 001=Black, 010=Blue
-    '5905R': 'Black', '5905R-001': 'Black', '5905R-010': 'Blue',
-    # Patek 5935A World Time Flyback — 014=Salmon (newer variant)
-    '5935A-014': 'Salmon', '5935A-010': 'Blue', '5935A-001': 'Black',
-    # Patek 5160R Annual Calendar Travel Time RG — primary variant White
-    '5160r-001': 'White', '5160r': 'White',
-    # RM67-02 country/athlete editions — skeleton Carbon TPT → Black base
-    'rm67-02 italy': 'Black', 'rm67-02 italia': 'Black',
-    'rm67-02 germany': 'Black', 'rm67-02 gemeany': 'Black',
-    'rm67-02 france': 'Black', 'rm67-02 switzerland': 'Black',
-    'rm67-02 japan': 'Black', 'rm67-02 brasil': 'Black', 'rm67-02 brazil': 'Black',
-    'rm67-05 italy': 'Black', 'rm67-05 italia': 'Black',
-    # Patek 6102R/6102P Sky Moon Celestial
-    '6102R-001': 'Blue', '6102P-001': 'Blue',
-    # Patek 5164A Aquanaut Travel Time — only Anthracite Grey variant
-    '5164A': 'Anthracite Grey',
-    # Patek 5164G Aquanaut Travel Time WG — only Blue-Grey variant
-    '5164G': 'Blue-Grey',
-    # Patek 5980R Nautilus Chrono RG leather — Blue primary, Brown secondary
-    '5980R-010': 'Brown', '5980R-001': 'Blue',
-    # Patek 5980 bare sub-variant codes (matched as substring in source_text)
-    # These cover listings where ref is stored as "5980" but text has the full code
-    '5980/1R': 'Black',      # RG Nautilus Chrono — always Black (not Blue)
-    '5980/1AR': 'Black',     # RG rubber-strap variant — same Black dial
-    '5980/60G': 'Blue-Grey', # WG leather-strap variant — Blue-Grey dial
-    # Rolex YM42 WG Oysterflex — TBR suffix = dark rhodium (black) dial
-    '226679TBR': 'Black',
-}
-
-# Default dial for refs where no color is mentioned and only one dominant variant exists.
-# Only used as a LAST RESORT after all text/code lookups fail.
-_DEFAULT_BRAND_DIAL = {
-    # Patek — only assigned for refs with exactly one production variant
-    '5164A': 'Anthracite Grey',  # only variant: -001 anthracite/khaki
-    '5164G': 'Blue-Grey',        # only variant: -001 blue-grey
-    '6102R': 'Blue',             # sky moon dial — always blue enamel
-    '6102P': 'Blue',
-    '6102T': 'Blue',
-    # Patek — assigned for -001 default when no suffix in text
-    '5968A': 'Anthracite Grey',  # -001 is by far the most common production variant
-    '5711': 'Blue',              # bare "5711" ref — Blue is the standard Nautilus
-    '5711/1A': 'Blue',           # Nautilus SS — Blue dominant (-001 Blue, -010 Blue)
-    '5980/1A': 'Blue',           # Nautilus Chrono SS — -001 Blue most common
-    '5980R': 'Blue',             # Nautilus Chrono RG leather — -001 Blue most common
-    '5270P': 'Salmon',           # Perpetual Calendar Chrono Pt — -001 Salmon dominant
-    '5712/1R': 'Brown',          # Nautilus Moonphase RG — only Brown variant
-    '5712G': 'Blue',             # Nautilus Moonphase WG — only Blue variant
-    '5712R': 'Grey',             # Nautilus Moonphase RG Leather — only Grey variant
-    # AP — assigned where dominant variant is clear
-    '26400AU': 'Black',          # Royal Oak Offshore Chrono YG — Black dominant
-    '15510OR': 'Blue',           # Royal Oak 41 RG — Blue most common (-001)
-    '26240OR': 'Blue',           # Royal Oak Chrono RG — Blue most common (-001)
-    '15202OR': 'Blue',           # Royal Oak Jumbo RG — Blue dominant
-    '15550BA': 'Blue',           # Royal Oak 37 YG — only Blue variant
-    '15500OR': 'Black',          # Royal Oak 41 RG — only Black variant
-    '26579CE': 'Black',          # Royal Oak Perpetual Calendar Ceramic — always Black
-    # AP — dominant variant fallbacks (from market data)
-    '15550SR': 'White',          # Royal Oak 37 TT — White most traded (103 vs Blue 16)
-    # Patek — dominant variant fallbacks
-    '5935A': 'Salmon',           # World Time Flyback — Salmon (-014) most traded (194 vs Black 34)
-    '5160R': 'White',            # Annual Cal Travel Time RG — White (-001) primary production variant
-    # VC — single-variant refs
-    '4520V/210A': 'Blue',        # Overseas Dual Time SS Bracelet — only Blue
-    '7900V/110A': 'Blue',        # Overseas Ultra-Thin Perpetual — only Blue
-    '2000V/120G': 'Blue',        # Overseas Perpetual Ultra-Thin WG — only Blue
-    '1500S/000A': 'Silver',      # Patrimony SS — only Silver
-    '85180/000R': 'Silver',      # Patrimony RG — Silver dominant (134 vs Brown 5)
-    # Patek — ladies Calatrava
-    '5067A': 'White',      # Ladies Calatrava SS — White most traded (153 vs 72 Black)
-    # RM — defaults for refs where dominant variant is clear from HK market data
-    'RM67-02': 'Black',    # Country/athlete editions (Italy/Germany etc.) = Black Carbon TPT
-    'RM67-01': 'Grey',     # Standard TI = grey skeletonized (most common listing without color)
-    'RM65-01': 'Black',    # LeBron James / standard = Black Carbon TPT
-    'RM72-01': 'Grey',     # Standard = grey skeleton; Leclerc (Red) caught by name pattern
-    'RM11-03': 'Grey',     # McLaren Carbon TPT = grey dominant
-    'RM011': 'Black',      # RM011 standard = black skeleton
-    'RM010': 'Grey',       # RM010 standard = grey/silver skeleton
-    'RM11-02': 'Black',    # RM11-02 = black skeleton (most HK listings)
-    'RM11-01': 'Black',    # RM11-01 Roberto Mancini = black
-    'RM11-04': 'Black',    # RM11-04 Roberto Mancini = black
-    'RM07-01': 'Black',    # RM07-01 ladies — Black most traded (322 vs 94 MOP, 86 White)
-    'RM037': 'MOP',        # RM037 ladies — MOP most traded (179 vs 134 Red, 104 White)
-    'RM035': 'Black',      # RM035 standard = black skeleton
-    'RM30-01': 'Black',    # RM30-01 RG most common = black Carbon TPT
-    'RM004': 'Black',      # RM004 Felipe Massa / standard = black skeleton
-    'RM021': 'Black',      # RM021 WG/RG standard = black skeleton
-    'RM21-01': 'Black',    # RM21-01 standard = black
-    'RM60-01': 'Black',    # RM60-01 Only Watch tourbillon = black
-    'RM61-01': 'Black',    # RM61-01 Yohan Blake = black ceramic skeleton
-    'RM39-01': 'Grey',     # RM39 Bubba Watson Golf = Grey Carbon TPT skeleton
-    'RM11-05': 'Black',    # RM11-05 standard = black skeleton
-    'RM16-01': 'Pink',     # RM16-01 ladies = Pink dominant
-    # RM — additional refs (high empty-dial count)
-    'RM68-01': 'Skeletonized',  # Graffiti by Pharrell Williams — skeleton movement
-    'RM63-02': 'Skeletonized',  # Dizzy Fingers Bi-Cylinder — skeleton display
-    'RM52-01': 'Black',         # Skull Tourbillon — black ceramic skull
-    'RM40-01': 'Black',         # McLaren Speedtail — black Carbon TPT
-    'RM27-05': 'Skeletonized',  # Nadal tourbillon — transparent skeleton
-    'RM028': 'Black',           # Diver Ti — black dominant
-    'RM005': 'Black',           # Felipe Massa standard — black skeleton
-    'RM33-03': 'Skeletonized',  # Ladies skeleton standard
-    'RM35-03': 'Skeletonized',  # Skeleton standard
-    'RM37-01': 'Skeletonized',  # Ladies Automatic — skeleton display
-    'RM58-01': 'Skeletonized',  # Skeleton standard
-    'RM07-04': 'White',         # Ladies White dominant
-    'RM16-02': 'Pink',          # Ladies Pink dominant
-    'RM57-01': 'MOP',           # Diamond Lotus — MOP dominant
-    'RM50-02': 'Skeletonized',  # Skeleton standard
-    'RM07-03': 'Pink',          # Ladies Pink dominant
-    'RM007': 'Black',           # Standard — black skeleton
-    'RM17-01': 'White',         # Snow edition — white (also caught by \bsnow\b in DIAL_PATS)
-    'RM016': 'Grey',            # Standard skeleton — grey/silver
-    'RM023': 'Skeletonized',    # Skeleton standard
-    # Patek — bare ref fallback (when no suffix code in source text)
-    '5980': 'Blue',        # Bare 5980 ref → 5980/1A Blue most common; sub-variants caught by text scan
-    # Cartier — dominant single-variant
-    'WSSA0018': 'Black',   # Santos de Cartier Medium SS — Black dominant variant
-    # Rolex — additional dominant-variant defaults (used by retroactive dial fill)
-    '116508': 'White',     # Daytona YG — White (panda) most traded (-0001)
-    '116509': 'White',     # Daytona WG — White most traded
-    '116505': 'Sundust',   # Daytona Everose — Sundust dominant
-    '116520': 'White',     # Daytona SS — White (panda) most common
-    '116503': 'White',     # Daytona TT SS/YG — White most common
-    '214270': 'Black',     # Explorer 39 — always black (belt-and-suspenders for retro fill)
-    '216570': 'Black',     # Explorer II 42mm — Black dominant
-    '118238': 'Champagne', # Day-Date 36 YG — Champagne most common
-    '118348': 'Champagne', # Day-Date 36 YG Fluted — Champagne most common
-    '326934': 'White',     # Sky-Dweller SS — White most common
-    # Rolex — single-variant refs (only one dial option in catalog)
-    '116695': 'Pavé',     # Day-Date 36 WG — always full Pavé diamond dial
-    '118365': 'Blue',     # Day-Date 36 Pt — only Blue variant
-    '326139': 'Black',    # Day-Date 36 WG — only Black variant
-    '118366': 'Ice Blue', # Day-Date 36 Pt 950 — only Ice Blue variant
-    '126535': 'Sundust',  # Day-Date 40 Everose smooth — only Sundust
-    '14270':  'Black',    # Explorer 36 — always Black
-    '279178': 'Silver',   # Lady-DJ 28 WG — only Silver
-    '116689': 'White',    # GMT-Master II WG — only White
-    '326138': 'White',    # Day-Date 36 WG fluted — only White
-    '279138': 'MOP',      # Lady-DJ 28 TT — only MOP
-    '116748': 'Black',    # GMT-Master II YG — only Black
-    '116619': 'Black',    # GMT-Master II YG — only Black
-    '128155': 'Pavé',     # Day-Date 36 Everose — only Pavé
-    '116189': 'Blue',     # Yacht-Master 40 WG — only Blue (Rolesium Blue)
-    '116189BBR': 'Blue',  # Yacht-Master 40 WG+Black Rubber — only Blue
-    '118206': 'Ice Blue', # Day-Date 36 Pt 950 prev-gen — Ice Blue default (Commemorative caught separately)
-    # AP — additional dominant-variant defaults
-    '26331ST': 'White',    # Royal Oak Chrono 41 SS — White (-01) first variant
-    '26470ST': 'Black',    # Royal Oak Offshore Chrono SS — Black dominant
-    '15510ST': 'Blue',     # Royal Oak 41 SS — Blue most common (-01) — 395 empties fixed
-    '15551ST': 'Blue',     # Royal Oak 37 Diamond SS — Blue dominant (358/601 = 60%)
-    # Tudor — dominant-variant defaults
-    'M79470': 'Black',     # Black Bay Pro — Black most common
-    # Patek — additional dominant-variant defaults
-    '5327G': 'Blue',       # Perpetual Calendar WG — Blue primary variant
-    '6300GR': 'Black',     # Grandmaster Chime (GR variant) — Black dominant
-    # Rolex — additional dominant-variant defaults (market data driven)
-    '126599': 'Rainbow',   # Day-Date 36 WG Rainbow — Rainbow dominant (152/247 = 62%)
-    '116588': 'Tiger Eye', # Day-Date 40 WG — Tiger Eye dominant (85/125 = 68%)
-    '336259': 'Black',     # Sky-Dweller SS — Black only (12/12 = 100%)
-    '326933': 'Black',     # Sky-Dweller RG — Black dominant (74/176 = 42%)
-    '116233': 'Champagne', # Datejust 36 YG — Champagne most common (26/141)
-    '116234': 'Black',     # Datejust 36 TT — Black dominant (13/117)
-    '218238': 'Champagne', # Datejust 36 YG (new style) — Champagne dominant (26/55 = 47%)
-    '116519': 'Grey',      # Daytona WG — Grey most traded (75/365 = 21%)
-    '116579': 'Blue Diamond', # Daytona WG Leather — Blue Diamond top variant (4/18)
-    '116515': 'Black',     # Daytona Everose — Black dominant (91/453 = 20%)
-    '279458': 'Pavé',      # Lady Datejust 28 WG — Pavé dominant (7/13 = 54%)
-    # AP — additional dominant-variant defaults (OR/RG variants missing from earlier list)
-    '26331OR': 'Black',    # Royal Oak Chrono RG — Black (-01) first variant
-    '26470OR': 'Black',    # Royal Oak Offshore Chrono RG — Black (-01) dominant
-    '15551OR': 'Blue',     # Royal Oak 37 Diamond RG — Blue (-01) dominant
-    '26420OR': 'Black',    # Royal Oak Offshore Chrono RG — Black (-01) dominant
-    '26420CE': 'Black',    # Royal Oak Offshore Chrono Ceramic — Black dominant
-    '15210OR': 'Blue',     # Royal Oak 33 Ladies RG — Blue (-01) dominant
-    '15210CR': 'Blue',     # Royal Oak 33 Ladies WG — Blue (-01) dominant
-    '15210QT': 'Blue',     # Royal Oak 33 Ladies Quartz — Blue (-01) dominant
-    # AP — additional dominant-variant defaults (market data driven)
-    '15720ST': 'Green',    # Royal Oak Offshore Diver SS — Green dominant (296/560 = 53%)
-    '15400ST': 'Black',    # Royal Oak 41 SS (prev gen) — Black dominant (172/369 = 47%)
-    '15550ST': 'Blue',     # Royal Oak 37 SS — Blue most traded
-    # Rolex — additional dominant-variant defaults (market data driven)
-    '228206': 'Ice Blue',  # Day-Date 40 Platinum — Ice Blue dominant (24/54 = 44%)
-    '116622': 'Blue',      # Yacht-Master 40 RG/SS — Blue dominant (34/68 = 50%)
-    '116523': 'MOP',       # Daytona TT YG — MOP dominant (53/174 = 30%)
-    '279173': 'Champagne', # Lady Datejust 28 RG/SS — Champagne dominant (94/440 = 21%)
-    '5500V/110A': 'Silver', # VC Overseas Chrono SS — Silver dominant (167/227 = 74%)
-    '116400GV': 'Black',   # Milgauss Green Crystal — Black dominant (39/81 = 48%)
-    '116713': 'Green',     # GMT-Master II TT — Green slightly dominant
-    '116518': 'YML',       # Daytona YG on leather — YML dominant (135/464 = 29%)
-    '116400': 'Black',     # Milgauss — Black dominant (17/42 = 40%)
-    '218348': 'Champagne', # Day-Date 36 WG Fluted — Champagne dominant (6/13 = 46%)
-    # RM — additional defaults from market data
-    'RM032': 'Blue',       # RM032 Diver — Blue dominant (27/38 = 71%)
-    'RM022': 'Black',      # RM022 — Black dominant (15/20 = 75%)
-    'RM52-05': 'Black',    # RM52-05 Skull — Black (2/2 = 100%)
-    'RM72-81': 'Grey',     # RM72-81 — Grey skeleton (no market data, educated default)
-    # Tudor — additional defaults
-    'M79663': 'Red',       # Tudor Pelagos FXD — Red (2/2 = 100%)
-    # Patek — additional defaults (high empty-dial refs)
-    '5167A': 'Anthracite Grey', # Aquanaut SS — Anthracite Grey (-001) most common
-    '5905/1A': 'Black',         # Annual Cal Chrono SS — Black (-001) most common
-    '5905R': 'Black',           # Annual Cal Chrono RG — Black (-001) most common
-    '5726/1A': 'Blue',          # Nautilus Annual Cal SS — Blue (-010) dominant (Blue-Grey -001 less traded)
-    '5396G': 'Blue',            # Annual Calendar WG — Blue (-012) dominant in market
-    '5396R': 'Brown',           # Annual Calendar RG — Brown (-012) dominant in market
-    '5205G': 'Blue',            # Annual Calendar WG — Blue (-001) primary variant
-    '5205R': 'Grey',            # Annual Calendar RG — Grey (-001) primary variant
-    '5960/1A': 'Blue',          # Annual Cal Chrono SS — Blue (-010) dominant (Grey -001 older)
-    '7118/1A': 'Blue',          # Ladies Nautilus SS — Blue (-001) dominant
-    '7118/1R': 'Silver',        # Ladies Nautilus RG — Silver (-001) dominant
-    '5004P': 'Salmon',          # Patek Perpetual Calendar Chrono Pt — Salmon common for -032
-    # Rolex — Sky-Dweller and Day-Date additional defaults
-    '326935': 'Grey',      # Sky-Dweller Everose — Grey dominant (90/200 = 45%)
-    '128159': 'Turquoise Pavé',  # Day-Date 36 WG — Turquoise Pavé dominant market variant (corrected from raw Pavé)
-    # AP — additional dominant-variant defaults
-    '26120ST': 'Black',    # Royal Oak Chrono Offshore (older) — Black dominant (57/106 = 54%)
-    '15300ST': 'White',    # Royal Oak 39 SS — White dominant (43/98 = 44%)
-    # RM — additional defaults from market data
-    'RM003': 'Blue',       # RM003 WG — Blue dominant (6/8 = 75%)
-    'RM056': 'Skeletonized', # RM056 Crystal — transparent skeleton (no sapphire dial color)
-    'RM53-02': 'Skeletonized', # RM53-02 Crystal — transparent skeleton
-    'RM033': 'Skeletonized',   # RM033 WG/RG — Skeletonized dominant (10/13 = 77%)
-    'RM066': 'White',      # RM066 — White dominant (5/8 = 62%)
-    # ── New entries from empty-dial analysis ──
-    # Rolex
-    '218206': 'Ice Blue',    # Day-Date II 41mm Platinum — Ice Blue dominant (23/30 = 77%)
-    '116610': 'Black',       # Sub Date SS bare ref (suffix stripped) — default LN=Black
-    '326938': 'Black',       # Sky-Dweller 42mm Everose — Black dominant (50/89 = 56%)
-    # AP — missing from earlier analysis
-    '26240ST': 'Grey',       # Royal Oak Chrono 41mm SS — Grey (-01) first production variant
-    '77247OR': 'Brown',      # Ladies Royal Oak Frosted Gold RG — Brown dominant
-    '15710ST': 'Black',      # Royal Oak Offshore Diver 42mm SS — Black (-01) first variant
-    '15500ST': 'Blue',       # Royal Oak 41mm SS — Blue (-01) most common
-    # RM — missing high-empty-dial refs
-    'RM27-03': 'Skeletonized',  # RM27-03 Nadal Tennis Ball Tourbillon — transparent skeleton
-    'RM025': 'Skeletonized',    # RM025 Diver Tourbillon — skeleton display
-    'RM014': 'Skeletonized',    # RM014 Tourbillon — skeleton
-    'RM002': 'Skeletonized',    # RM002 Tourbillon RG/WG — skeleton
-    'RM52-06': 'Blue',           # RM52-06 Skull — Blue dominant (17/25 = 68%)
-    # Cartier — dominant single-dial variants
-    'WSSA0030': 'Blue',      # Santos de Cartier Large SS — Blue dominant (9/16 = 56%)
-    'WSTA0041': 'Silver',    # Tank Must Large — Silver dial
-    'WSTA0065': 'Silver',    # Tank Large — Silver dial
-    'WHPA0007': 'Silver',    # Pasha de Cartier — Silver dial
-    # VC — dominant variant missing
-    '4500V/110A': 'Blue',    # Overseas 41mm SS — Blue dominant (B003A most common)
-    # Patek — additional gaps
-    '3738/100G': 'Blue',     # Grand Complications WG — Blue enamel dominant
-    '3738': 'Blue',          # Patek Grand Complications bare ref — Blue dominant (39/52 = 75%)
-    # Rolex — additional dominant-variant defaults (high empty-dial refs)
-    '127336': 'Ice Blue',    # Day-Date 41 Platinum — Ice Blue dominant (12/14 = 86%)
-    # Patek — additional dominant-variant defaults
-    '5134R': 'White',        # Patek Calatrava Annual Cal RG — White dominant (6/7 = 86%)
-    # RM — additional defaults
-    'RM21-02': 'Green',      # RM21-02 Tourbillon — Green dominant (6/8 = 75%)
-    'RM051': 'Skeletonized', # RM051 Phoenix Tourbillon — skeleton movement display
-    # Rolex — additional defaults from gap analysis (top empty-dial refs 2026-04)
-    '15210': 'Green',        # Oyster Date 34mm — Green leads (323/1111 = 29%)
-    '279171': 'Green',       # Lady DJ 28 TT RG/SS — Green leads (156/804 = 19%)
-    '279174': 'Pink',        # Lady DJ 28 RG/SS — Pink leads (174/602 = 29%)
-    '116333': 'Champagne',   # Datejust 41 YG/SS — Champagne leads (21/86 = 24%)
-    '116759': 'Black',       # GMT-Master II WG — Black dominant (13/19 = 68%)
-    '118235': 'Pink',        # Day-Date 36 RG — Pink variants lead (17/55 = 31%)
-    '116613': 'Blue',        # Submariner Date TT — Blue LB variant leads (12/21 = 57%)
-    '15200': 'Blue',         # Oyster Date 34mm SS — Blue leads (8/18 = 44%)
-    '116300': 'Blue',        # Datejust 41 TT — Blue variants lead (18/57 = 32%)
+    # VC 85180/000R Patrimony RG
+    '85180/000R-9248': 'Silver',
 }
 
 def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, seen, global_seen=None):
@@ -6804,12 +3642,11 @@ def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, se
     if curr == 'HKD': actual_region = 'HK'
     elif curr in ('EUR', 'GBP'): actual_region = 'EU'
     elif curr == 'USDT': actual_region = 'US'
-    else: actual_region = get_region(group, raw_phone)  # Audit5: phone overrides group region
-    # Extract dial — first try full model code mapping (case-insensitive), then DIAL_PATS
+    else: actual_region = region
+    # Extract dial — first try full model code mapping, then DIAL_PATS
     dial = ''
-    _text_lower = text.lower()
     for code, code_dial in _BRAND_MODEL_DIAL.items():
-        if code.lower() in _text_lower:
+        if code in text:
             dial = code_dial; break
     if not dial:
         for pat, name in DIAL_PATS:
@@ -6824,33 +3661,14 @@ def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, se
         'Grey': ['Rhodium', 'Slate', 'Anthracite'],
         'Rhodium': ['Grey', 'Slate'],
         'Slate': ['Grey', 'Rhodium'],
-        # Patek Aquanaut: dealers call the embossed khaki-textured dial "black" —
-        # map to the official name when valid_dials contains 'Anthracite Grey'
-        'Black': ['Anthracite Grey'],
-        'Anthracite Grey': ['Black', 'Anthracite', 'Khaki'],
     }
     valid_dials = info.get('dials', [])
     if dial and valid_dials and dial not in valid_dials:
-        # Fuzzy match — try substring match first.
-        # Two directions:
-        #   1. Upgrade: extracted is substring of valid ('Blue' → 'Blue Aventurine') — always good.
-        #   2. Downgrade: valid is substring of extracted ('Blue' in 'Tiffany Blue') — risky.
-        #      We allow downgrades for most dials, but PROTECT 'Tiffany Blue' specifically:
-        #      dealers explicitly writing "tiffany"/"tiff" is high-signal; downgrading to plain
-        #      'Blue' loses critical premium-dial information worth significant price premiums.
+        # Fuzzy match — try substring match first
         matched = False
         for vd in valid_dials:
-            if dial.lower() in vd.lower():
-                # Upgrade: extracted is substring of valid → use more specific valid dial
+            if dial.lower() in vd.lower() or vd.lower() in dial.lower():
                 dial = vd; matched = True; break
-            elif vd.lower() in dial.lower() and len(dial) > len(vd):
-                # Downgrade: valid is substring of extracted (e.g., 'Blue' in 'Tiffany Blue').
-                # EXCEPTION: 'Tiffany Blue' — explicit "tiffany" text is high-confidence and
-                # should not be downgraded to plain 'Blue'. Keep it as-is and mark matched.
-                if dial == 'Tiffany Blue':
-                    matched = True; break   # keep dial = 'Tiffany Blue'
-                else:
-                    dial = vd; matched = True; break
         # Then try synonym match
         if not matched:
             syns = _dial_synonyms.get(dial, [])
@@ -6861,27 +3679,6 @@ def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, se
             dial = valid_dials[0] if len(valid_dials) == 1 else ''
     elif not dial and len(valid_dials) == 1:
         dial = valid_dials[0]
-    # AP OO suffix fallback: "15210OR.OO.A002KB.03" → base=15210OR, suffix=03 → catalog dial
-    # Also handles "00" typed instead of "OO" (common dealer typo)
-    if not dial and brand == 'AP':
-        _oo_m = re.search(r'(\d{5}[A-Z]{2})\.[O0]{2}\.\w+\.(\d{2,4})', text, re.I)
-        if _oo_m:
-            _oo_base = _oo_m.group(1).upper()
-            _oo_sfx = _oo_m.group(2)[:2]  # Use first 2 digits (handles "011" → "01")
-            if _oo_base in AP_SUFFIX_DIALS and _oo_sfx in AP_SUFFIX_DIALS[_oo_base]:
-                dial = AP_SUFFIX_DIALS[_oo_base][_oo_sfx]
-    # Patek non-slash suffix fallback: "5160R-001" → catalog dial
-    if not dial and brand == 'Patek':
-        _pk_m = re.search(r'\b(\d{4,5}[A-Z]{1,2})-(\d{3})\b', text)
-        if _pk_m:
-            _pk_base = _pk_m.group(1).upper()
-            _pk_sfx = _pk_m.group(2)
-            if _pk_base in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[_pk_base], dict):
-                _d = DIAL_REF_CATALOG[_pk_base].get(_pk_sfx, '')
-                if _d: dial = _d
-    # Last-resort default for known single-variant / dominant-variant refs
-    if not dial and ref in _DEFAULT_BRAND_DIAL:
-        dial = _DEFAULT_BRAND_DIAL[ref]
     year = extract_year(text)
     cond = extract_condition(text, ref, extract_year_num(year), extract_month_num(year))
     comp = extract_completeness(text)
@@ -6922,45 +3719,9 @@ def _emit_listing(raw_ref, text, sender, ts, group, dc, region, out, seen, globa
     if curr == 'HKD': actual_region = 'HK'
     elif curr in ('EUR', 'GBP'): actual_region = 'EU'
     elif curr == 'USDT': actual_region = 'US'
-    else: actual_region = get_region(group, raw_phone)  # Audit5: phone overrides group region
+    else: actual_region = region
     # Pass raw_ref to extract_dial so it can detect "A" suffix (diamond markers)
     dial = extract_dial(text, ref, raw_ref=raw_ref)
-    # Post-correction: for Daytona multi-dial refs (LN = ceramic bezel only), the SUFFIX_DIAL
-    # early-return may have produced 'Black' even when text has a specific dial keyword.
-    # Re-detect the dial from text for these refs when a premium keyword is present.
-    if dial == 'Black' and raw_ref:
-        _bd_dn = re.match(r'\d+', ref)
-        if _bd_dn and _bd_dn.group(0) in _DAYTONA_LN_MULTI:
-            _tl_dn = text.lower()
-            if re.search(r'\bmete(?:orite?)?\b|\bmeteor\b', _tl_dn):
-                dial = 'Meteorite'
-            elif re.search(r'\bchampagne\b|\bchamp\b|\bchp\b', _tl_dn):
-                dial = 'Champagne'
-            elif re.search(r'\btiffany\b|\btiff\b|\bturquoise\b', _tl_dn):
-                # Daytona family: Rolex's official name for this enamel is 'Turquoise'
-                # (even when dealers call it "Tiffany Blue" — 126518LN Tiffany collab)
-                dial = 'Turquoise'
-            elif re.search(r'\byml\b|\byellow\s*mineral\b', _tl_dn):
-                dial = 'YML'
-            elif re.search(r'\bchoco(?:late)?\b|\bcho\b', _tl_dn):
-                dial = 'Chocolate'
-            elif re.search(r'\bTiger\s*[Ee]ye\b|\btiger\b', _tl_dn):
-                dial = 'Tiger Eye'
-            elif re.search(r'\bpaul\s*newman\b|\bpn\b|\bexotic\b', _tl_dn):
-                dial = 'Paul Newman'
-            elif re.search(r'\bmop\b|\bmother.of.pearl\b|\bnacre\b', _tl_dn):
-                dial = 'MOP'
-            elif re.search(r'\bgreen\b', _tl_dn):
-                dial = 'Green'
-            elif re.search(r'\bsundust\b|\bsun\s*dust\b', _tl_dn):
-                dial = 'Sundust'
-    # Last-resort default for Rolex refs with a known dominant variant (mirrors _emit_brand_listing)
-    if not dial and ref in _DEFAULT_BRAND_DIAL:
-        dial = _DEFAULT_BRAND_DIAL[ref]
-    if not dial:
-        _bd_key = re.match(r'(\d+)', ref)
-        if _bd_key and _bd_key.group(1) in _DEFAULT_BRAND_DIAL:
-            dial = _DEFAULT_BRAND_DIAL[_bd_key.group(1)]
     # Smart dial correction: fix material-dependent colors (Pink→Sundust, Blue→Ice Blue, etc.)
     if dial:
         dial = correct_dial_for_ref(dial, ref)
@@ -6971,11 +3732,12 @@ def _emit_listing(raw_ref, text, sender, ts, group, dc, region, out, seen, globa
         return  # Ambiguous green variant — skip
     # P0-1: Reject impossible dial/ref combinations using REF_VALID_DIALS
     valid_dials = REF_VALID_DIALS.get(ref, [])
-    if not valid_dials:
-        _bm2 = re.match(r'(\d+)', ref)
-        if _bm2: valid_dials = REF_VALID_DIALS.get(_bm2.group(1), [])
     if valid_dials and dial and dial not in valid_dials:
-        fuzzy = _fuzzy_dial_match(dial, valid_dials)
+        # Try fuzzy match (e.g. "Blue" when valid has "Dark Blue")
+        fuzzy = None
+        for v in valid_dials:
+            if dial.lower() in v.lower() or v.lower() in dial.lower():
+                fuzzy = v; break
         if fuzzy:
             dial = fuzzy
         else:
@@ -7688,12 +4450,12 @@ def build_excel(index, listings, out_path):
                 CellIsRule(operator='lessThan', formula=['-0.15'], font=green_font))
             # Bold for BNIB Full Set (Completeness col E = "Full Set")
             ws2.conditional_formatting.add(f'A2:Q{last}',
-                FormulaRule(formula=['$E2="Full Set"'], font=bold_font))
+                FormulaRule(formula=['\$E2="Full Set"'], font=bold_font))
             # Grey out stale listings (>5 days) — Date col Q
             # We can't easily calculate days in Excel formula, but we can grey rows
             # where date is old. Use a formula-based approach with TODAY()
             ws2.conditional_formatting.add(f'A2:Q{last}',
-                FormulaRule(formula=[f'AND($Q2<>"", $Q2<TODAY()-5)'], font=grey_font, fill=grey_fill))
+                FormulaRule(formula=[f'AND(\$Q2<>"", \$Q2<TODAY()-5)'], font=grey_font, fill=grey_fill))
 
         # ── Arbitrage (ws1): Green gradient for positive, red for negative ──
         if ws1.max_row > 1:
@@ -7713,13 +4475,13 @@ def build_excel(index, listings, out_path):
                 last = ws_inv.max_row
                 # Red row for underwater (Margin col H < 0)
                 ws_inv.conditional_formatting.add(f'A2:K{last}',
-                    FormulaRule(formula=['AND($H2<>"", $H2<0)'], fill=red_fill))
+                    FormulaRule(formula=['AND(\$H2<>"", \$H2<0)'], fill=red_fill))
                 # Yellow for >30 days unsold (Days col I > 30)
                 ws_inv.conditional_formatting.add(f'A2:K{last}',
-                    FormulaRule(formula=['AND($I2<>"", $I2>30)'], fill=yellow_fill))
+                    FormulaRule(formula=['AND(\$I2<>"", \$I2>30)'], fill=yellow_fill))
                 # Green for >15% margin potential
                 ws_inv.conditional_formatting.add(f'A2:K{last}',
-                    FormulaRule(formula=['AND($H2<>"", $H2>15)'], fill=green_fill))
+                    FormulaRule(formula=['AND(\$H2<>"", \$H2>15)'], fill=green_fill))
         except NameError:
             pass  # ws_inv not created
 
@@ -7756,10 +4518,8 @@ def build_excel(index, listings, out_path):
 
 # ── Outlier Filter ───────────────────────────────────────────
 def _filter_outliers(listings):
-    """Remove outliers using IQR method (interquartile range) with CHRONO-bound fallback.
-    Groups by (ref, dial, bracelet):
-      - >=4 listings: IQR × outlier_iqr_multiplier
-      - 1-3 listings: CHRONO lo×0.30 / hi×3.0 bounds (catches egregious parser errors)"""
+    """Remove outliers using IQR method (interquartile range).
+    Groups by (ref, dial, bracelet). Need >=4 listings to filter."""
     from collections import defaultdict
     groups = defaultdict(list)
     for i, l in enumerate(listings):
@@ -7767,104 +4527,22 @@ def _filter_outliers(listings):
         groups[key].append(i)
     drop = set()
     for key, idxs in groups.items():
-        ref = key[0]
+        if len(idxs) < 4: continue
         prices = sorted([listings[i]['price_usd'] for i in idxs])
-        if len(idxs) >= 4:
-            n = len(prices)
-            q1 = prices[n // 4]
-            q3 = prices[(3 * n) // 4]
-            iqr = q3 - q1
-            _iqr_mult = CONFIG.get('outlier_iqr_multiplier', 1.5)
-            lower = q1 - _iqr_mult * iqr
-            upper = q3 + _iqr_mult * iqr
-        else:
-            # Fallback for small groups: use CHRONO ref bounds
-            chrono = CHRONO.get(ref)
-            if not chrono or not chrono.get('low'):
-                b = re.match(r'(\d+)', ref)
-                if b:
-                    for r in CHRONO_BASE.get(b.group(1), []):
-                        chrono = CHRONO.get(r)
-                        if chrono and chrono.get('low'): break
-            if chrono and chrono.get('low'):
-                lower = chrono['low'] * 0.30
-                upper = chrono['high'] * 3.0
-            else:
-                continue  # no bounds available, skip
+        n = len(prices)
+        q1 = prices[n // 4]
+        q3 = prices[(3 * n) // 4]
+        iqr = q3 - q1
+        _iqr_mult = CONFIG.get('outlier_iqr_multiplier', 1.5)
+        lower = q1 - _iqr_mult * iqr
+        upper = q3 + _iqr_mult * iqr
         for i in idxs:
             p = listings[i]['price_usd']
             if p < lower or p > upper:
                 drop.add(i)
     filtered = [l for i, l in enumerate(listings) if i not in drop]
     if drop:
-        print(f"  ⚠️ Removed {len(drop)} outlier listings (IQR + CHRONO bounds)\n")
-    return filtered
-
-
-def _sweep_median_outliers(listings):
-    """Secondary per-ref median sweep: remove prices <30% or >300% of ref median.
-    Groups by ref only. Requires >=5 listings per ref.
-    Catches systematic parser errors (wrong multiplier, unconverted HKD, shorthand misfire)
-    that survive the IQR filter because they cluster at the wrong price level.
-
-    Audit 4 pass 2 improvements:
-    - min group raised 3 → 5 (more reliable median estimate)
-    - gem/Pavé/diamond dials excluded (legitimate 3–5× premium; median built from plain dials)
-    - HKD correction attempted before dropping >300% outliers
-    - per-ref drop summary in log output
-    - fixed f-string %% typo (was printing literal %% instead of %)"""
-    from collections import defaultdict
-    _GEM_RE = re.compile(r'pav[eé]|diamond|baguette|gem[\s-]*set|ombr[eé]|meteorite', re.I)
-    _HKD_RATE = FX.get('HKD', 0.1282)
-    ref_groups = defaultdict(list)
-    for i, l in enumerate(listings):
-        ref_groups[l['ref']].append(i)
-    drop = set()
-    corrected = 0
-    ref_drop_log = {}
-    for ref, idxs in ref_groups.items():
-        if len(idxs) < 5:
-            continue
-        # Build median from plain-dial listings only — gem dials have legitimate premiums
-        plain_prices = sorted([
-            listings[i]['price_usd'] for i in idxs
-            if not _GEM_RE.search(listings[i].get('dial', '') or '')
-        ])
-        if len(plain_prices) < 3:
-            continue  # all gem dials or too few plain — skip sweep for this ref
-        n = len(plain_prices)
-        median = plain_prices[n // 2]
-        lower = median * 0.30
-        upper = median * 3.0
-        ref_dropped = 0
-        for i in idxs:
-            l = listings[i]
-            if _GEM_RE.search(l.get('dial', '') or ''):
-                continue  # gem-set dial — skip outlier check
-            p = l['price_usd']
-            if p > upper:
-                # Try HKD → USD correction before dropping
-                hkd_candidate = p * _HKD_RATE
-                if lower * 0.5 <= hkd_candidate <= upper:
-                    listings[i] = listings[i].copy()
-                    listings[i]['price_usd'] = round(hkd_candidate, 2)
-                    listings[i]['_hkd_corrected_sweep'] = f'{p:.0f}→{hkd_candidate:.0f}'
-                    corrected += 1
-                else:
-                    drop.add(i)
-                    ref_dropped += 1
-            elif p < lower:
-                drop.add(i)
-                ref_dropped += 1
-        if ref_dropped:
-            ref_drop_log[ref] = ref_dropped
-    filtered = [l for i, l in enumerate(listings) if i not in drop]
-    if drop or corrected:
-        parts = [f"  ⚠️ Median sweep: {len(drop)} dropped, {corrected} HKD-corrected (<30% or >300% of ref median)"]
-        if ref_drop_log:
-            top = sorted(ref_drop_log.items(), key=lambda x: -x[1])[:5]
-            parts.append('    Top refs: ' + ', '.join(f'{r}×{c}' for r, c in top))
-        print('\n'.join(parts))
+        print(f"  ⚠️ Removed {len(drop)} outlier listings (IQR method)\n")
     return filtered
 
 # ── CLI ──────────────────────────────────────────────────────
@@ -8064,10 +4742,8 @@ def cmd_parse(args):
     if stale_drop:
         listings = [l for i, l in enumerate(listings) if i not in stale_drop]
         print(f"  ⚠️ Removed {len(stale_drop)} stale repostings (same seller+ref+dial)")
-    # ── Outlier filter: IQR within (ref,dial,bracelet) groups, CHRONO bounds for small groups ──
+    # ── Outlier filter: remove listings >15% away from group median ──
     listings = _filter_outliers(listings)
-    # ── Median sweep: drop prices <30% or >300% of per-ref median (Audit 4) ──
-    listings = _sweep_median_outliers(listings)
     # ── Junk ref filter: remove listings where "ref" is actually a price or currency string ──
     _pre_junk = len(listings)
     _junk_re = re.compile(r'(?:HKD|USD|USDT|EUR|SGD|RMB|CNY)', re.IGNORECASE)
@@ -8137,7 +4813,7 @@ def cmd_parse(args):
 
     # ── Price-as-ref filter: detect when a 5-digit "ref" is actually an HKD price ──
     # Heuristic: if ref is a round number (X000, X500) and price_usd matches ref*HKD_rate, it's a price
-    _HKD_RATE = FX.get('HKD', 0.1282)  # use live FX rate for consistency with to_usd()
+    _HKD_RATE = 0.128  # approximate HKD→USD
     def _ref_is_price(l):
         ref = l.get('ref', '')
         src = l.get('source_text', '') or ''
@@ -8166,7 +4842,7 @@ def cmd_parse(args):
         'RBOW':'Rainbow','RBW':'Rainbow','ARABIC':'Arabic','VIXI':'VI IX',
         'BROW':'Brown','TIF':'Tiffany','ANG':'','TSA':'','TOP':''}
     _valid_sfx = {'LN','LV','LB','LP','LK','BLNR','BLRO','GRNR','VTNR','CHNR','DB','NG',
-        'SARU','SARO','SABR','SACO','SACI','SALV','SANR','SATS','BBR','RBR','TBR'}
+        'SARU','SABR','SACO','SACI','SALV','SANR','SATS','BBR','RBR','TBR'}
     _typo_sfx = {'GRNE':'GRNR','GTNR':'GRNR','VNTR':'VTNR','BLOR':'BLRO','GRMR':'GRNR','BLN':'BLNR','LNNG':'LN'}
     for l in listings:
         rm = re.match(r'^(\d{5,6})([A-Z]+)$', l.get('ref',''))
@@ -8294,740 +4970,11 @@ def cmd_parse(args):
         print(f"  ⚠️ Removed {_pre_floor - len(listings)} below-floor listings (bad price parses)")
     if len(listings) < _pre_junk:
         print(f"  ⚠️ Removed {_pre_junk - len(listings)} junk-ref entries (prices parsed as refs)")
-    # ── Merge with existing listings (keep old data outside the parse window) ──
-    raw_path = BASE_DIR / 'rolex_listings.json'
-    if raw_path.exists():
-        try:
-            with open(raw_path, 'r', encoding='utf-8') as f:
-                existing = json.load(f)
-            # Build dedup key for new listings
-            new_keys = set()
-            for l in listings:
-                key = (l.get('ref',''), l.get('seller',''), l.get('ts',''), str(l.get('price',0)))
-                new_keys.add(key)
-            # Keep old listings that aren't duplicated by new ones
-            kept = 0
-            for old in existing:
-                key = (old.get('ref',''), old.get('seller',''), old.get('ts',''), str(old.get('price',0)))
-                if key not in new_keys:
-                    listings.append(old)
-                    kept += 1
-            if kept:
-                print(f"  📦 Merged {kept:,} older listings with {len(listings)-kept:,} new ({len(listings):,} total)")
-        except Exception as e:
-            print(f"  ⚠️ Could not merge old listings: {e}")
-
-    # ── Retroactive dial fill: re-extract dials from source_text for empty-dial listings ──
-    # Runs on ALL listings (new + merged existing) after the merge step.
-    # Covers historical records that were parsed before NTPT/Ferrari/emoji/suffix fixes.
-    _retro_count = 0
-    for _l in listings:
-        if _l.get('dial'):
-            continue  # already has a dial
-        _src = _l.get('source_text', '') or ''
-        if not _src:
-            continue
-        _ref = _l.get('ref', '')
-        # Step 1: Check _BRAND_MODEL_DIAL case-insensitively against source_text
-        # Catches full refs like '5968A-001', '15510ST.OO.1320ST.10', '5980/1R-001'
-        _src_lower = _src.lower()
-        _new_dial = ''
-        for _code, _code_dial in _BRAND_MODEL_DIAL.items():
-            if _code.lower() in _src_lower:
-                _new_dial = _code_dial
-                break
-        # Step 1b: AP OO model code detection (handles 15210OR.OO.A002KB.03 → Black etc.)
-        # This catches AP listings stored with base ref (e.g. "15210") that have full OO code in text
-        # Also handles "00" typed instead of "OO" (26331ST.00.1220ST.03 → Black)
-        if not _new_dial:
-            # Also handle 3-4 digit suffixes like ".0118y" → use first 2 digits "01"
-            _oo_retro = re.search(r'(\d{5}[A-Z]{2})\.[O0]{2}\.\w+\.(\d{2,4})', _src, re.I)
-            if _oo_retro:
-                _oo_b = _oo_retro.group(1).upper()
-                _oo_s = _oo_retro.group(2)[:2]  # Use first 2 digits for catalog lookup
-                if _oo_b in AP_SUFFIX_DIALS and _oo_s in AP_SUFFIX_DIALS[_oo_b]:
-                    _new_dial = AP_SUFFIX_DIALS[_oo_b][_oo_s]
-        # Step 2: Run extract_dial on source_text (handles FIXED_DIAL, color keywords,
-        # catalog single-entry fallback, and all the new normalizations)
-        if not _new_dial:
-            _new_dial = extract_dial(_src, _ref)
-        # Step 3: Fall back to _DEFAULT_BRAND_DIAL for refs with a dominant variant
-        if not _new_dial and _ref in _DEFAULT_BRAND_DIAL:
-            _new_dial = _DEFAULT_BRAND_DIAL[_ref]
-        if _new_dial:
-            _l['dial'] = _new_dial
-            _retro_count += 1
-    if _retro_count:
-        print(f"  🎯 Retroactive dial fill: {_retro_count:,} listings recovered from source_text")
-
-    # ── Retroactive dial UPGRADE: correct mislabeled premium dials ──
-    # Unlike the fill step above (which only handles empty dials), this step corrects
-    # wrong dials produced before recent detection improvements were added.
-    _upgrade_count = 0
-    # Blue → Tiffany Blue for Oyster Perpetual refs.
-    # These OP refs do NOT offer a standard blue sunray dial — their only blue-tone variant
-    # is officially "Tiffany Blue" (robin's-egg blue).  Any stored 'Blue' is therefore stale.
-    # Guard: skip when source text explicitly names a different blue shade (Azzurro, Bright
-    # Blue, Mediterranean Blue) — those edge-case descriptions stay as-is.
-    _TIFFANY_OP_REFS = frozenset({
-        '126000', '124300', '126034', '116000', '134300',
-        '277200', '276200', '124200', '124000', '126031',
-    })
-    _tiff_blue_excludes = re.compile(
-        r'\bazzurr?o\b|\bbright\s*blue\b|\bdark\s*blue\b'
-        r'|\bmediterranean\b|\bmed\s*blue\b|\bblue[\s-]?grey\b', re.I)
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        # Upgrade any 'Blue' → 'Tiffany Blue' for OP refs (no text-keyword requirement)
-        if _dial == 'Blue' and _br_up in _TIFFANY_OP_REFS:
-            if not _tiff_blue_excludes.search(_src):
-                _l['dial'] = 'Tiffany Blue'
-                _upgrade_count += 1
-        # Turquoise Blue → Tiffany Blue: fix old DIAL_PATS bug (was mapping all "tiffany" → 'Turquoise Blue')
-        elif _dial == 'Turquoise Blue' and bool(re.search(r'\btiff(?:any)?\b', _src)):
-            _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-            # Only upgrade if ref has 'Tiffany Blue' as valid dial, or has no dial restrictions
-            if not _valid_up or 'Tiffany Blue' in _valid_up:
-                _l['dial'] = 'Tiffany Blue'
-                _upgrade_count += 1
-    # Black → Meteorite/Champagne for Daytona LN refs where specific keyword in source
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Black' and _br_up in _DAYTONA_LN_MULTI:
-            if re.search(r'\bmete(?:orite?)?\b|\bmeteor\b', _src):
-                _l['dial'] = 'Meteorite'
-                _upgrade_count += 1
-            elif (re.search(r'\bchampagne\b|\bchamp\b|\bchp\b', _src)
-                  and not re.search(r'\bblack\b', _src[:40])):
-                _l['dial'] = 'Champagne'
-                _upgrade_count += 1
-            elif re.search(r'\byml\b|\byellow\s*mineral\b', _src):
-                _l['dial'] = 'YML'
-                _upgrade_count += 1
-            elif re.search(r'\bchoco(?:late)?\b', _src):
-                _l['dial'] = 'Chocolate'
-                _upgrade_count += 1
-            elif re.search(r'\btiff(?:any)?\b|\bturquoise\b', _src):
-                # Rolex official name for 126518LN "Tiffany" enamel dial is 'Turquoise'
-                _l['dial'] = 'Turquoise'
-                _upgrade_count += 1
-            elif re.search(r'\bpaul\s*newman\b', _src):
-                _l['dial'] = 'Paul Newman'
-                _upgrade_count += 1
-            elif re.search(r'\bsundust\b|\bsun\s*dust\b', _src):
-                _l['dial'] = 'Sundust'
-                _upgrade_count += 1
-            elif re.search(r'\bmop\b|\bmother.of.pearl\b|\bnacre\b', _src):
-                _l['dial'] = 'MOP'
-                _upgrade_count += 1
-    # Paul Newman retroactive upgrade: Black on ANY Daytona ref + "paul newman" → Paul Newman
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if (_dial == 'Black' and _br_up[:4] in ('1165', '1265')
-                and re.search(r'\bpaul\s*newman\b', _src)):
-            _l['dial'] = 'Paul Newman'
-            _upgrade_count += 1
-    # Wimbledon retroactive upgrade: non-Wimbledon dials on Wimbledon-capable refs
-    # where "wim"/"wimb"/"wimbledon" appears in source_text
-    _WIMBLEDON_REFS = frozenset({
-        '126300', '126334', '126303', '126333', '126331',
-        '126301', '126283', '126238', '126233', '126200',
-        '126234', '116333',  # DJ36 Rolesor + prev-gen DJ36 Rolesor
-    })
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if (_dial != 'Wimbledon' and _br_up in _WIMBLEDON_REFS
-                and re.search(r'\bwim(?:b(?:ledon|o)?)?\b', _src)):
-            _l['dial'] = 'Wimbledon'
-            _upgrade_count += 1
-    # ── Azzurro keyword-based retroactive upgrade ──
-    # Blue → Azzurro/Azzurro Blue for DJ refs where "azzurro" explicitly appears in source_text.
-    # Covers cases processed by old parser before Azzurro detection was added.
-    _AZZURRO_DJ_REFS = frozenset({
-        '126334', '126333', '126331', '126300', '126303', '126301',
-        '116334', '116333', '116331', '116300', '126234', '126233',
-        '126238', '126200',
-    })
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Blue' and _br_up in _AZZURRO_DJ_REFS:
-            if re.search(r'\bazzurr?o\b', _src):
-                _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-                # Use 'Azzurro' for 126334/126234 (official Rolex name), 'Azzurro Blue' for 126300
-                _new_az = 'Azzurro' if 'Azzurro' in _valid_up else 'Azzurro Blue'
-                _l['dial'] = _new_az
-                _upgrade_count += 1
-    # ── Azzurro default retroactive upgrade (126334 DJ41) ──
-    # The DJ41 126334 Fluted Bezel official blue dial is "Azzurro" — dealers typically
-    # abbreviate it as just "Blue" (e.g. "126334 Blue Jub N12 $105K").
-    # extract_dial already maps 126334 + Blue → Azzurro; this retro step catches listings
-    # stored before that logic was added.
-    # Guard: skip when text explicitly says "bright blue" or "stick" (Bright Blue variant).
-    _AZZURRO_126334_SKIP = re.compile(r'\bbright\s*blue\b|\bstick\b|\bbr\s*blue\b', re.I)
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Blue' and _br_up == '126334':
-            if not _AZZURRO_126334_SKIP.search(_src):
-                _l['dial'] = 'Azzurro'
-                _upgrade_count += 1
-    # ── Azzurro Blue default retroactive upgrade (126300 DJ36 Fluted) ──
-    # Same principle for 126300: default blue dial is "Azzurro Blue".
-    _AZZURRO_BLUE_126300_SKIP = re.compile(r'\bbright\s*blue\b|\bstick\b|\bbr\s*blue\b', re.I)
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Blue' and _br_up == '126300':
-            if not _AZZURRO_BLUE_126300_SKIP.search(_src):
-                _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-                if not _valid_up or 'Azzurro Blue' in _valid_up:
-                    _l['dial'] = 'Azzurro Blue'
-                    _upgrade_count += 1
-    # ── Mint Green retroactive upgrade ──
-    # Green → Mint Green for DJ refs where "mint green" appears in source_text.
-    # Covers old parser runs that only returned generic Green instead of Mint Green.
-    _MINT_GREEN_DJ_REFS = frozenset({
-        '126334', '126333', '126331', '126300', '126303', '126301',
-        '126234', '126233', '126238', '126200', '116334', '116233', '116300',
-    })
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Green' and _br_up in _MINT_GREEN_DJ_REFS:
-            if re.search(r'\bmint\s*gr(?:een|n)?\b|\bmingreen\b|\bmintgrn\b', _src):
-                _l['dial'] = 'Mint Green'
-                _upgrade_count += 1
-    # ── Palm retroactive upgrade ──
-    # Green → Palm for DJ refs where "palm" appears in source_text.
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Green' and _br_up in _MINT_GREEN_DJ_REFS:
-            if re.search(r'\bpalm\b', _src):
-                _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-                if not _valid_up or 'Palm' in _valid_up:
-                    _l['dial'] = 'Palm'
-                    _upgrade_count += 1
-    # ── Meteorite retroactive upgrade (non-Black dials) ──
-    # When a listing has a non-Meteorite dial (Green, Green Pavé, Green Diamond, etc.)
-    # but the source_text shows the REF directly followed by "mete"/"meteorite",
-    # the dial was misidentified (likely from a multi-ref message where another ref's
-    # dial keyword polluted this listing). Upgrade to Meteorite when the ref+mete
-    # proximity pattern is unambiguous.
-    # Scope: any ref that lists Meteorite as a valid dial option.
-    _mete_prox_re = re.compile(r'\bmete(?:orite?)?\b', re.I)
-    for _l in listings:
-        _src_raw = (_l.get('source_text', '') or '')
-        _src = _src_raw.lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial == 'Meteorite' or not _ref or not _dial:
-            continue
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if not _br_up:
-            continue
-        # Check: ref number immediately (≤3 tokens) precedes "mete" in source text
-        _prox_pat = re.compile(
-            r'\b' + re.escape(_br_up) + r'(?:\w{0,8})?\s+(?:\w+\s+){0,2}mete(?:orite?)?\b',
-            re.I)
-        if not _prox_pat.search(_src_raw):
-            continue
-        # Confirm Meteorite is a valid option for this ref
-        _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-        if not _valid_up:
-            continue
-        # Normalise synonyms: valid dials include raw synonyms (e.g. 'Mete', 'Meteoric')
-        _has_mete_option = any(
-            re.search(r'meteor', v, re.I) for v in _valid_up
-        )
-        if _has_mete_option:
-            _l['dial'] = 'Meteorite'
-            _upgrade_count += 1
-    # ── Paul Newman retroactive upgrade ──
-    # Black → Paul Newman for Daytona refs where "paul newman" appears in source_text.
-    # Covers records processed before the Paul Newman early-override was added.
-    _PN_DAYTONA_REFS = frozenset({
-        '126518LN', '126519LN', '116518LN', '116519LN',
-        '126518', '116518', '126519', '116519',
-        '126520', '116520', '126528', '116528',
-        '126515LN', '116515LN', '126515', '116515',
-    })
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial == 'Black' and _ref in _PN_DAYTONA_REFS:
-            if re.search(r'\bpaul\s*newman\b', _src):
-                _l['dial'] = 'Paul Newman'
-                _upgrade_count += 1
-    # ── Turquoise (Daytona) retroactive upgrade ──
-    # Black → Turquoise for Daytona LN refs where "turquoise" appears in source_text.
-    # Covers 126518LN/116518LN Tiffany collaboration, 116519LN Turquoise Beach etc.
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Black' and _br_up in _DAYTONA_LN_MULTI:
-            if re.search(r'\bturquoise\b|\bturq\b', _src):
-                _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-                if not _valid_up or 'Turquoise' in _valid_up:
-                    _l['dial'] = 'Turquoise'
-                    _upgrade_count += 1
-    # ── Tiger Iron retroactive upgrade ──
-    # Black → Tiger Iron for 126718GRNR where "tiger iron" appears in source_text.
-    # The 2025 variant 126718GRNR-0002 has Tiger Iron stone dial; old parser returned Black.
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial == 'Black' and re.match(r'^126718', _ref):
-            if re.search(r'\btiger\s*iron\b', _src):
-                _l['dial'] = 'Tiger Iron'
-                _upgrade_count += 1
-    # ── Ombré retroactive upgrade ──
-    # Correct mislabeled ombré dials on Day-Date refs processed before ombré detection.
-    # e.g. "128235 ombre cho" → 'Chocolate' should be 'Ombré' (per rolex_dial_options).
-    # Only upgrades to a variant explicitly listed in the ref's valid dial options.
-    _OMBRE_DD_REFS = frozenset({
-        '228235', '128235', '228236', '128236', '228348', '128348',
-        '228239', '228238', '128239', '128238', '228345', '128345',
-        '228234', '128234',
-    })
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _br_up in _OMBRE_DD_REFS and re.search(r'ombr[eé]?', _src):
-            _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-            if not _valid_up:
-                continue
-            _candidates = []
-            if 'Green Ombré' in _valid_up and re.search(r'\bgreen\b', _src):
-                _candidates.append('Green Ombré')
-            if 'Chocolate Ombré' in _valid_up and re.search(r'\bchoco(?:late)?\b|\bcho\b', _src):
-                _candidates.append('Chocolate Ombré')
-            if 'Ombré Slate' in _valid_up and re.search(r'\bslate\b|\bsmoke\b|\bgrey\b|\bgray\b', _src):
-                _candidates.append('Ombré Slate')
-            if 'Red Ombré' in _valid_up and re.search(r'\bred\b', _src):
-                _candidates.append('Red Ombré')
-            if not _candidates and 'Ombré' in _valid_up:
-                _candidates.append('Ombré')
-            if _candidates and _dial != _candidates[0]:
-                _l['dial'] = _candidates[0]
-                _upgrade_count += 1
-    # ── AP Tiffany retroactive upgrade ──
-    # Blue → Tiffany Blue for AP refs that have a Tiffany edition (26238ST, 15720ST, etc.)
-    # where "tiffany"/"tiff" appears in source_text.
-    _AP_TIFF_REFS = frozenset({
-        '26238ST', '15720ST', '15710ST', '15202ST', '26240ST', '15500ST',
-    })
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial == 'Blue' and _ref in _AP_TIFF_REFS:
-            # Include common typos: "tiffiny", "tiffaney", "tifany" seen in HK/SG dealer messages
-            if re.search(r'\btiff(?:any|iny|aney)?\b|\btifany\b|\btifanny\b', _src):
-                _valid_up = REF_VALID_DIALS.get(_ref, [])
-                if not _valid_up or 'Tiffany Blue' in _valid_up:
-                    _l['dial'] = 'Tiffany Blue'
-                    _upgrade_count += 1
-    # ── 128159/228159 Turquoise Pavé retroactive upgrade ──
-    # Day-Date 36 WG (128159) and Day-Date 40 WG (228159) with pavé/turquoise/tiffany in source
-    # text → always Turquoise Pavé. Also catches RBR-suffix variants that slipped through as
-    # plain 'Pavé' or 'Turquoise' before the _turq_pave_refs_pv check was added to extract_dial.
-    _TURQ_PAVE_DD_REFS = frozenset({'128159', '228159'})
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '') or ''
-        _dial = _l.get('dial', '') or ''
-        _bm_tp = re.match(r'(\d+)', _ref)
-        _rb_tp = _bm_tp.group(1) if _bm_tp else ''
-        if _rb_tp in _TURQ_PAVE_DD_REFS and _dial != 'Turquoise Pavé':
-            # Evidence for Turquoise Pavé: explicit keywords OR RBR suffix in ref
-            if (re.search(r'\btiff|\bturq|\bpav[eé]?\b', _src)
-                    or 'RBR' in _ref.upper()):
-                _l['dial'] = 'Turquoise Pavé'
-                _upgrade_count += 1
-    # ── Grossular/Giraffe retroactive upgrade ──
-    # Black → Grossular for 126555 refs where "giraffe"/"grossular" appears in source_text.
-    # 126555 can carry the grossular garnet stone (Giraffe) dial — override the Black default.
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial == 'Black' and re.match(r'^126555', _ref):
-            if re.search(r'\bgiraffe\b|\bgrossular\b', _src):
-                _l['dial'] = 'Grossular'
-                _upgrade_count += 1
-    # ── D-Blue (Deepsea) retroactive upgrade ──
-    # Black → D-Blue for Sea-Dweller Deepsea refs (136660, 116660) where source explicitly
-    # names the D-Blue dial via "deepsea blue", "d-blue", "james cameron", or similar.
-    # These were stored as Black because the FIXED_DIAL for 136660 is 'Black' (standard variant);
-    # the D-Blue override in extract_dial only ran during parsing — this retro step catches
-    # listings parsed before the override was complete (missing "deepsea blue" variant).
-    # Also fixes 136660DB [Black] entries that slipped through before FIXED_DIAL was populated.
-    _DBLUE_DEEPSEA_BASES = frozenset({'136660', '116660'})
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Black' and (_br_up in _DBLUE_DEEPSEA_BASES or _ref in ('136660DB', '116660DB')):
-            # Unconditional: ref suffix "DB" = D-Blue by definition — no text check needed.
-            # The canonicalizer only produces 136660DB/116660DB for the D-Blue variant,
-            # so a Black dial on these refs is always a stale parse error.
-            if _ref in ('136660DB', '116660DB'):
-                _l['dial'] = 'D-Blue'
-                _upgrade_count += 1
-            elif re.search(r'\bd[\s-]*blue\b|\bdblue\b|\bjames\s*cameron\b'
-                         r'|\bdeep\s*sea\s*blue\b|\bdeepsea\s*blue\b', _src):
-                _l['dial'] = 'D-Blue'
-                _upgrade_count += 1
-    # ── 126598 Champagne retroactive upgrade ──
-    # 126598 (Everose Rainbow Daytona) is in FIXED_DIAL as 'Black' but also has a Champagne
-    # dial variant. Listings parsed before the Champagne override was added defaulted to Black.
-    # Upgrade Black → Champagne when source text explicitly says "champagne" for ref 126598.
-    for _l in listings:
-        if _l.get('dial') != 'Black': continue
-        _ref_ch = _l.get('ref', '')
-        _bm_ch = re.match(r'\d+', _ref_ch)
-        _br_ch = _bm_ch.group(0) if _bm_ch else ''
-        if _br_ch != '126598': continue
-        _src_ch = (_l.get('source_text', '') or '').lower()
-        if re.search(r'\bchampagne\b|\bchamp\b|\bchmpg?\b|\bchp\b', _src_ch):
-            _l['dial'] = 'Champagne'
-            _upgrade_count += 1
-    # ── Ice Blue retroactive upgrade ──
-    # Two sub-cases:
-    # (a) FIXED_DIAL=Ice Blue refs (126506, 116506, 116506A) stored as 'Blue' — unconditional
-    #     because these refs ONLY ship with Ice Blue; any 'Blue' is a parse/storage error.
-    # (b) Multi-option refs (AP Royal Oak 15551ST/15550ST/15202ST, Rolex 228236, 127336)
-    #     where source explicitly says "ice blue" / "iceblue" — conditional on text.
-    _ICE_BLUE_FIXED_REFS = frozenset({'126506', '116506', '116506A', '127236'})
-    # AP Royal Oak base ref digits that commonly carry Ice Blue as a named dial
-    _AP_RO_IB_BASES = frozenset({'15551', '15550', '15202', '15400', '15450', '16202'})
-    # Rolex multi-option refs with a confirmed Ice Blue variant
-    _RLX_IB_REFS = frozenset({'228236', '127336'})
-    _ib_src_re = re.compile(r'ice[\s\-]?blue|iceblue', re.I)
-    for _l in listings:
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial != 'Blue':
-            continue
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        # (a) Fixed Ice Blue refs — no source check needed
-        if _ref in _ICE_BLUE_FIXED_REFS or _br_up in _ICE_BLUE_FIXED_REFS:
-            _l['dial'] = 'Ice Blue'
-            _upgrade_count += 1
-        # (b) AP Royal Oak refs — upgrade only when source says "ice blue"
-        elif _br_up[:5] in _AP_RO_IB_BASES:
-            _src = (_l.get('source_text', '') or '').lower()
-            if _ib_src_re.search(_src):
-                _l['dial'] = 'Ice Blue'
-                _upgrade_count += 1
-        # (c) Rolex multi-option refs — upgrade only when source says "ice blue"
-        elif _br_up in _RLX_IB_REFS:
-            _src = (_l.get('source_text', '') or '').lower()
-            if _ib_src_re.search(_src):
-                _l['dial'] = 'Ice Blue'
-                _upgrade_count += 1
-    # ── Sundust retroactive upgrade (prev-gen Everose Daytona) ──
-    # Pink → Sundust for 116505 / 116515 (prev-gen Everose Daytona).  These refs were
-    # missing from the _ref_specific Pink→Sundust block that covers the current-gen
-    # equivalents (126505, 126515, etc.).  The dial on these models is identical to
-    # Sundust — "Pink" is a dealer shorthand that does not reflect a distinct dial option.
-    _PREV_EVEROSE_DT_REFS = frozenset({'116505', '116515'})
-    for _l in listings:
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Pink' and _br_up in _PREV_EVEROSE_DT_REFS:
-            _l['dial'] = 'Sundust'
-            _upgrade_count += 1
-    # ── Candy Pink retroactive upgrade ──
-    # Pink → Candy Pink for Oyster Perpetual refs where the _ref_specific synonym
-    # mapping explicitly says Pink = Candy Pink (126000, 134300, 277200, 276200, 124200).
-    # Covers listings stored before _ref_specific was applied to the retro validation path.
-    _OP_CANDY_REFS = frozenset({'126000', '134300', '277200', '276200', '124200'})
-    for _l in listings:
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        if _dial == 'Pink' and _br_up in _OP_CANDY_REFS:
-            _l['dial'] = 'Candy Pink'
-            _upgrade_count += 1
-    # ── Commemorative retroactive upgrade ──
-    # Any dial (or empty) → Commemorative for refs where source explicitly names
-    # "commemorative plate", "commemorative dial", or "commemorate".
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _dial = _l.get('dial', '')
-        _ref = _l.get('ref', '')
-        if _dial == 'Commemorative': continue  # already correct
-        if re.search(r'\bcommemorat\w*\b|\bcommem\b', _src):
-            _bm_up = re.match(r'\d+', _ref)
-            _br_up = _bm_up.group(0) if _bm_up else ''
-            _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-            if not _valid_up or 'Commemorative' in _valid_up:
-                _l['dial'] = 'Commemorative'
-                _upgrade_count += 1
-    # ── Celebration retroactive upgrade ──
-    # Empty → Celebration for refs where source contains "celebration" or common typos
-    # (e.g. "Celebrarion", "Celebation").  Covers listings stored before the typo
-    # normalizations were added to extract_dial().
-    _celeb_src_re = re.compile(r'\bcelebrar?i?on\b|\bcelebation\b|\bcelebrat?ion\b', re.I)
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _dial = _l.get('dial', '')
-        _ref = _l.get('ref', '')
-        if _dial in ('Celebration', 'Celebration Roman VI', 'Celebration Tiffany Blue'):
-            continue  # already correct
-        if _celeb_src_re.search(_src):
-            _bm_up = re.match(r'\d+', _ref)
-            _br_up = _bm_up.group(0) if _bm_up else ''
-            _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-            if not _valid_up or 'Celebration' in _valid_up:
-                _l['dial'] = 'Celebration'
-                _upgrade_count += 1
-    # ── Grape retroactive upgrade ──
-    # Two-pass upgrade:
-    # Pass 1: Purple/Violet → Grape for OP refs (mislabeled legacy listings).
-    # Pass 2: Empty dial + "grape" keyword in source → Grape for OP-family refs.
-    # Covers listings stored before the purple→grape text normalization or "grape"
-    # keyword detection were added to extract_dial().
-    _OP_GRAPE_REFS = frozenset({
-        '126000', '124300', '126034', '116000', '134300',
-        '277200', '276200', '124200', '114300', '114200',
-    })
-    for _l in listings:
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial == 'Grape':
-            continue  # already correct
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-        if _dial in ('Purple', 'Violet'):
-            # Pass 1: mislabeled Purple/Violet on OP refs → Grape
-            if _br_up in _OP_GRAPE_REFS or _br_up[:3] in ('114', '124', '134', '277', '276'):
-                if not _valid_up or 'Grape' in _valid_up:
-                    _l['dial'] = 'Grape'
-                    _upgrade_count += 1
-        elif not _dial:
-            # Pass 2: empty dial + explicit "grape" keyword → Grape
-            _src_g = (_l.get('source_text', '') or '').lower()
-            if re.search(r'\bgrape\b', _src_g):
-                if not _valid_up or 'Grape' in _valid_up:
-                    _l['dial'] = 'Grape'
-                    _upgrade_count += 1
-    # ── Arabic retroactive upgrade ──
-    # Empty dial + "arabic" keyword (or Chinese 數字/数字) in source → Arabic dial.
-    # Covers listings stored before Arabic detection was robust, specifically
-    # for multi-dial refs (116576, 116231, etc.) where text has "Arabic" but dial
-    # extraction failed in the original parse run.
-    # Guard: "Arabic wave" = Wave dial, not Arabic — handled by Wave upgrade below.
-    for _l in listings:
-        if _l.get('dial'):
-            continue
-        _src_ar = (_l.get('source_text', '') or '').lower()
-        _ref_ar = _l.get('ref', '')
-        _bm_ar = re.match(r'\d+', _ref_ar)
-        _br_ar = _bm_ar.group(0) if _bm_ar else ''
-        _valid_ar = REF_VALID_DIALS.get(_ref_ar, REF_VALID_DIALS.get(_br_ar, []))
-        if (re.search(r'\barabic\b|[數数]字', _src_ar) and
-                ('Arabic' in _valid_ar) and
-                not re.search(r'\barabic\s+wave\b|\bwave\b', _src_ar)):
-            _l['dial'] = 'Arabic'
-            _upgrade_count += 1
-    # ── Wave retroactive upgrade ──
-    # Empty dial + "wave" keyword on Day-Date refs that support Wave dial → Wave.
-    # Covers "Arabic wave dial" / "wave dial" on 218235, 228235, 228238, etc.
-    for _l in listings:
-        if _l.get('dial'):
-            continue
-        _src_wv = (_l.get('source_text', '') or '').lower()
-        _ref_wv = _l.get('ref', '')
-        _bm_wv = re.match(r'\d+', _ref_wv)
-        _br_wv = _bm_wv.group(0) if _bm_wv else ''
-        _valid_wv = REF_VALID_DIALS.get(_ref_wv, REF_VALID_DIALS.get(_br_wv, []))
-        if re.search(r'\bwave\b', _src_wv) and 'Wave' in _valid_wv:
-            _l['dial'] = 'Wave'
-            _upgrade_count += 1
-    # ── LN-suffix retroactive Black upgrade ──
-    # Empty dial + "\d{5,6}-ln" pattern in source → Black.
-    # Covers listings where the original parse stored ref as bare digits (e.g. "116718")
-    # but the raw source text had the -LN hyphenated suffix form ("116718-ln-78208").
-    # The hyphenated-suffix scan in extract_dial catches these when re-run, but old
-    # stored listings may have been parsed before that scan existed.
-    for _l in listings:
-        if _l.get('dial'):
-            continue
-        _src_ln = _l.get('source_text', '') or ''
-        _ref_ln = _l.get('ref', '')
-        _bm_ln = re.match(r'\d+', _ref_ln)
-        _br_ln = _bm_ln.group(0) if _bm_ln else ''
-        _valid_ln = REF_VALID_DIALS.get(_ref_ln, REF_VALID_DIALS.get(_br_ln, []))
-        if (re.search(r'\b\d{5,6}-ln[-\s\d]', _src_ln, re.I) and
-                (not _valid_ln or 'Black' in _valid_ln)):
-            _l['dial'] = 'Black'
-            _upgrade_count += 1
-    # ── Anniversary → Commemorative retroactive upgrade for 118206 ──
-    # Empty dial + "anniversary"/"anniv" on 118206 → Commemorative.
-    # Rolex's official name is "Commemorative"; dealers frequently say "Anniversary dial"
-    # (the dial was produced for Rolex's centennial in 2003-era platinum DD36).
-    for _l in listings:
-        if _l.get('dial'):
-            continue
-        _src_an = (_l.get('source_text', '') or '').lower()
-        _ref_an = _l.get('ref', '')
-        _bm_an = re.match(r'\d+', _ref_an)
-        _br_an = _bm_an.group(0) if _bm_an else ''
-        if _br_an == '118206' and re.search(r'\banniversary\b|\banniv\b', _src_an):
-            _l['dial'] = 'Commemorative'
-            _upgrade_count += 1
-    # ── Coral retroactive upgrade ──
-    # Red/empty → Coral for non-OP refs where "coral" appears in source_text.
-    # On OP refs (124xxx, 126xxx, 277xxx, 276xxx) "Coral Red" IS the Red dial —
-    # extract_dial normalizes Coral→Red for those refs, so we skip them here.
-    # Also catches "carol"/"corral" typos for non-OP refs (e.g. AP RO Offshore).
-    # Scoped to refs with Coral as a valid option (validation step is the backstop).
-    _coral_re = re.compile(r'\bcoral\b|\bcarol\b|\bcorral\b', re.I)
-    _OP_CORAL_AS_RED_BASES = frozenset({'124', '126', '277', '276'})  # OP: coral = Red
-    for _l in listings:
-        _src = (_l.get('source_text', '') or '').lower()
-        _ref = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if _dial == 'Coral': continue
-        if _coral_re.search(_src):
-            _bm_up = re.match(r'\d+', _ref)
-            _br_up = _bm_up.group(0) if _bm_up else ''
-            # Skip OP refs — "coral" on those = Red (see Coral→Red normalization in extract_dial)
-            if _br_up[:3] in _OP_CORAL_AS_RED_BASES:
-                continue
-            _valid_up = REF_VALID_DIALS.get(_ref, REF_VALID_DIALS.get(_br_up, []))
-            if not _valid_up or 'Coral' in _valid_up:
-                _l['dial'] = 'Coral'
-                _upgrade_count += 1
-    # ── Single-valid-dial retroactive fill ──
-    # For refs with exactly one documented dial variant, any empty-dial listing
-    # is unambiguously that one dial.  Using _DEFAULT_BRAND_DIAL entries as the
-    # authoritative source (same dict used by the retro-fill step), but applied here
-    # directly to catch listings that slipped through the fill step (e.g. extract_dial
-    # returned a wrong value that was later cleared by validation, leaving empty).
-    _SINGLE_DIAL_FILL = {
-        '116695': 'Pavé',     '118365': 'Blue',    '326139': 'Black',
-        '118366': 'Ice Blue', '126535': 'Sundust', '14270':  'Black',
-        '279178': 'Silver',   '116689': 'White',   '326138': 'White',
-        '279138': 'MOP',      '116748': 'Black',   '116619': 'Black',
-        '128155': 'Pavé',     '116189': 'Blue',    '118206': 'Ice Blue',
-    }
-    for _l in listings:
-        if _l.get('dial'):
-            continue  # only fill empty dials
-        _ref = _l.get('ref', '')
-        _bm_up = re.match(r'\d+', _ref)
-        _br_up = _bm_up.group(0) if _bm_up else ''
-        _target = _SINGLE_DIAL_FILL.get(_ref) or _SINGLE_DIAL_FILL.get(_br_up)
-        if _target:
-            _l['dial'] = _target
-            _upgrade_count += 1
-    if _upgrade_count:
-        print(f"  ⬆️  Retroactive dial upgrade: {_upgrade_count:,} listings improved "
-              f"(Tiffany Blue / Meteorite / Wimbledon / Azzurro / Mint Green / Palm / "
-              f"Paul Newman / Turquoise / Tiger Iron / Ombré / Grossular / D-Blue / "
-              f"Ice Blue / Sundust prev-gen / Candy Pink / Commemorative / Coral / Celebration / single-dial fills)")
-
-    # ── Retroactive dial validation: clear impossible dial/ref combos ──
-    # Runs on ALL listings (new + merged existing) after retro-fill.
-    # Uses REF_VALID_DIALS (populated from rolex_dial_options.json) to
-    # reject dials that don't belong to a given ref.
-    _clean_count = 0
-    _remap_count = 0
-    for _l in listings:
-        _ref  = _l.get('ref', '')
-        _dial = _l.get('dial', '')
-        if not _dial or not _ref:
-            continue
-        _valid = REF_VALID_DIALS.get(_ref, [])
-        if not _valid:
-            _bm3 = re.match(r'(\d+)', _ref)
-            if _bm3: _valid = REF_VALID_DIALS.get(_bm3.group(1), [])
-        if not _valid or _dial in _valid:
-            continue  # no options data, or dial already valid
-        _fuzzy = _fuzzy_dial_match(_dial, _valid)
-        if _fuzzy:
-            _l['dial'] = _fuzzy
-            _remap_count += 1
-        else:
-            _l['dial'] = ''  # clear impossible dial; listing is kept
-            _clean_count += 1
-    if _clean_count or _remap_count:
-        print(f"  🧹 Retroactive dial cleanup: {_clean_count:,} cleared, {_remap_count:,} remapped")
-
-    # ── Post-validation single-dial refill ──
-    # Validation may clear a false-positive extraction (e.g. "candy like new" parsed as
-    # 'Candy Pink' then correctly cleared on 116695 Pavé-only ref), leaving the dial empty.
-    # Re-apply _SINGLE_DIAL_FILL to restore the known single-dial value for those listings.
-    _post_val_refill = 0
-    for _l in listings:
-        if _l.get('dial'):
-            continue  # validation left this one intact
-        _ref = _l.get('ref', '')
-        _bm_pv = re.match(r'\d+', _ref)
-        _br_pv = _bm_pv.group(0) if _bm_pv else ''
-        _target = _SINGLE_DIAL_FILL.get(_ref) or _SINGLE_DIAL_FILL.get(_br_pv)
-        if _target:
-            _l['dial'] = _target
-            _post_val_refill += 1
-    if _post_val_refill:
-        print(f"  🔁 Post-validation refill: {_post_val_refill:,} single-dial listings restored")
-
     index = build_index(listings)
     idx_path = BASE_DIR / 'rolex_wholesale.json'
     with open(idx_path, 'w') as f: json.dump(index, f, indent=1)
-    # Save raw listings (all brands combined — includes merged old data)
+    # Also save raw listings (all brands combined)
+    raw_path = BASE_DIR / 'rolex_listings.json'
     with open(raw_path, 'w') as f: json.dump(listings, f, indent=1, default=str)
 
     # Save per-brand listing files
@@ -11011,11 +6958,11 @@ def build_report_excel(listings, out_path):
             if ws_myinv.max_row > 1:
                 last = ws_myinv.max_row
                 ws_myinv.conditional_formatting.add(f'A2:J{last}',
-                    FormulaRule(formula=['AND($G2<>"", $G2<0)'], fill=PatternFill('solid', fgColor='FFC7CE')))
+                    FormulaRule(formula=['AND(\$G2<>"", \$G2<0)'], fill=PatternFill('solid', fgColor='FFC7CE')))
                 ws_myinv.conditional_formatting.add(f'A2:J{last}',
-                    FormulaRule(formula=['AND($H2<>"", $H2>30)'], fill=PatternFill('solid', fgColor='FFEB9C')))
+                    FormulaRule(formula=['AND(\$H2<>"", \$H2>30)'], fill=PatternFill('solid', fgColor='FFEB9C')))
                 ws_myinv.conditional_formatting.add(f'A2:J{last}',
-                    FormulaRule(formula=['AND($G2<>"", $G2>0.15)'], fill=PatternFill('solid', fgColor='C6EFCE')))
+                    FormulaRule(formula=['AND(\$G2<>"", \$G2>0.15)'], fill=PatternFill('solid', fgColor='C6EFCE')))
     except Exception:
         pass
 
