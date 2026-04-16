@@ -1570,9 +1570,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbk\b', 'black', t)
     t = re.sub(r'\bwht\b', 'white', t)
     t = re.sub(r'\bpolar\b', 'white', t)  # Polar = White dial (Explorer II)
+    # Wimbledon compound-color shorthands — MUST precede champ→champagne so "champ green" isn't lost
+    t = re.sub(r'\bchamp(?:agne)?\s*(?:slate\s*)?(?:green|grn)\b', 'wimbledon', t)
+    t = re.sub(r'\bchamp(?:agne)?\s*slate\b|\bslate\s*champ(?:agne)?\b', 'wimbledon', t)
+    t = re.sub(r'\bwim\s*(?:green|grn|gr)\b', 'wimbledon', t)
+    t = re.sub(r'\bwimb?\s*dial\b|\bwm\s*dial\b|\bwb\s*dial\b', 'wimbledon', t)
+    t = re.sub(r'\bslate\s*(?:green|grn)\s*champ(?:agne)?\b|\bchamp(?:agne)?\s*grn?\s*slate\b', 'wimbledon', t)
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
-    t = re.sub(r'\bchocolates?\b', 'chocolate', t)
+    t = re.sub(r'\bchocolates?\b|\bchoc\b', 'chocolate', t)
     t = re.sub(r'\bsodalit[eo]?\b', 'sodalite', t)
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
@@ -1614,6 +1620,24 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bsd\b', 'sundust', t)             # "sd" = Sundust (Daytona/Day-Date shorthand)
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
     t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b', 'd-blue', t)  # normalise d-blue variants
+    # ── Unambiguous Tiffany Blue synonyms (watch-market specific) ──
+    # Robin's egg / duck egg / celeste / flamingo blue / T-blue / dealer typo variants
+    t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck\s*egg(?:\s*blue)?\b", 'tiffany', t)
+    t = re.sub(r'\bceleste\b', 'tiffany', t)        # "celeste" = Tiffany Blue in watch market
+    t = re.sub(r'\bflamingo\s*blue\b|\bcandy\s*blue\b', 'tiffany', t)
+    t = re.sub(r'\bt[/-]blue\b', 'tiffany', t)      # T-blue / T/blue shorthand
+    t = re.sub(r'\btifb\b|\btifblu\b|\btiffanya\b', 'tiffany', t)
+    # Ref-gated ambiguous light-blue → Tiffany Blue (OP refs have no other light-blue option)
+    _OP_TIFF_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
+    _ref_base_norm = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+    if _ref_base_norm in _OP_TIFF_REFS:
+        t = re.sub(r'\blight\s*blue\b|\bbaby\s*blue\b|\bsky\s*blue\b|\bpowder\s*blue\b|\bpale\s*blue\b|\baquamarin(?:e)?\b', 'tiffany', t)
+    # Ref-gated "met" → meteorite (only on known Meteorite-capable models; too ambiguous elsewhere)
+    _METEORITE_BASE = {'116508','116518','116519','126508','126518','126519','126503','126719',
+                       '128238','228238','228239','128239','228235','128235','126555','228236',
+                       '116500','126500'}
+    if _ref_base_norm in _METEORITE_BASE:
+        t = re.sub(r'\bmet\b', 'meteorite', t)
     # Separate color glued to ref: "116508green" → "116508 green"
     t = re.sub(r'(\d{5,6})(green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|chocolate|meteorite|panda|ceramic|giraffe|grossular|polar|yml|tiffany|wimbledon)', r'\1 \2', t)
     ref_upper = ref.upper() if ref else ''
@@ -1743,7 +1767,12 @@ def extract_dial(text, ref='', raw_ref=''):
         if has_vi: return 'vi Pavé'
         return 'Pavé'
     # Paul Newman — no trailing \b: "Paul Newman2023Y" glued to year is still a PN dial
-    if re.search(r'\bpaul\s*newman|\bpn\b', t): return 'Paul Newman'
+    # Also: standalone "newman"/"pnd" unambiguous in watch context; "exotic" ref-gated to Daytona
+    _DAYTONA_PN_BASES = {'116508','116518','116519','116520','126508','126518','126519','126520',
+                         '116503','126503','6239','6241','6240','6262','6263','6264','6265'}
+    _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
+    if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
+    if re.search(r'\bpaul\s*newman|\bpn\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
