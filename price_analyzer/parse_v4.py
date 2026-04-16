@@ -3462,15 +3462,20 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bweiss\b', 'white', t)           # weiss = white (ASCII form of weiß)
     t = re.sub(r'\bbraun\b', 'chocolate', t)       # braun = brown → chocolate (watch context)
     t = re.sub(r'\bgelb\b', 'yellow', t)           # gelb = yellow
-    t = re.sub(r'\bgruen\b', 'green', t)           # gruen = green (ASCII form of grün)
+    t = re.sub(r'\bgruen\b|\bgrün\b', 'green', t) # gruen/grün = green (ASCII + umlaut forms)
+    t = re.sub(r'\brot\b', 'red', t)               # rot = red
     # ── Additional French color words ──
     t = re.sub(r'\bmarron\b', 'chocolate', t)      # marron = brown → chocolate
     t = re.sub(r'\bsaumon\b', 'salmon', t)         # saumon = salmon
     t = re.sub(r'\bjaune\b', 'yellow', t)          # jaune = yellow
     t = re.sub(r'\becru\b', 'beige', t)            # écru = off-white → beige
     t = re.sub(r'\bpistache\b', 'pistachio', t)    # pistache (French) = pistachio
+    t = re.sub(r'\bcorail\b', 'coral', t)          # corail (French) = coral
     # ── Spanish / Italian / Portuguese color words ──
     t = re.sub(r'\bverde\b', 'green', t)           # verde = green (ES/IT/PT)
+    t = re.sub(r'\brojo\b', 'red', t)              # rojo (Spanish) = red
+    t = re.sub(r'\bnaranja\b', 'orange', t)        # naranja (Spanish) = orange
+    t = re.sub(r'\brosa\b', 'pink', t)             # rosa (Spanish/Italian) = pink
     t = re.sub(r'\bviolett[ao]?\b', 'aubergine', t)  # violetta/violetto (IT) = violet → aubergine
     # ── Food/coffee color shorthands (common in international dealer messages) ──
     t = re.sub(r'\bmocha\b|\bespresso\b', 'chocolate', t)  # mocha/espresso = dark brown
