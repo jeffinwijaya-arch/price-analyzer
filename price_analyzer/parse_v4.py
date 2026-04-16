@@ -2904,6 +2904,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'煙熏|烟熏', 'ombré', t)                               # 煙熏/烟熏 = smoky = Ombré
     # ── Chinese Olive Green (Day-Date 40 RG / DD 36 RG olive stone dial) ──
     t = re.sub(r'橄欖綠|橄榄绿|橄欖色|橄榄色', 'olive green', t)       # 橄欖綠/橄榄绿 = olive green
+    # ── Chinese Orange (OP41/OP36/OP31 orange lacquer dial) ──
+    t = re.sub(r'橙色|橙盤|橙面|橙[紅红]', 'orange', t)                # 橙色/橙盤 = orange dial
+    # ── Chinese Yellow (OP/DJ yellow lacquer dial) ──
+    t = re.sub(r'[黃黄]色|[黃黄]盤|[黃黄]面', 'yellow', t)             # 黃色/黄色 = yellow dial
+    # ── Chinese Purple/Aubergine (DJ/DD Aubergine; OP Grape — OP guard fires later) ──
+    t = re.sub(r'紫色|紫盤|紫面|茄子?色', 'purple', t)                  # 紫色/茄子色 = purple/aubergine (OP guard converts to grape)
+    # ── Chinese Beige (OP41/OP31 beige lacquer dial) ──
+    t = re.sub(r'米色|米盤|杏[仁]?色', 'beige', t)                      # 米色/杏色 = beige/cream dial
     # ── Chinese Celebration dial ──
     t = re.sub(r'慶典|庆典', 'celebration', t)                          # 慶典/庆典 = Celebration (Jubilee Motif dial)
     # "official tiffany" / "tiffany official" → tiffany (explicit premium dial label)
