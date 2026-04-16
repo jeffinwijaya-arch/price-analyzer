@@ -2907,6 +2907,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'薰衣草', 'lavender', t)         # 薰衣草 = Lavender
     t = re.sub(r'開心果|开心果', 'pistachio', t) # 開心果/开心果 = Pistachio (lit. "happy fruit")
     t = re.sub(r'奶白色?|乳白色?', 'white', t)  # 奶白/乳白 = cream/milky white
+    t = re.sub(r'金色|金盤|金面', 'champagne', t)   # 金色/金盤 = gold-colored dial = Champagne
+    t = re.sub(r'焦糖色?', 'chocolate', t)           # 焦糖 = caramel/toffee = Chocolate
+    t = re.sub(r'香草色?', 'champagne', t)           # 香草 = vanilla = Champagne (cream-tone)
+    t = re.sub(r'奶油色?', 'champagne', t)           # 奶油 = butter/cream = Champagne
     # ── Chinese Ombré dial terms (Day-Date gradient dials — HK/TW/CN dealer groups) ──
     t = re.sub(r'綠烟|绿烟|綠煙|绿煙', 'green ombré', t)                # 绿烟/綠煙 = green smoke = Green Ombré
     t = re.sub(r'巧克力烟|巧克力煙', 'chocolate ombré', t)              # 巧克力烟 = chocolate smoke = Chocolate Ombré
@@ -3507,16 +3511,25 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bweiss\b', 'white', t)           # weiss = white (ASCII form of weiß)
     t = re.sub(r'\bbraun\b', 'chocolate', t)       # braun = brown → chocolate (watch context)
     t = re.sub(r'\bgelb\b', 'yellow', t)           # gelb = yellow
-    t = re.sub(r'\bgruen\b', 'green', t)           # gruen = green (ASCII form of grün)
+    t = re.sub(r'\bgruen\b|\bgrün\b', 'green', t)  # gruen/grün = green (German, both ASCII and umlaut forms)
+    t = re.sub(r'\brot\b', 'red', t)              # rot = red (German)
     # ── Additional French color words ──
     t = re.sub(r'\bmarron\b', 'chocolate', t)      # marron = brown → chocolate
     t = re.sub(r'\bsaumon\b', 'salmon', t)         # saumon = salmon
     t = re.sub(r'\bjaune\b', 'yellow', t)          # jaune = yellow
     t = re.sub(r'\becru\b', 'beige', t)            # écru = off-white → beige
     t = re.sub(r'\bpistache\b', 'pistachio', t)    # pistache (French) = pistachio
+    t = re.sub(r'\bcorail\b', 'coral', t)          # corail = coral (French)
     # ── Spanish / Italian / Portuguese color words ──
     t = re.sub(r'\bverde\b', 'green', t)           # verde = green (ES/IT/PT)
     t = re.sub(r'\bviolett[ao]?\b', 'aubergine', t)  # violetta/violetto (IT) = violet → aubergine
+    t = re.sub(r'\brojo\b', 'red', t)              # rojo = red (Spanish)
+    t = re.sub(r'\bnaranja\b', 'orange', t)        # naranja = orange (Spanish)
+    t = re.sub(r'\brosa\b', 'pink', t)             # rosa = pink (Spanish/Italian)
+    t = re.sub(r'\bazul\b', 'blue', t)             # azul = blue (Spanish/Portuguese)
+    t = re.sub(r'\bblanco\b', 'white', t)          # blanco = white (Spanish)
+    t = re.sub(r'\bargento\b', 'silver', t)        # argento = silver (Italian)
+    t = re.sub(r'\brosso\b', 'red', t)             # rosso = red (Italian)
     # ── Food/coffee color shorthands (common in international dealer messages) ──
     t = re.sub(r'\bmocha\b|\bespresso\b', 'chocolate', t)  # mocha/espresso = dark brown
     t = re.sub(r'\beggshell\b', 'white', t)        # eggshell = off-white
