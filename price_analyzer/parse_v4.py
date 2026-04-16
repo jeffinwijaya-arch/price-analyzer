@@ -3028,12 +3028,30 @@ def extract_dial(text, ref='', raw_ref=''):
     # "bright grn" / "bright grne" / "brgrn" / "brightgrn" → "bright green"
     # Day-Date 40/36 Bright Green (casino/money green solid lacquer dial) shorthand
     t = re.sub(r'\bbright\s+gr[ne]n?\b|\bbrgrn\b|\bbrightgrn\b|\bbgrn\b(?=\s|$)', 'bright green', t)
+    # "lime" / "lime green" → "bright green" for Day-Date refs
+    # Lime green = Bright Green on Day-Date 40/36 refs (casino/electric green lacquer dial).
+    # Guard: only apply to DD family to avoid corrupting other brands where "lime" could be
+    # a colour descriptor for non-bright-green dials (e.g. lime yellow ≠ bright green on OP).
+    if ref:
+        _rb_lime = re.match(r'(\d+)', ref)
+        _rb_lime_b = _rb_lime.group(1) if _rb_lime else ''
+        if _rb_lime_b[:3] in ('228', '128', '218', '118'):
+            t = re.sub(r'\blime(?:\s*green)?\b', 'bright green', t)
     # "br blue" / "bright bl" → "bright blue" (DJ Bright Blue shorthand)
     t = re.sub(r'\bbr\s*blue\b|\bbright\s*bl\b', 'bright blue', t)
     # "blusy" / "blsy" → "blue" (Blue Sunray shorthand used in US/SG dealer groups)
     t = re.sub(r'\bblusy\b|\bblsy\b|\bblu\s*sy\b', 'blue', t)
     # "sund" / "snds" / "sundst" / "sundus" → "sundust" (additional Everose Daytona shorthands)
     t = re.sub(r'\bsund\b|\bsnds\b|\bsundst\b|\bsundus\b', 'sundust', t)
+    # "sandy" → "sundust" for Everose Daytona / Day-Date refs with Sundust as the dial name.
+    # Dealers in SG/HK occasionally use "sandy" for the warm sand-gold lacquer Sundust dial.
+    # Guard: strictly Everose refs — globally "sandy" could refer to sandy-beige on other brands.
+    if ref:
+        _rb_sandy = re.match(r'(\d+)', ref)
+        _rb_sandy_b = _rb_sandy.group(1) if _rb_sandy else ''
+        if _rb_sandy_b in ('116505', '126505', '116515', '126515', '116595', '126595',
+                           '228235', '128235', '228345', '128345', '228238', '128238'):
+            t = re.sub(r'\bsandy\b', 'sundust', t)
     # "sunny" / "sunnyside" → "sundust" for Everose Daytona/Day-Date refs
     # Guard: only fire for Everose refs where Sundust is the canonical dial name.
     # Not global — "sunny" is too common an English word outside watch context.
@@ -3119,8 +3137,8 @@ def extract_dial(text, ref='', raw_ref=''):
             t = re.sub(r'\bnewman\b', 'paul newman', t)
     # "exo" shorthand → "exotic" (abbreviation used in some dealer groups for PN exotic dial)
     t = re.sub(r'\bexo\b(?!\s*(?:terra|tic))', 'exotic', t)  # guard against "exoterra" (RM brand)
-    # "smoky" → ombré (gradient/smoky finishes on Day-Date ombré dials)
-    t = re.sub(r'\bsmoky\b', 'ombré', t)
+    # "smoky" / "smokey" (alternate spelling) → ombré (gradient/smoky finishes on Day-Date ombré dials)
+    t = re.sub(r'\bsmoky\b|\bsmokey\b', 'ombré', t)
     # Split color words glued to year numbers (e.g. "black2021" → "black 2021")
     t = re.sub(r'\b(black|white|blue|green|grey|gray|silver|gold|pink|red|brown|orange)(20\d\d)\b', r'\1 \2', t)
     # Split color words glued to month/day numbers (e.g. "blue12/2025" → "blue 12/2025")
@@ -3301,7 +3319,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Note: existing \bazz\b → azzurro already present at line ~2838; guard against double-apply
     # "azzuro" (single-z, common Italian-speaker typo) → already handled at line ~2789
     # "offical tiffany" / "offi tiff" (misspelling of "official tiffany") → tiffany
-    t = re.sub(r'\boffi(?:cial)?\s+tiff(?:any)?\b', 'tiffany', t)
+    t = re.sub(r'\boffi(?:c(?:i(?:al)?|al))?\s+tiff(?:any)?\b', 'tiffany', t)
     # "azzuro" → "azzurro" (single-z Italian typo, additional variant)
     t = re.sub(r'\bazzuro\b', 'azzurro', t)  # already handled but reinforce
     # "bb blue" / "bright bl" → "bright blue" (compound abbrev for Bright Blue DJ dial)
@@ -3334,6 +3352,11 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)  # safe: require "grossul" prefix
     # "carnelian" truncations → carnelian (Day-Date stone dial; NOT "carn"/"carnival")
     t = re.sub(r'\bcarnel(?:ian)?\b', 'carnelian', t)  # safe: require "carnel" prefix
+    # "cornelian" → "carnelian" (alternate English spelling of the gemstone)
+    # Common in UK/EU dealer listings; same stone, same dial — Rolex uses "Carnelian"
+    t = re.sub(r'\bcornel(?:ian)?\b', 'carnelian', t)
+    # "puzz" shorthand → "puzzles" (Day-Date Puzzles special dial — HK/SG dealer truncation)
+    t = re.sub(r'\bpuzz\b', 'puzzles', t)
     # "malach" → malachite (stone dial shorthand; require 6+ chars to avoid "mala"/"malady")
     t = re.sub(r'\bmalach(?:ite?)?\b', 'malachite', t)
     # "sodalite" truncations → sodalite (stone dial shorthand)
@@ -3398,6 +3421,11 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bred\s+smoke\b|\bsmoke\s+red\b', 'red ombré', t)
     # "ombe" / "omber" / "ombr" typos → ombré (common HK/China dealer misspellings / truncations)
     t = re.sub(r'\bomber\b|\bombe\b(?!r)|\bombr\b', 'ombré', t)
+    # "grey ombré" / "gray ombré" / "ombré grey" → "ombré slate" (natural alternate phrasing)
+    # Dealers say "grey ombré" instead of the official "Ombré Slate" name.
+    t = re.sub(r'\b(?:grey|gray)\s+ombr[eé]\b|\bombr[eé]\s+(?:grey|gray)\b', 'ombré slate', t)
+    # "ombré grey" already covered above; reinforce "ombr[eé] slate" bidirectional form
+    t = re.sub(r'\bslate\s+ombr[eé]\b|\bombr[eé]\s+slate\b', 'ombré slate', t)
     # "olive grn" / "olv" / "olv grn" shorthand → olive (Day-Date 40 Olive Green dial)
     t = re.sub(r'\bolv\b|\bolive\s+grn\b|\bolv\s+grn\b', 'olive', t)
     # "pikachu" → YML is already handled above; also catch "pkl" (very rare HK shorthand)
