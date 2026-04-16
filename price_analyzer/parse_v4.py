@@ -3643,11 +3643,22 @@ def extract_dial(text, ref='', raw_ref=''):
         not _diamond_on_bezel_only
     )
     if has_diamond and not has_vi:
+        # ORDERING IS CRITICAL: compound colour names containing component words must
+        # be checked BEFORE their generic components, exactly as in the baguette block.
+        # "ice blue" contains \bblue\b — without this guard "228396 ice blue dia" → "Blue Diamond"
+        # (incorrect; "Ice Blue Diamond" does not exist as a Rolex dial option).
+        if re.search(r'\bice\s*blue\b', t): return 'Ice Blue'   # No "Ice Blue Diamond" — preserve base dial
+        # "bright blue" contains \bblue\b — "126333 bright blue diamond" → "Blue Diamond" (wrong)
+        # "Bright Blue Diamond" does not exist; fall through to Bright Blue via standard chain.
+        if re.search(r'\bbright\s*blue\b', t): return 'Bright Blue'  # No "Bright Blue Diamond"
         if re.search(r'\brhodium\b', t): return 'Rhodium Diamond'
         if re.search(r'\bblue\b', t): return 'Blue Diamond'
         if re.search(r'\bgrey\b|\bgray\b', t): return 'Grey Diamond'
         if re.search(r'\bblack\b', t): return 'Black Diamond'
         if re.search(r'\bmint\s*green\b', t): return 'Mint Green Diamond'
+        # "olive" before "green" — "Olive Diamond" is a real Rolex dial (278273/278383 etc.)
+        # Without this guard "olive diamond" falls through to 'Diamond' (no color detected).
+        if re.search(r'\bolive\b', t): return 'Olive Diamond'
         if re.search(r'\bgreen\b', t): return 'Green Diamond'
         if re.search(r'\bsilver\b', t): return 'Silver Diamond'
         if re.search(r'\bwhite\b', t): return 'White Diamond'
