@@ -2731,8 +2731,31 @@ def extract_dial(text, ref='', raw_ref=''):
     _valid_dials = _dial_options_db.get(ref, [])
 
     t = text.lower()
+    # ── EARLY: Official Tiffany Blue signal detection ─────────────────────────
+    # Must run immediately after t = text.lower() while OTB/stamp/collab signals
+    # are still intact — before normalization erases them.
+    # These signals mark the premium T&Co-retailer-stamped OP Tiffany Blue dial,
+    # which commands a significant price premium over a plain (unstamped) Tiffany Blue.
+    _early_op_base_otb = ''
+    if ref:
+        _early_rb_otb = re.match(r'(\d+)', ref)
+        _early_op_base_otb = _early_rb_otb.group(1) if _early_rb_otb else ''
+    _is_official_tiffany_signal = (
+        (
+            _early_op_base_otb in ('126000', '126031', '126034', '124300', '134300',
+                                    '124200', '124260') or
+            _early_op_base_otb[:3] in ('277', '276', '124')
+        ) and bool(re.search(
+            r'\botb\b|\botbl\b|\bofficial\s*tiff(?:any)?\b|\boffi\s+tiff(?:any)?\b|'
+            r'\btiffany\s+stamp(?:ed)?\b|\bstamp(?:ed)?\s+(?:by\s+)?tiffany\b|'
+            r'\btiffany\s*&\s*co\.?\b|\bt\s*&\s*co\b|\bofficial\s+tb\b|'
+            r'\btiff(?:any)?\s+official\b|\boff\s*tiff(?:any)?\b|'
+            r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])',
+            t
+        ))
+    )
     # Separate color abbreviations glued to ref BEFORE normalization (e.g. 216570BLK → 216570 black)
-    t = re.sub(r'(\d{5,6})(blk|wht|whe|blu|grn|gry|pnk|choco|cho|slv|polar|mete|yml|sun|rbow|ywl|brow|ora|org|turq|tiff|tb|ib|cp|mb|ghost|pn|mintgrn)\b', r'\1 \2', t)
+    t = re.sub(r'(\d{5,6})(blk|wht|whe|blu|grn|gry|pnk|choco|cho|slv|polar|mete|yml|sun|rbow|ywl|brow|ora|org|turq|tiff|tb|ib|cp|mb|ghost|pn|mintgrn|otb|otbl|wim|wimb|wimbo|ctb|cltb)\b', r'\1 \2', t)
     # Normalize shorthand for dial detection
     t = re.sub(r'\bblk\b', 'black', t)
     t = re.sub(r'\bbk\b', 'black', t)
@@ -2993,6 +3016,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # On non-OP refs, falls through to plain 'Celebration' (safe default).
     t = re.sub(r'\bctb\b', 'celebration tiffany', t)
     t = re.sub(r'\bcltb\b', 'celebration tiffany', t)
+    t = re.sub(r'\bceltb\b', 'celebration tiffany', t)   # "CELTB" = Celebration Tiffany Blue (dial_synonyms synonym)
     # "OTB" = "Official Tiffany Blue" (rare HK/SG dealer shorthand for the stamped OP Tiffany Blue dial)
     # Only valid for OP refs that officially list Tiffany Blue as a dial option.
     if ref:
@@ -3002,6 +3026,8 @@ def extract_dial(text, ref='', raw_ref=''):
         _op_otb_pfx = ('277', '276', '124')
         if _rb_otb_b in _op_otb_exact or _rb_otb_b[:3] in _op_otb_pfx:
             t = re.sub(r'\botb\b', 'tiffany', t)
+            # "OTBL" = "Off Tiff Blue Level" / "Official Tiffany Blue" dealer shorthand (dial_synonyms synonym)
+            t = re.sub(r'\botbl\b', 'tiffany', t)
             # "t/b" / "ot/b" slash notation → tiffany (WhatsApp dealer shorthand for Tiffany Blue / Official TB)
             # \b fails around '/' so use lookahead/lookbehind approach
             t = re.sub(r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', 'tiffany', t)
@@ -3167,6 +3193,13 @@ def extract_dial(text, ref='', raw_ref=''):
             t = re.sub(r'\bclt\s+(?:blue|bl)\b', 'celebration tiffany', t)
             t = re.sub(r'\bjubilee\s+tiffany\b', 'celebration tiffany', t)
             t = re.sub(r'\bjubilee\s+tb\b', 'celebration tiffany', t)
+            # Slash-notation variants from dial_synonyms.json (common in HK/SG WhatsApp dealer groups)
+            # "CLT/B" = Celebration Tiffany Blue, "CT/B" = same, "CELT/B" = abbreviated form
+            t = re.sub(r'(?<![a-zA-Z0-9])clt/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
+            t = re.sub(r'(?<![a-zA-Z0-9])ct/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
+            t = re.sub(r'(?<![a-zA-Z0-9])celt/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
+            t = re.sub(r'(?<![a-zA-Z0-9])celeb\s*t/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
+            t = re.sub(r'(?<![a-zA-Z0-9])cl\s*t/b(?![a-zA-Z0-9])', 'celebration tiffany', t)
     # "clt" shorthand → "celebration" (very short HK code for Celebration dial, e.g. "126000 clt tb")
     # Guard: only map when followed by space+color or at end to avoid corrupting "clt" part-numbers.
     t = re.sub(r'\bclt\b(?=\s+(?:tiff|tb|tiffany|blue|wh|blk|silver|green|pistachio)|\s*$)', 'celebration', t)
@@ -3715,7 +3748,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'(\d{5,6})grne\b', r'\1grnr', t)    # GRNE → GRNR (Sprite GMT shorthand)
     t = re.sub(r'(\d{5,6})gtnr\b', r'\1grnr', t)    # GTNR → GRNR (Sprite typo variant)
     # Separate color/variant glued to ref: "116508green" → "116508 green", "228236arabic" → "228236 arabic"
-    t = re.sub(r'(\d{5,6})(yellow|orange|coral|red|green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|choco|chocolate|meteorite|mete|panda|ceramic|giraffe|grossular|polar|yml|rainbow|sundust|salmon|khaki|turquoise|tiffany|otb|ctb|cltb|lavender|pistachio|beige|aubergine|violet|purple|arabic|eggplant|amethyst|jade|stella)', r'\1 \2', t, flags=re.I)
+    t = re.sub(r'(\d{5,6})(yellow|orange|coral|red|green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|choco|chocolate|meteorite|mete|panda|ceramic|giraffe|grossular|polar|yml|rainbow|sundust|salmon|khaki|turquoise|tiffany|otb|otbl|ctb|cltb|lavender|pistachio|beige|aubergine|violet|purple|arabic|eggplant|amethyst|jade|stella|wimbledon|wimbo|wimb|wim)', r'\1 \2', t, flags=re.I)
     # Dealer shorthands → canonical form
     t = re.sub(r'\bchmpgn\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bwimb\b', 'wimbledon', t)
@@ -4155,7 +4188,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # Also "dial grape" where colon is omitted. Works on both single-line and
     # multi-line source texts when extract_dial receives the full body.
     _dial_lbl_m = re.search(
-        r'\bdial\s*[:\s]\s*(grape|arabic|wimbledon|tiffany|paul\s*newman|meteorite|ice\s*blue|'
+        r'\bdial\s*[:\s]\s*(official\s+tiffany(?:\s+blue)?|celebration\s+tiffany(?:\s+blue)?|'
+        r'grape|arabic|wimbledon|tiffany|paul\s*newman|meteorite|ice\s*blue|'
         r'turquoise|aventurine|grossular|sodalite|malachite|lapis|opal|carnelian|onyx|'
         r'champagne|chocolate|silver|white|black|blue|green|grey|gray|pink|red|orange|'
         r'yellow|coral|lavender|aubergine|pistachio|sundust|salmon|beige|mop|pave|pavé|'
@@ -4165,6 +4199,11 @@ def extract_dial(text, ref='', raw_ref=''):
     if _dial_lbl_m:
         _lbl = _dial_lbl_m.group(1).strip()
         _lbl_overrides = {
+            # Premium Tiffany Blue variants — must precede generic 'tiffany' entry
+            'official tiffany': 'Official Tiffany Blue',
+            'official tiffany blue': 'Official Tiffany Blue',
+            'celebration tiffany': 'Celebration Tiffany Blue',
+            'celebration tiffany blue': 'Celebration Tiffany Blue',
             'grape': 'Grape', 'arabic': 'Arabic', 'wimbledon': 'Wimbledon',
             'tiffany': 'Tiffany Blue',
             'paul newman': 'Paul Newman', 'paul  newman': 'Paul Newman',
@@ -4184,7 +4223,9 @@ def extract_dial(text, ref='', raw_ref=''):
         if _lbl in _lbl_overrides:
             # Prepend to t so standard detection chain picks it up, OR return directly for
             # unambiguous dials that don't need index-type enrichment.
-            if _lbl in ('grape', 'arabic', 'wimbledon', 'tiffany', 'paul newman', 'meteorite',
+            if _lbl in ('official tiffany', 'official tiffany blue',
+                        'celebration tiffany', 'celebration tiffany blue',
+                        'grape', 'arabic', 'wimbledon', 'tiffany', 'paul newman', 'meteorite',
                         'ice blue', 'turquoise', 'aventurine', 'grossular', 'sodalite',
                         'malachite', 'lapis', 'opal', 'carnelian', 'onyx',
                         'palm', 'bright green', 'fluted', 'rainbow', 'd-blue', 'd blue',
@@ -4668,6 +4709,14 @@ def extract_dial(text, ref='', raw_ref=''):
                 return v
         # No good match — return as-is (reference data may not be exhaustive)
         pass
+
+    # ── Upgrade Tiffany Blue → Official Tiffany Blue when OTB signal present ────
+    # "Official Tiffany Blue" = OP dial with the Tiffany & Co. retailer stamp at 6 o'clock.
+    # Signals include: OTB, OTBL, "Official Tiffany", "Tiffany stamp", "Tiffany & Co", etc.
+    # These are among the most premium OP listings — stamp adds significant price premium.
+    # Only fires when the early-detection flag (set before normalization) is True.
+    if dial == 'Tiffany Blue' and _is_official_tiffany_signal:
+        dial = 'Official Tiffany Blue'
 
     # ── Catalog-based fallback: use official AP/Patek ref suffix → dial mapping ──
     if not dial and raw_ref:
