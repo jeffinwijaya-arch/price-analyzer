@@ -2976,8 +2976,13 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbr\s*blue\b|\bbright\s*bl\b', 'bright blue', t)
     # "blusy" / "blsy" → "blue" (Blue Sunray shorthand used in US/SG dealer groups)
     t = re.sub(r'\bblusy\b|\bblsy\b|\bblu\s*sy\b', 'blue', t)
-    # "sund" / "snds" → "sundust" (additional Everose Daytona shorthand)
-    t = re.sub(r'\bsund\b|\bsnds\b', 'sundust', t)
+    # "sund" / "snds" / "sundst" / "sundus" → "sundust" (additional Everose Daytona shorthands)
+    t = re.sub(r'\bsund\b|\bsnds\b|\bsundst\b|\bsundus\b', 'sundust', t)
+    # "tiffy" / "tif dial" → "tiffany" (playful shorthand used in dealer groups)
+    t = re.sub(r'\btiffy\b', 'tiffany', t)
+    t = re.sub(r'\btif\s+dial\b', 'tiffany', t)
+    # "wimbledun" → "wimbledon" (common typo in WhatsApp dealer messages)
+    t = re.sub(r'\bwimbledun\b', 'wimbledon', t)
     # "azz" / "azzur" → "azzurro" (Datejust 41 Azzurro Blue shorthand — HK dealer groups)
     t = re.sub(r'\bazz\b|\bazzur\b', 'azzurro', t)
     # "aventur" / "avent" → "aventurine" (Day-Date stone dial shorthand — require 5+ chars to avoid false hits)
@@ -3716,7 +3721,13 @@ def extract_dial(text, ref='', raw_ref=''):
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
-    if re.search(r'\bpanda\b', t): return 'Panda'  # Panda Daytona = distinct dial, not just 'White'
+    if re.search(r'\bpanda\b', t):
+        # Panda only applies to Daytona family (1165xx / 1265xx) — guard non-Daytona refs
+        _rb_panda_check = re.match(r'(\d+)', ref) if ref else None
+        _panda_base = _rb_panda_check.group(1) if _rb_panda_check else ''
+        if not ref or _panda_base[:4] in ('1165', '1265'):
+            return 'Panda'
+        # For non-Daytona refs, 'panda' is likely false positive — fall through to colour detection
 
     # Wimbledon — specific dial, NOT just slate or green
     # Guard: only return Wimbledon if the ref actually supports it (prevents false positives on
