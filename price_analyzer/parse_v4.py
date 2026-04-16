@@ -2698,7 +2698,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwht\b', 'white', t)
     t = re.sub(r'\bpolar\b', 'white', t)  # Polar = White dial (Explorer II)
     t = re.sub(r'\bchamp\b|\bcham\b', 'champagne', t)  # champ/cham = champagne
-    t = re.sub(r'\bmete\b|\bmet\b|\bmeteor\b|\bmeteroit\b|\bmeteoriter\b|\bmeteoric\b', 'meteorite', t)  # met/mete/meteor + typos = meteorite
+    t = re.sub(r'\bmete\b|\bmet\b|\bmeteor\b|\bmeteroit\b|\bmeteoriter\b|\bmeteoric\b|\bmeteorit\b|\bmeteorite?\b|\bmeteoryte\b', 'meteorite', t)  # met/mete/meteor + typos = meteorite (incl. German "meteorit", y-typo "meteoryte")
     t = re.sub(r'\baerolite\b|\bsikhote\b|\bmuonio\b', 'meteorite', t)  # Aerolite/stone subtypes = meteorite
     # "celeste" = Tiffany Blue (Italian/Spanish dealers for robin's-egg-blue OP dials)
     t = re.sub(r'\bceleste\b', 'tiffany', t)
@@ -2779,7 +2779,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\brby\b|\bruby\b|\brubb?y\b|\brubi\b', 'ruby', t) # "ruby"/"rubby"/"rubi" typos → ruby (Day-Date stone dial)
     t = re.sub(r'\bwhitee\b', 'white', t)      # "whitee" typo → white
     t = re.sub(r'\bcognac\b', 'chocolate', t)  # "cognac" = warm brown stone → Chocolate (Rolex official)
-    t = re.sub(r'\bceleb\b', 'celebration', t) # "celeb" = Celebration dial (Day-Date)
+    t = re.sub(r'\bceleb\b|\bcelb\b', 'celebration', t) # "celeb"/"celb" = Celebration dial (Day-Date)
     t = re.sub(r'\bcelebrarion\b|\bcelebation\b|\bcelebraion\b', 'celebration', t)  # common typos for Celebration
     # "carol" / "corral" → coral (common typo/shorthand for Coral dial on OP/DJ refs).
     # Guard: must be standalone word — avoid matching "carolina", "carol king", etc.
@@ -2958,6 +2958,10 @@ def extract_dial(text, ref='', raw_ref=''):
         _op_otb_pfx = ('277', '276', '124')
         if _rb_otb_b in _op_otb_exact or _rb_otb_b[:3] in _op_otb_pfx:
             t = re.sub(r'\botb\b', 'tiffany', t)
+            # "t/b" / "ot/b" slash notation → tiffany (WhatsApp dealer shorthand for Tiffany Blue / Official TB)
+            # \b fails around '/' so use lookahead/lookbehind approach
+            t = re.sub(r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', 'tiffany', t)
+            t = re.sub(r'(?<![a-zA-Z0-9])t/b(?![a-zA-Z0-9])', 'tiffany', t)
     # "pn exotic" / "exotic pn" → paul newman (concatenated PN+Exotic shorthand)
     t = re.sub(r'\bpn\s*exotic\b|\bexotic\s*pn\b', 'paul newman', t)
     # "wimbelon" / "wimbledn" / "wimbeldon" / "wibledon" → wimbledon (additional typo variants)
@@ -2970,7 +2974,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bazzuro\b|\bazzure\b', 'azzurro', t)          # azzuro/azzure → azzurro (common Italian-speaker typo)
     t = re.sub(r'\bchampange\b|\bchampaign\b|\bchampainge\b', 'champagne', t)  # champange/champaign → champagne
     t = re.sub(r'\bturqoise\b|\bturquiose\b', 'turquoise', t)   # turqoise/turquiose → turquoise
-    t = re.sub(r'\btiffb\b', 'tiffany', t)                      # "tiffb" = Tiffany Blue (HK dealer abbreviation)
+    t = re.sub(r'\btiffb\b|\btifb\b', 'tiffany', t)              # "tiffb"/"tifb" = Tiffany Blue (HK dealer abbreviation, single/double-f)
     # ── "tiff ib" / "ib tiff" compound — must normalize BEFORE standalone \bib\b fires ──
     # "tiff ib" is dealer shorthand for Tiffany Blue (NOT Ice Blue).
     # Without this, \bib\b at the Ice Blue check triggers first, returning 'Ice Blue' incorrectly.
@@ -3069,7 +3073,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # "azz" / "azzur" → "azzurro" (Datejust 41 Azzurro Blue shorthand — HK dealer groups)
     t = re.sub(r'\bazz\b|\bazzur\b', 'azzurro', t)
     # "aventur" / "avent" → "aventurine" (Day-Date stone dial shorthand — require 5+ chars to avoid false hits)
-    t = re.sub(r'\baventur(?:ine?)?\b', 'aventurine', t)
+    # Also "adventurine" (d→v confusion typo common in EN/SG dealer messages)
+    t = re.sub(r'\baventur(?:ine?)?\b|\badventurine?\b', 'aventurine', t)
     # "lazuli" → "lapis" (lapis lazuli stone dial shorthand)
     t = re.sub(r'\blazuli\b', 'lapis', t)
     # "malach" → "malachite" (require 5+ chars — "mala" alone is too common)
@@ -3131,6 +3136,8 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_pauln = re.match(r'(\d+)', ref)
         if _rb_pauln and _rb_pauln.group(1)[:4] in ('1165', '1265'):
             t = re.sub(r'\bpaul\s+n\b(?!\s*ew)', 'paul newman', t)
+            # "pauln" concatenated (no space) on Daytona refs → paul newman (WhatsApp dealer shorthand)
+            t = re.sub(r'\bpauln\b', 'paul newman', t)
             # "newman" alone (no "paul" prefix) on Daytona refs → paul newman
             # Dealers frequently write just the surname: "116518LN newman champagne $210k"
             # Guard: only Daytona 1165xx / 1265xx — too risky for non-Daytona refs.
@@ -3172,7 +3179,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bchampagne\s+green\b|\bchamp(?:agne)?\s*grn\b|\bchgrn\b', 'wimbledon', t)
     # Wimbledon shorthands — "wb" only when NOT preceded by "w/" (watch box)
     # Also catch common typos: wimbeldon, wimbelton, wimbeldan (very frequent in dealer messages)
-    t = re.sub(r'\bwim\b|\bwimb\b|\bwimbo\b|\bwimbeld[oe]n\b|\bwimbelton\b|\bwimbeldan\b|\bwimbledone\b', 'wimbledon', t)
+    t = re.sub(r'\bwim\b|\bwimb\b|\bwimbo\b|\bwimbeld[oe]n\b|\bwimbelton\b|\bwimbeldan\b|\bwimbledone\b|\bwbl\b', 'wimbledon', t)
     t = re.sub(r'(?<!/)\bwb\b', 'wimbledon', t)
     # "wm" standalone → wimbledon (ultra-short code used in some HK/SG dealer groups).
     # Guard: only when Wimbledon is a valid dial for this ref — prevents "wm" false hits
