@@ -95,10 +95,15 @@
         "Tiffany Stamp",
         "Tiffany & Co Blue",
         "Flamingo Blue",
-        "Turquoise Blue",
         "T Blue",
         "Candy Blue",
-        "Tiffany Blue Dial"
+        "Tiffany Blue Dial",
+        "Tiffanya",
+        "Tifblu",
+        "Aqua Dial",
+        "Robin Egg",
+        "Duck Egg",
+        "Egg Shell Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -130,6 +135,13 @@
         "Wimbledo",
         "Wimbledn",
         "Wimbledun",
+        "Wimbldon",
+        "Wimbeldon",
+        "Wimbeldone",
+        "Wimbelton",
+        "Wimbeldan",
+        "Wimbleton",
+        "Wimbledone",
         "Wimbo Dial",
         "Champagne Green",
         "Champ Green",
@@ -140,7 +152,6 @@
         "WM Dial",
         "Wim",
         "Wimbo",
-        "Wimbeldon",
         "Champagne Slate Green",
         "Slate Green Champagne",
         "Champagne Slate",
@@ -225,10 +236,10 @@
         "IceBl"
     ],
     "Turquoise": [
-        "Tiffany Blue",
-        "Tiffany",
         "Turquoise Blue",
-        "Stella Turquoise"
+        "Turq",
+        "Stella Turquoise",
+        "Stella"
     ],
     "Ombré": [
         "Ombre",
@@ -352,6 +363,12 @@
             "Green Diamond": "Green",
             "Champagne Diamond": "Champagne",
             "Chocolate Diamond": "Chocolate"
+        },
+        "_comment_dj_turq": "DJ36 SS (126200) has Turquoise but NOT Tiffany Blue as a valid dial — remap dealer shorthand",
+        "126200": {
+            "Tiffany Blue": "Turquoise",
+            "Tiffany": "Turquoise",
+            "Tiff": "Turquoise"
         },
         "_comment4": "Rainbow Daytonas — fixed dial models, override any misparsed catalog descriptions",
         "126598": {

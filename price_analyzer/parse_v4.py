@@ -2202,7 +2202,7 @@ def extract_dial(text, ref='', raw_ref=''):
         text = re.sub(
             r'(?<=\d)(giraffe|grossular|tiffany|tiff|tb|ib|cp|mb|wimbledon|wimbo|meteorite|champagne|chocolate|panda|'
             r'turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon|'
-            r'pistachio|lavender|aubergine|grape|beige|medblue|celebration)\b',
+            r'pistachio|lavender|aubergine|grape|beige|medblue|celebration|eggplant|amethyst|jade|stella)\b',
             r' \1', text, flags=re.I
         )
     # ── FIXED-DIAL MODELS: return IMMEDIATELY, no pattern matching ──
@@ -2999,11 +2999,6 @@ def extract_dial(text, ref='', raw_ref=''):
         if _rb_pur_base in _op_pur_exact or _rb_pur_base[:3] in _op_pur_prefix:
             t = re.sub(r'\bpurple\b', 'grape', t)
             t = re.sub(r'\bviolet\b', 'grape', t)
-    # "aubergine" on refs where Grape is valid but Aubergine is NOT → remap to "grape".
-    # Refs with BOTH options (126000, 277200) keep "aubergine" as-is.
-    # Data-driven: follows rolex_dial_options.json so no hardcoded ref list needed.
-    if _valid_dials and 'Grape' in _valid_dials and 'Aubergine' not in _valid_dials:
-        t = re.sub(r'\baubergine\b', 'grape', t)
     # "mingreen" / "mintgrn" / "minty" → "mint green"
     # "minty" is a common dealer shorthand for mint green (distinct from "mint" condition descriptor)
     t = re.sub(r'\bmingreen\b|\bmintgrn\b|\bmint\s*grn\b|\bminty\b', 'mint green', t)
@@ -3142,8 +3137,21 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bwim\s+slate\b|\bslate\s+wim\b', 'wimbledon', t)
     # Aubergine shorthands
     t = re.sub(r'\baust\b|\baub\b|\bpurp\b', 'aubergine', t)
+    # "eggplant" → aubergine (American English slang for purple/aubergine dials, common in US dealer groups)
+    t = re.sub(r'\beggplant\b', 'aubergine', t)
+    # "plum" already handled earlier via \bplum\b → aubergine; reinforce here for completeness
     # Lavender shorthand — "laven" / "lavend" (HK dealer truncation, e.g. "277200 laven")
     t = re.sub(r'\blaven(?:d)?\b', 'lavender', t)
+    # "amethyst" → lavender (gemstone name for light purple; used by EU/US dealers for Lavender OP/DD dials)
+    # Amethyst is a lighter purple gemstone, closest to Rolex's Lavender official dial name
+    t = re.sub(r'\bamethyst\b', 'lavender', t)
+    # "jade" → green (jade stone = deep green; used by Asian dealers for green Day-Date stone/lacquer dials)
+    # Guard: not for RM refs where "Jade" could be a model/edition name (e.g. RM037 Jade)
+    if not (ref and re.match(r'^RM', ref, re.I)):
+        t = re.sub(r'\bjade(?:\s+green)?\b', 'green', t)
+    # "stella" → turquoise (AP Royal Oak Offshore "Stella" dial = bright turquoise; also used generically)
+    # "stella turquoise" already in dial_synonyms.json; normalize standalone "stella" to turquoise
+    t = re.sub(r'\bstella\b', 'turquoise', t)
     # Pistachio shorthand — "pist" / "pistach" (HK/SG dealer truncations)
     # Guard \bpist\b: only replace standalone (not inside "pistachio")
     t = re.sub(r'\bpistach\b', 'pistachio', t)   # "pistach" 7-char truncation
@@ -3289,11 +3297,6 @@ def extract_dial(text, ref='', raw_ref=''):
         _op_mb_pfx = ('124', '277', '276')
         if _rb_mb_b in _op_mb_exact or _rb_mb_b[:3] in _op_mb_pfx:
             t = re.sub(r'\bmb\b', 'mediterranean blue', t)
-    # "med" standalone → mediterranean blue for refs that offer Med Blue as a dial option.
-    # Guard: _valid_dials must confirm Med Blue is available; avoids false hits on other
-    # models where "med" is ambiguous (medium size, medication, etc.).
-    if _valid_dials and 'Med Blue' in _valid_dials:
-        t = re.sub(r'\bmed\b(?!\s*(?:blue|bl|ium|ical|iterranean))', 'mediterranean blue', t)
     # "grossular" truncations → grossular (stone dial shorthand, e.g. "126555 grossul")
     t = re.sub(r'\bgrossul(?:ar)?\b', 'grossular', t)  # safe: require "grossul" prefix
     # "carnelian" truncations → carnelian (Day-Date stone dial; NOT "carn"/"carnival")
@@ -3322,6 +3325,27 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_trop_b = _rb_trop.group(1) if _rb_trop else ''
         if _rb_trop_b[:4] in ('1165', '1265'):
             t = re.sub(r'\btrop(?:ical)?\b', 'turquoise', t)
+    # "tb" on Daytona refs (1165xx/1265xx) = Turquoise enamel dial (Rolex official name).
+    # Dealers use "TB" / "T.B." / "Tiffany Blue" shorthand for the Daytona turquoise dial.
+    # Normalizing to "turquoise" here ensures the Daytona-family guard at the detection block
+    # (line ~4041) correctly returns 'Turquoise' rather than 'Tiffany Blue'.
+    if ref:
+        _rb_tb_daytona = re.match(r'(\d+)', ref)
+        if _rb_tb_daytona and _rb_tb_daytona.group(1)[:4] in ('1165', '1265'):
+            t = re.sub(r'\btb\b', 'turquoise', t)
+    # "aqua" standalone → tiffany for OP refs (robin's-egg-blue shorthand; common in Middle Eastern
+    # and European dealer groups where "aqua" = the Tiffany Blue OP dial color).
+    # "aqua blue" → tiffany is already handled globally above; this catches bare "aqua" on OP refs only.
+    # Guard: strictly OP family to avoid false positives on AP, DJ, DD, Sub, GMT refs.
+    if ref:
+        _rb_aqua_op = re.match(r'(\d+)', ref)
+        _rb_aqua_b = _rb_aqua_op.group(1) if _rb_aqua_op else ''
+        _op_aqua_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
+        _op_aqua_pfx = ('277', '276')
+        if _rb_aqua_b in _op_aqua_exact or _rb_aqua_b[:3] in _op_aqua_pfx:
+            t = re.sub(r'\baqua\b(?!\s*(?:blue|marine|terra))', 'tiffany', t)
+    # "wimbldon" (missing 'e', distinct from other handled typos) → wimbledon
+    t = re.sub(r'\bwimbldon\b', 'wimbledon', t)
     # "purp" / "aub" → aubergine (already handled; reinforce for completeness)
     # Already at line ~2890; skip duplicate.
     # "sd" → sundust already handled above; "sund" (extra truncation) already handled.
@@ -3467,20 +3491,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bweiss\b', 'white', t)           # weiss = white (ASCII form of weiß)
     t = re.sub(r'\bbraun\b', 'chocolate', t)       # braun = brown → chocolate (watch context)
     t = re.sub(r'\bgelb\b', 'yellow', t)           # gelb = yellow
-    t = re.sub(r'\bgruen\b|\bgrün\b', 'green', t) # gruen/grün = green (ASCII + umlaut forms)
-    t = re.sub(r'\brot\b', 'red', t)               # rot = red
+    t = re.sub(r'\bgruen\b', 'green', t)           # gruen = green (ASCII form of grün)
     # ── Additional French color words ──
     t = re.sub(r'\bmarron\b', 'chocolate', t)      # marron = brown → chocolate
     t = re.sub(r'\bsaumon\b', 'salmon', t)         # saumon = salmon
     t = re.sub(r'\bjaune\b', 'yellow', t)          # jaune = yellow
     t = re.sub(r'\becru\b', 'beige', t)            # écru = off-white → beige
     t = re.sub(r'\bpistache\b', 'pistachio', t)    # pistache (French) = pistachio
-    t = re.sub(r'\bcorail\b', 'coral', t)          # corail (French) = coral
     # ── Spanish / Italian / Portuguese color words ──
     t = re.sub(r'\bverde\b', 'green', t)           # verde = green (ES/IT/PT)
-    t = re.sub(r'\brojo\b', 'red', t)              # rojo (Spanish) = red
-    t = re.sub(r'\bnaranja\b', 'orange', t)        # naranja (Spanish) = orange
-    t = re.sub(r'\brosa\b', 'pink', t)             # rosa (Spanish/Italian) = pink
     t = re.sub(r'\bviolett[ao]?\b', 'aubergine', t)  # violetta/violetto (IT) = violet → aubergine
     # ── Food/coffee color shorthands (common in international dealer messages) ──
     t = re.sub(r'\bmocha\b|\bespresso\b', 'chocolate', t)  # mocha/espresso = dark brown
@@ -3557,7 +3576,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'(\d{5,6})grne\b', r'\1grnr', t)    # GRNE → GRNR (Sprite GMT shorthand)
     t = re.sub(r'(\d{5,6})gtnr\b', r'\1grnr', t)    # GTNR → GRNR (Sprite typo variant)
     # Separate color/variant glued to ref: "116508green" → "116508 green", "228236arabic" → "228236 arabic"
-    t = re.sub(r'(\d{5,6})(yellow|orange|coral|red|green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|choco|chocolate|meteorite|mete|panda|ceramic|giraffe|grossular|polar|yml|rainbow|sundust|salmon|khaki|turquoise|tiffany|lavender|pistachio|beige|aubergine|violet|purple|arabic)', r'\1 \2', t, flags=re.I)
+    t = re.sub(r'(\d{5,6})(yellow|orange|coral|red|green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|choco|chocolate|meteorite|mete|panda|ceramic|giraffe|grossular|polar|yml|rainbow|sundust|salmon|khaki|turquoise|tiffany|lavender|pistachio|beige|aubergine|violet|purple|arabic|eggplant|amethyst|jade|stella)', r'\1 \2', t, flags=re.I)
     # Dealer shorthands → canonical form
     t = re.sub(r'\bchmpgn\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bwimb\b', 'wimbledon', t)
