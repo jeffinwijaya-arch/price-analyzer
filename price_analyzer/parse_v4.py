@@ -1591,6 +1591,16 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwhe\b', 'white', t)
     t = re.sub(r'\blvory\b', 'ivory', t)  # typo: lvory → ivory
     t = re.sub(r'\biceblue\b', 'ice blue', t)  # "iceblue" (no space) → "ice blue"
+    t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
+    t = re.sub(r'\bice[-]blue\b', 'ice blue', t)  # "ice-blue" hyphenated
+    t = re.sub(r'\bglacier\s*blue\b|\bplatinum\s*blue\b', 'ice blue', t)  # Ice Blue synonyms
+    t = re.sub(r'\belectric\s*blue\b', 'bright blue', t)  # Electric Blue = Bright Blue (DJ/GMT)
+    t = re.sub(r'\baventurin\b|\badventurine\b', 'aventurine', t)  # typo/German form
+    t = re.sub(r'\baeroli(?:te|th?e?)\b', 'meteorite', t)  # "Aerolite" = meteorite
+    t = re.sub(r'\bsmok[ey]y?\b', 'smoke', t)  # "smoky/smokey" → "smoke" → ombré trigger
+    t = re.sub(r'\bcornel(?:ian)?\b|\bcornerian\b', 'carnelian', t)  # Cornelian = Carnelian
+    t = re.sub(r'\biron\s*flint\b|\bflint\s*(?:stone\s*)?dial\b', 'eisenkiesel', t)  # Iron Flint
+    t = re.sub(r'\bcotton\s*candy\b', 'candy pink', t)  # Cotton Candy = Candy Pink dial
     # Dealer nicknames → dial color
     t = re.sub(r'\bjohn\s*mayer\b', 'green', t)  # John Mayer = green Daytona
     t = re.sub(r'\bleman\b|\ble\s*mans?\b', 'black', t)  # Le Mans = black Daytona YG
@@ -1624,13 +1634,13 @@ def extract_dial(text, ref='', raw_ref=''):
     if _sd_ref_base not in {'126600', '126603', '136660', '116600', '136659'}:
         t = re.sub(r'\bsd\b', 'sundust', t)
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
-    t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b', 'd-blue', t)  # normalise d-blue variants
+    t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b|\bgradient\s*blue\b|\bdeepsea\s*blue\b', 'd-blue', t)  # normalise d-blue variants
     # ── Unambiguous Tiffany Blue synonyms (watch-market specific) ──
     # Robin's egg / duck egg / celeste / flamingo blue / T-blue / dealer typo variants
     t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck\s*egg(?:\s*blue)?\b", 'tiffany', t)
     t = re.sub(r'\bceleste\b', 'tiffany', t)        # "celeste" = Tiffany Blue in watch market
     t = re.sub(r'\bflamingo\s*blue\b|\bcandy\s*blue\b', 'tiffany', t)
-    t = re.sub(r'\bt[/-]blue\b', 'tiffany', t)      # T-blue / T/blue shorthand
+    t = re.sub(r'\bt[/-]blue\b|\bt\/b\b|\bt\.b\.\B', 'tiffany', t)  # T-blue / T/blue / T/B / T.B.
     t = re.sub(r'\btifb\b|\btifblu\b|\btiffanya\b', 'tiffany', t)
     # Ref-gated ambiguous light-blue → Tiffany Blue (OP refs have no other light-blue option)
     _OP_TIFF_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
@@ -1708,11 +1718,11 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bcelebration\b|\bcele\b', t):
         if has_vi: return 'vi Celebration'
         return 'Celebration'
-    # Eisenkiesel
+    # Eisenkiesel (also catches normalized "eisenkiesel" from "iron flint" / "flint dial")
     if re.search(r'\beisenk', t): return 'Eisenkiesel'
-    # Aventurine
+    # Aventurine (also catches normalized "aventurine" from "aventurin"/"adventurine")
     if re.search(r'\baventurine\b', t): return 'Aventurine'
-    # Carnelian
+    # Carnelian (also catches normalized "carnelian" from "cornelian"/"cornerian")
     if re.search(r'\bcarnelian\b', t): return 'Carnelian'
     # Onyx
     if re.search(r'\bonyx\b', t): return 'Onyx'
@@ -1730,7 +1740,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Opal
     if re.search(r'\bopal\b', t): return 'Opal'
     # Grossular / Giraffe (same stone — Rolex official name is "Grossular")
-    if re.search(r'\bgrossular\b|\bgiraffe\b', t): return 'Grossular'
+    if re.search(r'\bgrossular\b|\bgiraffe\b|\bgrossul\b', t): return 'Grossular'
     # Leopard (Yacht-Master 37 / Day-Date exotic stone dial)
     if re.search(r'\bleopard\b', t): return 'Leopard'
     # Zebra (Day-Date exotic dial — 228235)
@@ -1777,7 +1787,7 @@ def extract_dial(text, ref='', raw_ref=''):
                          '116503','126503','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpn\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
+    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.\B|\bpn\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
@@ -1853,7 +1863,9 @@ def extract_dial(text, ref='', raw_ref=''):
     dial = None
     _rb_ice = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     _ice_blue_only_refs = {'228206','228236','128236','127236','116506','126506'}
-    if re.search(r'\bice\s*blue\b|\bib\b', t): dial = 'Ice Blue'
+    # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
+    if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
+    elif re.search(r'\bice\s*blue\b|\bib\b', t): dial = 'Ice Blue'
     elif re.search(r'\bice\b', t) and (
             _rb_ice in _ice_blue_only_refs or
             (_valid_dials and 'Ice Blue' in _valid_dials and len(_valid_dials) <= 3)):
@@ -1892,7 +1904,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bmint\s*green\b|\bmint\b', t): dial = 'Mint Green'
     elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
     elif re.search(r'\bpistachio\b|\bpis\b', t): dial = 'Pistachio'
-    elif re.search(r'\bcandy\s*pink\b', t): dial = 'Candy Pink'
+    elif re.search(r'\bcandy\s*pink\b|\bbaby\s*pink\b|\bblush\s*pink\b|\bpastel\s*pink\b|\bsoft\s*pink\b', t): dial = 'Candy Pink'
     elif re.search(r'\blavender\b|\blave?\b|\blanv', t): dial = 'Lavender'
     elif re.search(r'\baubergine\b|\bviolet\b', t): dial = 'Aubergine'
     elif re.search(r'\byml\b', t): dial = 'YML'
