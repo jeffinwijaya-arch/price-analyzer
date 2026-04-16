@@ -2200,9 +2200,9 @@ def extract_dial(text, ref='', raw_ref=''):
         # Without this, the word boundary \b fails between a digit (word char) and a letter (word char).
         # Covers the most common premium dial keywords seen concatenated in HK/SG dealer messages.
         text = re.sub(
-            r'(?<=\d)(giraffe|grossular|tiffany|tiff|otb|ctb|cltb|tb|ib|cp|mb|wimbledon|wimbo|meteorite|champagne|chocolate|panda|'
-            r'turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon|'
-            r'pistachio|lavender|aubergine|grape|beige|medblue|celebration|eggplant|amethyst|jade|stella)\b',
+            r'(?<=\d)(giraffe|grossular|tiffany|tiff|otb|ctb|cltb|tb|ib|cp|mb|wimbledon|wimbo|meteorite|mete|ghost|mintgrn|mintgreen|pn|'
+            r'champagne|chocolate|panda|turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon|'
+            r'pistachio|lavender|aubergine|grape|beige|medblue|medbl|celebration|eggplant|amethyst|jade|stella)\b',
             r' \1', text, flags=re.I
         )
     # ── FIXED-DIAL MODELS: return IMMEDIATELY, no pattern matching ──
@@ -2441,6 +2441,33 @@ def extract_dial(text, ref='', raw_ref=''):
         if _rb_fe_early and _rb_fe_early.group(1) in ('226659', '226679', '268622'):
             if re.search(r"\bfalcon['\u2019s]*\s*eye\b|\bfalconeye\b", text, re.I):
                 return "Falcon's Eye"
+
+    # ── EARLY OVERRIDE: "Official Tiffany Blue" for OP family refs ──
+    # When a listing explicitly names "Official Tiffany", "OTB", "Tiffany & Co.", or
+    # "Tiffany stamp/stamped", the watch carries the Tiffany & Co. retailer-exclusive
+    # variant (6 o'clock stamp) — a significantly higher premium than standard Tiffany Blue.
+    # Must fire BEFORE the normalization block that collapses these phrases → generic "tiffany".
+    # GUARD: not for Patek refs (5xxx/7xxx) where "Tiffany stamp" = retailer engraving only.
+    # GUARD: not when "tiffany stamp [other_color]" — stamp on a non-Tiffany-blue dial.
+    if text and ref:
+        _rb_otbl = re.match(r'(\d+)', ref)
+        _rb_otbl_b = _rb_otbl.group(1) if _rb_otbl else ''
+        _op_otbl_exact = frozenset({'126000', '126031', '126034', '124300', '134300',
+                                    '124200', '277200', '276200', '124260'})
+        _op_otbl_pfx = ('277', '276', '124', '134')
+        if _rb_otbl_b in _op_otbl_exact or _rb_otbl_b[:3] in _op_otbl_pfx:
+            _otbl_t = text.lower()
+            # Stamp-on-other-color guard: "tiffany stamp black/white/etc." = non-TB dial
+            _otbl_stamp_other = bool(re.search(
+                r'\btiffany\s+stamp(?:ed)?\s+(?:black|white|silver|green|blue|grey|gray|'
+                r'pink|red|brown|chocolate|champagne|coral)\b', _otbl_t))
+            if not _otbl_stamp_other and re.search(
+                    r'\bofficial\s+tiff(?:any)?\b|\btiff(?:any)?\s+official\b|'
+                    r'\btiffany\s*&\s*co\.?\b|\bt(?:iffany)?\s+&\s*co\.?\b|'
+                    r'\btiffany\s+stamp(?:ed)?\b|'
+                    r'(?<![a-zA-Z0-9])otb(?![a-zA-Z0-9])|'
+                    r'(?<![a-zA-Z0-9])ot/b(?![a-zA-Z0-9])', _otbl_t):
+                return 'Official Tiffany Blue'
 
     # ── EARLY OVERRIDE: "Pumpkin" orange enamel dial for Rolex 116578 Daytona Everose Gold ──
     # 116578SACO/SANR = Daytona 40mm Everose Gold with sapphire crystal. Standard dial = Black.
@@ -2691,7 +2718,7 @@ def extract_dial(text, ref='', raw_ref=''):
 
     t = text.lower()
     # Separate color abbreviations glued to ref BEFORE normalization (e.g. 216570BLK → 216570 black)
-    t = re.sub(r'(\d{5,6})(blk|wht|whe|blu|grn|gry|pnk|choco|cho|slv|polar|mete|yml|sun|rbow|ywl|brow|ora|org|turq|tiff|tb|ib|cp|mb)\b', r'\1 \2', t)
+    t = re.sub(r'(\d{5,6})(blk|wht|whe|blu|grn|gry|pnk|choco|cho|slv|polar|mete|yml|sun|rbow|ywl|brow|ora|org|turq|tiff|tb|ib|cp|mb|ghost|pn|mintgrn)\b', r'\1 \2', t)
     # Normalize shorthand for dial detection
     t = re.sub(r'\bblk\b', 'black', t)
     t = re.sub(r'\bbk\b', 'black', t)
@@ -2974,7 +3001,19 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bazzuro\b|\bazzure\b', 'azzurro', t)          # azzuro/azzure → azzurro (common Italian-speaker typo)
     t = re.sub(r'\bchampange\b|\bchampaign\b|\bchampainge\b', 'champagne', t)  # champange/champaign → champagne
     t = re.sub(r'\bturqoise\b|\bturquiose\b', 'turquoise', t)   # turqoise/turquiose → turquoise
+    # "tb" standalone on OP refs = Tiffany Blue shorthand (normalise here for robustness).
+    # NOTE: Daytona refs (1165xx/1265xx) normalize "tb" → "turquoise" separately at line ~3398.
+    # This block fires AFTER the Daytona guard so they can't conflict.
+    if ref:
+        _rb_tb_op = re.match(r'(\d+)', ref)
+        _rb_tb_op_b = _rb_tb_op.group(1) if _rb_tb_op else ''
+        _op_tb_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200', '124260'})
+        _op_tb_pfx = ('277', '276')
+        if _rb_tb_op_b in _op_tb_exact or _rb_tb_op_b[:3] in _op_tb_pfx:
+            t = re.sub(r'\btb\b', 'tiffany', t)
     t = re.sub(r'\btiffb\b|\btifb\b', 'tiffany', t)              # "tiffb"/"tifb" = Tiffany Blue (HK dealer abbreviation, single/double-f)
+    t = re.sub(r'\btifblu\b|\btiffblu\b', 'tiffany', t)          # "tifblu"/"tiffblu" = Tiffany Blue (HK shorthand, no trailing 'e')
+    t = re.sub(r'\btiffany\s+blu\b(?!e)', 'tiffany', t)          # "tiffany blu" (Italian form) = Tiffany Blue
     # ── "tiff ib" / "ib tiff" compound — must normalize BEFORE standalone \bib\b fires ──
     # "tiff ib" is dealer shorthand for Tiffany Blue (NOT Ice Blue).
     # Without this, \bib\b at the Ice Blue check triggers first, returning 'Ice Blue' incorrectly.
@@ -3230,6 +3269,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # "mt grn" / "mnt grn" / "mintgrn" / "mt green" / "mnt green" → mint green
     # Note: \bgrn\b → 'green' fires earlier, so also match the already-expanded form
     t = re.sub(r'\bmt\s*gr(?:n|een)\b|\bmnt\s*gr(?:n|een)\b|\bmintgrn\b', 'mint green', t)
+    # "mintg" / "mint-grn" additional Mint Green shorthand variants
+    t = re.sub(r'\bmintg\b|\bmint[-_]grn\b', 'mint green', t)
     # "lav" standalone → lavender (HK two-letter shorthand, e.g. "126000 lav")
     # Guard: only when preceded by space/start or specific separators (not part of "lavender", "slave", etc.)
     t = re.sub(r'(?<!\w)\blav\b(?!\w)', 'lavender', t)
@@ -3239,6 +3280,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\brhod\b|\brho\b', 'grey', t)
     # Turquoise shorthand — "turq" standalone (non-beach context resolved later)
     t = re.sub(r'\bturq\b', 'turquoise', t)  # turq = turquoise
+    # "turqb" = turquoise (HK shorthand where 'b' = blue, e.g. "turqb dial" = Turquoise Blue)
+    t = re.sub(r'\bturqb\b', 'turquoise', t)
     # Sundust shorthand — "sd" but NOT when ref is Sea-Dweller (126600/136660)
     if not ref or not re.match(r'^(126600|136660|126603)', ref):
         t = re.sub(r'\bsd\b', 'sundust', t)
@@ -3342,8 +3385,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bmed(?:iterranean)?\s+bl(?:ue)?\b', 'mediterranean blue', t)
     # "medit" standalone → mediterranean blue (truncation used by some EU dealers)
     t = re.sub(r'\bmedit(?:erranean)?\s+(?:blue|bl)\b', 'mediterranean blue', t)
-    # "medblue" concatenated (no space) → mediterranean blue (HK WhatsApp shorthand)
-    t = re.sub(r'\bmedblue\b|\bmed_blue\b', 'mediterranean blue', t)
+    # "medblue" / "medbl" concatenated (no space) → mediterranean blue (HK WhatsApp shorthand)
+    t = re.sub(r'\bmedblue\b|\bmed_blue\b|\bmedbl\b', 'mediterranean blue', t)
     # "mb" standalone → Mediterranean Blue on OP refs that carry the Med Blue dial.
     # OP refs: 126000/126031/126034/134300 and prefix families 124xxx/277xxx/276xxx.
     # Guard: only apply for confirmed OP family to prevent false hits on other brands
