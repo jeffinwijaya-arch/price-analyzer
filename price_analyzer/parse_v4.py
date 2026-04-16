@@ -2893,11 +2893,13 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'薰衣草', 'lavender', t)         # 薰衣草 = Lavender
     t = re.sub(r'開心果|开心果', 'pistachio', t) # 開心果/开心果 = Pistachio (lit. "happy fruit")
     t = re.sub(r'淡粉[紅红]?|淡粉色', 'candy pink', t)  # 淡粉/淡粉紅 = light/candy pink
+    t = re.sub(r'嫩粉[紅红]?|嫩粉色', 'candy pink', t)  # 嫩粉/嫩粉紅 = tender/baby pink = Candy Pink
     t = re.sub(r'奶白色?|乳白色?', 'white', t)  # 奶白/乳白 = cream/milky white
     # ── Chinese Ombré dial terms (Day-Date gradient dials — HK/TW/CN dealer groups) ──
     t = re.sub(r'綠烟|绿烟|綠煙|绿煙', 'green ombré', t)                # 绿烟/綠煙 = green smoke = Green Ombré
     t = re.sub(r'巧克力烟|巧克力煙', 'chocolate ombré', t)              # 巧克力烟 = chocolate smoke = Chocolate Ombré
     t = re.sub(r'灰烟|灰煙|石板烟|石板煙|板岩烟|板岩煙', 'ombré slate', t)  # 灰烟/石板烟 = slate smoke = Ombré Slate
+    t = re.sub(r'紅烟|红烟|紅煙|红煙', 'red ombré', t)                 # 紅烟/红煙 = red smoke = Red Ombré
     t = re.sub(r'漸變|渐变', 'ombré', t)                               # 漸變/渐变 = gradient = Ombré
     t = re.sub(r'煙熏|烟熏', 'ombré', t)                               # 煙熏/烟熏 = smoky = Ombré
     # ── Chinese Olive Green (Day-Date 40 RG / DD 36 RG olive stone dial) ──
@@ -2996,6 +2998,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bblusy\b|\bblsy\b|\bblu\s*sy\b', 'blue', t)
     # "sund" / "snds" / "sundst" / "sundus" → "sundust" (additional Everose Daytona shorthands)
     t = re.sub(r'\bsund\b|\bsnds\b|\bsundst\b|\bsundus\b', 'sundust', t)
+    # "sunny" / "sunnyside" → "sundust" for Everose Daytona/Day-Date refs
+    # Guard: only fire for Everose refs where Sundust is the canonical dial name.
+    # Not global — "sunny" is too common an English word outside watch context.
+    if ref:
+        _rb_sunny = re.match(r'(\d+)', ref)
+        _rb_sunny_b = _rb_sunny.group(1) if _rb_sunny else ''
+        if _rb_sunny_b in ('116505', '116515', '126505', '126515', '116595', '126595',
+                           '228235', '128235', '228345', '128345', '228238', '128238'):
+            t = re.sub(r'\bsunny(?:side)?\b', 'sundust', t)
     # "tiffy" / "tif dial" → "tiffany" (playful shorthand used in dealer groups)
     t = re.sub(r'\btiffy\b', 'tiffany', t)
     t = re.sub(r'\btif\s+dial\b', 'tiffany', t)
@@ -3303,8 +3314,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bchocolate\s+smoke\b|\bchoco\s+smoke\b', 'chocolate ombré', t)
     # "slate smoke" / "grey smoke" / "smoke slate" = Ombré Slate (228235 default ombré variant)
     t = re.sub(r'\bslate\s+smoke\b|\bgrey\s+smoke\b|\bsmoke\s+slate\b', 'ombré slate', t)
-    # "ombe" / "omber" typos → ombré (common HK/China dealer misspellings)
-    t = re.sub(r'\bomber\b|\bombe\b(?!r)', 'ombré', t)
+    # "red smoke" / "smoke red" = Red Ombré (Day-Date 40 red gradient dial — 228345/228235 RG variants)
+    t = re.sub(r'\bred\s+smoke\b|\bsmoke\s+red\b', 'red ombré', t)
+    # "ombe" / "omber" / "ombr" typos → ombré (common HK/China dealer misspellings / truncations)
+    t = re.sub(r'\bomber\b|\bombe\b(?!r)|\bombr\b', 'ombré', t)
     # "olive grn" / "olv" / "olv grn" shorthand → olive (Day-Date 40 Olive Green dial)
     t = re.sub(r'\bolv\b|\bolive\s+grn\b|\bolv\s+grn\b', 'olive', t)
     # "pikachu" → YML is already handled above; also catch "pkl" (very rare HK shorthand)
