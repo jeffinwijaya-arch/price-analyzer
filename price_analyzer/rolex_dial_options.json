@@ -49,7 +49,40 @@
     "White",
     "Orange",
     "Green",
+    "Tiffany Blue",
+    "Orange Diamond",
+    "Brown",
+    "Yellow",
+    "Blue Dial"
+  ],
+  "26331ST": [
+    "Black",
+    "Blue",
+    "White",
+    "Khaki",
+    "Khaki Green",
+    "Orange",
+    "Green",
+    "Tiffany Blue",
+    "Grey"
+  ],
+  "26400ST": [
+    "Black",
+    "White",
+    "Blue",
+    "Grey",
+    "Green",
+    "Orange",
+    "Silver",
+    "Khaki",
     "Tiffany Blue"
+  ],
+  "26300ST": [
+    "Black",
+    "White",
+    "Blue",
+    "Grey",
+    "Green"
   ],
   "15710ST": [
     "Black",
@@ -1099,10 +1132,20 @@
   ],
   "114200": [
     "Silver",
+    "Black",
+    "Blue",
+    "White",
+    "Pink",
+    "Green",
     "Grape"
   ],
   "114300": [
     "Blue",
+    "Black",
+    "Silver",
+    "White",
+    "Pink",
+    "Green",
     "Grape"
   ],
   "278271": [

@@ -74,16 +74,29 @@
     "Tiffany Blue": [
         "Robin Egg Blue",
         "Robins Egg Blue",
+        "Robin's Egg Blue",
         "Eggshell Blue",
         "Duck Egg Blue",
         "Celeste Blue",
+        "Celeste",
         "Light Blue",
         "Baby Blue",
         "Sky Blue",
         "Powder Blue",
         "Pale Blue",
         "Aqua Blue",
-        "Aquamarine Blue"
+        "Aquamarine Blue",
+        "Aquamarine",
+        "Tiffany",
+        "Tiff Blue",
+        "Tiff",
+        "TB",
+        "Official Tiffany",
+        "Tiffany Official",
+        "Tiffany Stamp",
+        "Tiffany & Co Blue",
+        "Flamingo Blue",
+        "Turquoise Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -92,7 +105,11 @@
         "Jubilee Tiffany Blue",
         "Jubilee Tiffany",
         "Celeb Tiffany Blue",
-        "Celeb Tiffany"
+        "Celeb Tiffany",
+        "CLT Blue",
+        "Celebration TB",
+        "Celeb TB",
+        "Official CTB"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -111,7 +128,29 @@
         "Champ Green",
         "Champ Grn",
         "Wim Grn",
-        "Wim Green"
+        "Wim Green",
+        "WB Dial",
+        "WM Dial",
+        "Wim",
+        "Wimbo",
+        "Wimbeldon",
+        "Champagne Slate Green",
+        "Slate Green Champagne"
+    ],
+    "Med Blue": [
+        "Mediterranean Blue",
+        "Mediterranean",
+        "Medblue",
+        "MB Dial"
+    ],
+    "Meteorite": [
+        "Meteor",
+        "Mete",
+        "Meteo",
+        "Meteoric",
+        "Aerolite",
+        "Iron Meteorite",
+        "Stone Dial Meteorite"
     ],
     "_ref_specific": {
         "_comment": "On these refs, Pink is a mislabel for Sundust (Everose gold models where 'pink' = sundust dial)",

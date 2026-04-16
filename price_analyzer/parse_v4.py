@@ -2072,11 +2072,15 @@ ROLEX_SUB_CATALOG = {
     # ── Oyster Perpetual 34/41 (124300) confirmed sub-codes ──
     "124300-0001":"Silver","124300-0002":"Black","124300-0003":"Blue",
     "124300-0004":"Yellow","124300-0006":"Tiffany Blue","124300-0007":"Red",
+    "124300-0018":"Celebration Tiffany Blue","124300-0019":"Grape",
     # ── Oyster Perpetual 36 (126000) confirmed sub-codes ──
     "126000-0001":"Silver","126000-0002":"Black","126000-0003":"Blue",
     "126000-0004":"Yellow","126000-0005":"Green","126000-0006":"Tiffany Blue",
     "126000-0007":"Coral","126000-0008":"Pink","126000-0009":"Blue",
+    "126000-0010":"Lavender","126000-0011":"Pistachio","126000-0012":"Turquoise",
     "126000-0013":"Lavender","126000-0014":"Black",
+    "126000-0015":"Candy Pink","126000-0016":"Turquoise","126000-0017":"Pistachio",
+    "126000-0018":"Celebration Tiffany Blue","126000-0019":"Grape",
     "126067-0001":"Black","126067-0002":"Black",
     "126233-0015":"Champagne","126233-0029":"White","126233-0031":"Silver",
     "126233-0036":"Grey",
@@ -2163,11 +2167,15 @@ ROLEX_SUB_CATALOG = {
     # OP 41mm: Silver/Black/Green/MedBlue confirmed from reference catalog; CandyPink/Beige/Aubergine from listings
     "134300-0001":"Silver","134300-0004":"Green","134300-0006":"Candy Pink",
     "134300-0007":"Beige","134300-0008":"Black","134300-0009":"Med Blue",
-    "134300-0012":"Aubergine","134300-0013":"Candy Pink",
+    "134300-0011":"Tiffany Blue","134300-0012":"Aubergine","134300-0013":"Candy Pink",
+    "134300-0018":"Celebration Tiffany Blue",
     # ── Oyster Perpetual 31 (277200) confirmed sub-codes ──
     "277200-0001":"Silver","277200-0002":"Black","277200-0014":"Lavender",
+    "277200-0015":"Tiffany Blue","277200-0016":"Candy Pink",
+    "277200-0018":"Celebration Tiffany Blue",
     # ── Oyster Perpetual 28 (276200) confirmed sub-codes ──
     "276200-0001":"Silver","276200-0004":"Champagne",
+    "276200-0007":"Tiffany Blue","276200-0008":"Candy Pink",
     # Lady Datejust 28 WG (279178): -0017 = Silver dial (standard WG smooth bezel config)
     "279178-0017":"Silver",
     # Day-Date II (218348): -0089 = Black (wave motif) dial variant
@@ -2697,6 +2705,23 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiffiny\b|\btiffaney\b|\btifany\b|\btifanny\b|\btiffny\b|\btifanie\b|\btifffany\b|\btiffanay\b', 'tiffany', t)
     # "tiffanys" (possessive/plural) → tiffany (\btiffany\b misses the trailing 's' word char boundary)
     t = re.sub(r'\btiffanys\b', 'tiffany', t)
+    # Additional Tiffany typo variants from HK/SG/CN dealer groups
+    t = re.sub(r'\btiffani(?:es?)?\b', 'tiffany', t)   # "tiffani"/"tiffanies" → tiffany
+    t = re.sub(r'\btifanni\b|\btifani\b', 'tiffany', t)  # "tifanni"/"tifani" (missing double-f) → tiffany
+    t = re.sub(r'\btifany\b|\btiffanay\b|\btifffany\b', 'tiffany', t)  # additional typos (dedup from above but safe)
+    # "tif blue" / "tif bl" compound (3-char truncation + "blue") → tiffany (common HK shorthand)
+    t = re.sub(r'\btif\s+bl(?:ue)?\b', 'tiffany', t)
+    # "tiffany color/colour" → tiffany (UK/EU dealer phrasing, e.g. "tiffany colour dial")
+    t = re.sub(r'\btiffany\s+colou?r(?:ed)?\b', 'tiffany', t)
+    # "t blue" standalone on OP refs → tiffany (ultra-short HK code; guard to OP family only)
+    # Guard: avoid false hits on "dark blue"/"light blue"/"sky blue" — require word-start only
+    if ref:
+        _rb_tblue = re.match(r'(\d+)', ref)
+        _rb_tblue_b = _rb_tblue.group(1) if _rb_tblue else ''
+        _op_tblue_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
+        _op_tblue_pfx = ('277', '276', '124')
+        if _rb_tblue_b in _op_tblue_exact or _rb_tblue_b[:3] in _op_tblue_pfx:
+            t = re.sub(r'(?<!\w)\bt\s+blue\b(?!\s+(?:dial|bezel|band|strap))', 'tiffany', t)
     # "celebrations" (plural) → celebration (\bcelebration\b misses plural form used by some dealers)
     t = re.sub(r'\bcelebrations\b', 'celebration', t)
     # "wimbledons" (plural, rare) → wimbledon
@@ -2851,6 +2876,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'珊瑚[紅红]?|珊瑚色', 'coral', t)           # 珊瑚/珊瑚色 = coral (OP/DJ Coral dial)
     # "official tiffany" / "tiffany official" → tiffany (explicit premium dial label)
     t = re.sub(r'\bofficial\s+tiffany\b|\btiffany\s+official\b', 'tiffany', t)
+    # "offi tiff" / "official tiff" (misspelled + abbreviated form) → tiffany
+    t = re.sub(r'\bofficial\s+tiff\b|\boffi\s+tiff\b|\boffi\s+tiffany\b', 'tiffany', t)
+    # "tiffany blue dial" / "tiff blue dial" compound label — normalized upstream but reinforce
+    t = re.sub(r'\btiff(?:any)?\s+blue\s+dial\b', 'tiffany', t)
+    # "tiffany op" / "op tiffany" (common HK dealer shorthand for OP36 Tiffany Blue)
+    t = re.sub(r'\btiffany\s+op\b|\bop\s+tiffany\b', 'tiffany', t)
+    # "tiff op" / "op tiff" → tiffany (abbreviated form of the above)
+    t = re.sub(r'\btiff\s+op\b|\bop\s+tiff\b', 'tiffany', t)
     # "champagne green" already converted to 'wimbledon' above; reinforce for any split form
     # that may have been lowercased before reaching the earlier normalization
     t = re.sub(r'\bchamp(?:agne)?\s+green\b', 'wimbledon', t)
@@ -3200,21 +3233,48 @@ def extract_dial(text, ref='', raw_ref=''):
     # "pikachu" → YML is already handled above; also catch "pkl" (very rare HK shorthand)
     t = re.sub(r'\bpkl\b', 'yml', t)
     # ── NEW: expanded dealer shorthand + multi-language normalization ──
-    # "Tiffany stamp" = Tiffany & Co. retailer engraving on dial, NOT a Tiffany Blue color.
-    # Remove "tiffany stamp" (+ optional trailing color word) so it doesn't trigger Tiffany
-    # Blue detection downstream. The color after the stamp (e.g. "tiffany stamp blue") refers
-    # to the stamped variant description, not the dial color.
-    # Common for: Patek 5711/1A "Tiffany stamp", 7118/1200A "tiffany stamp blue", etc.
-    t = re.sub(r'\btiffany\s+stamp(?:ed)?(?:\s+(?:blue|green|black|white|silver|grey|gray|brown))?\b', 'retailer stamp', t)
-    # Also catch "tiffany BLUE stamp" / "tiffany GREEN stamp" (color appears BETWEEN tiffany and stamp).
-    # E.g. "7118/1200A tiffany blue stamp" = Tiffany & Co. retailer branding on a blue dial.
-    t = re.sub(r'\btiffany\s+(?:blue|green|black|white|grey|gray|silver)\s+stamp(?:ed)?\b', 'retailer stamp', t)
-    t = re.sub(r'\bstamp(?:ed)?\s+(?:by\s+)?tiffany\b', 'retailer stamp', t)
-    # "Tiffany Collaboration" / "Tiffany & Co." / "Tiffany Edition" = retailer branding, NOT a dial color.
-    # E.g.: "5067A-011 white Tiffany Collaboration 2016" → the dial is White (Tiffany-branded piece).
-    # E.g.: "5711/1A Tiffany & Co." → standard Blue dial with Tiffany retailer stamp.
-    t = re.sub(r'\btiffany\s+(?:collaboration|collab|exclusive|edition|retailer)\b', 'retailer collab', t)
-    t = re.sub(r'\btiffany\s*&\s*co\.?\b', 'retailer collab', t)
+    # ── "Tiffany stamp" / "Tiffany & Co." neutralization (ref-aware) ──
+    # For Patek, Cartier, and non-OP refs: "tiffany stamp" = retailer engraving, NOT a dial color.
+    # For Rolex OP-family refs (126000/124300/277200/276200 etc.): "tiffany stamp" means the watch
+    # has BOTH a genuine Tiffany Blue dial AND the Tiffany & Co. retailer stamp at 6 o'clock.
+    # These are among the most premium OP listings — the dial IS Tiffany Blue.
+    # FIX: preserve "tiffany" signal for OP refs instead of stripping it.
+    _is_op_tiff_family = False
+    if ref:
+        _rb_otf = re.match(r'(\d+)', ref)
+        _rb_otf_b = _rb_otf.group(1) if _rb_otf else ''
+        # OP exact refs + prefix families that officially offer Tiffany Blue
+        _op_tiff_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200', '124260'})
+        _op_tiff_pfx = ('277', '276', '124')
+        _is_op_tiff_family = (_rb_otf_b in _op_tiff_exact or
+                              _rb_otf_b[:3] in _op_tiff_pfx)
+    if _is_op_tiff_family:
+        # OP family: "tiffany stamp/stamped/collaboration/&co" → "tiffany"
+        # The watch has a genuine Tiffany Blue dial; the stamp/collab label is extra context only.
+        t = re.sub(r'\btiffany\s+stamp(?:ed)?(?:\s+(?:blue|green|black|white|silver|grey|gray|brown))?\b', 'tiffany', t)
+        t = re.sub(r'\btiffany\s+(?:blue|green|black|white|grey|gray|silver)\s+stamp(?:ed)?\b', 'tiffany', t)
+        t = re.sub(r'\bstamp(?:ed)?\s+(?:by\s+)?tiffany\b', 'tiffany', t)
+        # "Tiffany & Co." on OP = Tiffany & Co. exclusive OP → still Tiffany Blue dial
+        t = re.sub(r'\btiffany\s+(?:collaboration|collab|exclusive|edition|retailer)\b', 'tiffany', t)
+        t = re.sub(r'\btiffany\s*&\s*co\.?\b', 'tiffany', t)
+    else:
+        # Non-OP refs: neutralize "tiffany stamp/collab/&co" → retailer branding token.
+        # Common for: Patek 5711/1A "Tiffany stamp", 7118/1200A "tiffany stamp blue", etc.
+        # IMPORTANT: preserve any COLOR word that follows "tiffany stamp" — the color describes
+        # the actual dial (e.g. "5711/1A tiffany stamp blue" = Blue dial with Tiffany stamp).
+        # Pattern: replace "tiffany stamp [color]" → "[color]" (keep color, strip tiffany stamp)
+        t = re.sub(r'\btiffany\s+stamp(?:ed)?\s+(blue|green|black|white|silver|grey|gray|brown)\b', r'\1', t)
+        # Pattern without trailing color: "tiffany stamp" alone → "retailer stamp"
+        t = re.sub(r'\btiffany\s+stamp(?:ed)?\b', 'retailer stamp', t)
+        # "tiffany [color] stamp" (color BETWEEN tiffany and stamp) → preserve the color.
+        # E.g. "7118/1200A tiffany blue stamp" = Tiffany & Co. retailer branding on a blue dial.
+        t = re.sub(r'\btiffany\s+(blue|green|black|white|grey|gray|silver)\s+stamp(?:ed)?\b', r'\1', t)
+        t = re.sub(r'\bstamp(?:ed)?\s+(?:by\s+)?tiffany\b', 'retailer stamp', t)
+        # "Tiffany Collaboration" / "Tiffany & Co." / "Tiffany Edition" = retailer branding, NOT a dial color.
+        # E.g.: "5067A-011 white Tiffany Collaboration 2016" → the dial is White (Tiffany-branded piece).
+        # E.g.: "5711/1A Tiffany & Co." → standard Blue dial with Tiffany retailer stamp.
+        t = re.sub(r'\btiffany\s+(?:collaboration|collab|exclusive|edition|retailer)\b', 'retailer collab', t)
+        t = re.sub(r'\btiffany\s*&\s*co\.?\b', 'retailer collab', t)
     # NOTE: "Tiffany new/used/complete/full/unworn" neutralization is intentionally NOT done here.
     # For Rolex OP (126000/134300/124300/277200 etc.), AP, Tudor, and all non-Patek refs,
     # "Tiffany used 2021" / "Tiffany new" simply describes the condition of a Tiffany Blue dial
