@@ -91,12 +91,15 @@
         "Tiff Blue",
         "Tiff",
         "TB",
+        "OTB",
         "Official Tiffany",
         "Tiffany Official",
         "Tiffany Stamp",
         "Tiffany & Co Blue",
         "Flamingo Blue",
-        "Turquoise Blue"
+        "Turquoise Blue",
+        "T Blue",
+        "Tiffany Blue Dial"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -118,7 +121,11 @@
         "PN Exotic",
         "Exotic Daytona",
         "Newman Exotic",
-        "PND"
+        "PND",
+        "Newman",
+        "PN Dial",
+        "Daytona PN",
+        "Exotic PN"
     ],
     "Wimbledon": [
         "Wimbledo",
@@ -135,7 +142,13 @@
         "Wimbo",
         "Wimbeldon",
         "Champagne Slate Green",
-        "Slate Green Champagne"
+        "Slate Green Champagne",
+        "Champagne Slate",
+        "Slate Champagne",
+        "Wim Slate",
+        "Slate Wim",
+        "Champ Slate Green",
+        "Slate Champ Green"
     ],
     "Med Blue": [
         "Mediterranean Blue",

@@ -2199,7 +2199,7 @@ def extract_dial(text, ref='', raw_ref=''):
         # Without this, the word boundary \b fails between a digit (word char) and a letter (word char).
         # Covers the most common premium dial keywords seen concatenated in HK/SG dealer messages.
         text = re.sub(
-            r'(?<=\d)(giraffe|grossular|tiffany|tiff|wimbledon|wimbo|meteorite|champagne|chocolate|panda|'
+            r'(?<=\d)(giraffe|grossular|tiffany|tiff|tb|ib|cp|mb|wimbledon|wimbo|meteorite|champagne|chocolate|panda|'
             r'turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon|'
             r'pistachio|lavender|aubergine|grape|beige|medblue|celebration)\b',
             r' \1', text, flags=re.I
@@ -2690,7 +2690,7 @@ def extract_dial(text, ref='', raw_ref=''):
 
     t = text.lower()
     # Separate color abbreviations glued to ref BEFORE normalization (e.g. 216570BLK → 216570 black)
-    t = re.sub(r'(\d{5,6})(blk|wht|whe|blu|grn|gry|pnk|choco|cho|slv|polar|mete|yml|sun|rbow|ywl|brow|ora|org|turq|tiff)\b', r'\1 \2', t)
+    t = re.sub(r'(\d{5,6})(blk|wht|whe|blu|grn|gry|pnk|choco|cho|slv|polar|mete|yml|sun|rbow|ywl|brow|ora|org|turq|tiff|tb|ib|cp|mb)\b', r'\1 \2', t)
     # Normalize shorthand for dial detection
     t = re.sub(r'\bblk\b', 'black', t)
     t = re.sub(r'\bbk\b', 'black', t)
@@ -2852,6 +2852,19 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'[數数]字', 'arabic', t)
     # 羅馬/罗马 = "Roman" = Roman numeral indices
     t = re.sub(r'[羅罗][馬马]', 'roman', t)
+    # Sky Blue / Baby Blue in Chinese → Tiffany Blue for OP refs
+    # MUST come BEFORE the generic [藍蓝]色 → blue sub below, because that sub eats
+    # the 藍/色 characters, leaving "天blue" which has no \b before 'blue' (天 is a Unicode
+    # word character), causing the sky-blue compound patterns to never match.
+    # 天藍/天空藍/水藍/淡藍 = sky/light/water blue — OP Tiffany Blue dealer descriptions
+    # Guard: only apply for OP family (these refs officially offer Tiffany Blue)
+    if ref:
+        _rb_cn_tblue = re.match(r'(\d+)', ref)
+        _rb_cn_tb_b = _rb_cn_tblue.group(1) if _rb_cn_tblue else ''
+        _op_cn_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
+        _op_cn_pfx = ('277', '276', '124')
+        if _rb_cn_tb_b in _op_cn_exact or _rb_cn_tb_b[:3] in _op_cn_pfx:
+            t = re.sub(r'天[藍蓝]色?|天空[藍蓝]色?|水[藍蓝]色?|淡[藍蓝]色?', 'tiffany', t)
     # 白/黑/藍/綠/灰/銀/玫瑰 = white/black/blue/green/grey/silver/rose (common color chars)
     t = re.sub(r'白色|白盤|白面', 'white', t)   # 白色/白盤/白面 = white dial
     t = re.sub(r'黑色|黑盤|黑面', 'black', t)   # 黑色/黑盤/黑面 = black dial
@@ -2874,6 +2887,12 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'葡萄(?:紫|色)?', 'grape', t)               # 葡萄 = Grape (OP/DJ Grape dial — Chinese)
     t = re.sub(r'\bgrapes\b', 'grape', t)                  # "grapes" (plural) → grape (dealer plural form)
     t = re.sub(r'珊瑚[紅红]?|珊瑚色', 'coral', t)           # 珊瑚/珊瑚色 = coral (OP/DJ Coral dial)
+    # ── Additional Chinese dial color normalizations ──────────────────────────
+    t = re.sub(r'薄荷[綠绿]', 'mint green', t)  # 薄荷綠/薄荷绿 = Mint Green
+    t = re.sub(r'薰衣草', 'lavender', t)         # 薰衣草 = Lavender
+    t = re.sub(r'開心果|开心果', 'pistachio', t) # 開心果/开心果 = Pistachio (lit. "happy fruit")
+    t = re.sub(r'淡粉[紅红]?|淡粉色', 'candy pink', t)  # 淡粉/淡粉紅 = light/candy pink
+    t = re.sub(r'奶白色?|乳白色?', 'white', t)  # 奶白/乳白 = cream/milky white
     # "official tiffany" / "tiffany official" → tiffany (explicit premium dial label)
     t = re.sub(r'\bofficial\s+tiffany\b|\btiffany\s+official\b', 'tiffany', t)
     # "offi tiff" / "official tiff" (misspelled + abbreviated form) → tiffany
@@ -2893,6 +2912,15 @@ def extract_dial(text, ref='', raw_ref=''):
     # On non-OP refs, falls through to plain 'Celebration' (safe default).
     t = re.sub(r'\bctb\b', 'celebration tiffany', t)
     t = re.sub(r'\bcltb\b', 'celebration tiffany', t)
+    # "OTB" = "Official Tiffany Blue" (rare HK/SG dealer shorthand for the stamped OP Tiffany Blue dial)
+    # Only valid for OP refs that officially list Tiffany Blue as a dial option.
+    if ref:
+        _rb_otb = re.match(r'(\d+)', ref)
+        _rb_otb_b = _rb_otb.group(1) if _rb_otb else ''
+        _op_otb_exact = frozenset({'126000', '126031', '126034', '124300', '134300', '124200'})
+        _op_otb_pfx = ('277', '276', '124')
+        if _rb_otb_b in _op_otb_exact or _rb_otb_b[:3] in _op_otb_pfx:
+            t = re.sub(r'\botb\b', 'tiffany', t)
     # "pn exotic" / "exotic pn" → paul newman (concatenated PN+Exotic shorthand)
     t = re.sub(r'\bpn\s*exotic\b|\bexotic\s*pn\b', 'paul newman', t)
     # "wimbelon" / "wimbledn" → wimbledon (additional typo variants)
@@ -2937,7 +2965,7 @@ def extract_dial(text, ref='', raw_ref=''):
     if ref:
         _rb_pur = re.match(r'(\d+)', ref)
         _rb_pur_base = _rb_pur.group(1) if _rb_pur else ''
-        _op_pur_exact = {'126000', '126034', '114200', '114300', '114270'}
+        _op_pur_exact = {'126000', '126031', '126034', '114200', '114300', '114270'}
         _op_pur_prefix = ('124', '134', '277', '276', '114')
         if _rb_pur_base in _op_pur_exact or _rb_pur_base[:3] in _op_pur_prefix:
             t = re.sub(r'\bpurple\b', 'grape', t)
@@ -2991,6 +3019,10 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_pauln = re.match(r'(\d+)', ref)
         if _rb_pauln and _rb_pauln.group(1)[:4] in ('1165', '1265'):
             t = re.sub(r'\bpaul\s+n\b(?!\s*ew)', 'paul newman', t)
+            # "newman" alone (no "paul" prefix) on Daytona refs → paul newman
+            # Dealers frequently write just the surname: "116518LN newman champagne $210k"
+            # Guard: only Daytona 1165xx / 1265xx — too risky for non-Daytona refs.
+            t = re.sub(r'\bnewman\b', 'paul newman', t)
     # "exo" shorthand → "exotic" (abbreviation used in some dealer groups for PN exotic dial)
     t = re.sub(r'\bexo\b(?!\s*(?:terra|tic))', 'exotic', t)  # guard against "exoterra" (RM brand)
     # "smoky" → ombré (gradient/smoky finishes on Day-Date ombré dials)
@@ -3037,6 +3069,12 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'(\d{5,6})(wimbledon|wimb|wim\b)', r'\1 \2', t)
     # "wim grn" / "wim green" → wimbledon (the Wimbledon dial IS the slate-green motif — HK compound shorthand)
     t = re.sub(r'\bwim\s+gr(?:n|een)\b', 'wimbledon', t)
+    # "Champagne Slate Green" / "Slate Green Champagne" → wimbledon (per dial_synonyms.json)
+    # Guard: only when Wimbledon is a valid dial for this ref (avoid false hits on YM/Daytona/DD refs)
+    if not _valid_dials or 'Wimbledon' in _valid_dials:
+        t = re.sub(r'\bchampagne\s+slate(?:\s+green)?\b|\bslate(?:\s+green)?\s+champagne\b', 'wimbledon', t)
+        # "wim slate" / "slate wim" = Wimbledon compound shorthand (common in DJ/DD group messages)
+        t = re.sub(r'\bwim\s+slate\b|\bslate\s+wim\b', 'wimbledon', t)
     # Aubergine shorthands
     t = re.sub(r'\baust\b|\baub\b|\bpurp\b', 'aubergine', t)
     # Lavender shorthand — "laven" (HK dealer truncation, e.g. "277200 laven")
@@ -3051,7 +3089,7 @@ def extract_dial(text, ref='', raw_ref=''):
     if ref:
         _rb_cp = re.match(r'(\d+)', ref)
         _rb_cp_b = _rb_cp.group(1) if _rb_cp else ''
-        _op_cp_exact = {'126000', '126034', '134300'}
+        _op_cp_exact = {'126000', '126031', '126034', '134300'}
         _op_cp_pfx = ('124', '134', '277', '276')
         if _rb_cp_b in _op_cp_exact or _rb_cp_b[:3] in _op_cp_pfx:
             t = re.sub(r'\bcp\b(?!\s*u)', 'candy pink', t)  # guard: not "CPU"
@@ -3078,7 +3116,7 @@ def extract_dial(text, ref='', raw_ref=''):
     if ref:
         _rb_grp = re.match(r'(\d+)', ref)
         _rb_grp_b = _rb_grp.group(1) if _rb_grp else ''
-        _op_grp_exact = {'126000', '126034', '114200', '114300'}
+        _op_grp_exact = {'126000', '126031', '126034', '114200', '114300'}
         _op_grp_pfx = ('124', '134', '277', '276')
         if _rb_grp_b in _op_grp_exact or _rb_grp_b[:3] in _op_grp_pfx:
             t = re.sub(r'\bgrp\b', 'grape', t)
