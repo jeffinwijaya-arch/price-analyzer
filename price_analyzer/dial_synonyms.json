@@ -90,16 +90,10 @@
         "T.Blue",
         "T-Blue",
         "T/B",
-        "OT/B",
         "T.B.",
         "Tiff-Blue",
         "Tiffany-Blue",
         "Tifb",
-        "OTB",
-        "Official Tiffany",
-        "Tiffany Official",
-        "Tiffany Stamp",
-        "Tiffany & Co Blue",
         "Flamingo Blue",
         "T Blue",
         "Candy Blue",
@@ -111,7 +105,10 @@
         "Duck Egg",
         "Egg Shell Blue",
         "Ciel Blue",
-        "Tiffany Blu"
+        "Tiffany Blu",
+        "Tiff Dial",
+        "Blue Tiff",
+        "Tiffany Light Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -157,6 +154,7 @@
         "Tiffany Co Stamp",
         "OfficialTB",
         "Off. Tiffany",
+        "Off Tiffany",
         "Tiff Stamp",
         "Original Tiffany",
         "Genuine Tiffany",
@@ -166,7 +164,13 @@
         "Real Tiffany",
         "Real Tiff",
         "Auth Tiff",
-        "Gen Tiff"
+        "Gen Tiff",
+        "Gen Tiffany",
+        "Genuine Tiff",
+        "Official T/B",
+        "Official T Blue",
+        "Off T/B",
+        "Off TB"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -184,7 +188,12 @@
         "P.N.",
         "paul n.",
         "Paul N Daytona",
-        "P.N Daytona"
+        "P.N Daytona",
+        "PN Ref",
+        "Paul N",
+        "Pn Daytona",
+        "Vintage PN",
+        "Vintage Paul Newman"
     ],
     "Wimbledon": [
         "Wimbledo",

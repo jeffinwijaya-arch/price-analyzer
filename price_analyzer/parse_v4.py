@@ -1469,7 +1469,8 @@ FIXED_DIAL = {
     '126613LB':'Blue','126613LN':'Black',
     '126618LB':'Blue','126618LN':'Black',
     '126619LB':'Black',  # WG Sub — black dial, blue bezel
-    '126655':'Black','126660':'Blue',
+    '126655':'Black',
+    # 126660 (Sea-Dweller 43) has Black and occasional Blue — NOT fixed; text detection handles it
     '126710BLNR':'Black','126710BLRO':'Black','126710GRNR':'Black','126720VTNR':'Black',
     '126711CHNR':'Black','126713GRNR':'Black',
     '126525LN':'Black','126529LN':'Black',
@@ -1515,6 +1516,30 @@ FIXED_DIAL = {
     '14060':'Black',     # Sub no-date — always black
     '14060M':'Black',    # Sub no-date — always black
     '116710':'Black',    # GMT-Master II (no bezel suffix) — always black
+    # Lady Day-Date / OP single-dial refs
+    '278285':'MOP',      # Lady DD 28 WG — MOP only
+    '279138':'MOP',      # OP 28 WG — MOP only
+    '279139':'MOP',      # OP 28 Oystersteel RG — MOP only
+    # Yacht-Master single-dial refs
+    '268655':'Black',    # YM37 TT — always black
+    '268622':'Slate',    # YM37 SS — always slate
+    '226627':'Black',    # YM42 SS — always black
+    '226658':'Black',    # YM42 SS full-black — always black
+    # GMT prev-gen single-dial
+    '116285':'Champagne','116285BBR':'Champagne',   # GMT-Master II YG
+    '116189':'Blue','116189BBR':'Blue',              # GMT-Master II TT
+    # Day-Date platinum prev-gen
+    '118366':'Ice Blue', # DD 36 Platinum — Ice Blue only
+    '218206':'Ice Blue', # DD 36 Platinum prev-prev — Ice Blue only
+    # Sea-Dweller TT
+    '136668':'Blue',     # Sea-Dweller 43mm TT — always blue dial
+    # Special Daytona / Day-Date single-dial
+    '128155':'Pavé',     # DD 36 WG Pavé — Pavé only
+    '128345':'Rainbow',  # DD 36 RG Rainbow — Rainbow only
+    # Cellini single-dial
+    '326139':'Black',    # Cellini Date WG — always black
+    '326138':'White',    # Cellini Date YG — always white
+    '52506':'Ice Blue',  # Cellini Cymation Platinum — Ice Blue only
 }
 
 def extract_dial(text, ref='', raw_ref=''):
@@ -1624,7 +1649,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bghost\b', 'grey', t)  # Ghost = grey dial Daytona (126519LN etc.)
     t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
     t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
-    t = re.sub(r'\borig(?:inal)?\s*tiff(?:any)?\b|\bgenuine\s*tiff(?:any)?\b|\bauth(?:entic)?\s*tiff(?:any)?\b|\breal\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\borig(?:inal)?\s*tiff(?:any)?\b|\bgenuine\s*tiff(?:any)?\b|\bauth(?:entic)?\s*tiff(?:any)?\b|\breal\s*tiff(?:any)?\b|\bgen(?:uine)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
     # NG (standalone) = MOP dial + diamond markers — common HK shorthand for NG suffix ref
     # e.g. "279381 RBR NG" → MOP; distinct from N1/N12 (new, month code)
@@ -1645,7 +1670,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck\s*egg(?:\s*blue)?\b", 'tiffany', t)
     t = re.sub(r'\bceleste\b', 'tiffany', t)        # "celeste" = Tiffany Blue in watch market
     t = re.sub(r'\bflamingo\s*blue\b|\bcandy\s*blue\b', 'tiffany', t)
-    t = re.sub(r'\bt[/-]blue\b|\bt\/b\b|\bt\.b\.\B', 'tiffany', t)  # T-blue / T/blue / T/B / T.B.
+    t = re.sub(r'\bt[/-]blue\b|\bt\/b\b|\bt\.b\.|\bt\.blue\b|\bt\s+blue\b', 'tiffany', t)  # T-blue / T/blue / T/B / T.B. / T.Blue / T Blue
     t = re.sub(r'\btifb\b|\btifblu\b|\btiffanya\b', 'tiffany', t)
     # Ref-gated ambiguous light-blue → Tiffany Blue (OP refs have no other light-blue option)
     _OP_TIFF_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
@@ -1656,7 +1681,8 @@ def extract_dial(text, ref='', raw_ref=''):
     _METEORITE_BASE = {'116508','116518','116519','126508','126518','126519','126503','126719',
                        '128238','228238','228239','128239','228235','128235','126555','228236',
                        '116500','126500','228206','228349','128349',
-                       '126505','116505','126515','116515','126509','116509'}
+                       '126505','116505','126515','116515','126509','116509',
+                       '228396','52509'}  # 228396=DD Plat, 52509=Cellini Dual Time Plat
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
     # Separate color glued to ref: "116508green" → "116508 green"
@@ -1795,7 +1821,7 @@ def extract_dial(text, ref='', raw_ref=''):
                          '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.\B|\bpn\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
+    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
@@ -1808,6 +1834,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126331','126333','126334',
         '126200','126201','126203','126231','126233','126234',
         '126283','126284','116300','116333','116334','116234',
+        '116233',  # prev-gen DJ36 TT — also offers Wimbledon
     }
     _ref_base_wim = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t): return 'Wimbledon'
@@ -1883,8 +1910,9 @@ def extract_dial(text, ref='', raw_ref=''):
             (_valid_dials and 'Ice Blue' in _valid_dials and len(_valid_dials) <= 3)):
         dial = 'Ice Blue'
     elif re.search(r'\bmediterranean\b|\bmed\s*blue\b', t): dial = 'Med Blue'
-    elif re.search(r'\botb\b|\bot\/b\b|\botbl\b'
+    elif re.search(r'\botb\b|\bot\/b\b|\botbl\b|\bofficialtb\b'
                    r'|\bofficial\s*tiff(?:any)?\b|\btiff(?:any)?\s*official\b'
+                   r'|\bofficial\s*tb\b|\boff\.?\s*tiff(?:any)?\b'
                    r'|\btiffany\s*stamp(?:ed)?\b'
                    r'|\btiffany\s*&\s*co\b|\btiff\s*&\s*co\b|\bt\s*&\s*co\b'
                    r'|\btiffany\s*and\s*co\b|\btiff\s*co\b|\btiffany\s*co\b'
@@ -1949,7 +1977,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bbb\b', t) and _rb_ice in {
         '126300','126301','126303','126200','126201','126203',
         '126334','126333','126331','126234','126233','126231',
-        '116300','116234','116334',
+        '116300','116234','116334','126238',
     }: dial = 'Bright Blue'
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
     elif re.search(r'\bblack\b|\bblk\b', t): dial = 'Black'
