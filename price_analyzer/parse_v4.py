@@ -2790,9 +2790,9 @@ def extract_dial(text, ref='', raw_ref=''):
     # "pistacho" → pistachio (Spanish-influenced misspelling common in EU/Latin dealer groups)
     t = re.sub(r'\bpistacho\b', 'pistachio', t)
     # Additional pistachio typos from HK/EU dealer groups
-    t = re.sub(r'\bpistacheo\b|\bpistagio\b|\bpistaccio\b', 'pistachio', t)
-    # "lavander" / "lavander" → lavender (common misspelling)
-    t = re.sub(r'\blavander\b|\blawander\b', 'lavender', t)
+    t = re.sub(r'\bpistacheo\b|\bpistagio\b|\bpistaccio\b|\bpistachoi\b', 'pistachio', t)
+    # "lavander" / "lawander" / "lavendar" → lavender (common misspellings)
+    t = re.sub(r'\blavander\b|\blawander\b|\blanveder\b|\blanveder\b|\blavendar\b', 'lavender', t)
     t = re.sub(r'\bgreay\b', 'grey', t)        # "greay" typo → grey
     t = re.sub(r'\bgreeb\b', 'green', t)       # "greeb" typo → green (common in HK msgs, e.g. "greeb jub")
     t = re.sub(r'\bgrene\b|\bgreem\b', 'green', t)  # "grene"/"greem" typos → green
@@ -3137,11 +3137,14 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bwim\s+slate\b|\bslate\s+wim\b', 'wimbledon', t)
     # Aubergine shorthands
     t = re.sub(r'\baust\b|\baub\b|\bpurp\b', 'aubergine', t)
-    # Lavender shorthand — "laven" (HK dealer truncation, e.g. "277200 laven")
-    t = re.sub(r'\blaven\b', 'lavender', t)
-    # Pistachio shorthand — "pist" alone (HK/SG dealer groups, e.g. "126000 pist")
-    # Guard: only replace standalone \bpist\b to avoid corrupting "pistachio" if partially present
+    # Lavender shorthand — "laven" / "lavend" (HK dealer truncation, e.g. "277200 laven")
+    t = re.sub(r'\blaven(?:d)?\b', 'lavender', t)
+    # Pistachio shorthand — "pist" / "pistach" (HK/SG dealer truncations)
+    # Guard \bpist\b: only replace standalone (not inside "pistachio")
+    t = re.sub(r'\bpistach\b', 'pistachio', t)   # "pistach" 7-char truncation
     t = re.sub(r'\bpist\b(?!ach)', 'pistachio', t)
+    # "chmp" → champagne (very short HK dealer code, e.g. "126234 chmp roman")
+    t = re.sub(r'\bchmp\b', 'champagne', t)
     # "candy pk" / "candypk" / "candy p" → candy pink (compound shorthand)
     t = re.sub(r'\bcandy\s*pk\b|\bcandypk\b|\bcandy\s*p\b(?!ink)', 'candy pink', t)
     # "cp" on OP refs = candy pink (very short HK/SG code, e.g. "126000 cp")
