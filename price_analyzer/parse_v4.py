@@ -2200,7 +2200,7 @@ def extract_dial(text, ref='', raw_ref=''):
         # Without this, the word boundary \b fails between a digit (word char) and a letter (word char).
         # Covers the most common premium dial keywords seen concatenated in HK/SG dealer messages.
         text = re.sub(
-            r'(?<=\d)(giraffe|grossular|tiffany|tiff|tb|ib|cp|mb|wimbledon|wimbo|meteorite|champagne|chocolate|panda|'
+            r'(?<=\d)(giraffe|grossular|tiffany|tiff|otb|ctb|cltb|tb|ib|cp|mb|wimbledon|wimbo|meteorite|champagne|chocolate|panda|'
             r'turquoise|rainbow|sundust|ombre|ombré|orange|arabic|pavé?|silver|coral|salmon|'
             r'pistachio|lavender|aubergine|grape|beige|medblue|celebration|eggplant|amethyst|jade|stella)\b',
             r' \1', text, flags=re.I
@@ -3605,7 +3605,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'(\d{5,6})grne\b', r'\1grnr', t)    # GRNE → GRNR (Sprite GMT shorthand)
     t = re.sub(r'(\d{5,6})gtnr\b', r'\1grnr', t)    # GTNR → GRNR (Sprite typo variant)
     # Separate color/variant glued to ref: "116508green" → "116508 green", "228236arabic" → "228236 arabic"
-    t = re.sub(r'(\d{5,6})(yellow|orange|coral|red|green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|choco|chocolate|meteorite|mete|panda|ceramic|giraffe|grossular|polar|yml|rainbow|sundust|salmon|khaki|turquoise|tiffany|lavender|pistachio|beige|aubergine|violet|purple|arabic|eggplant|amethyst|jade|stella)', r'\1 \2', t, flags=re.I)
+    t = re.sub(r'(\d{5,6})(yellow|orange|coral|red|green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|choco|chocolate|meteorite|mete|panda|ceramic|giraffe|grossular|polar|yml|rainbow|sundust|salmon|khaki|turquoise|tiffany|otb|ctb|cltb|lavender|pistachio|beige|aubergine|violet|purple|arabic|eggplant|amethyst|jade|stella)', r'\1 \2', t, flags=re.I)
     # Dealer shorthands → canonical form
     t = re.sub(r'\bchmpgn\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bwimb\b', 'wimbledon', t)
