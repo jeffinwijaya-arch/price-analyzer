@@ -1621,7 +1621,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
     t = re.sub(r'\bchocolates?\b|\bchoc\b', 'chocolate', t)
-    t = re.sub(r'\bsodalit[eo]?\b', 'sodalite', t)
+    t = re.sub(r'\bsodalit[eo]?\b|\bsoda\b', 'sodalite', t)  # "soda" = Sodalite shorthand (in synonyms JSON, not in code until now)
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
     t = re.sub(r'\btiger\s*iron\b', '__tigeriron__', t)  # protect before generic tiger→tiger eye
@@ -1667,8 +1667,12 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\broot\s*beer\b', 'black', t)  # Root Beer = black dial GMT
     t = re.sub(r'\bstarbucks\b', 'green', t)  # Starbucks = green dial Sub
     t = re.sub(r'\bkermit\b', 'green', t)  # Kermit = green dial/bezel Sub
+    t = re.sub(r'\bhulk\b', 'green', t)    # Hulk = green dial Submariner LV (126610LV / 116610LV)
     t = re.sub(r'\bsmurf\b', 'blue', t)  # Smurf = blue dial Sub WG
     t = re.sub(r'\bghost\b', 'grey', t)  # Ghost = grey dial Daytona (126519LN etc.)
+    t = re.sub(r'\bjoker\b', 'black', t)  # Joker = black dial GMT VTNR (126729VTNR, 126710VTNR)
+    t = re.sub(r'\bbruce\s*wayne\b', 'black', t)  # Bruce Wayne = black dial GMT Sprite GRNR
+    t = re.sub(r'\bcoke\b', 'black', t)   # Coke = black dial GMT (vintage 16710 red/black bezel)
     t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
     t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
@@ -1681,6 +1685,10 @@ def extract_dial(text, ref='', raw_ref=''):
     # Reverse-order parenthetical OTB: "Tiffany (official)", "TB (otb)", "Tiff (auth)", etc.
     t = re.sub(r'\btiff(?:any)?\s*\((?:orig(?:inal)?|auth(?:entic)?|genuine|real|off?(?:icial)?|stamp(?:ed)?|otb|t\.?co|t\s*&\s*co)\)', 'official tiffany', t)
     t = re.sub(r'\btb\s*\((?:orig(?:inal)?|auth(?:entic)?|genuine|real|off?(?:icial)?|stamp(?:ed)?|otb|t\.?co|t\s*&\s*co)\)', 'official tiffany', t)
+    # Tiffany stamp at 6 o'clock position — "@6" and dotted "O.T.B." notations
+    t = re.sub(r'\btiff(?:any)?\s*@\s*6\b|\btb\s*@\s*6\b', 'official tiffany', t)
+    t = re.sub(r'\bo\.t\.b\.?\b', 'official tiffany', t)  # O.T.B. (dotted) = Official Tiffany Blue
+    t = re.sub(r'\btiff(?:any)?\s*six\b', 'official tiffany', t)  # "tiff six" = T&Co stamp at 6
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1733,6 +1741,9 @@ def extract_dial(text, ref='', raw_ref=''):
     if _ref_base_norm in _OP_TIFF_REFS:
         t = re.sub(r'\blight\s*blue\b|\bbaby\s*blue\b|\bsky\s*blue\b|\bpowder\s*blue\b|\bpale\s*blue\b|\baquamarin(?:e)?\b', 'tiffany', t)
         t = re.sub(r'\baqua\s*(?:blue|green)?\b', 'tiffany', t)  # "aqua"/"aqua blue" = Tiffany Blue on OP refs
+        t = re.sub(r'\begg\b', 'tiffany', t)           # standalone "egg" = robin's egg = Tiffany Blue on OP
+        t = re.sub(r'\bjade(?:\s*blue)?\b', 'tiffany', t)  # "jade"/"jade blue" = Tiffany Blue (HK/Asia dealer term)
+        t = re.sub(r'\brobin\b', 'tiffany', t)          # standalone "robin" = robin's egg = Tiffany Blue on OP
     # "DB" shorthand on Deepsea refs = D-Blue gradient dial (not "Dark Blue")
     # Must run after dblue normalization but before color checks
     if _ref_base_norm in {'136660', '116660'}:
@@ -2094,7 +2105,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126200','126201','126203',
         '126334','126333','126331','126234','126233','126231',
         '116300','116234','116334','126238',
-        '336934','336935','336238',  # new-gen DJ41 refs with Bright Blue
+        '336934','336238',  # new-gen DJ41/DJ36 refs with Bright Blue (336935 removed — no Bright Blue dial)
     }: dial = 'Bright Blue'
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
     elif re.search(r'\bblack\b|\bblk\b', t): dial = 'Black'
