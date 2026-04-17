@@ -257,7 +257,12 @@
         "Paul N",
         "Pn Daytona",
         "Vintage PN",
-        "Vintage Paul Newman"
+        "Vintage Paul Newman",
+        "P/N",
+        "P/N Daytona",
+        "P/N Dial",
+        "PN (Exotic)",
+        "Newman Dial"
     ],
     "Wimbledon": [
         "Wimble",
@@ -472,6 +477,26 @@
     "Chocolate Roman VI": [
         "vi Chocolate"
     ],
+    "Malachite": [
+        "Malach",
+        "Malachit",
+        "Malachite Stone",
+        "Malachite Green",
+        "Green Stone Malachite",
+        "Mala"
+    ],
+    "Onyx": [
+        "Black Onyx",
+        "Onyx Black",
+        "Onx",
+        "Black Stone Onyx"
+    ],
+    "Sodalite": [
+        "Sodalit",
+        "Sodalite Blue",
+        "Blue Sodalite",
+        "Soda"
+    ],
     "Fluted": [
         "Fluted Dial",
         "Fluted Motif",
@@ -577,9 +602,14 @@
         "Jubilee Dial",
         "Celebration Dial",
         "Celeb Dial",
+        "Celeb",
         "Cele Dial",
+        "Cele",
         "Motif Dial",
-        "Anniversary Motif"
+        "Anniversary Motif",
+        "Jubilee Pattern",
+        "Celeb Motif",
+        "Celebration Motif"
     ],
     "Ombré": [
         "Ombre",

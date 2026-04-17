@@ -1539,6 +1539,8 @@ FIXED_DIAL = {
     '326139':'Black',    # Cellini Date WG — always black
     '326138':'White',    # Cellini Date YG — always white
     '52506':'Ice Blue',  # Cellini Cymation Platinum — Ice Blue only
+    '126619':'Black',      # WG Sub bare ref — always Black dial, blue ceramic bezel, regardless of LB suffix omission
+    '126679SABR':'Black',  # Sea-Dweller 43 SABR (sapphire bezel Rainbow) — always Black dial
 }
 
 def extract_dial(text, ref='', raw_ref=''):
@@ -1690,6 +1692,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\baub\b', 'aubergine', t)   # "aub" = aubergine
     t = re.sub(r'\bpurp\b', 'aubergine', t)  # "purp" = purple/aubergine
     t = re.sub(r'\bcham\b|\bchm\b', 'champagne', t)  # "cham/chm" = champagne
+    t = re.sub(r'\bolv(?:\s*grn?)?\b', 'olive', t)   # "olv"/"olv grn" = Olive (HK shorthand; in synonyms JSON but not in code)
+    t = re.sub(r'\bmalach\b', 'malachite', t)         # "malach" shorthand for Malachite stone dial
+    t = re.sub(r'\bceleb\b', 'celebration', t)        # "celeb" = Celebration (Jubilee Motif) dial; safe — \b excludes "celebrity","celebrated"
     # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself)
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '116600', '136659'}:
@@ -1737,7 +1742,7 @@ def extract_dial(text, ref='', raw_ref=''):
                        '128238','228238','228239','128239','228235','128235','126555','228236',
                        '116500','126500','228206','228349','128349',
                        '126505','116505','126515','116515','126509','116509',
-                       '228396','52509',
+                       '228396','128396','52509',
                        '218235','118208','118235','116139'}  # prev-gen DD/Daytona with meteorite
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
@@ -1910,7 +1915,7 @@ def extract_dial(text, ref='', raw_ref=''):
                          '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
+    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
@@ -2056,7 +2061,7 @@ def extract_dial(text, ref='', raw_ref=''):
             # Official Tiffany Blue (OTB/T&Co/stamp) is already caught in the OTB block above
             dial = 'Tiffany Blue'
     elif re.search(r'\bcornflower\b', t): dial = 'Cornflower Blue'
-    elif re.search(r'\bmint\s*green\b|\bmint\b', t):
+    elif re.search(r'\bmint\s*green\b|\bmint\b', t) and not re.search(r'\bmint\s*(?:condition|cond|set|box(?:ed)?|papers|unworn|complete)\b', t):
         if _ref_base_norm in _OP_TIFF_REFS:
             dial = 'Tiffany Blue'  # OP "mint/mint-green" ≈ Tiffany Blue (aqua/teal hue; OP has no Turquoise dial)
         else:
@@ -2089,6 +2094,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126200','126201','126203',
         '126334','126333','126331','126234','126233','126231',
         '116300','116234','116334','126238',
+        '336934','336935','336238',  # new-gen DJ41 refs with Bright Blue
     }: dial = 'Bright Blue'
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
     elif re.search(r'\bblack\b|\bblk\b', t): dial = 'Black'
