@@ -1474,7 +1474,7 @@ FIXED_DIAL = {
     '126710BLNR':'Black','126710BLRO':'Black','126710GRNR':'Black','126720VTNR':'Black',
     '126711CHNR':'Black','126713GRNR':'Black',
     '126525LN':'Black','126529LN':'Black',
-    '126067':'Black','126707':'Black','126755':'Black',
+    '126067':'Black','126707':'Black',
     # 136660 (Deepsea) has Black AND D-Blue — NOT fixed; handled by text/suffix detection
     '126729VTNR':'Black',
     # Prev gen
@@ -1512,7 +1512,6 @@ FIXED_DIAL = {
     '126589':'MOP',      # Daytona Rainbow WG Oysterflex — MOP dial
     '126539':'Black',    # Daytona Rainbow WG bracelet — black dial
     '127234':'White',    # 1908 39mm SS — white lacquer only
-    '226668':'Black',    # YM42 TT RG — always black
     '14060':'Black',     # Sub no-date — always black
     '14060M':'Black',    # Sub no-date — always black
     '116710':'Black',    # GMT-Master II (no bezel suffix) — always black
@@ -1649,6 +1648,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bghost\b', 'grey', t)  # Ghost = grey dial Daytona (126519LN etc.)
     t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
     t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
+    t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*tiff(?:any)?\b|\bgenuine\s*tiff(?:any)?\b|\bauth(?:entic)?\s*tiff(?:any)?\b|\breal\s*tiff(?:any)?\b|\bgen(?:uine)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
     # NG (standalone) = MOP dial + diamond markers — common HK shorthand for NG suffix ref
@@ -1790,6 +1790,8 @@ def extract_dial(text, ref='', raw_ref=''):
         return 'Ceramic'
     # Money Green / Casino Green (slang for Bright Green on Day-Date)
     if re.search(r'\bmoney\s*green\b|\bcasino\s*green\b', t): return 'Bright Green'
+    # Explicit "bright green" text (covers brt grn, bright grn, etc. — normalized above)
+    if re.search(r'\bbright\s*(?:green|grn)\b', t): return 'Bright Green'
     # Bright Green (Day-Date specific — solid bright/casino green, often with roman indices)
     if re.search(r'\bgreen\s*rom(?:an|a|e)?\b|\brom(?:an|a|e)?\s*green\b', t):
         if ref:
@@ -1812,6 +1814,7 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\brainbow\b', t): return 'Rainbow'
     # Pavé (full diamond dial)
     if re.search(r'\bpav[eé]\b|\bfull\s*diamond\b', t):
+        if re.search(r'\bturquoise\b|\bturq\b', t): return 'Turquoise Pavé'
         if re.search(r'\bgreen\b', t): return 'Green Pavé'
         if has_vi: return 'vi Pavé'
         return 'Pavé'
@@ -1902,7 +1905,8 @@ def extract_dial(text, ref='', raw_ref=''):
     dial = None
     _rb_ice = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     _ice_blue_only_refs = {'228206','228236','128236','127236','116506','126506',
-                           '118206','118346','118166','218206','52506'}
+                           '118206','118346','118166','218206','52506',
+                           '127286'}  # 1908 36mm Platinum — only Ice Blue / Ice Blue Baguette
     # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
     if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
     # \bib\b (Ice Blue shorthand) is ref-gated: only fires for known IB-capable refs.
@@ -1930,27 +1934,24 @@ def extract_dial(text, ref='', raw_ref=''):
             dial = 'Turquoise'
         else:
             dial = 'Official Tiffany Blue'
-    elif re.search(r'\btiffany\b|\bturquoise\b|\btiff\b|\bturq\b', t) or (
+    elif re.search(r'\bturquoise\b|\bturq\b', t) and not re.search(r'\btiffany\b|\btiff\b', t):
+        # Pure "turquoise"/"turq" without any Tiffany keyword → the actual Turquoise dial on all refs
+        # This correctly resolves OP/DJ refs (277200, 276200, 124200, etc.) where both
+        # Turquoise and Tiffany Blue are valid dials that must be distinguished by keyword.
+        dial = 'Turquoise'
+    elif re.search(r'\btiffany\b|\btiff\b', t) or (
         re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126','134')):
-        # DD/prev-DD (128xxx, 228xxx) have an actual "Turquoise" dial — NOT Tiffany
-        _ref_base = re.match(r'(\d+)', ref) if ref else None
-        _rb = _ref_base.group(1) if _ref_base else ''
-        if _rb.startswith('128') or _rb.startswith('228') or _rb.startswith('118'):
+        # DD/prev-DD (128xxx, 228xxx, 118xxx): dealers say "tiffany" but maps to their Turquoise dial
+        _ref_base_t = re.match(r'(\d+)', ref) if ref else None
+        _rb_t = _ref_base_t.group(1) if _ref_base_t else ''
+        if _rb_t.startswith('128') or _rb_t.startswith('228') or _rb_t.startswith('118'):
             dial = 'Turquoise'
-        elif _rb == '126200':
-            # DJ36 SS: Rolex official dial is "Turquoise" — dealers say "Tiffany" but it's Turquoise here
+        elif _rb_t == '126200':
+            # DJ36 SS: Rolex official is "Turquoise" (OTB already handled above)
             dial = 'Turquoise'
-        elif _rb == '126000':
-            # OP36 has two distinct blue-ish dials:
-            #   "Turquoise" = greenish-blue official dial (no Tiffany stamp)
-            #   "Official Tiffany Blue" = Tiffany & Co. stamped special edition (massive premium)
-            if re.search(r'\bturquoise\b|\bturq\b|\bmint\b', t) and not re.search(r'\btiffany\b|\btiff\b', t):
-                dial = 'Turquoise'
-            elif not re.search(r'\baftermarket\b|\bcustom\b|\bmod(?:ified)?\b|\bservice\b', t):
-                dial = 'Official Tiffany Blue'
-            else:
-                dial = 'Tiffany Blue'
         else:
+            # All OP/DJ/other refs: "tiffany"/"tiff"/"tb" = Tiffany Blue
+            # Official Tiffany Blue (OTB/T&Co/stamp) is already caught in the OTB block above
             dial = 'Tiffany Blue'
     elif re.search(r'\bcornflower\b', t): dial = 'Cornflower Blue'
     elif re.search(r'\bmint\s*green\b|\bmint\b', t):
