@@ -1611,6 +1611,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwim\s*(?:green|grn|gr)\b', 'wimbledon', t)
     t = re.sub(r'\bwimb?\s*dial\b|\bwm\s*dial\b|\bwb\s*dial\b|\bwbl\s*dial\b', 'wimbledon', t)
     t = re.sub(r'\bslate\s*(?:green|grn)\s*champ(?:agne)?\b|\bchamp(?:agne)?\s*grn?\s*slate\b', 'wimbledon', t)
+    # Wimbledon spelling variants (common dealer typos and truncations)
+    t = re.sub(r'\bwimbeldon\b|\bwimbleton\b|\bwimbledone\b|\bwimbledun\b', 'wimbledon', t)
+    t = re.sub(r'\bwimbldon\b|\bwimbledo\b|\bwimbledn\b|\bwimbelton\b|\bwimbeldan\b|\bwimbly\b|\bwimble\b', 'wimbledon', t)
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
     t = re.sub(r'\bchocolates?\b|\bchoc\b', 'chocolate', t)
@@ -1667,6 +1670,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*(?:tiff(?:any)?|tb)\b|\bgenuine\s*(?:tiff(?:any)?|tb)\b|\bauth(?:entic)?\s*(?:tiff(?:any)?|tb)\b|\breal\s*(?:tiff(?:any)?|tb)\b|\bgen(?:uine)?\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
+    # Tiffany & Co collaboration / sole-agent retailer = Official Tiffany Blue
+    t = re.sub(r'\btiff(?:any)?\s*collab(?:oration)?\b|\bcollab(?:oration)?\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\bunofficiale?\s*tiff(?:any)?\b|\baftermarket\s*tiff(?:any)?\b|\breplica\s*tiff(?:any)?\b', 'tiffany', t)  # aftermarket/replica = plain tiffany, NOT official
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1707,6 +1714,7 @@ def extract_dial(text, ref='', raw_ref=''):
     _ref_base_norm = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _ref_base_norm in _OP_TIFF_REFS:
         t = re.sub(r'\blight\s*blue\b|\bbaby\s*blue\b|\bsky\s*blue\b|\bpowder\s*blue\b|\bpale\s*blue\b|\baquamarin(?:e)?\b', 'tiffany', t)
+        t = re.sub(r'\baqua\s*(?:blue|green)?\b', 'tiffany', t)  # "aqua"/"aqua blue" = Tiffany Blue on OP refs
     # "DB" shorthand on Deepsea refs = D-Blue gradient dial (not "Dark Blue")
     # Must run after dblue normalization but before color checks
     if _ref_base_norm in {'136660', '116660'}:
@@ -1784,6 +1792,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # so "Celebration Tiffany" is not swallowed into plain "Celebration"
     if re.search(r'\bctb\b|\bcltb\b|\bceltb\b'
                  r'|\bclt\/b\b|\bcl\s*t\/b\b|\bct\/b\b'
+                 r'|\bcl\s*tiff(?:any)?\b'  # "cl tiff" = Celebration (Jubilee) Tiffany Blue
                  r'|\bcelebration\s*tiff(?:any)?\b|\bcelebration\s*tb\b'
                  r'|\bcelebration\s*t\/b\b|\bceleb\s*tiff(?:any)?\b'
                  r'|\bceleb\s*tb\b|\bceleb\s*t\/b\b'
@@ -2013,7 +2022,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bcornflower\b', t): dial = 'Cornflower Blue'
     elif re.search(r'\bmint\s*green\b|\bmint\b', t):
         if _ref_base_norm in _OP_TIFF_REFS:
-            dial = 'Turquoise'  # OP "mint/mint-green" = the official turquoise dial
+            dial = 'Tiffany Blue'  # OP "mint/mint-green" ≈ Tiffany Blue (aqua/teal hue; OP has no Turquoise dial)
         else:
             dial = 'Mint Green'
     elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
