@@ -1700,9 +1700,20 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*@\s*6\b|\btb\s*@\s*6\b', 'official tiffany', t)
     t = re.sub(r'\bo\.t\.b\.?\b', 'official tiffany', t)  # O.T.B. (dotted) = Official Tiffany Blue
     t = re.sub(r'\btiff(?:any)?\s*six\b', 'official tiffany', t)  # "tiff six" = T&Co stamp at 6
+    # "bought at/from Tiffany" / "from Tiffany store" = watch retailed through T&Co = OTB
+    t = re.sub(r'\bbought\s*(?:at|from|through)\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\bfrom\s*tiff(?:any)?\s*(?:store|boutique|shop|only|directly)?\b', 'official tiffany', t)
+    # "Tiffany papers" / "Tiffany receipt" / "came with Tiffany docs" = OTB provenance
+    t = re.sub(r'\btiff(?:any)?\s*papers?\b|\btiff(?:any)?\s*receipt\b|\btiff(?:any)?\s*docs?\b', 'official tiffany', t)
+    # "Tiffany caseback" (the physical stamp on case back) = OTB
+    t = re.sub(r'\btiff(?:any)?\s*(?:case\s*)?back\b', 'official tiffany', t)
+    # "Tiffany retailer" / "Tiffany only" / "Tiffany boutique" = sold exclusively through T&Co
+    t = re.sub(r'\btiff(?:any)?\s*retailer\b|\btiff(?:any)?\s*boutique\b|\btiff(?:any)?\s*only\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
+    t = re.sub(r'\bchatoyant(?:\s*blue)?\b', "falcon's eye", t)  # chatoyant = optical property of YM40 WG stone dial
+    t = re.sub(r'\bblue\s*stone\s*ym\b|\bym\s*blue\s*stone\b', "falcon's eye", t)  # dealer description for 226659
     # NG (standalone) = MOP dial + diamond markers — common HK shorthand for NG suffix ref
     # e.g. "279381 RBR NG" → MOP; distinct from N1/N12 (new, month code)
     t = re.sub(r'\bng\b', 'mop', t)
@@ -1718,6 +1729,13 @@ def extract_dial(text, ref='', raw_ref=''):
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '116600', '136659'}:
         t = re.sub(r'\bsd\b', 'sundust', t)
+    # "ym" alone = Yellow Mineral (Lacquer) — Daytona dealer shorthand for YML dial
+    # Only fire on Daytona refs (where YML is a valid dial); elsewhere "ym" is too ambiguous
+    _YML_DAYTONA_BASES = {'116508','116518','116519','126508','126518','126519',
+                          '116500','126500','116505','126505','116503','126503',
+                          '116520','126520','116528','126528','116515','126515'}
+    if _sd_ref_base in _YML_DAYTONA_BASES:
+        t = re.sub(r'\bym\b(?!\s*(?:lacquer|mineral|lac|ii\b))', 'yml', t)
     # "tb" on Day-Date refs (128/228/118) = Turquoise dial — NOT Tiffany Blue.
     # DDs have a "Turquoise" dial option; dealers write "TB" for "Turquoise Blue" not "Tiffany Blue".
     # Must normalise BEFORE the tiffany/OTB detection block so the turquoise path fires instead.
@@ -1791,10 +1809,16 @@ def extract_dial(text, ref='', raw_ref=''):
         '116500','116503','116505','116508','116509','116515','116518','116519','116520',
         # Datejust 36/41 — no Tiffany Blue dial option; block to prevent false positives
         '126231','126233','126234','126238',  # DJ36 TT/YG variants (fluted & smooth)
+        '116231','116233','116234','116238',  # prev-gen DJ36 TT/YG variants
         '126300','126301','126303',           # DJ41 SS variants
+        '116300','116301','116303',           # prev-gen DJ41 SS variants
         '126331','126333','126334',           # DJ36 TT Rose Gold variants
+        '116331','116333','116334',           # prev-gen DJ36 TT Rose Gold variants
         # New-gen Datejust (336/326 series) — no Tiffany Blue option
         '336235','336238','336935','326935',
+        # GMT/Sub/Daytona refs (already partially covered above; explicit for safety)
+        '126600','126603','126660','136660','136668',  # Sea-Dweller family
+        '126900',  # Air-King
     }
     if _ref_base_norm in _TIFFANY_BLOCKED_BASES:
         # Pre-convert remaining OTB signals not yet handled by lines above
@@ -1877,6 +1901,18 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bcelebration\b|\bcele\b', t):
         if has_vi: return 'vi Celebration'
         return 'Celebration'
+    # Palm (standalone named dial — palm tree motif design, its own SKU on DJ refs)
+    # Must be early (before color extraction) since "palm" triggers index-type logic that
+    # would silently drop the result if no color is found
+    _PALM_DIAL_REFS = {'126200','126300','126334','126234'}
+    if re.search(r'\bpalm\b', t) and (_ref_base_norm in _PALM_DIAL_REFS or not ref):
+        if not re.search(r'\bpalm\s*(?:beach|springs|island|trees?\s*island)\b', t):
+            return 'Palm'
+    # Fluted (Fluted Motif — standalone named dial, not just the bezel type)
+    # "fluted motif" or "fluted dial" = explicit dial reference; bare "fluted" is ambiguous
+    _FLUTED_DIAL_REFS = {'126334','126234'}
+    if re.search(r'\bfluted\s*(?:motif|dial)\b', t) and _ref_base_norm in _FLUTED_DIAL_REFS:
+        return 'Fluted'
     # Eisenkiesel (also catches normalized "eisenkiesel" from "iron flint" / "flint dial")
     if re.search(r'\beisenk', t): return 'Eisenkiesel'
     # Aventurine (also catches normalized "aventurine" from "aventurin"/"adventurine")
@@ -2108,7 +2144,10 @@ def extract_dial(text, ref='', raw_ref=''):
             dial = 'Tiffany Blue'  # OP "mint/mint-green" ≈ Tiffany Blue (aqua/teal hue; OP has no Turquoise dial)
         else:
             dial = 'Mint Green'
-    elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
+    elif re.search(r'\bolive\s*green\b|\bolive\b', t):
+        # Day-Date refs use official "Olive Green" name; other refs use generic "Olive"
+        _rb_olv = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+        dial = 'Olive Green' if _rb_olv[:3] in ('228', '128', '118', '218', '279', '278') else 'Olive'
     elif re.search(r'\bemeraldy?\b', t):
         # "Emerald" = Bright Green on Day-Date (casino/emerald green); generic Green elsewhere
         _rb_em = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
