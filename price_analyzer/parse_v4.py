@@ -159,7 +159,7 @@ PATEK_REFS_DB = {
     '5164R': {'model': 'Aquanaut Travel Time', 'family': 'Aquanaut', 'retail': 52260, 'dials': ['Brown'], 'case_mm': 41},
     '5167A': {'model': 'Aquanaut', 'family': 'Aquanaut', 'retail': 27550, 'dials': ['Black', 'Brown', 'Blue'], 'case_mm': 40},
     '5167R': {'model': 'Aquanaut RG', 'family': 'Aquanaut', 'retail': 44490, 'dials': ['Brown'], 'case_mm': 40},
-    '5711/1A': {'model': 'Nautilus Blue', 'family': 'Nautilus', 'retail': 35070, 'dials': ['Blue', 'White', 'Green', 'Olive Green'], 'case_mm': 40, 'discontinued': True},
+    '5711/1A': {'model': 'Nautilus Blue', 'family': 'Nautilus', 'retail': 35070, 'dials': ['Blue', 'White', 'Green', 'Olive Green', 'Tiffany Blue'], 'case_mm': 40, 'discontinued': True},
     '5711/1R': {'model': 'Nautilus RG', 'family': 'Nautilus', 'retail': 89640, 'dials': ['Green'], 'case_mm': 40},
     '5712/1A': {'model': 'Nautilus Moon Phase', 'family': 'Nautilus', 'retail': 44380, 'dials': ['Blue'], 'case_mm': 40},
     '5811/1G': {'model': 'Nautilus Blue WG', 'family': 'Nautilus', 'retail': 69000, 'dials': ['Blue'], 'case_mm': 41},
@@ -1416,7 +1416,7 @@ def _get_ref_price_range(ref):
 DIAL_PATS = [
     (r'\bice\s*blue\b|\bib\b', 'Ice Blue'),
     (r'\bmediterranean\s*blue\b|\bmed\s*blue\b', 'Mediterranean Blue'),
-    (r'\btiffany\b|\bturquoise\b', 'Turquoise Blue'),
+    (r'\btiffany\b|\bturquoise\b|\btiff\b|\bturq\b', 'Tiffany Blue'),
     (r'\bmint\s*green\b|\bmint\b', 'Mint Green'),
     (r'\bolive\s*green\b|\bolive\b', 'Olive Green'),
     (r'\bpistachio\b|\bpis\b', 'Pistachio'),
@@ -1425,7 +1425,7 @@ DIAL_PATS = [
     (r'\baubergine\b|\bviolet\b', 'Aubergine'),
     (r'\bmother[\s-]*of[\s-]*pearl\b|\bmop\b', 'MOP'),
     (r'\brhodium\b', 'Rhodium'),
-    (r'\bsundust\b|\bsun\b', 'Sundust'),
+    (r'\bsundust\b|\bsun\s*dust\b', 'Sundust'),
     (r'\bchocolate\b|\bchoco?\b', 'Chocolate'),
     (r'\bchampagne\b|\bchamp\b', 'Champagne'),
     (r'\bgolden\b', 'Golden'),
@@ -1589,7 +1589,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = text.lower()
     # Separate color abbreviations glued to ref BEFORE normalization (e.g. 116508mete → 116508 mete)
     # Also covers: mete/met=meteorite, yml=YML, tiff=Tiffany, wim=Wimbledon, ib=Ice Blue
-    t = re.sub(r'(\d{5,6})(blk|wht|blu|grn|gry|pnk|cho|slv|polar|mete|met|yml|tiff|wim)\b', r'\1 \2', t)
+    t = re.sub(r'(\d{5,6})(blk|wht|blu|grn|gry|pnk|cho|slv|polar|mete|met|yml|tiff|wim|ib|tb)\b', r'\1 \2', t)
     # Normalize shorthand for dial detection
     t = re.sub(r'\bblk\b', 'black', t)
     t = re.sub(r'\bbk\b', 'black', t)
@@ -1901,10 +1901,14 @@ def extract_dial(text, ref='', raw_ref=''):
     # Standard color extraction (order matters — specific before generic)
     dial = None
     _rb_ice = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
-    _ice_blue_only_refs = {'228206','228236','128236','127236','116506','126506'}
+    _ice_blue_only_refs = {'228206','228236','128236','127236','116506','126506',
+                           '118206','118346','118166','218206','52506'}
     # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
     if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
-    elif re.search(r'\bice\s*blue\b|\bib\b', t): dial = 'Ice Blue'
+    # \bib\b (Ice Blue shorthand) is ref-gated: only fires for known IB-capable refs.
+    # Without gating it would falsely match "IB" in DJ/DD listing text (indices, etc.)
+    elif re.search(r'\bice\s*blue\b', t) or (
+            re.search(r'\bib\b', t) and _rb_ice in _ice_blue_only_refs): dial = 'Ice Blue'
     elif re.search(r'\bice\b', t) and (
             _rb_ice in _ice_blue_only_refs or
             (_valid_dials and 'Ice Blue' in _valid_dials and len(_valid_dials) <= 3)):
@@ -3820,15 +3824,16 @@ def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, se
     elif curr in ('EUR', 'GBP'): actual_region = 'EU'
     elif curr == 'USDT': actual_region = 'US'
     else: actual_region = region
-    # Extract dial — first try full model code mapping, then DIAL_PATS
+    # Extract dial — first try exact model-code mapping (e.g. 5711/1A-018 → Tiffany Blue),
+    # then fall back to extract_dial() which handles all HK/dealer shorthands/abbreviations.
+    # Previously used crude DIAL_PATS here; extract_dial() is dramatically richer:
+    # handles tiff/tb/turq/wim/wimbo/ib/choco/cham/aub/sd/benz/ghost/mete/pn and more.
     dial = ''
     for code, code_dial in _BRAND_MODEL_DIAL.items():
         if code in text:
             dial = code_dial; break
     if not dial:
-        for pat, name in DIAL_PATS:
-            if re.search(pat, text, re.I):
-                dial = name; break
+        dial = extract_dial(text, ref, raw_ref=ref)
     # Validate dial against known dials for this ref
     # Dial synonyms: dealers use these interchangeably
     _dial_synonyms = {
