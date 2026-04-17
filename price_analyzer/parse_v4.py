@@ -1600,7 +1600,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = text.lower()
     # Separate color abbreviations glued to ref BEFORE normalization (e.g. 116508mete → 116508 mete)
     # Also covers: mete/met=meteorite, yml=YML, tiff=Tiffany, wim=Wimbledon, ib=Ice Blue
-    t = re.sub(r'(\d{5,6})(blk|wht|blu|grn|gry|pnk|cho|slv|polar|mete|met|yml|tiff|tif|wim|ib|tb)\b', r'\1 \2', t)
+    t = re.sub(r'(\d{5,6})(blk|wht|blu|grn|gry|pnk|choco|choc|cho|slv|slvr|polar|mete|met|yml|tiff|tif|wim|ib|tb)\b', r'\1 \2', t)
     # Normalize shorthand for dial detection
     t = re.sub(r'\bblk\b', 'black', t)
     t = re.sub(r'\bbk\b', 'black', t)
@@ -1616,14 +1616,16 @@ def extract_dial(text, ref='', raw_ref=''):
     # Wimbledon spelling variants (common dealer typos and truncations)
     t = re.sub(r'\bwimbeldon\b|\bwimbleton\b|\bwimbledone\b|\bwimbledun\b', 'wimbledon', t)
     t = re.sub(r'\bwimbldon\b|\bwimbledo\b|\bwimbledn\b|\bwimbelton\b|\bwimbeldan\b|\bwimbly\b|\bwimble\b', 'wimbledon', t)
+    t = re.sub(r'\bwimed\b|\bwimedo\b|\bwimdon\b|\bwimdo\b|\bwmdn\b', 'wimbledon', t)
     # Wimbledon slash-form shorthands: "champ/grn", "grn/champ", "G/C", "C/G" (HK/SG dealer notation)
     t = re.sub(r'\bchamp(?:agne)?\s*/\s*g(?:r(?:n|een)?)?\b|\bg(?:r(?:n|een)?)?\s*/\s*champ(?:agne)?\b', 'wimbledon', t)
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
-    t = re.sub(r'\bchocolates?\b|\bchoc\b', 'chocolate', t)
+    t = re.sub(r'\bchocolates?\b|\bchoco?\b', 'chocolate', t)
     t = re.sub(r'\bsodalit[eo]?\b|\bsoda\b', 'sodalite', t)  # "soda" = Sodalite shorthand (in synonyms JSON, not in code until now)
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
+    t = re.sub(r'\bslvr\b|\bsilv\b', 'silver', t)  # "slvr"/"silv" = silver shorthand
     t = re.sub(r'\btiger\s*iron\b', '__tigeriron__', t)  # protect before generic tiger→tiger eye
     t = re.sub(r'\btiger\b', 'tiger eye', t)
     t = re.sub(r'__tigeriron__', 'tiger iron', t)
@@ -1760,6 +1762,7 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\begg\b', 'tiffany', t)           # standalone "egg" = robin's egg = Tiffany Blue on OP
         t = re.sub(r'\bjade(?:\s*blue)?\b', 'tiffany', t)  # "jade"/"jade blue" = Tiffany Blue (HK/Asia dealer term)
         t = re.sub(r'\brobin\b', 'tiffany', t)          # standalone "robin" = robin's egg = Tiffany Blue on OP
+        t = re.sub(r'\bteal(?:\s*blue)?\b', 'tiffany', t)  # "teal"/"teal blue" = Tiffany Blue hue on OP refs
     # "DB" shorthand on Deepsea refs = D-Blue gradient dial (not "Dark Blue")
     # Must run after dblue normalization but before color checks
     if _ref_base_norm in {'136660', '116660'}:
@@ -1786,6 +1789,12 @@ def extract_dial(text, ref='', raw_ref=''):
     _TIFFANY_BLOCKED_BASES = {
         '126500','126503','126505','126508','126509','126515','126518','126519','126520',
         '116500','116503','116505','116508','116509','116515','116518','116519','116520',
+        # Datejust 36/41 — no Tiffany Blue dial option; block to prevent false positives
+        '126231','126233','126234','126238',  # DJ36 TT/YG variants (fluted & smooth)
+        '126300','126301','126303',           # DJ41 SS variants
+        '126331','126333','126334',           # DJ36 TT Rose Gold variants
+        # New-gen Datejust (336/326 series) — no Tiffany Blue option
+        '336235','336238','336935','326935',
     }
     if _ref_base_norm in _TIFFANY_BLOCKED_BASES:
         # Pre-convert remaining OTB signals not yet handled by lines above
@@ -1942,7 +1951,7 @@ def extract_dial(text, ref='', raw_ref=''):
                          '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bnewman\b|\bpnd\b', t): return 'Paul Newman'
+    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
