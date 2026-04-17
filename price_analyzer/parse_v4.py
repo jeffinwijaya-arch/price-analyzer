@@ -1678,6 +1678,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*(?:tiff(?:any)?|tb)\b|\bgenuine\s*(?:tiff(?:any)?|tb)\b|\bauth(?:entic)?\s*(?:tiff(?:any)?|tb)\b|\breal\s*(?:tiff(?:any)?|tb)\b|\bgen(?:uine)?\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
+    # Tiffany signed/engraved caseback = OTB — "Tiffany signed", "T&Co engraved", "inscribed Tiffany"
+    t = re.sub(r'\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
+    t = re.sub(r'\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b|\binscrip?t(?:ion)?\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
+    # "Tiffany Edition" / "Tiffany Special Edition" / "Tiffany Exclusive" = OTB
+    t = re.sub(r'\btiff(?:any)?\s*(?:special\s*)?edition\b|\btiff(?:any)?\s*exclusive\b', 'official tiffany', t)
+    # "Retailed at Tiffany" / "sold by/through Tiffany" = sold through T&Co = OTB
+    t = re.sub(r'\bretail(?:ed)?\s*(?:at|by|through|via)\s*(?:tiff(?:any)?|t\.?co)\b', 'official tiffany', t)
+    t = re.sub(r'\bsold\s*(?:at|by|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
     # Tiffany & Co collaboration / sole-agent retailer = Official Tiffany Blue
     t = re.sub(r'\btiff(?:any)?\s*collab(?:oration)?\b|\bcollab(?:oration)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
@@ -1707,6 +1716,13 @@ def extract_dial(text, ref='', raw_ref=''):
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '116600', '136659'}:
         t = re.sub(r'\bsd\b', 'sundust', t)
+    # "tb" on Day-Date refs (128/228/118) = Turquoise dial — NOT Tiffany Blue.
+    # DDs have a "Turquoise" dial option; dealers write "TB" for "Turquoise Blue" not "Tiffany Blue".
+    # Must normalise BEFORE the tiffany/OTB detection block so the turquoise path fires instead.
+    # Also applies to 336238 (new-gen DJ36 YG) which has Turquoise but no Tiffany Blue option.
+    # (_sd_ref_base computed just above; same value as _ref_base_norm which is defined later)
+    if _sd_ref_base[:3] in ('128', '228', '118') or _sd_ref_base in {'336238'}:
+        t = re.sub(r'\btb\b', 'turquoise', t)
     # ── Additional dial synonym normalizations ──
     # Champagne synonyms (dealer terms for warm cream/ivory dials; Rolex official = champagne)
     t = re.sub(r'\bivory\b|\bivoire\b|\becru\b|\bstraw\b|\bbutterscotch\b', 'champagne', t)
@@ -2043,7 +2059,13 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\btiffany\s*co\s*blue\b|\bofficial\s*tiff\s*blue\b'
                    r'|\btiff(?:any)?\s*(?:at\s*)?6\b'
                    r'|\btiff(?:any)?\s*retail(?:ed|er)?\b'
-                   r'|\btiff(?:any)?\s*(?:case)?back\b', t):
+                   r'|\btiff(?:any)?\s*(?:case)?back\b'
+                   r'|\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b'
+                   r'|\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b'
+                   r'|\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?)\b'
+                   r'|\btiff(?:any)?\s*(?:special\s*)?edition\b|\btiff(?:any)?\s*exclusive\b'
+                   r'|\bretail(?:ed)?\s*(?:at|by|through|via)\s*(?:tiff(?:any)?|t\.?co)\b'
+                   r'|\bsold\s*(?:at|by|through|via)\s*tiff(?:any)?\b', t):
         # Official Tiffany Blue = Tiffany & Co stamped dial (massive premium vs plain TB)
         # DD refs (128/228) don't carry OTB — remap to their actual Turquoise dial
         _ref_base_otb = re.match(r'(\d+)', ref) if ref else None
@@ -2064,8 +2086,8 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_t = _ref_base_t.group(1) if _ref_base_t else ''
         if _rb_t.startswith('128') or _rb_t.startswith('228') or _rb_t.startswith('118'):
             dial = 'Turquoise'
-        elif _rb_t == '126200':
-            # DJ36 SS: Rolex official is "Turquoise" (OTB already handled above)
+        elif _rb_t in {'126200', '336238'}:
+            # DJ36 SS / new-gen DJ36 YG: Rolex official dial is "Turquoise" (no Tiffany Blue option)
             dial = 'Turquoise'
         else:
             # All OP/DJ/other refs: "tiffany"/"tiff"/"tb" = Tiffany Blue
