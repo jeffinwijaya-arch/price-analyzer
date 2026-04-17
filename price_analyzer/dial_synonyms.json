@@ -68,11 +68,24 @@
         "Intense white",
         "Weiss",
         "Bianco",
-        "Blanc"
+        "Blanc",
+        "Arctic White",
+        "Polar White"
+    ],
+    "Yellow": [
+        "Lemon",
+        "Lemon Yellow",
+        "Canary",
+        "Canary Yellow",
+        "Saffron",
+        "Buttercup",
+        "Buttercup Yellow"
     ],
     "Green": [
         "Verde",
-        "Vert"
+        "Vert",
+        "Forest Green",
+        "Forest"
     ],
     "Blue": [
         "Dark Blue",
@@ -254,7 +267,16 @@
         "Retailed by Tiffany",
         "Sold at Tiffany",
         "Sold by Tiffany",
-        "Sold Through Tiffany"
+        "Sold Through Tiffany",
+        "Tiffany Store",
+        "Tiffany Shop",
+        "Tiffany Direct",
+        "Tiffany Authorized",
+        "Tiffany Authorised",
+        "T&Co Authorized",
+        "T&Co Authorised",
+        "T&Co Store",
+        "T&Co Direct"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -413,7 +435,9 @@
         "Olv Grn",
         "Olive-Green",
         "Verde Oliva",
-        "Olivgrün"
+        "Olivgrün",
+        "Sage Green",
+        "Sage"
     ],
     "Red": [
         "Scarlet",
@@ -421,7 +445,9 @@
         "Claret",
         "Raspberry",
         "Rouge",
-        "Rosso"
+        "Rosso",
+        "Vermillion",
+        "Carmine"
     ],
     "Salmon": [
         "Saumon",

@@ -1649,6 +1649,18 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bcornel(?:ian)?\b|\bcornerian\b', 'carnelian', t)  # Cornelian = Carnelian
     t = re.sub(r'\biron\s*flint\b|\bflint\s*(?:stone\s*)?dial\b', 'eisenkiesel', t)  # Iron Flint
     t = re.sub(r'\bcotton\s*candy\b', 'candy pink', t)  # Cotton Candy = Candy Pink dial
+    # Additional shade/hue shorthands used by dealers globally
+    t = re.sub(r'\blemon(?:\s*yellow)?\b', 'yellow', t)         # Lemon/Lemon Yellow = Yellow OP/DJ dial
+    t = re.sub(r'\bcanary(?:\s*yellow)?\b', 'yellow', t)        # Canary/Canary Yellow = Yellow dial
+    t = re.sub(r'\bsaffron\b', 'yellow', t)                     # Saffron = warm yellow
+    t = re.sub(r'\bbuttercup(?:\s*yellow)?\b', 'yellow', t)     # Buttercup Yellow = Yellow
+    t = re.sub(r'\bforest\s*green\b', 'green', t)               # Forest Green = Green
+    t = re.sub(r'\bsage\s*green\b', 'olive', t)                 # Sage Green ≈ Olive (muted green; ref-gated → Olive Green or Olive)
+    t = re.sub(r'\barctic\s*white\b', 'white', t)               # Arctic White = White (Explorer II polar)
+    t = re.sub(r'\bvermill?i[oa]n\b|\bcarmine\b', 'red', t)    # Vermillion/Carmine = Red
+    t = re.sub(r'\bindigo(?:\s*blue)?\b', 'blue', t)            # Indigo/Indigo Blue = Blue
+    t = re.sub(r'\bazure(?:\s*blue)?\b', 'blue', t)             # Azure/Azure Blue = Blue
+    t = re.sub(r'\bfuchsia\b|\bmagenta\b', 'pink', t)           # Fuchsia/Magenta ≈ Pink
     # Dealer nicknames → dial color
     t = re.sub(r'\bjohn\s*mayer\b', 'green', t)  # John Mayer = green Daytona
     t = re.sub(r'\bleman\b|\ble\s*mans?\b', 'black', t)  # Le Mans = black Daytona YG
@@ -1707,8 +1719,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*papers?\b|\btiff(?:any)?\s*receipt\b|\btiff(?:any)?\s*docs?\b', 'official tiffany', t)
     # "Tiffany caseback" (the physical stamp on case back) = OTB
     t = re.sub(r'\btiff(?:any)?\s*(?:case\s*)?back\b', 'official tiffany', t)
-    # "Tiffany retailer" / "Tiffany only" / "Tiffany boutique" = sold exclusively through T&Co
-    t = re.sub(r'\btiff(?:any)?\s*retailer\b|\btiff(?:any)?\s*boutique\b|\btiff(?:any)?\s*only\b', 'official tiffany', t)
+    # "Tiffany retailer/boutique/store/shop/only/direct/authorized" = sold exclusively through T&Co
+    t = re.sub(r'\btiff(?:any)?\s*(?:retailer|boutique|only|store|shop|direct|authorized|authorised)\b', 'official tiffany', t)
+    # "T&Co authorized" / "T&Co dealer" = OTB provenance signal
+    t = re.sub(r'\bt\s*&\s*co\s*(?:authorized|authorised|dealer|only|store|direct)\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -2081,7 +2095,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # \bib\b (Ice Blue shorthand) is ref-gated: only fires for known IB-capable refs.
     # Without gating it would falsely match "IB" in DJ/DD listing text (indices, etc.)
     elif re.search(r'\bice\s*blue\b', t) or (
-            re.search(r'\bib\b', t) and _rb_ice in _ice_blue_only_refs): dial = 'Ice Blue'
+            re.search(r'\bib\b|\bglacier\b', t) and _rb_ice in _ice_blue_only_refs): dial = 'Ice Blue'
     elif re.search(r'\bice\b', t) and (
             _rb_ice in _ice_blue_only_refs or
             (_valid_dials and 'Ice Blue' in _valid_dials and len(_valid_dials) <= 3)):
@@ -2229,11 +2243,14 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_gold = re.match(r'(\d+)', ref)
         if _rb_gold and _rb_gold.group(1)[:3] in ('126', '128', '228', '116', '118', '278', '279', '336'):
             dial = 'Champagne'
-    # "Coral" on OP = Red (Rolex official is "coral red" but dealers call it "Red")
+    # "Coral" on OP: remap to "Red" ONLY if the ref does not list "Coral" as a distinct official dial.
+    # OP refs like 126000, 124300, 277200 have BOTH "Coral" AND "Red" as separate official dials —
+    # keeping the distinction matters for accurate pricing.
     if dial == 'Coral' and ref:
         _rb_coral = re.match(r'(\d+)', ref)
         if _rb_coral and _rb_coral.group(1)[:3] in ('124', '126', '277'):
-            dial = 'Red'
+            if 'Coral' not in _valid_dials:
+                dial = 'Red'
     # "Rhodium" → "Grey" (Rolex uses both, industry prefers Grey)
     if dial and dial.startswith('Rhodium'):
         dial = dial.replace('Rhodium', 'Grey')
