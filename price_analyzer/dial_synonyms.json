@@ -41,7 +41,10 @@
         "Mocha",
         "Espresso",
         "Cognac",
-        "Coffee"
+        "Coffee",
+        "Caramel",
+        "Cafe",
+        "Cafe au Lait"
     ],
     "Chocolate Diamond": [
         "Brown Diamond"
@@ -135,6 +138,20 @@
         "OT/B",
         "Tiffany Stamp",
         "Tiffany Stamped",
+        "Tiff Stamp",
+        "Tiff Stamped",
+        "Stamped Tiff",
+        "Stamped Tiffany",
+        "Legit Tiff",
+        "Legit Tiffany",
+        "Verified Tiff",
+        "Verified Tiffany",
+        "Confirmed Tiff",
+        "Confirmed Tiffany",
+        "Tiffany x Rolex",
+        "Rolex x Tiffany",
+        "Tiffany n Co",
+        "Tiff n Co",
         "Tiffany & Co Blue",
         "Tiffany & Co",
         "Tiffany and Co",
@@ -155,7 +172,6 @@
         "OfficialTB",
         "Off. Tiffany",
         "Off Tiffany",
-        "Tiff Stamp",
         "Original Tiffany",
         "Genuine Tiffany",
         "Authentic Tiffany",
@@ -288,7 +304,11 @@
         "Cotton Candy",
         "Soft Pink",
         "Blush Pink",
-        "Pastel Pink"
+        "Pastel Pink",
+        "Bubblegum",
+        "Bubblegum Pink",
+        "Bubble Gum",
+        "Bubble Gum Pink"
     ],
     "Olive Green": [
         "Olive",
@@ -423,7 +443,9 @@
         "Bright-Green",
         "BrGreen",
         "Brt Green",
-        "Brt Grn"
+        "Brt Grn",
+        "Emerald Green",
+        "Emerald"
     ],
     "Carnelian": [
         "Cornelian",

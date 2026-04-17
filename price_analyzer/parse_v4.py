@@ -1650,6 +1650,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*tiff(?:any)?\b|\bgenuine\s*tiff(?:any)?\b|\bauth(?:entic)?\s*tiff(?:any)?\b|\breal\s*tiff(?:any)?\b|\bgen(?:uine)?\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\blegit\s*tiff(?:any)?\b|\bverif(?:ied)?\s*tiff(?:any)?\b|\bconfirm(?:ed)?\s*tiff(?:any)?\b|\bstamped\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
+    t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
     # NG (standalone) = MOP dial + diamond markers — common HK shorthand for NG suffix ref
     # e.g. "279381 RBR NG" → MOP; distinct from N1/N12 (new, month code)
@@ -1836,8 +1839,9 @@ def extract_dial(text, ref='', raw_ref=''):
     _WIM_REFS = {
         '126300','126301','126303','126331','126333','126334',
         '126200','126201','126203','126231','126233','126234',
+        '126238',  # DJ36 YG — also offers Wimbledon
         '126283','126284','116300','116333','116334','116234',
-        '116233',  # prev-gen DJ36 TT — also offers Wimbledon
+        '116233','116200','116201','116203','116231','116238',  # prev-gen DJ36 SS/TT/YG
     }
     _ref_base_wim = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t): return 'Wimbledon'
@@ -1921,7 +1925,13 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\botb\b|\bot\/b\b|\botbl\b|\bofficialtb\b'
                    r'|\bofficial\s*tiff(?:any)?\b|\btiff(?:any)?\s*official\b'
                    r'|\bofficial\s*tb\b|\boff\.?\s*tiff(?:any)?\b'
-                   r'|\btiffany\s*stamp(?:ed)?\b'
+                   r'|\btiffany\s*stamp(?:ed)?\b|\btiff\s*stamp(?:ed)?\b'
+                   r'|\bstamped\s*tiff(?:any)?\b'
+                   r'|\blegit\s*tiff(?:any)?\b'
+                   r'|\bverif(?:ied)?\s*tiff(?:any)?\b'
+                   r'|\bconfirm(?:ed)?\s*tiff(?:any)?\b'
+                   r'|\btiff(?:any)?\s*[x×]\s*rolex\b|\brolex\s*[x×]\s*tiff(?:any)?\b'
+                   r'|\btiff(?:any)?\s*n\s*co\b'
                    r'|\btiffany\s*&\s*co\b|\btiff\s*&\s*co\b|\bt\s*&\s*co\b'
                    r'|\btiffany\s*and\s*co\b|\btiff\s*co\b|\btiffany\s*co\b'
                    r'|\boff\s*tiff\s*blue\b|\boffi\s*tiffany\b'
@@ -1960,8 +1970,12 @@ def extract_dial(text, ref='', raw_ref=''):
         else:
             dial = 'Mint Green'
     elif re.search(r'\bolive\s*green\b|\bolive\b', t): dial = 'Olive'
+    elif re.search(r'\bemeraldy?\b', t):
+        # "Emerald" = Bright Green on Day-Date (casino/emerald green); generic Green elsewhere
+        _rb_em = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+        dial = 'Bright Green' if _rb_em[:3] in ('228', '128', '118') else 'Green'
     elif re.search(r'\bpistachio\b|\bpis\b', t): dial = 'Pistachio'
-    elif re.search(r'\bcandy\s*pink\b|\bbaby\s*pink\b|\bblush\s*pink\b|\bpastel\s*pink\b|\bsoft\s*pink\b', t): dial = 'Candy Pink'
+    elif re.search(r'\bcandy\s*pink\b|\bcandy\s*p\b|\bbaby\s*pink\b|\bblush\s*pink\b|\bpastel\s*pink\b|\bsoft\s*pink\b', t): dial = 'Candy Pink'
     elif re.search(r'\blavender\b|\blave?\b|\blanv', t): dial = 'Lavender'
     elif re.search(r'\baubergine\b|\bviolet\b', t): dial = 'Aubergine'
     elif re.search(r'\bgrape\b', t): dial = 'Grape'
