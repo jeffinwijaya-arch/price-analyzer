@@ -3,7 +3,10 @@
     "Grey": [
         "Slate",
         "Rhodium",
-        "Steel"
+        "Steel",
+        "Grau",
+        "Gris",
+        "Grigio"
     ],
     "Grey Diamond": [
         "Rhodium Diamond",
@@ -60,13 +63,27 @@
         "Brown Stick"
     ],
     "White": [
-        "Intense white"
+        "Intense white",
+        "Weiss",
+        "Bianco",
+        "Blanc"
+    ],
+    "Green": [
+        "Verde",
+        "Vert"
     ],
     "Blue": [
         "Dark Blue",
         "Cobalt",
         "Navy",
-        "Navy Blue"
+        "Navy Blue",
+        "Bleu",
+        "Blau"
+    ],
+    "Black": [
+        "Noir",
+        "Nero",
+        "Schwarz"
     ],
     "Sundust Diamond": [
         "Sundust set with diamonds"
@@ -285,7 +302,12 @@
         "Wim Dial",
         "Champagne Green Slate",
         "Green Champagne Slate",
-        "Slate Champagne Green"
+        "Slate Champagne Green",
+        "C/G",
+        "G/C",
+        "Champ/Grn",
+        "Grn/Champ",
+        "CGS"
     ],
     "Med Blue": [
         "Mediterranean Blue",

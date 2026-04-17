@@ -1614,6 +1614,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # Wimbledon spelling variants (common dealer typos and truncations)
     t = re.sub(r'\bwimbeldon\b|\bwimbleton\b|\bwimbledone\b|\bwimbledun\b', 'wimbledon', t)
     t = re.sub(r'\bwimbldon\b|\bwimbledo\b|\bwimbledn\b|\bwimbelton\b|\bwimbeldan\b|\bwimbly\b|\bwimble\b', 'wimbledon', t)
+    # Wimbledon slash-form shorthands: "champ/grn", "grn/champ", "G/C", "C/G" (HK/SG dealer notation)
+    t = re.sub(r'\bchamp(?:agne)?\s*/\s*g(?:r(?:n|een)?)?\b|\bg(?:r(?:n|een)?)?\s*/\s*champ(?:agne)?\b', 'wimbledon', t)
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
     t = re.sub(r'\bchocolates?\b|\bchoc\b', 'chocolate', t)
@@ -1674,6 +1676,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*collab(?:oration)?\b|\bcollab(?:oration)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bunofficiale?\s*tiff(?:any)?\b|\baftermarket\s*tiff(?:any)?\b|\breplica\s*tiff(?:any)?\b', 'tiffany', t)  # aftermarket/replica = plain tiffany, NOT official
+    # Reverse-order parenthetical OTB: "Tiffany (official)", "TB (otb)", "Tiff (auth)", etc.
+    t = re.sub(r'\btiff(?:any)?\s*\((?:orig(?:inal)?|auth(?:entic)?|genuine|real|off?(?:icial)?|stamp(?:ed)?|otb|t\.?co|t\s*&\s*co)\)', 'official tiffany', t)
+    t = re.sub(r'\btb\s*\((?:orig(?:inal)?|auth(?:entic)?|genuine|real|off?(?:icial)?|stamp(?:ed)?|otb|t\.?co|t\s*&\s*co)\)', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1700,6 +1705,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bplum\b|\bprune\b', 'aubergine', t)
     # Blue variants (cobalt/navy = standard blue in Rolex context)
     t = re.sub(r'\bcobalt\b|\bnavy\b', 'blue', t)
+    # Multilingual color normalizations (French/German/Italian/Spanish dealers)
+    t = re.sub(r'\bnoir\b|\bnero\b|\bschwarz\b', 'black', t)       # FR/IT/DE black
+    t = re.sub(r'\bbleu\b|\bblau\b', 'blue', t)                    # FR/DE blue
+    t = re.sub(r'\brouge\b|\brosso\b', 'red', t)                   # FR/IT red
+    t = re.sub(r'\bweiss\b|\bbianco\b|\bblanc\b', 'white', t)     # DE/IT/FR white
+    t = re.sub(r'\bgrau\b|\bgris\b|\bgrigio\b', 'grey', t)        # DE/FR/IT grey
+    t = re.sub(r'\bverde\b|\bvert\b', 'green', t)                  # IT+ES/FR green
+    t = re.sub(r'\bmarron\b|\bbraun\b', 'chocolate', t)            # FR/DE brown
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
     t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b|\bgradient\s*blue\b|\bdeepsea\s*blue\b', 'd-blue', t)  # normalise d-blue variants
     # ── Unambiguous Tiffany Blue synonyms (watch-market specific) ──
@@ -1735,6 +1748,25 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bpink\b', 'candy pink', t)
     # Separate color glued to ref: "116508green" → "116508 green"
     t = re.sub(r'(\d{5,6})(green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|chocolate|meteorite|panda|ceramic|giraffe|grossular|polar|yml|tiffany|wimbledon)', r'\1 \2', t)
+    # ── Suppress tiffany/tiff/tb on Daytona refs — Daytona has no Tiffany Blue dial ──
+    # OTB-grade signals were already pre-normalized to "official tiffany" (lines above).
+    # For remaining OTB detector-only patterns, pre-convert them here before stripping.
+    _TIFFANY_BLOCKED_BASES = {
+        '126500','126503','126505','126508','126509','126515','126518','126519','126520',
+        '116500','116503','116505','116508','116509','116515','116518','116519','116520',
+    }
+    if _ref_base_norm in _TIFFANY_BLOCKED_BASES:
+        # Pre-convert remaining OTB signals not yet handled by lines above
+        t = re.sub(r'\botb\b|\bt\.co\b|\btco\b'
+                   r'|\btiffany\s*&\s*co\b|\btiffany\s*and\s*co\b|\btiff\s*&\s*co\b'
+                   r'|\btiffany\s*[x\xd7]\s*rolex\b|\brolex\s*[x\xd7]\s*tiffany\b',
+                   '__otb__', t)
+        # Also protect "official tiffany" already written by lines 1671-1675 and reverse-parens above
+        t = re.sub(r'\bofficial\s*tiffany\b', '__otb__', t)
+        # Strip standalone tiffany/tiff/tb — contextual mention on non-TB ref
+        t = re.sub(r'\btiffany(?:\s*blue)?\b|\btiff\b|\btb\b', ' ', t)
+        # Restore OTB placeholder so detection block below can fire
+        t = re.sub(r'__otb__', 'official tiffany', t)
     ref_upper = ref.upper() if ref else ''
     raw_ref_upper = (raw_ref or '').upper().strip()
 
@@ -1901,6 +1933,10 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bwm\b|\bwb\b|\bwbl\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
     # "slate green" / "green slate" on DJ refs = Wimbledon (no plain slate-green DJ dial exists)
     if re.search(r'\bslate\s*green\b|\bgreen\s*slate\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
+    # "G/C" or "C/G" (Green/Champagne slash) on known Wimbledon refs = Wimbledon
+    if re.search(r'\bg\s*/\s*c\b|\bc\s*/\s*g\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
+    # "CGS" (Champagne-Green-Slate) dealer abbreviation
+    if re.search(r'\bcgs\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
 
     # Diamond dial variants — "blue diamond", "diamond blue", "grey diamond", etc.
     # These are dials with diamond hour markers + specific color (common on DJ/DD)
