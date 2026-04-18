@@ -92,7 +92,8 @@
         "Buttercup Yellow",
         "Mustard",
         "Mustard Yellow",
-        "Goldenrod"
+        "Goldenrod",
+        "Ylw"
     ],
     "Green": [
         "Verde",
@@ -186,7 +187,12 @@
         "Teal Blue",
         "Lite Blue",
         "Lite Bl",
-        "Sky Bl"
+        "Sky Bl",
+        "Aqua",
+        "Aqua Dial",
+        "Jade Dial",
+        "Egg Dial",
+        "Ciel Dial"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -340,7 +346,10 @@
         "TB Edition",
         "TB Exclusive",
         "TB at 6",
-        "TB Six"
+        "TB Six",
+        "T/Co",
+        "TiffCo",
+        "Tiff/Co"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -449,7 +458,8 @@
         "Meteoryte",
         "Met",
         "Meteoritique",
-        "Siderite"
+        "Siderite",
+        "Mtr"
     ],
     "Grossular": [
         "Giraffe",
@@ -574,7 +584,11 @@
         "Amber Dial",
         "Amber",
         "Amber Tone",
-        "Amber Gold"
+        "Amber Gold",
+        "Sndk",
+        "Sdst",
+        "Sdt",
+        "Sndst"
     ],
     "Pistachio": [
         "Pistachio Green",
@@ -692,7 +706,10 @@
         "YM Lacquer",
         "YM Yellow",
         "Lac Yellow",
-        "Lacquer Yellow"
+        "Lacquer Yellow",
+        "Y.M.L.",
+        "Y.M.L",
+        "YML Dial"
     ],
     "Puzzles": [
         "Puzzle",

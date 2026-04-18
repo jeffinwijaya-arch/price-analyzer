@@ -1664,6 +1664,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bcanary(?:\s*yellow)?\b', 'yellow', t)        # Canary/Canary Yellow = Yellow dial
     t = re.sub(r'\bsaffron\b', 'yellow', t)                     # Saffron = warm yellow
     t = re.sub(r'\bbuttercup(?:\s*yellow)?\b', 'yellow', t)     # Buttercup Yellow = Yellow
+    t = re.sub(r'\bylw\b', 'yellow', t)                          # "ylw" = Yellow shorthand (Asian dealers)
     t = re.sub(r'\bforest\s*green\b', 'green', t)               # Forest Green = Green
     t = re.sub(r'\bsage\s*green\b', 'olive', t)                 # Sage Green ≈ Olive (muted green; ref-gated → Olive Green or Olive)
     t = re.sub(r'\bkhaki(?:\s*green)?\b', 'olive', t)           # Khaki/Khaki Green = military muted olive → Olive
@@ -1684,9 +1685,11 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bsun\b(?!\s*(?:dust|shine|set|burst|ray|light|day))', 'sundust', t)
     t = re.sub(r'\bsund\b', 'sundust', t)  # "sund" shorthand for Sundust (HK/Asia dealers)
     t = re.sub(r'\bsunstone\b', 'sundust', t)  # "Sunstone" = Sundust (Asian dealer alternate name)
+    t = re.sub(r'\bsndk\b|\bsdst\b|\bsdt\b|\bsndst\b', 'sundust', t)  # Asian/dealer shorthand variants for Sundust
     t = re.sub(r'\bpikachu\b', 'yml', t)  # Pikachu = YML (same dial)
     # Yellow Mineral Lacquer longhand phrases → yml (for dealers who write the full name)
     t = re.sub(r'\byellow\s*mineral(?:\s*lacquer)?\b|\byellow\s*lacquer\b|\bmineral\s*(?:lacquer\s*)?yellow\b|\blac(?:quer)?\s*yellow\b|\bym\s*lacquer\b', 'yml', t)
+    t = re.sub(r'\by\.m\.l\.?\b', 'yml', t)  # "Y.M.L." dotted abbreviation form
     t = re.sub(r'\bjubilee\s*(?:motif|dial|pattern)\b', 'celebration', t)  # Jubilee Motif = Celebration dial
     t = re.sub(r'\bbarbie\b', 'pink', t)  # Barbie = pink dial Daytona
     t = re.sub(r'\bbatman\b', 'black', t)  # Batman = black dial GMT
@@ -1721,6 +1724,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Tiffany & Co collaboration / sole-agent retailer = Official Tiffany Blue
     t = re.sub(r'\btiff(?:any)?\s*collab(?:oration)?\b|\bcollab(?:oration)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\btiff(?:any)?[-_]co\b|\bt[-_]co\b', 'official tiffany', t)  # "Tiffany-co"/"T-co" hyphen variant = T&Co = OTB
+    t = re.sub(r'\bt\/co\b', 'official tiffany', t)  # "T/Co" slash variant = T&Co = OTB
     t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bunofficiale?\s*tiff(?:any)?\b|\baftermarket\s*tiff(?:any)?\b|\breplica\s*tiff(?:any)?\b', 'tiffany', t)  # aftermarket/replica = plain tiffany, NOT official
     # Reverse-order parenthetical OTB: "Tiffany (official)", "TB (otb)", "Tiff (auth)", etc.
@@ -1881,7 +1885,7 @@ def extract_dial(text, ref='', raw_ref=''):
     _ref_base_norm = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _ref_base_norm in _OP_TIFF_REFS:
         t = re.sub(r'\blight\s*blue\b|\bbaby\s*blue\b|\bsky\s*blue\b|\bpowder\s*blue\b|\bpale\s*blue\b|\baquamarin(?:e)?\b', 'tiffany', t)
-        t = re.sub(r'\baqua\s*(?:blue|green)?\b', 'tiffany', t)  # "aqua"/"aqua blue" = Tiffany Blue on OP refs
+        t = re.sub(r'\baqua(?:\s*(?:blue|green))?\b', 'tiffany', t)  # "aqua"/"aqua blue"/"aqua green" = Tiffany Blue on OP refs
         t = re.sub(r'\begg\b', 'tiffany', t)           # standalone "egg" = robin's egg = Tiffany Blue on OP
         t = re.sub(r'\bjade(?:\s*blue)?\b', 'tiffany', t)  # "jade"/"jade blue" = Tiffany Blue (HK/Asia dealer term)
         t = re.sub(r'\brobin\b', 'tiffany', t)          # standalone "robin" = robin's egg = Tiffany Blue on OP
@@ -1909,6 +1913,7 @@ def extract_dial(text, ref='', raw_ref=''):
                        '126719'}     # GMT WG Pepsi bare ref — Meteorite option exists
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
+        t = re.sub(r'\bmtr\b', 'meteorite', t)  # "mtr" = meteorite shorthand (HK dealers)
     # ── Ref-gated Pink → Candy Pink (OP/31 refs where only Candy Pink exists, not plain Pink) ──
     # For these refs dealers say "pink" but Rolex's official name is "Candy Pink"
     _ONLY_CANDY_PINK_REFS = {'124300', '277200', '276200', '134300'}
