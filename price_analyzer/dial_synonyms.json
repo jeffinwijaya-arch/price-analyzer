@@ -93,7 +93,9 @@
         "Navy",
         "Navy Blue",
         "Bleu",
-        "Blau"
+        "Blau",
+        "Cerulean",
+        "Azurean"
     ],
     "Black": [
         "Noir",
@@ -139,6 +141,9 @@
         "T-Blue",
         "T/B",
         "T.B.",
+        "T.B",
+        "Eau de Nil",
+        "Eau Nil",
         "Tiff-Blue",
         "Tiffany-Blue",
         "Tifb",
@@ -501,7 +506,30 @@
         "Auber",
         "Aubergine Dial",
         "Plum",
-        "Prune"
+        "Prune",
+        "Amethyst",
+        "Ametrine",
+        "Bordeaux",
+        "Burgundy"
+    ],
+    "Lavender": [
+        "Lilac",
+        "Lilas",
+        "Mauve",
+        "Lavande",
+        "Lavanda"
+    ],
+    "Mint Green": [
+        "Celadon",
+        "Celadon Green",
+        "Mint",
+        "Mint Dial"
+    ],
+    "Sundust": [
+        "Sund",
+        "Sun Dial",
+        "Suntone",
+        "Sun Dust"
     ],
     "Pistachio": [
         "Pistachio Green",

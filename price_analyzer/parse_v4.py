@@ -1669,9 +1669,11 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bavocado\b', 'green', t)  # Avocado = green AP Offshore Diver
     t = re.sub(r'\bvampire\b', 'blue', t)  # Vampire = blue AP Offshore Chrono
     t = re.sub(r'\bcho\b', 'chocolate', t)
+    t = re.sub(r'\bracing\s*(?:green|grn)\b', 'green', t)  # Racing Green = green Daytona dealer term
     # "sun" alone = sundust for Daytona RG (116515, 126515)
     # Don't match "sunshine", "sunset", "sunburst", "sundust" (already correct)
     t = re.sub(r'\bsun\b(?!\s*(?:dust|shine|set|burst|ray|light|day))', 'sundust', t)
+    t = re.sub(r'\bsund\b', 'sundust', t)  # "sund" shorthand for Sundust (HK/Asia dealers)
     t = re.sub(r'\bpikachu\b', 'yml', t)  # Pikachu = YML (same dial)
     # Yellow Mineral Lacquer longhand phrases → yml (for dealers who write the full name)
     t = re.sub(r'\byellow\s*mineral(?:\s*lacquer)?\b|\byellow\s*lacquer\b|\bmineral\s*(?:lacquer\s*)?yellow\b|\blac(?:quer)?\s*yellow\b|\bym\s*lacquer\b', 'yml', t)
@@ -1787,8 +1789,11 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bscarlet\b|\bcrimson\b|\bclaret\b|\braspberry\b', 'red', t)
     # Aubergine/purple variants
     t = re.sub(r'\bplum\b|\bprune\b', 'aubergine', t)
+    t = re.sub(r'\bamethyst\b|\bametrine\b', 'aubergine', t)       # Amethyst/Ametrine = purple stone → Aubergine
+    t = re.sub(r'\bbordeaux\b|\bburgund(?:y|i)?\b', 'aubergine', t)  # Bordeaux/Burgundy = deep purple → Aubergine
     # Blue variants (cobalt/navy = standard blue in Rolex context)
     t = re.sub(r'\bcobalt\b|\bnavy\b', 'blue', t)
+    t = re.sub(r'\bcerulean\b|\bazurean\b', 'blue', t)             # Cerulean/Azurean = sky-blue → Blue
     # Multilingual color normalizations (French/German/Italian/Spanish dealers)
     t = re.sub(r'\bnoir\b|\bnero\b|\bschwarz\b', 'black', t)       # FR/IT/DE black
     t = re.sub(r'\bbleu\b|\bblau\b', 'blue', t)                    # FR/DE blue
@@ -1797,6 +1802,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bgrau\b|\bgris\b|\bgrigio\b', 'grey', t)        # DE/FR/IT grey
     t = re.sub(r'\bverde\b|\bvert\b', 'green', t)                  # IT+ES/FR green
     t = re.sub(r'\bmarron\b|\bbraun\b', 'chocolate', t)            # FR/DE brown
+    t = re.sub(r'\blilac\b|\blilas\b|\bmauve\b', 'lavender', t)   # English/FR lilac/mauve → Lavender
+    t = re.sub(r'\bceladon\b', 'mint green', t)                    # Celadon = pale grey-green → Mint Green
+    t = re.sub(r'\beau\s*de\s*nil\b|\beau\s*nil\b', 'tiffany', t)  # Eau de nil = pale blue-green → Tiffany on OP refs
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
     t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b|\bgradient\s*blue\b|\bdeepsea\s*blue\b', 'd-blue', t)  # normalise d-blue variants
     # ── Unambiguous Tiffany Blue synonyms (watch-market specific) ──
@@ -1807,7 +1815,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck\s*egg(?:\s*blue)?\b", 'tiffany', t)
     t = re.sub(r'\bceleste\b', 'tiffany', t)        # "celeste" = Tiffany Blue in watch market
     t = re.sub(r'\bflamingo\s*blue\b|\bcandy\s*blue\b', 'tiffany', t)
-    t = re.sub(r'\bt[/-]blue\b|\bt\/b\b|\bt\.b\.|\bt\.blue\b|\bt\s+blue\b', 'tiffany', t)  # T-blue / T/blue / T/B / T.B. / T.Blue / T Blue
+    t = re.sub(r'\bt[/-]blue\b|\bt\/b\b|\bt\.b\.?|\bt\.blue\b|\bt\s+blue\b', 'tiffany', t)  # T-blue / T/blue / T/B / T.B. / T.B / T.Blue / T Blue
     t = re.sub(r'\btifb\b|\btifblu\b|\btiffanya\b', 'tiffany', t)
     # Ref-gated ambiguous light-blue → Tiffany Blue (OP refs have no other light-blue option)
     _OP_TIFF_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
@@ -1834,7 +1842,11 @@ def extract_dial(text, ref='', raw_ref=''):
                        '126505','116505','126515','116515','126509','116509',
                        '228396','128396','52509',
                        '218235','118208','118235','116139',
-                       '226667'}  # YM37 Oystersteel — offers Meteorite stone dial
+                       '226667',  # YM37 Oystersteel — offers Meteorite stone dial
+                       # Oysterflex (LN-suffix) variants of Daytona also have Meteorite option
+                       '116515LN','116518LN','116519LN',
+                       '126515LN','126518LN','126519LN',
+                       '126719BLRO'}  # GMT WG Pepsi Oysterflex — Meteorite dial option
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
     # ── Ref-gated Pink → Candy Pink (OP/31 refs where only Candy Pink exists, not plain Pink) ──
@@ -1950,10 +1962,20 @@ def extract_dial(text, ref='', raw_ref=''):
                  r'|\bcele\s*tiff(?:any)?\b|\bcele\s*tb\b'
                  r'|\bjub\s*tiff(?:any)?\b|\bjub\s*tb\b', t):
         return 'Celebration Tiffany Blue'
-    # Celebration (Jubilee motif)
-    if re.search(r'\bcelebration\b|\bcele\b', t):
-        if has_vi: return 'vi Celebration'
-        return 'Celebration'
+    # Celebration (Jubilee motif) — ref-gated to models that actually offer this dial
+    # Prevents false positives ("birthday celebration", "anniversary celebration" in listing text)
+    _CELEBRATION_REFS = {
+        '118235','118238','124200','124300','126000','126031','126034',
+        '128235','128236','128238','128239','134300',
+        '228206','228235','228236','228238','228239','276200','277200',
+    }
+    _celeb_ok = (not ref) or (_ref_base_norm in _CELEBRATION_REFS)
+    if _celeb_ok and re.search(r'\bcelebration\b|\bcele\b', t):
+        # Guard: skip if "celebration" is clearly a non-dial context word
+        if not re.search(r'\b(?:birthday|anniversary|party|event|occasion|gift|present)\s*celebration\b'
+                         r'|\bcelebration\s*(?:of|for|dinner|lunch|drink|gift)', t):
+            if has_vi: return 'vi Celebration'
+            return 'Celebration'
     # Palm (standalone named dial — palm tree motif design, its own SKU on DJ refs)
     # Must be early (before color extraction) since "palm" triggers index-type logic that
     # would silently drop the result if no color is found
@@ -2127,8 +2149,10 @@ def extract_dial(text, ref='', raw_ref=''):
     dial = None
     _rb_ice = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     _ice_blue_only_refs = {'228206','228236','128236','127236','116506','126506',
-                           '118206','118346','118166','218206','52506',
+                           '118206','118346','118366','118166','218206','52506',
                            '127286','127386','228396','128396',
+                           '116576',   # prev-gen DD 36 Platinum (fluted) — Ice Blue
+                           '279174',   # Lady DJ 28 TT — Ice Blue option per catalog
                            '127336'}  # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
     # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
     if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
