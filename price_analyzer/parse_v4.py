@@ -1758,6 +1758,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpurchas(?:ed?|ing)?\s*(?:at|from|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
     # "came from Tiffany" = provenance = OTB
     t = re.sub(r'\bcame?\s*from\s*tiff(?:any)?\b', 'official tiffany', t)
+    # "tb + OTB signal" — physical T&Co marking/provenance using 'tb' shorthand (mirrors tiff* patterns)
+    t = re.sub(r'\btb\s*stamp(?:ed)?\b', 'official tiffany', t)
+    t = re.sub(r'\btb\s*(?:case\s*)?back\b', 'official tiffany', t)
+    t = re.sub(r'\btb\s*seal\b', 'official tiffany', t)
+    t = re.sub(r'\btb\s*papers?\b|\btb\s*receipt\b|\btb\s*docs?\b', 'official tiffany', t)
+    t = re.sub(r'\btb\s*(?:collab(?:oration)?|edition|exclusive)\b|\bcollab(?:oration)?\s*tb\b', 'official tiffany', t)
+    t = re.sub(r'\btb\s*(?:retailer?|boutique|store|shop|only|direct|authorized|authorised)\b', 'official tiffany', t)
+    t = re.sub(r'\btb\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b|\bsign(?:ed)?\s*(?:by\s*)?tb\b', 'official tiffany', t)
+    t = re.sub(r'\btb\s*and\s*comp(?:any)?\b|\btb\s*six\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1859,7 +1868,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bt[/-]blue\b|\bt\/b\b|\bt\.b\.?|\bt\.blue\b|\bt\s+blue\b', 'tiffany', t)  # T-blue / T/blue / T/B / T.B. / T.B / T.Blue / T Blue
     t = re.sub(r'\btifb\b|\btifblu\b|\btiffanya\b', 'tiffany', t)
     # Ref-gated ambiguous light-blue → Tiffany Blue (OP refs have no other light-blue option)
-    _OP_TIFF_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
+    _OP_TIFF_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034',
+                     # AP Royal Oak refs with confirmed Tiffany Blue dial option
+                     '15510','15720','26238','26331','26400','15550','15551'}
     _ref_base_norm = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _ref_base_norm in _OP_TIFF_REFS:
         t = re.sub(r'\blight\s*blue\b|\bbaby\s*blue\b|\bsky\s*blue\b|\bpowder\s*blue\b|\bpale\s*blue\b|\baquamarin(?:e)?\b', 'tiffany', t)
@@ -2263,6 +2274,13 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\btiff(?:any)?\s*and\s*comp(?:any)?\b'
                    r'|\bt\s*\+\s*c(?:o|0)\b'
                    r'|\btiff(?:any)?\s*seal\b'
+                   r'|\btb\s*stamp(?:ed)?\b'
+                   r'|\btb\s*(?:case\s*)?back\b'
+                   r'|\btb\s*seal\b'
+                   r'|\btb\s*papers?\b|\btb\s*receipt\b'
+                   r'|\btb\s*(?:collab(?:oration)?|edition|exclusive)\b|\bcollab(?:oration)?\s*tb\b'
+                   r'|\btb\s*(?:retailer?|boutique|only|direct|authorized|authorised)\b'
+                   r'|\btb\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b|\bsign(?:ed)?\s*(?:by\s*)?tb\b'
                    r'|\bdial\s*(?:says?|reads?|has|with)\s*tiff(?:any)?\b'
                    r'|\btiff(?:any)?\s*on\s*(?:the\s*)?dial\b'  # "tiffany on (the) dial" not "tiffany dial"
                    r'|\bpurchas(?:ed?)\s*(?:at|from|through)\s*tiff(?:any)?\b'
@@ -2283,7 +2301,9 @@ def extract_dial(text, ref='', raw_ref=''):
         # Turquoise and Tiffany Blue are valid dials that must be distinguished by keyword.
         dial = 'Turquoise'
     elif re.search(r'\btiffany\b|\btiff\b', t) or (
-        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126','134')):
+        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and (
+            re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126','134') or
+            re.match(r'(\d+)', ref).group(1) in _OP_TIFF_REFS)):
         # DD/prev-DD (128xxx, 228xxx, 118xxx): dealers say "tiffany" but maps to their Turquoise dial
         _ref_base_t = re.match(r'(\d+)', ref) if ref else None
         _rb_t = _ref_base_t.group(1) if _ref_base_t else ''
