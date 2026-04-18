@@ -1480,7 +1480,7 @@ FIXED_DIAL = {
     # Prev gen
     '116610LN':'Black','116610LV':'Green','116600':'Black',
     # 116660 (prev-gen Deepsea) has Black AND D-Blue — NOT fixed
-    '114060':'Black','114270':'Black',
+    '114060':'Black','114270':'Black','214270':'Black',  # Explorer 39mm (2010-2021) — Black dial only
     # 116500LN has both white and black dials — NOT fixed
     '116710LN':'Black','116710BLNR':'Black','116710BLRO':'Black',
     '116711':'Black','116713LN':'Black',
@@ -1635,6 +1635,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwhe\b', 'white', t)
     t = re.sub(r'\blvory\b', 'ivory', t)  # typo: lvory → ivory
     t = re.sub(r'\biceblue\b', 'ice blue', t)  # "iceblue" (no space) → "ice blue"
+    t = re.sub(r'\begg\s+shell\b', 'eggshell', t)  # "egg shell" two-word form → "eggshell" for TB detection
     t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
     t = re.sub(r'\bt-b\b', 'tiffany', t)             # T-B hyphenated = Tiffany Blue shorthand
@@ -1692,6 +1693,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*(?:tiff(?:any)?|tb)\b|\bgenuine\s*(?:tiff(?:any)?|tb)\b|\bauth(?:entic)?\s*(?:tiff(?:any)?|tb)\b|\breal\s*(?:tiff(?:any)?|tb)\b|\bgen(?:uine)?\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
+    t = re.sub(r'\bcertif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\btiff(?:any)?\s*certif(?:ied)?\b', 'official tiffany', t)
+    t = re.sub(r'\bverif(?:ied)?\s*by\s*tiff(?:any)?\b|\bauth(?:enticated)?\s*by\s*tiff(?:any)?\b', 'official tiffany', t)
     # Tiffany signed/engraved caseback = OTB — "Tiffany signed", "T&Co engraved", "inscribed Tiffany"
     t = re.sub(r'\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
     t = re.sub(r'\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b|\binscrip?t(?:ion)?\s*tiff(?:any)?\b', 'official tiffany', t)
@@ -1825,7 +1828,8 @@ def extract_dial(text, ref='', raw_ref=''):
                        '116500','126500','228206','228349','128349',
                        '126505','116505','126515','116515','126509','116509',
                        '228396','128396','52509',
-                       '218235','118208','118235','116139'}  # prev-gen DD/Daytona with meteorite
+                       '218235','118208','118235','116139',
+                       '226667'}  # YM37 Oystersteel — offers Meteorite stone dial
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
     # ── Ref-gated Pink → Candy Pink (OP/31 refs where only Candy Pink exists, not plain Pink) ──
@@ -2040,6 +2044,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126331','126333','126334',
         '126200','126201','126203','126231','126233','126234',
         '126238',  # DJ36 YG — also offers Wimbledon
+        '126235','126239',  # DJ36 WG/Everose variants with Wimbledon
         '126283','126284','116300','116333','116334','116234',
         '116233','116200','116201','116203','116231','116238',  # prev-gen DJ36 SS/TT/YG
     }
@@ -2133,6 +2138,8 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\bofficial\s*tb\b|\boff\.?\s*tiff(?:any)?\b'
                    r'|\btiffany\s*stamp(?:ed)?\b|\btiff\s*stamp(?:ed)?\b'
                    r'|\bstamped\s*tiff(?:any)?\b'
+                   r'|\bcertif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\btiff(?:any)?\s*certif(?:ied)?\b'
+                   r'|\bverif(?:ied)?\s*by\s*tiff(?:any)?\b|\bauth(?:enticated)?\s*by\s*tiff(?:any)?\b'
                    r'|\blegit\s*tiff(?:any)?\b'
                    r'|\bverif(?:ied)?\s*tiff(?:any)?\b'
                    r'|\bconfirm(?:ed)?\s*tiff(?:any)?\b'
@@ -2212,7 +2219,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\byellow\s*m(?:other)?[\s-]*o(?:f)?[\s-]*p(?:earl)?\b|\byellow\s*mop\b', t): dial = 'Yellow MOP'
     elif re.search(r'\bmother[\s-]*of[\s-]*pearl\b|\bmop\b', t): dial = 'MOP'
     elif re.search(r'\brhodium\b', t): dial = 'Rhodium'
-    elif re.search(r'\bsundust\b|\bsun\s*dust\b', t): dial = 'Sundust'
+    elif re.search(r'\bsundust\b|\bsun[-\s]?dust\b', t): dial = 'Sundust'  # also catches sun-dust (hyphenated)
     elif re.search(r'\bchocolate\b|\bchoco?\b', t): dial = 'Chocolate'
     elif re.search(r'\bchampagne\b|\bchamp\b', t):
         if get_family(ref) in ('Cosmograph Daytona','Daytona'): dial = 'Champagne'
@@ -2244,6 +2251,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bslate\b', t): dial = 'Slate'
     elif re.search(r'\bgrey\b|\bgray\b|\bgry\b', t): dial = 'Grey'
     elif re.search(r'\bpink\b|\brose\b|\bros[eé]\b', t): dial = 'Pink'
+    elif re.search(r'\bcoral\s*red\b', t): dial = 'Coral'  # "coral red" (OP official name) → Coral before generic red
     elif re.search(r'\bred\b', t): dial = 'Red'
     elif re.search(r'\bcoral\b', t): dial = 'Coral'
     elif re.search(r'\bgold\b|\bgolden\b', t): dial = 'Gold'

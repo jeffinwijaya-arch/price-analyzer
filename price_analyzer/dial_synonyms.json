@@ -151,6 +151,7 @@
         "Robin Egg",
         "Duck Egg",
         "Egg Shell Blue",
+        "Egg Shell",
         "Tiffany Blu",
         "Tiff Dial",
         "Blue Tiff",
@@ -296,7 +297,15 @@
         "Purchased from Tiffany",
         "Purchased through Tiffany",
         "Came from Tiffany",
-        "Come from Tiffany"
+        "Come from Tiffany",
+        "Certified Tiffany",
+        "Certified TB",
+        "Tiffany Certified",
+        "Verified by Tiffany",
+        "Authenticated by Tiffany",
+        "Auth by Tiffany",
+        "Certified Tiff",
+        "Tiffany Auth"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -830,5 +839,11 @@
         "Benz",
         "Argent",
         "Silber"
+    ],
+    "Coral": [
+        "Coral Red",
+        "Coral Red Dial",
+        "Red Coral",
+        "Coral Orange"
     ]
 }

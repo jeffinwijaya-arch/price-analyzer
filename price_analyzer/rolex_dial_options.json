@@ -2071,10 +2071,20 @@
     "Pavé",
     "Black"
   ],
+  "226667": [
+    "Black",
+    "Meteorite",
+    "Silver"
+  ],
   "226679": [
     "Black",
-    "Pavé",
-    "MOP"
+    "Silver",
+    "MOP",
+    "Green",
+    "Blue",
+    "White",
+    "Rhodium",
+    "Pavé"
   ],
   "268621": [
     "Chocolate",
