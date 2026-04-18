@@ -6,7 +6,9 @@
         "Steel",
         "Grau",
         "Gris",
-        "Grigio"
+        "Grigio",
+        "Ghost",
+        "Ghost Dial"
     ],
     "Grey Diamond": [
         "Rhodium Diamond",
@@ -28,7 +30,10 @@
         "Ivory",
         "Ivoire",
         "Butterscotch",
-        "Straw"
+        "Straw",
+        "Wheat",
+        "Warm Cream",
+        "Cream"
     ],
     "Champagne Diamond": [
         "Gold Diamond",
@@ -53,7 +58,11 @@
         "Cappuccino",
         "Latte",
         "Choco",
-        "Cho"
+        "Cho",
+        "Chestnut",
+        "Walnut",
+        "Teak",
+        "Brunette"
     ],
     "Chocolate Diamond": [
         "Brown Diamond"
@@ -79,13 +88,18 @@
         "Canary Yellow",
         "Saffron",
         "Buttercup",
-        "Buttercup Yellow"
+        "Buttercup Yellow",
+        "Mustard",
+        "Mustard Yellow",
+        "Goldenrod"
     ],
     "Green": [
         "Verde",
         "Vert",
         "Forest Green",
-        "Forest"
+        "Forest",
+        "GG",
+        "GG Dial"
     ],
     "Blue": [
         "Dark Blue",
@@ -533,7 +547,12 @@
         "Sund",
         "Sun Dial",
         "Suntone",
-        "Sun Dust"
+        "Sun Dust",
+        "SD",
+        "Sunny",
+        "Sunstone",
+        "Warm Amber",
+        "Amber Dial"
     ],
     "Pistachio": [
         "Pistachio Green",
@@ -661,6 +680,18 @@
         "Puzzle Motif",
         "Puzzle Pattern"
     ],
+    "Beige": [
+        "Nude",
+        "Nude Dial",
+        "Bisque",
+        "Skin",
+        "Skin Tone",
+        "Taupe",
+        "Greige",
+        "Sand",
+        "Linen",
+        "Oatmeal"
+    ],
     "Bright Green": [
         "Casino Green",
         "Money Green",
@@ -675,7 +706,9 @@
         "Brt Green",
         "Brt Grn",
         "Emerald Green",
-        "Emerald"
+        "Emerald",
+        "Chartreuse",
+        "Chartreuse Green"
     ],
     "Carnelian": [
         "Cornelian",

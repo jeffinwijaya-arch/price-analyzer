@@ -1806,8 +1806,10 @@ def extract_dial(text, ref='', raw_ref=''):
     # ── Additional dial synonym normalizations ──
     # Champagne synonyms (dealer terms for warm cream/ivory dials; Rolex official = champagne)
     t = re.sub(r'\bivory\b|\bivoire\b|\becru\b|\bstraw\b|\bbutterscotch\b', 'champagne', t)
+    t = re.sub(r'\bwheat\b', 'champagne', t)  # Wheat = warm cream → Champagne (HK/SG dealer term)
     # Chocolate synonyms (dealers use coffee/mocha/cognac/havana for brown Daytona/DD dials)
     t = re.sub(r'\bmocha\b|\bcoffee\b|\bespresso\b|\bcognac\b|\btobacco\b|\bhavana\b|\bcappuccino\b|\blatte\b', 'chocolate', t)
+    t = re.sub(r'\bchestnut\b', 'chocolate', t)  # Chestnut = warm brown → Chocolate (Asian/Euro dealer term)
     # Red variants used by dealers (raspberry on OP, scarlet/crimson on specials)
     t = re.sub(r'\bscarlet\b|\bcrimson\b|\bclaret\b|\braspberry\b', 'red', t)
     # Aubergine/purple variants
@@ -1828,6 +1830,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\blilac\b|\blilas\b|\bmauve\b', 'lavender', t)   # English/FR lilac/mauve → Lavender
     t = re.sub(r'\bceladon\b', 'mint green', t)                    # Celadon = pale grey-green → Mint Green
     t = re.sub(r'\beau\s*de\s*nil\b|\beau\s*nil\b', 'tiffany', t)  # Eau de nil = pale blue-green → Tiffany on OP refs
+    # Beige synonyms (dealers use skin/nude/bisque/taupe for the OP/DJ beige dial)
+    t = re.sub(r'\bnude\b|\bbisque\b|\bskin\s*(?:tone)?\b|\btaupe\b|\bgreige\b', 'beige', t)
+    # Yellow synonyms (mustard/saffron/canary sometimes used even on Rolex DJ/OP refs)
+    t = re.sub(r'\bmustard(?:\s*yellow)?\b', 'yellow', t)  # Mustard/Mustard Yellow → Yellow
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
     t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b|\bgradient\s*blue\b|\bdeepsea\s*blue\b', 'd-blue', t)  # normalise d-blue variants
     # ── Unambiguous Tiffany Blue synonyms (watch-market specific) ──
@@ -2323,6 +2329,12 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bbrown\b', t): dial = 'Brown'
     elif re.search(r'\bpurple\b|\bviolet\b', t): dial = 'Aubergine'
     elif re.search(r'\borange\b', t): dial = 'Orange'
+
+    # Post-process: Pink → Candy Pink for refs where only Candy Pink exists as the pink dial.
+    # The text-level substitution at line ~1878 converts bare \bpink\b but misses "rose"/"fuchsia"/
+    # "magenta"/etc. that get normalized to generic pink via other substitutions above.
+    if dial == 'Pink' and _ref_base_norm in _ONLY_CANDY_PINK_REFS:
+        dial = 'Candy Pink'
 
     if not dial:
         # Check if this is a single-dial ref from catalog before returning empty
