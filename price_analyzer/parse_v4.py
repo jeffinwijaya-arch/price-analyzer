@@ -1648,6 +1648,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bt-b\b', 'tiffany', t)             # T-B hyphenated = Tiffany Blue shorthand
     t = re.sub(r'\bice[-]blue\b', 'ice blue', t)  # "ice-blue" hyphenated
     t = re.sub(r'\bice\s*bl\b', 'ice blue', t)    # "ice bl" abbreviation → "ice blue"
+    t = re.sub(r'\blite\s*bl(?:ue)?\b', 'light blue', t)  # "lite blue"/"lite bl" → light blue (then ref-gated → Tiffany on OP)
+    t = re.sub(r'\bsky\s*bl\b', 'sky blue', t)              # "sky bl" → sky blue (then ref-gated → Tiffany on OP)
     t = re.sub(r'\bglacier\s*blue\b|\bplatinum\s*blue\b', 'ice blue', t)  # Ice Blue synonyms
     t = re.sub(r'\belectric\s*blue\b', 'bright blue', t)  # Electric Blue = Bright Blue (DJ/GMT)
     t = re.sub(r'\baventurin\b|\badventurine\b', 'aventurine', t)  # typo/German form
@@ -1699,7 +1701,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbruce\s*wayne\b', 'black', t)  # Bruce Wayne = black dial GMT Sprite GRNR
     t = re.sub(r'\bcoke\b', 'black', t)   # Coke = black dial GMT (vintage 16710 red/black bezel)
     t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
-    t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
+    t = re.sub(r'\bpistach\b|\bpistache\b|\bpistacchio\b', 'pistachio', t)  # dealer shorthand for Pistachio (incl. FR/IT spellings)
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*(?:tiff(?:any)?|tb)\b|\bgenuine\s*(?:tiff(?:any)?|tb)\b|\bauth(?:entic)?\s*(?:tiff(?:any)?|tb)\b|\breal\s*(?:tiff(?:any)?|tb)\b|\bgen(?:uine)?\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
@@ -1916,6 +1918,10 @@ def extract_dial(text, ref='', raw_ref=''):
         '126500','126503','126505','126508','126509','126515','126518','126519','126520',
         '116500','116503','116505','116508','116509','116515','116518','116519','116520',
         # Datejust 36/41 — no Tiffany Blue dial option; block to prevent false positives
+        # 126200 deliberately excluded — its tiffany/tb text is remapped to Turquoise via special-case;
+        # blocking would strip 'tb' BEFORE that remap and break "126200 TB" → Turquoise detection.
+        '126201','126203',                     # DJ36 SS-TT variants (no TB/Turquoise — OTB would reject dial)
+        '116200','116201','116203',            # prev-gen DJ36 SS / SS-TT variants (no Tiffany Blue)
         '126231','126233','126234','126238',  # DJ36 TT/YG variants (fluted & smooth)
         '116231','116233','116234','116238',  # prev-gen DJ36 TT/YG variants
         '126300','126301','126303',           # DJ41 SS variants
@@ -2135,7 +2141,10 @@ def extract_dial(text, ref='', raw_ref=''):
                          '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
+    # 'paul newman'/'newman'/'p.n.'/'pnd'/'pnm' are unambiguous on any ref
+    # 'pn'/'p/n' are bare abbreviations — gate to Daytona refs to prevent false matches on DJ/Sub/DD/YM listings
+    if re.search(r'\bpaul\s*newman\b|\bpaul\s*n\.\b|\bp\.n\.\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
+    if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bpn\b|\bp/n\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
