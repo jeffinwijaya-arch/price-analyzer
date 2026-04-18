@@ -1617,6 +1617,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwimbeldon\b|\bwimbleton\b|\bwimbledone\b|\bwimbledun\b', 'wimbledon', t)
     t = re.sub(r'\bwimbldon\b|\bwimbledo\b|\bwimbledn\b|\bwimbelton\b|\bwimbeldan\b|\bwimbly\b|\bwimble\b', 'wimbledon', t)
     t = re.sub(r'\bwimed\b|\bwimedo\b|\bwimdon\b|\bwimdo\b|\bwmdn\b', 'wimbledon', t)
+    t = re.sub(r'\bwmb\b', 'wimbledon', t)  # "Wmb" = Wimbledon (dealer abbreviation)
     # Wimbledon slash-form shorthands: "champ/grn", "grn/champ", "G/C", "C/G" (HK/SG dealer notation)
     t = re.sub(r'\bchamp(?:agne)?\s*/\s*g(?:r(?:n|een)?)?\b|\bg(?:r(?:n|een)?)?\s*/\s*champ(?:agne)?\b', 'wimbledon', t)
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
@@ -1639,6 +1640,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
     t = re.sub(r'\btiff[-_]blue\b', 'tiffany', t)   # "Tiff-Blue" / "Tiff_Blue" hyphenated
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
+    t = re.sub(r'\btifany\b', 'tiffany', t)  # common single-f spelling variant (tifany → tiffany)
     t = re.sub(r'\bt-b\b', 'tiffany', t)             # T-B hyphenated = Tiffany Blue shorthand
     t = re.sub(r'\bice[-]blue\b', 'ice blue', t)  # "ice-blue" hyphenated
     t = re.sub(r'\bice\s*bl\b', 'ice blue', t)    # "ice bl" abbreviation → "ice blue"
@@ -1698,6 +1700,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\bcertif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\btiff(?:any)?\s*certif(?:ied)?\b', 'official tiffany', t)
     t = re.sub(r'\bverif(?:ied)?\s*by\s*tiff(?:any)?\b|\bauth(?:enticated)?\s*by\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*auth(?:entic(?:ated)?)?\b', 'official tiffany', t)  # "tiffany auth" reversed form
     # Tiffany signed/engraved caseback = OTB — "Tiffany signed", "T&Co engraved", "inscribed Tiffany"
     t = re.sub(r'\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
     t = re.sub(r'\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b|\binscrip?t(?:ion)?\s*tiff(?:any)?\b', 'official tiffany', t)
@@ -1756,7 +1759,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bng\b', 'mop', t)
     # HK/dealer colour shorthands not covered above
     t = re.sub(r'\bgg\b', 'green', t)        # "gg" = green dial (HK shorthand)
-    t = re.sub(r'\baub\b', 'aubergine', t)   # "aub" = aubergine
+    t = re.sub(r'\baub\b|\bauberg\b', 'aubergine', t)  # "aub"/"auberg" = aubergine shorthand
     t = re.sub(r'\bpurp\b', 'aubergine', t)  # "purp" = purple/aubergine
     t = re.sub(r'\bcham\b|\bchm\b', 'champagne', t)  # "cham/chm" = champagne
     t = re.sub(r'\bolv(?:\s*grn?)?\b', 'olive', t)   # "olv"/"olv grn" = Olive (HK shorthand; in synonyms JSON but not in code)
@@ -1766,6 +1769,10 @@ def extract_dial(text, ref='', raw_ref=''):
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '136659', '116600', '126660', '136668'}:
         t = re.sub(r'\bsd\b', 'sundust', t)
+    # "pist" = Pistachio shorthand — gate to OP/multi-dial refs where Pistachio is a valid dial
+    _PISTACHIO_SHORTHAND_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
+    if _sd_ref_base in _PISTACHIO_SHORTHAND_REFS or not ref:
+        t = re.sub(r'\bpist\b', 'pistachio', t)
     # "ym" alone = Yellow Mineral (Lacquer) — Daytona dealer shorthand for YML dial
     # Only fire on Daytona refs (where YML is a valid dial); elsewhere "ym" is too ambiguous
     _YML_DAYTONA_BASES = {'116508','116518','116519','126508','126518','126519',
@@ -1779,6 +1786,13 @@ def extract_dial(text, ref='', raw_ref=''):
     # Also applies to 336238 (new-gen DJ36 YG) which has Turquoise but no Tiffany Blue option.
     # (_sd_ref_base computed just above; same value as _ref_base_norm which is defined later)
     if _sd_ref_base[:3] in ('128', '228', '118') or _sd_ref_base in {'336238'}:
+        t = re.sub(r'\btb\b', 'turquoise', t)
+    # On Daytona refs that offer a Turquoise dial, "TB" = Turquoise Blue — remap BEFORE tiffany stripping
+    # Without this, "126508 tb" would have "tb" stripped by the Tiffany blocker and return empty.
+    # 126508/116508 don't offer a Turquoise dial; 126509/116509 have Turquoise Beach only
+    _DAYTONA_TURQ_TB_BASES = {'126500','126515','126518','126518LN','126528','126529',
+                               '116515','116518','116518LN','116528'}
+    if _sd_ref_base in _DAYTONA_TURQ_TB_BASES:
         t = re.sub(r'\btb\b', 'turquoise', t)
     # ── Additional dial synonym normalizations ──
     # Champagne synonyms (dealer terms for warm cream/ivory dials; Rolex official = champagne)
@@ -1812,6 +1826,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Pre-normalize CTB dotted/spaced abbreviations → "ctb" BEFORE T.B. pattern fires,
     # otherwise \bt\.b\. would consume "t.b." inside "c.t.b." → "c.tiffany" (wrong)
     t = re.sub(r'\bc\.t\.b\.?\b', 'ctb', t)   # C.T.B. = Celebration Tiffany Blue abbreviation
+    t = re.sub(r'\bceleb[-\.]tb\b', 'ctb', t)  # "celeb-tb" / "celeb.tb" hyphenated/dotted CTB
     t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck\s*egg(?:\s*blue)?\b", 'tiffany', t)
     t = re.sub(r'\bceleste\b', 'tiffany', t)        # "celeste" = Tiffany Blue in watch market
     t = re.sub(r'\bflamingo\s*blue\b|\bcandy\s*blue\b', 'tiffany', t)
@@ -1955,7 +1970,7 @@ def extract_dial(text, ref='', raw_ref=''):
                  r'|\bc\s+t\s+b\b'                             # spaced C T B (dotted pre-normalized → ctb)
                  r'|\bclt\/b\b|\bcl\s*t\/b\b|\bct\/b\b'
                  r'|\bcl\s*tiff(?:any)?\b'
-                 r'|\bcelebration\s*/?\s*tiff(?:any)?\b|\bcelebration\s*tb\b'
+                 r'|\bcelebration\s*[-/.]?\s*tiff(?:any)?\b|\bcelebration\s*[-/.]?\s*tb\b'
                  r'|\bcelebration\s*t\/b\b|\bceleb\s*/?\s*tiff(?:any)?\b'
                  r'|\bceleb\s*tb\b|\bceleb\s*t\/b\b'
                  r'|\bjubilee\s*/?\s*tiff(?:any)?\b|\bjubilee\s*tb\b'
@@ -2333,6 +2348,10 @@ def extract_dial(text, ref='', raw_ref=''):
     # "Rhodium" → "Grey" (Rolex uses both, industry prefers Grey)
     if dial and dial.startswith('Rhodium'):
         dial = dial.replace('Rhodium', 'Grey')
+    # For DJ41 fluted (126334/116334): "Azzurro"/"Azzurro Blue" is dealer shorthand for the
+    # official "Blue Roman" dial (confirmed by dial_synonyms.json _ref_specific comment).
+    if dial in ('Azzurro Blue', 'Azzurro') and _ref_base_norm in {'126334', '116334'}:
+        dial = 'Blue Roman'
 
     # ── 126300/126200 Blue dial reclassification ──
     # Rolex 126300 (DJ41 smooth bezel) has TWO official blue dials:
