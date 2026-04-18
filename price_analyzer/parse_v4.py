@@ -1666,6 +1666,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbuttercup(?:\s*yellow)?\b', 'yellow', t)     # Buttercup Yellow = Yellow
     t = re.sub(r'\bforest\s*green\b', 'green', t)               # Forest Green = Green
     t = re.sub(r'\bsage\s*green\b', 'olive', t)                 # Sage Green ≈ Olive (muted green; ref-gated → Olive Green or Olive)
+    t = re.sub(r'\bkhaki(?:\s*green)?\b', 'olive', t)           # Khaki/Khaki Green = military muted olive → Olive
     t = re.sub(r'\barctic\s*white\b', 'white', t)               # Arctic White = White (Explorer II polar)
     t = re.sub(r'\bvermill?i[oa]n\b|\bcarmine\b', 'red', t)    # Vermillion/Carmine = Red
     t = re.sub(r'\bindigo(?:\s*blue)?\b', 'blue', t)            # Indigo/Indigo Blue = Blue
@@ -1832,6 +1833,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # Chocolate synonyms (dealers use coffee/mocha/cognac/havana for brown Daytona/DD dials)
     t = re.sub(r'\bmocha\b|\bcoffee\b|\bespresso\b|\bcognac\b|\btobacco\b|\bhavana\b|\bcappuccino\b|\blatte\b', 'chocolate', t)
     t = re.sub(r'\bchestnut\b', 'chocolate', t)  # Chestnut = warm brown → Chocolate (Asian/Euro dealer term)
+    t = re.sub(r'\bmahogany\b|\bwalnut\b|\bteak\b|\bbrunette\b', 'chocolate', t)  # Woodgrain tones → Chocolate (in dial_synonyms.json but missing from code)
+    t = re.sub(r'\bamber(?:\s*(?:dial|tone|gold))?\b', 'sundust', t)  # Amber/Amber Dial = Sundust (warm golden-orange; Daytona ER/DD RG shorthand)
     # Red variants used by dealers (raspberry on OP, scarlet/crimson on specials)
     t = re.sub(r'\bscarlet\b|\bcrimson\b|\bclaret\b|\braspberry\b', 'red', t)
     # Aubergine/purple variants
@@ -1850,10 +1853,12 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bverde\b|\bvert\b', 'green', t)                  # IT+ES/FR green
     t = re.sub(r'\bmarron\b|\bbraun\b', 'chocolate', t)            # FR/DE brown
     t = re.sub(r'\blilac\b|\blilas\b|\bmauve\b', 'lavender', t)   # English/FR lilac/mauve → Lavender
+    t = re.sub(r'\bwisteria\b|\bwistaria\b|\bperiwinkle\b', 'lavender', t)  # Purple-blue flower/hue → Lavender
     t = re.sub(r'\bceladon\b', 'mint green', t)                    # Celadon = pale grey-green → Mint Green
     t = re.sub(r'\beau\s*de\s*nil\b|\beau\s*nil\b', 'tiffany', t)  # Eau de nil = pale blue-green → Tiffany on OP refs
     # Beige synonyms (dealers use skin/nude/bisque/taupe for the OP/DJ beige dial)
     t = re.sub(r'\bnude\b|\bbisque\b|\bskin\s*(?:tone)?\b|\btaupe\b|\bgreige\b', 'beige', t)
+    t = re.sub(r'\bsand(?:stone)?\b', 'beige', t)  # Sand/Sandstone = Beige (already in dial_synonyms.json; needed in code for text extraction)
     # Yellow synonyms (mustard/saffron/canary sometimes used even on Rolex DJ/OP refs)
     t = re.sub(r'\bmustard(?:\s*yellow)?\b', 'yellow', t)  # Mustard/Mustard Yellow → Yellow
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
@@ -2427,6 +2432,11 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_gold = re.match(r'(\d+)', ref)
         if _rb_gold and _rb_gold.group(1)[:3] in ('126', '128', '228', '116', '118', '278', '279', '336'):
             dial = 'Champagne'
+    # "Brown" → "Chocolate" for Rolex family refs (Rolex official name is always Chocolate, never Brown)
+    if dial == 'Brown' and ref:
+        _rb_br = re.match(r'(\d+)', ref)
+        if _rb_br and _rb_br.group(1)[:3] in ('126','128','228','116','118','278','279','336','124','277','276','134'):
+            dial = 'Chocolate'
     # "Coral" on OP: remap to "Red" ONLY if the ref does not list "Coral" as a distinct official dial.
     # OP refs like 126000, 124300, 277200 have BOTH "Coral" AND "Red" as separate official dials —
     # keeping the distinction matters for accurate pricing.

@@ -62,7 +62,8 @@
         "Chestnut",
         "Walnut",
         "Teak",
-        "Brunette"
+        "Brunette",
+        "Mahogany"
     ],
     "Chocolate Diamond": [
         "Brown Diamond"
@@ -501,7 +502,9 @@
         "Verde Oliva",
         "Olivgrün",
         "Sage Green",
-        "Sage"
+        "Sage",
+        "Khaki Green",
+        "Khaki"
     ],
     "Red": [
         "Scarlet",
@@ -548,7 +551,10 @@
         "Lilas",
         "Mauve",
         "Lavande",
-        "Lavanda"
+        "Lavanda",
+        "Wisteria",
+        "Wistaria",
+        "Periwinkle"
     ],
     "Mint Green": [
         "Celadon",
@@ -565,7 +571,10 @@
         "Sunny",
         "Sunstone",
         "Warm Amber",
-        "Amber Dial"
+        "Amber Dial",
+        "Amber",
+        "Amber Tone",
+        "Amber Gold"
     ],
     "Pistachio": [
         "Pistachio Green",
@@ -703,6 +712,7 @@
         "Taupe",
         "Greige",
         "Sand",
+        "Sandstone",
         "Linen",
         "Oatmeal"
     ],
