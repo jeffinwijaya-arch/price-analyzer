@@ -1774,10 +1774,21 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bolv(?:\s*grn?)?\b', 'olive', t)   # "olv"/"olv grn" = Olive (HK shorthand; in synonyms JSON but not in code)
     t = re.sub(r'\bmalach\b', 'malachite', t)         # "malach" shorthand for Malachite stone dial
     t = re.sub(r'\bceleb\b', 'celebration', t)        # "celeb" = Celebration (Jubilee Motif) dial; safe — \b excludes "celebrity","celebrated"
+    t = re.sub(r'\blinen\b|\boatmeal\b', 'beige', t)  # Linen/Oatmeal = Beige (OP/DJ dealer terms in Western markets)
     # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself)
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '136659', '116600', '126660', '136668'}:
         t = re.sub(r'\bsd\b', 'sundust', t)
+    # "bb" = Bright Blue on DJ/DD refs where BB is a valid dial — must precede the elif chain
+    # to avoid "blue" matching first on text like "126300 bb dial"
+    _BB_BRIGHT_REFS = {
+        '126300','126301','126303','126200','126201','126203',  # DJ41 / DJ36 SS
+        '126334','126333','126331','126234','126233','126231',  # DJ36 TT / WG
+        '116300','116234','116334','126238','336934','336238',  # prev-gen / new-gen
+        '228239','228236',  # Day-Date 40 Platinum / Day-Date 40 Platinum (Bright Blue option)
+    }
+    if _sd_ref_base in _BB_BRIGHT_REFS:
+        t = re.sub(r'\bbb\b', 'bright blue', t)
     # "pist" = Pistachio shorthand — gate to OP/multi-dial refs where Pistachio is a valid dial
     _PISTACHIO_SHORTHAND_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
     if _sd_ref_base in _PISTACHIO_SHORTHAND_REFS or not ref:
@@ -1876,7 +1887,8 @@ def extract_dial(text, ref='', raw_ref=''):
                        # Oysterflex (LN-suffix) variants of Daytona also have Meteorite option
                        '116515LN','116518LN','116519LN',
                        '126515LN','126518LN','126519LN',
-                       '126719BLRO'}  # GMT WG Pepsi Oysterflex — Meteorite dial option
+                       '126719BLRO',  # GMT WG Pepsi Oysterflex — Meteorite dial option
+                       '126719'}     # GMT WG Pepsi bare ref — Meteorite option exists
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
     # ── Ref-gated Pink → Candy Pink (OP/31 refs where only Candy Pink exists, not plain Pink) ──
@@ -1910,19 +1922,34 @@ def extract_dial(text, ref='', raw_ref=''):
         # GMT/Sub/Daytona refs (already partially covered above; explicit for safety)
         '126600','126603','126660','136660','136668',  # Sea-Dweller family
         '126900',  # Air-King
+        # Additional DJ36 WG/RG/RBR variants — no Tiffany Blue dial option
+        # Without blocking, "retailed at Tiffany" → OTB detection → validation rejects → empty dial
+        '126235','126239',           # DJ36 WG/RG smooth bezel (Wimbledon-capable but no TB)
+        '126281','126283','126284',  # DJ36 WG/YG/RG RBR variants
+        '116235','116239',           # prev-gen DJ36 WG/RG smooth
+        # Lady DJ 28 RBR/WG variants — no Tiffany Blue option
+        '278271','278273','278274','278275','278278','278288',
+        '278341',                    # Lady DJ 28 President variants
+        # Additional Yacht-Master and older refs
+        '226659','226658','226627',  # YM40 variants (no TB)
+        '268622','268655','268621',  # YM37 variants (no TB)
     }
     if _ref_base_norm in _TIFFANY_BLOCKED_BASES:
-        # Pre-convert remaining OTB signals not yet handled by lines above
-        t = re.sub(r'\botb\b|\bt\.co\b|\btco\b'
+        # Pre-convert ALL OTB/Tiffany signals — none of these refs support Official Tiffany Blue.
+        # Bug fix: previously we RESTORED the placeholder to "official tiffany" which caused the OTB
+        # detection block to fire → hard validation rejected it → returned '' (empty dial) instead of
+        # the actual detected color (e.g., "sundust" buried in same listing text).
+        t = re.sub(r'\botb\b|\bot\/b\b|\botbl\b|\bofficialtb\b|\bt\.co\b|\btco\b'
                    r'|\btiffany\s*&\s*co\b|\btiffany\s*and\s*co\b|\btiff\s*&\s*co\b'
-                   r'|\btiffany\s*[x\xd7]\s*rolex\b|\brolex\s*[x\xd7]\s*tiffany\b',
+                   r'|\btiffany\s*[x\xd7]\s*rolex\b|\brolex\s*[x\xd7]\s*tiffany\b'
+                   r'|\bt\s*&\s*co\b',  # bare "T&Co" (e.g. "purchased at T&Co") → strip
                    '__otb__', t)
-        # Also protect "official tiffany" already written by lines 1671-1675 and reverse-parens above
+        # Also convert "official tiffany" already pre-normalized by the early normalization lines
         t = re.sub(r'\bofficial\s*tiffany\b', '__otb__', t)
-        # Strip standalone tiffany/tiff/tb — contextual mention on non-TB ref
+        # Strip standalone tiffany/tiff/tb — no Tiffany Blue option on these refs
         t = re.sub(r'\btiffany(?:\s*blue)?\b|\btiff\b|\btb\b', ' ', t)
-        # Restore OTB placeholder so detection block below can fire
-        t = re.sub(r'__otb__', 'official tiffany', t)
+        # Strip OTB placeholder entirely — blocked refs NEVER have Official Tiffany Blue dial
+        t = re.sub(r'__otb__', ' ', t)
     ref_upper = ref.upper() if ref else ''
     raw_ref_upper = (raw_ref or '').upper().strip()
 
@@ -1974,8 +2001,10 @@ def extract_dial(text, ref='', raw_ref=''):
     # Special dials (check before generic colors)
     # D-Blue (Deepsea gradient dial — normalised to "d-blue" above)
     if re.search(r'\bd-blue\b', t): return 'D-Blue'
-    # Puzzles (DD special)
-    if re.search(r'\bpuzzle', t): return 'Puzzles'
+    # Puzzles (Day-Date 36 WG special dial) — gate to known Puzzles-capable refs to prevent false positives
+    # e.g. 228238/128239 don't have Puzzles; 128238/128235/128239 do
+    _PUZZLES_REFS = {'128238','128235','128239','128236'}
+    if re.search(r'\bpuzzle', t) and (_ref_base_norm in _PUZZLES_REFS or not ref): return 'Puzzles'
     # Celebration Tiffany Blue (CTB/CLTB) — MUST precede generic Celebration check
     # so "Celebration Tiffany" is not swallowed into plain "Celebration".
     # Gate to OP refs only — CTB is exclusively a Oyster Perpetual special dial.
@@ -2046,8 +2075,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # Zebra (Day-Date exotic dial — 228235 only)
     _ZEBRA_REFS = {'228235'}
     if re.search(r'\bzebra\b', t) and (_ref_base_norm in _ZEBRA_REFS or not ref): return 'Zebra'
-    # Wave (Day-Date lacquer motif dial — 228235/218238/228345)
-    _WAVE_REFS = {'228235', '218238', '228345'}
+    # Wave (Day-Date lacquer motif dial — 228235/218235/218238/228345)
+    _WAVE_REFS = {'228235', '218235', '218238', '228345'}
     if re.search(r'\bwave\b', t) and not re.search(r'\bwave\s*fluted\b', t) and (_ref_base_norm in _WAVE_REFS or not ref):
         return 'Wave'
     # Falcon's Eye (226659 Yacht-Master 40 WG — chatoyant blue-grey stone dial)
@@ -2186,7 +2215,12 @@ def extract_dial(text, ref='', raw_ref=''):
                            '127286','127386','228396','128396',
                            '116576',   # prev-gen DD 36 Platinum (fluted) — Ice Blue
                            '279174',   # Lady DJ 28 TT — Ice Blue option per catalog
-                           '127336'}  # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
+                           '127336',   # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
+                           # AP Royal Oak refs with confirmed Ice Blue dial option
+                           '15510',    # AP Royal Oak 37mm (15510ST) — Ice Blue is a valid option
+                           '15550',    # AP Royal Oak 34mm (15550ST) — Ice Blue option
+                           '15551',    # AP Royal Oak 34mm (15551ST) — Ice Blue option
+                           }
     # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
     if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
     # \bib\b (Ice Blue shorthand) is ref-gated: only fires for known IB-capable refs.
@@ -2321,7 +2355,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bslate\b', t): dial = 'Slate'
     elif re.search(r'\bgrey\b|\bgray\b|\bgry\b', t): dial = 'Grey'
     elif re.search(r'\bpink\b|\brose\b|\bros[eé]\b', t): dial = 'Pink'
-    elif re.search(r'\bcoral\s*red\b', t): dial = 'Coral'  # "coral red" (OP official name) → Coral before generic red
+    elif re.search(r'\bcoral\s*red\b|\bred\s*coral\b', t): dial = 'Coral'  # "coral red" / "red coral" → Coral before generic red
     elif re.search(r'\bred\b', t): dial = 'Red'
     elif re.search(r'\bcoral\b', t): dial = 'Coral'
     elif re.search(r'\bgold\b|\bgolden\b', t): dial = 'Gold'
