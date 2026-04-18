@@ -1637,6 +1637,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\biceblue\b', 'ice blue', t)  # "iceblue" (no space) → "ice blue"
     t = re.sub(r'\begg\s+shell\b', 'eggshell', t)  # "egg shell" two-word form → "eggshell" for TB detection
     t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
+    t = re.sub(r'\btiff[-_]blue\b', 'tiffany', t)   # "Tiff-Blue" / "Tiff_Blue" hyphenated
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
     t = re.sub(r'\bt-b\b', 'tiffany', t)             # T-B hyphenated = Tiffany Blue shorthand
     t = re.sub(r'\bice[-]blue\b', 'ice blue', t)  # "ice-blue" hyphenated
@@ -1706,6 +1707,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bsold\s*(?:at|by|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
     # Tiffany & Co collaboration / sole-agent retailer = Official Tiffany Blue
     t = re.sub(r'\btiff(?:any)?\s*collab(?:oration)?\b|\bcollab(?:oration)?\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?[-_]co\b|\bt[-_]co\b', 'official tiffany', t)  # "Tiffany-co"/"T-co" hyphen variant = T&Co = OTB
     t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bunofficiale?\s*tiff(?:any)?\b|\baftermarket\s*tiff(?:any)?\b|\breplica\s*tiff(?:any)?\b', 'tiffany', t)  # aftermarket/replica = plain tiffany, NOT official
     # Reverse-order parenthetical OTB: "Tiffany (official)", "TB (otb)", "Tiff (auth)", etc.
@@ -1760,7 +1762,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bceleb\b', 'celebration', t)        # "celeb" = Celebration (Jubilee Motif) dial; safe — \b excludes "celebrity","celebrated"
     # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself)
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
-    if _sd_ref_base not in {'126600', '126603', '136660', '116600', '136659'}:
+    if _sd_ref_base not in {'126600', '126603', '136660', '136659', '116600', '126660', '136668'}:
         t = re.sub(r'\bsd\b', 'sundust', t)
     # "ym" alone = Yellow Mineral (Lacquer) — Daytona dealer shorthand for YML dial
     # Only fire on Daytona refs (where YML is a valid dial); elsewhere "ym" is too ambiguous
@@ -1799,6 +1801,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b|\bgradient\s*blue\b|\bdeepsea\s*blue\b', 'd-blue', t)  # normalise d-blue variants
     # ── Unambiguous Tiffany Blue synonyms (watch-market specific) ──
     # Robin's egg / duck egg / celeste / flamingo blue / T-blue / dealer typo variants
+    # Pre-normalize CTB dotted/spaced abbreviations → "ctb" BEFORE T.B. pattern fires,
+    # otherwise \bt\.b\. would consume "t.b." inside "c.t.b." → "c.tiffany" (wrong)
+    t = re.sub(r'\bc\.t\.b\.?\b', 'ctb', t)   # C.T.B. = Celebration Tiffany Blue abbreviation
     t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck\s*egg(?:\s*blue)?\b", 'tiffany', t)
     t = re.sub(r'\bceleste\b', 'tiffany', t)        # "celeste" = Tiffany Blue in watch market
     t = re.sub(r'\bflamingo\s*blue\b|\bcandy\s*blue\b', 'tiffany', t)
@@ -1930,14 +1935,18 @@ def extract_dial(text, ref='', raw_ref=''):
     # Puzzles (DD special)
     if re.search(r'\bpuzzle', t): return 'Puzzles'
     # Celebration Tiffany Blue (CTB/CLTB) — MUST precede generic Celebration check
-    # so "Celebration Tiffany" is not swallowed into plain "Celebration"
-    if re.search(r'\bctb\b|\bcltb\b|\bceltb\b'
+    # so "Celebration Tiffany" is not swallowed into plain "Celebration".
+    # Gate to OP refs only — CTB is exclusively a Oyster Perpetual special dial.
+    _CTB_VALID_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
+    if (_ref_base_norm in _CTB_VALID_REFS or not ref) and re.search(
+                 r'\bctb\b|\bcltb\b|\bceltb\b'
+                 r'|\bc\s+t\s+b\b'                             # spaced C T B (dotted pre-normalized → ctb)
                  r'|\bclt\/b\b|\bcl\s*t\/b\b|\bct\/b\b'
-                 r'|\bcl\s*tiff(?:any)?\b'  # "cl tiff" = Celebration (Jubilee) Tiffany Blue
-                 r'|\bcelebration\s*tiff(?:any)?\b|\bcelebration\s*tb\b'
-                 r'|\bcelebration\s*t\/b\b|\bceleb\s*tiff(?:any)?\b'
+                 r'|\bcl\s*tiff(?:any)?\b'
+                 r'|\bcelebration\s*/?\s*tiff(?:any)?\b|\bcelebration\s*tb\b'
+                 r'|\bcelebration\s*t\/b\b|\bceleb\s*/?\s*tiff(?:any)?\b'
                  r'|\bceleb\s*tb\b|\bceleb\s*t\/b\b'
-                 r'|\bjubilee\s*tiff(?:any)?\b|\bjubilee\s*tb\b'
+                 r'|\bjubilee\s*/?\s*tiff(?:any)?\b|\bjubilee\s*tb\b'
                  r'|\bcele\s*tiff(?:any)?\b|\bcele\s*tb\b'
                  r'|\bjub\s*tiff(?:any)?\b|\bjub\s*tb\b', t):
         return 'Celebration Tiffany Blue'
@@ -2233,7 +2242,8 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126200','126201','126203',
         '126334','126333','126331','126234','126233','126231',
         '116300','116234','116334','126238',
-        '336934','336238',  # new-gen DJ41/DJ36 refs with Bright Blue (336935 removed — no Bright Blue dial)
+        '336934','336238',  # new-gen DJ41/DJ36 refs with Bright Blue
+        '228239',           # Day-Date 40 Platinum — offers Bright Blue dial
     }: dial = 'Bright Blue'
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
     elif re.search(r'\bblack\b|\bblk\b', t): dial = 'Black'
@@ -2389,6 +2399,20 @@ def extract_dial(text, ref='', raw_ref=''):
     # Apply baguette suffix
     if is_baguette and dial:
         return f'{dial} Baguette'
+
+    # ── Hard validation against rolex_dial_options.json ──
+    # For refs with a known dial list, reject base-color dials that are not valid for the ref.
+    # "Compound" dials (Diamond/Stick/Roman/Baguette/Ombré variants) are exempt because
+    # rolex_dial_options.json may not enumerate every variant explicitly.
+    if _valid_dials and dial and len(_valid_dials) >= 2:
+        _is_compound_dial = any(s in dial for s in
+            [' Diamond', ' Stick', ' Roman', ' Baguette', ' Ombré', ' Ombre', ' Pavé', ' Beach'])
+        if not _is_compound_dial:
+            _matched = (dial in _valid_dials
+                        or any(dial.lower() == v.lower() for v in _valid_dials)
+                        or any(dial.lower() in v.lower() or v.lower() in dial.lower() for v in _valid_dials))
+            if not _matched:
+                return ''  # Dial not valid for this ref — suppress false positive
 
     # Validate dial against reference data (if available for this ref)
     valid = REF_VALID_DIALS.get(ref, REF_VALID_DIALS.get(ref_upper, []))
