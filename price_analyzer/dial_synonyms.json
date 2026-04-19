@@ -127,7 +127,15 @@
     ],
     "MOP": [
         "White and black mother-of-pearl set with diamonds",
-        "Black and white mother-of-pearl set with diamonds"
+        "Black and white mother-of-pearl set with diamonds",
+        "Mother of Pearl",
+        "Mother-of-Pearl",
+        "Nacre",
+        "Perlmutt",
+        "Perlmutte",
+        "Perlato",
+        "Silk Dial",
+        "MOP Dial"
     ],
     "Tiffany Blue": [
         "Robin Egg Blue",
@@ -194,6 +202,7 @@
         "Sky Bl",
         "Aqua",
         "Aqua Dial",
+        "Jade",
         "Jade Dial",
         "Egg Dial",
         "Ciel Dial"
