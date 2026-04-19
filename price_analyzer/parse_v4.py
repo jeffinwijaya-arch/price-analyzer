@@ -1483,7 +1483,7 @@ FIXED_DIAL = {
     '114060':'Black','114270':'Black','214270':'Black',  # Explorer 39mm (2010-2021) — Black dial only
     # 116500LN has both white and black dials — NOT fixed
     '116710LN':'Black','116710BLNR':'Black','116710BLRO':'Black',
-    '116711':'Black','116713LN':'Black',
+    '116711':'Black','116713':'Black','116713LN':'Black',
     '116613LB':'Blue','116613LN':'Black',
     '116618LB':'Blue','116618LN':'Black',
     '116619LB':'Black',  # prev-gen WG Sub
@@ -1791,6 +1791,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bmalach\b', 'malachite', t)         # "malach" shorthand for Malachite stone dial
     t = re.sub(r'\bceleb\b', 'celebration', t)        # "celeb" = Celebration (Jubilee Motif) dial; safe — \b excludes "celebrity","celebrated"
     t = re.sub(r'\blinen\b|\boatmeal\b', 'beige', t)  # Linen/Oatmeal = Beige (OP/DJ dealer terms in Western markets)
+    t = re.sub(r'\btropicaliz(?:ed|ation)?\b|\btrop(?:ical)?\s*patina\b|\buv\s*patina\b|\bpatinated\s*brown\b', 'tropical', t)  # Tropicalized/Tropical Patina = Tropical dial
+    t = re.sub(r'\bcal(?:ifornia)?\s*dial\b|\broman[\s-]*arabic\b|\bsplit[\s-]*numeral\b', 'california dial', t)  # California dial variants
+    t = re.sub(r'\bgilded\b|\bgilt\s*(?:text|print|dial|writing|finish)\b|\bgold\s*(?:text|print)\b', 'gilt', t)  # Gilt dial printing variants
     # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself)
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '136659', '116600', '126660', '136668'}:
@@ -2112,6 +2115,18 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\btiger\s*iron\b', t): return 'Tiger Iron'
     # Tiger Eye
     if re.search(r'\btiger\s*eye\b', t): return 'Tiger Eye'
+    # Tropical (vintage UV-patinated brown dial — significant premium on vintage Sub/Daytona/GMT)
+    # Dealers are always explicit: "tropical dial" or "tropical" in a vintage listing context.
+    # Guard against geographic uses (storm, vacation, etc.) that appear in shipping/event notes.
+    if re.search(r'\btropical\b', t) and not re.search(r'\btropical\s*(?:storm|fish|bird|vacation|island|design|pattern|climate)\b', t):
+        return 'Tropical'
+    # California (split Roman/Arabic numeral vintage dial — premium on vintage Sub/DJ/GMT)
+    if re.search(r'\bcalifornia\s*(?:dial)?\b', t) and not re.search(r'\bcalifornia\s*(?:king|roll|dreamin|pizza|girls)\b', t):
+        return 'California'
+    # Gilt (vintage gold-text/lacquer printing — premium on pre-1970s references)
+    # "gilt" in a listing almost exclusively means the gilt printing on vintage dials.
+    if re.search(r'\bgilt\b', t) and not re.search(r'\bgilt\s*(?:fund|edge|edged|market|trip)\b', t):
+        return 'Gilt'
     # Ceramic (Daytona ceramic dial)
     if re.search(r'\bceramic\s*(?:dial)?\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1) in ('126506','116500','116505','116506','116508','116518','116519','126500','126503','126505','126508','126518'):
         return 'Ceramic'

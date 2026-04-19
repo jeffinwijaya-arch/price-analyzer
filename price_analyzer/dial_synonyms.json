@@ -952,5 +952,33 @@
         "Coral Red Dial",
         "Red Coral",
         "Coral Orange"
+    ],
+    "Tropical": [
+        "Tropical Patina",
+        "Tropical Brown",
+        "Tropicalized",
+        "UV Patina",
+        "Patinated Brown",
+        "Tropical Dial",
+        "Trop Dial",
+        "Trop"
+    ],
+    "California": [
+        "California Dial",
+        "Cal Dial",
+        "Roman Arabic",
+        "Roman/Arabic",
+        "Split Numeral",
+        "Split Dial"
+    ],
+    "Gilt": [
+        "Gilt Dial",
+        "Gilt Text",
+        "Gilt Print",
+        "Gilded",
+        "Gold Text",
+        "Gold Print",
+        "Gilt Writing",
+        "Gloss Gilt"
     ]
 }
