@@ -1637,6 +1637,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # Typo/shorthand fixes
     t = re.sub(r'\bbule\b', 'blue', t)
     t = re.sub(r'\bsliver\b', 'silver', t)
+    # Turquoise misspellings (dealer typos — all map to canonical "turquoise")
+    t = re.sub(r'\bturqoise\b|\bturquois\b|\bturqouise\b|\bturquiose\b|\bturqois\b|\bturkoise\b|\bturkois\b', 'turquoise', t)
     t = re.sub(r'\bwhe\b', 'white', t)
     t = re.sub(r'\blvory\b', 'ivory', t)  # typo: lvory → ivory
     t = re.sub(r'\biceblue\b', 'ice blue', t)  # "iceblue" (no space) → "ice blue"
@@ -1786,6 +1788,18 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btb\s*(?:retailer?|boutique|store|shop|only|direct|authorized|authorised)\b', 'official tiffany', t)
     t = re.sub(r'\btb\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b|\bsign(?:ed)?\s*(?:by\s*)?tb\b', 'official tiffany', t)
     t = re.sub(r'\btb\s*and\s*comp(?:any)?\b|\btb\s*six\b', 'official tiffany', t)
+    # "Tiffany blue caseback/stamp" — "blue" sits between "tiffany" and the OTB marker,
+    # which breaks the earlier \btiff...\s*(?:case\s*)?back\b pattern. These must be OTB
+    # because only Official Tiffany Blue watches have a T&Co stamp alongside blue coloring.
+    t = re.sub(r'\btiff(?:any)?\s+blue\s*(?:case\s*)?back\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s+blue\s*stamp(?:ed)?\b', 'official tiffany', t)
+    # "Tiffany inscription" — "inscrib" already covered but not "inscription" (noun form)
+    t = re.sub(r'\btiff(?:any)?\s*inscription\b|\binscription\s*(?:of\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    # "Tiffany logo / hallmark / monogram" — physical T&Co branding on case or dial = OTB
+    t = re.sub(r'\btiff(?:any)?\s*(?:logo|hallmark|monogram)\b', 'official tiffany', t)
+    t = re.sub(r'\bhallmark(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    # "Tiffany writing/text/print on dial" — visible T&Co text on dial face = OTB
+    t = re.sub(r'\btiff(?:any)?\s*(?:writing|text|print(?:ing|ed)?)\s*(?:on\s*(?:the\s*)?dial)?\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1854,9 +1868,11 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\btb\b', 'turquoise', t)
     # On Daytona refs that offer a Turquoise dial, "TB" = Turquoise Blue — remap BEFORE tiffany stripping
     # Without this, "126508 tb" would have "tb" stripped by the Tiffany blocker and return empty.
-    # 126508/116508 don't offer a Turquoise dial; 126509/116509 have Turquoise Beach only
+    # 116509/126519/116519 have Turquoise Beach only (no plain Turquoise); the post-detection
+    # upgrade block below converts "Turquoise" → "Turquoise Beach" for those refs.
     _DAYTONA_TURQ_TB_BASES = {'126500','126515','126518','126518LN','126528','126529',
-                               '116515','116518','116518LN','116528'}
+                               '116515','116518','116518LN','116528',
+                               '116509','126519','116519'}  # Turquoise Beach-only refs
     if _sd_ref_base in _DAYTONA_TURQ_TB_BASES:
         t = re.sub(r'\btb\b', 'turquoise', t)
     # Lime/Neon/Electric/Vivid/Chartreuse → Bright Green on Day-Date refs (Rolex official name)
@@ -1887,6 +1903,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bnoir\b|\bnero\b|\bschwarz\b', 'black', t)       # FR/IT/DE black
     t = re.sub(r'\bbleu\b|\bblau\b', 'blue', t)                    # FR/DE blue
     t = re.sub(r'\brouge\b|\brosso\b', 'red', t)                   # FR/IT red
+    t = re.sub(r'\bcorail\b', 'coral', t)                          # FR coral (Lady DJ/OP seller term)
     t = re.sub(r'\bweiss\b|\bbianco\b|\bblanc\b', 'white', t)     # DE/IT/FR white
     t = re.sub(r'\bgrau\b|\bgris\b|\bgrigio\b', 'grey', t)        # DE/FR/IT grey
     t = re.sub(r'\bverde\b|\bvert\b', 'green', t)                  # IT+ES/FR green
@@ -2319,6 +2336,7 @@ def extract_dial(text, ref='', raw_ref=''):
                            '279174',   # Lady DJ 28 TT — Ice Blue option per catalog
                            '127336',   # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
                            # AP Royal Oak refs with confirmed Ice Blue dial option
+                           '15210',    # AP Royal Oak 37mm (new gen, 2022+) — Ice Blue confirmed
                            '15510',    # AP Royal Oak 37mm (15510ST) — Ice Blue is a valid option
                            '15550',    # AP Royal Oak 34mm (15550ST) — Ice Blue option
                            '15551',    # AP Royal Oak 34mm (15551ST) — Ice Blue option
@@ -2480,6 +2498,15 @@ def extract_dial(text, ref='', raw_ref=''):
     # "magenta"/etc. that get normalized to generic pink via other substitutions above.
     if dial == 'Pink' and _ref_base_norm in _ONLY_CANDY_PINK_REFS:
         dial = 'Candy Pink'
+
+    # Post-process: Turquoise/Green → Turquoise Beach/Green Beach for Daytona refs that only
+    # offer the Beach variant (no plain Turquoise or Green dial exists for these refs).
+    # 116509/126519/116519 are the Daytona Oystersteel/Everose Sapphire-bezel refs; dealers
+    # often write "turq", "turquoise", or "green" without the "beach" qualifier.
+    _BEACH_ONLY_REFS = {'116509', '126519', '116519'}
+    if _ref_base_norm in _BEACH_ONLY_REFS:
+        if dial == 'Turquoise': dial = 'Turquoise Beach'
+        elif dial == 'Green': dial = 'Green Beach'
 
     if not dial:
         # Check if this is a single-dial ref from catalog before returning empty

@@ -631,7 +631,26 @@
         "Turquoise Blue",
         "Turq",
         "Stella Turquoise",
-        "Stella"
+        "Stella",
+        "Turqoise",
+        "Turquois",
+        "Turqouise",
+        "Turquiose",
+        "Turqois",
+        "Turkoise"
+    ],
+    "Turquoise Beach": [
+        "Turq Beach",
+        "TB Beach",
+        "Beach Turquoise",
+        "Turquoise Beach Dial",
+        "Turq Bch"
+    ],
+    "Green Beach": [
+        "Green Beach Dial",
+        "Beach Green",
+        "Grn Beach",
+        "Green Bch"
     ],
     "Green Ombré": [
         "Green Smoke",
@@ -966,7 +985,8 @@
         "Coral Red",
         "Coral Red Dial",
         "Red Coral",
-        "Coral Orange"
+        "Coral Orange",
+        "Corail"
     ],
     "Tropical": [
         "Tropical Patina",
