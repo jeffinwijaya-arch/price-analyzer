@@ -1646,6 +1646,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\begg\s+shell\b', 'eggshell', t)  # "egg shell" two-word form → "eggshell" for TB detection
     t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
     t = re.sub(r'\btiff[-_]blue\b', 'tiffany', t)   # "Tiff-Blue" / "Tiff_Blue" hyphenated
+    t = re.sub(r'\btiffblue\b', 'tiffany', t)        # "TiffBlue" glued (no separator) — common in Hong Kong/WhatsApp shorthand
+    t = re.sub(r'\btiff\.\s*blue\b', 'tiffany', t)  # "Tiff.Blue" / "Tiff. Blue" period-separated form
+    t = re.sub(r'\btiff(?:any)?\s*colou?r\b', 'tiffany', t)  # "Tiffany colour/color" — descriptive form
     t = re.sub(r'\bsea\s*foam(?:\s*green)?\b', 'tiffany', t)  # Sea Foam / Seafoam / Sea Foam Green ≈ Tiffany Blue
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
     t = re.sub(r'\btifany\b|\btiffanie\b|\btiffani\b|\btifanny\b|\btiffanys\b', 'tiffany', t)  # misspellings (single-f, -ie/-i/-ny/-s variants)
@@ -1881,6 +1884,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126334','126333','126331','126234','126233','126231',  # DJ36 TT / WG
         '116300','116234','116334','126238','336934','336238',  # prev-gen / new-gen
         '228239','228236',  # Day-Date 40 Platinum / Day-Date 40 Platinum (Bright Blue option)
+        '336300','336301','336234','336235',  # new-gen DJ41 SS / DJ36 SS (Bright Blue option)
     }
     if _sd_ref_base in _BB_BRIGHT_REFS:
         t = re.sub(r'\bbb\b', 'bright blue', t)
@@ -2010,7 +2014,10 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bmtr\b', 'meteorite', t)  # "mtr" = meteorite shorthand (HK dealers)
     # ── Ref-gated Pink → Candy Pink (OP/31 refs where only Candy Pink exists, not plain Pink) ──
     # For these refs dealers say "pink" but Rolex's official name is "Candy Pink"
-    _ONLY_CANDY_PINK_REFS = {'124300', '277200', '276200', '134300'}
+    # All current-gen OP refs use "Candy Pink" as the official Rolex name for the pink dial.
+    # 126000/126031/126034 and 124200 were missing — dealers writing "pink" for these returned 'Pink'
+    # instead of the correct 'Candy Pink', causing catalog mismatches and pricing errors.
+    _ONLY_CANDY_PINK_REFS = {'124300', '277200', '276200', '134300', '126000', '126031', '126034', '124200'}
     if _ref_base_norm in _ONLY_CANDY_PINK_REFS:
         t = re.sub(r'\bpink\b', 'candy pink', t)
     # "cpk"/"cpnk"/"cp pink" = Candy Pink shorthand — gate to OP/Lady refs to avoid false positives
@@ -2039,7 +2046,10 @@ def extract_dial(text, ref='', raw_ref=''):
         # New-gen Datejust/Day-Date (336/326 series) — no Tiffany Blue option
         # NOTE: 336238 intentionally excluded — it has a Turquoise dial and the code at
         # line ~2148 remaps tiffany→Turquoise for it; blocking here would break that.
-        '336235','336934','336938','336933','336239','336259',
+        # 336234/336300/336301/336303 were previously missing — false OTB signals would
+        # cause validation to reject the result and return '' instead of the true dial color.
+        '336234','336235','336300','336301','336303',
+        '336934','336938','336933','336239','336259',
         '336935',
         '326935','326934','326938','326933','326939',
         '326238','326235','326239','326259',
@@ -2291,6 +2301,10 @@ def extract_dial(text, ref='', raw_ref=''):
         '126235','126239',  # DJ36 WG/Everose variants with Wimbledon
         '126283','126284','116300','116333','116334','116234',
         '116233','116200','116201','116203','116231','116238',  # prev-gen DJ36 SS/TT/YG
+        # New-gen Datejust 36 & 41 (336xxx, 2023+) — all carry Wimbledon dial option.
+        # Without these, abbreviation shorthands wim/wb/wm/CGS/G-C are ref-gated and miss.
+        '336234','336235','336238','336239','336259',  # DJ36 new-gen
+        '336300','336301','336303','336933','336934',  # DJ41 new-gen
     }
     _ref_base_wim = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t): return 'Wimbledon'

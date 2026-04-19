@@ -214,7 +214,13 @@
         "Seafoam Green",
         "Sea Foam",
         "Sea Foam Green",
-        "Jade Blue"
+        "Jade Blue",
+        "TiffBlue",
+        "Tiff Blue",
+        "Tiff.Blue",
+        "Tiff. Blue",
+        "Tiffany Colour",
+        "Tiffany Color"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -940,8 +946,17 @@
         "126334": {
             "Azzurro Blue": "Blue Roman"
         },
-        "_comment3": "On OP refs, 'Pink' is a mislabel for Candy Pink",
+        "_comment3": "On OP refs, 'Pink' is a mislabel for Candy Pink (official Rolex name)",
         "126000": {
+            "Pink": "Candy Pink"
+        },
+        "126031": {
+            "Pink": "Candy Pink"
+        },
+        "126034": {
+            "Pink": "Candy Pink"
+        },
+        "124200": {
             "Pink": "Candy Pink"
         },
         "134300": {
