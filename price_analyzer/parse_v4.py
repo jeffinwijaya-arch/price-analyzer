@@ -1716,7 +1716,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bstarbucks\b', 'green', t)  # Starbucks = green dial Sub
     t = re.sub(r'\bkermit\b', 'green', t)  # Kermit = green dial/bezel Sub
     t = re.sub(r'\bhulk\b', 'green', t)    # Hulk = green dial Submariner LV (126610LV / 116610LV)
-    t = re.sub(r'\bsmurf\b', 'blue', t)  # Smurf = blue dial Sub WG
+    t = re.sub(r'\bsmurf\b', 'black', t)  # Smurf = WG Sub (116619LB/126619LB) — BLACK dial, blue bezel
     t = re.sub(r'\bghost\b', 'grey', t)  # Ghost = grey dial Daytona (126519LN etc.)
     t = re.sub(r'\bjoker\b', 'black', t)  # Joker = black dial GMT VTNR (126729VTNR, 126710VTNR)
     t = re.sub(r'\bbruce\s*wayne\b', 'black', t)  # Bruce Wayne = black dial GMT Sprite GRNR
@@ -1729,7 +1729,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bcertif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\btiff(?:any)?\s*certif(?:ied)?\b', 'official tiffany', t)
     t = re.sub(r'\bverif(?:ied)?\s*by\s*tiff(?:any)?\b|\bauth(?:enticated)?\s*by\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\btiff(?:any)?\s*auth(?:entic(?:ated)?)?\b', 'official tiffany', t)  # "tiffany auth" reversed form
-    # Tiffany signed/engraved caseback = OTB — "Tiffany signed", "T&Co engraved", "inscribed Tiffany"
+    # Tiffany signed/engraved/stamped caseback = OTB — "Tiffany signed", "T&Co engraved", "tiff-stamped"
+    t = re.sub(r'\btiff(?:any)?[-\s]*stamp(?:ed)?\b', 'official tiffany', t)  # "tiff-stamped"/"tiff stamped" = OTB
     t = re.sub(r'\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
     t = re.sub(r'\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b|\binscrip?t(?:ion)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
@@ -1841,10 +1842,21 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btrop\b', 'tropical', t)  # bare "trop" = Tropical (dealer shorthand, unambiguous in watch listings)
     t = re.sub(r'\bcal(?:ifornia)?\s*dial\b|\broman[\s-]*arabic\b|\bsplit[\s-]*numeral\b', 'california dial', t)  # California dial variants
     t = re.sub(r'\bgilded\b|\bgilt\s*(?:text|print|dial|writing|finish)\b|\bgold\s*(?:text|print)\b', 'gilt', t)  # Gilt dial printing variants
-    # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself)
+    # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself).
+    # Additionally gate to refs where Sundust is actually a valid dial — prevents "sd" on
+    # DJ/Sub/GMT refs from being converted to "Sundust", which then fails hard validation and
+    # returns '' instead of detecting the other valid color(s) present in the listing text.
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '136659', '116600', '126660', '136668'}:
-        t = re.sub(r'\bsd\b', 'sundust', t)
+        if not ref or not _valid_dials or 'Sundust' in _valid_dials:
+            t = re.sub(r'\bsd\b', 'sundust', t)
+    # T&Co × Rolex 2021 collab: exactly 130 pieces numbered. "1 of 130" / "only 130" in context
+    # with any Tiffany keyword = Official Tiffany Blue. Gate to OP refs where the collab occurred.
+    if _sd_ref_base in {'126000', '126031'} or not ref:
+        if re.search(r'\b(?:1\s*(?:of|\/)\s*130|only\s*130|130\s*(?:pieces?|made|produced|examples?|units?))\b', t):
+            if re.search(r'\btiff(?:any)?\b|\btb\b', t):
+                t = re.sub(r'\btiff(?:any)?\b', 'official tiffany', t)
+                t = re.sub(r'\btb\b', 'official tiffany', t)
     # "sol" = Sundust shorthand used by Malaysian/Singapore Daytona Everose dealers
     _SUNDUST_SOL_REFS = {'116515','126515','116595','126595','116505','126505','126515LN','116515LN'}
     if _sd_ref_base in _SUNDUST_SOL_REFS:
@@ -1906,6 +1918,9 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bneon\s*green\b|\belectric\s*green\b|\bvivid\s*green\b', 'bright green', t)
         t = re.sub(r'\bchartreuse(?:\s*green)?\b', 'bright green', t)
         t = re.sub(r'\bbrg\b', 'bright green', t)  # "brg" = Bright Green shorthand on DD refs
+    else:
+        # Non-Day-Date refs: "lime"/"lime green" = generic Green (OP/DJ/Sub/Daytona dealers' shorthand)
+        t = re.sub(r'\blime(?:\s*green)?\b', 'green', t)
     # ── Additional dial synonym normalizations ──
     # Champagne synonyms (dealer terms for warm cream/ivory dials; Rolex official = champagne)
     t = re.sub(r'\bivory\b|\bivoire\b|\becru\b|\bstraw\b|\bbutterscotch\b', 'champagne', t)
@@ -2385,7 +2400,7 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\btco\b|\bt\.co\b'
                    r'|\bofficial\s*tiff(?:any)?\b|\btiff(?:any)?\s*official\b'
                    r'|\bofficial\s*tb\b|\boff\.?\s*tiff(?:any)?\b'
-                   r'|\btiffany\s*stamp(?:ed)?\b|\btiff\s*stamp(?:ed)?\b'
+                   r'|\btiffany[-\s]*stamp(?:ed)?\b|\btiff[-\s]*stamp(?:ed)?\b'
                    r'|\bstamped\s*tiff(?:any)?\b'
                    r'|\bcertif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\btiff(?:any)?\s*certif(?:ied)?\b'
                    r'|\bverif(?:ied)?\s*by\s*tiff(?:any)?\b|\bauth(?:enticated)?\s*by\s*tiff(?:any)?\b'
