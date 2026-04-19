@@ -1646,9 +1646,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\begg\s+shell\b', 'eggshell', t)  # "egg shell" two-word form → "eggshell" for TB detection
     t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
     t = re.sub(r'\btiff[-_]blue\b', 'tiffany', t)   # "Tiff-Blue" / "Tiff_Blue" hyphenated
-    t = re.sub(r'\bseafoam(?:\s*green)?\b', 'tiffany', t)  # Seafoam/Seafoam Green ≈ Tiffany Blue (OP refs → Tiffany; DD refs → Turquoise via later remap)
+    t = re.sub(r'\bsea\s*foam(?:\s*green)?\b', 'tiffany', t)  # Sea Foam / Seafoam / Sea Foam Green ≈ Tiffany Blue
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
-    t = re.sub(r'\btifany\b', 'tiffany', t)  # common single-f spelling variant (tifany → tiffany)
+    t = re.sub(r'\btifany\b|\btiffanie\b|\btiffani\b|\btifanny\b|\btiffanys\b', 'tiffany', t)  # misspellings (single-f, -ie/-i/-ny/-s variants)
     t = re.sub(r'\bt-b\b', 'tiffany', t)             # T-B hyphenated = Tiffany Blue shorthand
     t = re.sub(r'\bice[-]blue\b', 'ice blue', t)  # "ice-blue" hyphenated
     t = re.sub(r'\bice\s*bl\b', 'ice blue', t)    # "ice bl" abbreviation → "ice blue"
@@ -1745,6 +1745,20 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\btiff(?:any)?\s*limited\s*edition\b|\blimited\s*edition\s*tiff(?:any)?\b', 'official tiffany', t)  # "Tiffany Limited Edition" = the 2022 T&Co × Rolex collab = OTB
     t = re.sub(r'\btiff(?:any)?\s+rolex\b|\brolex\s+tiff(?:any)?\b', 'official tiffany', t)  # "Tiffany Rolex" / "Rolex Tiffany" = sold through T&Co = OTB
+    # "Tiffany box/boxed/packaging" — watch came with T&Co branded packaging = sold through T&Co = OTB
+    t = re.sub(r'\btiff(?:any)?\s*box(?:ed)?\b|\btiff(?:any)?\s*packag(?:ing|ed?)?\b', 'official tiffany', t)
+    t = re.sub(r'\bt\s*&\s*co\s*box(?:ed)?\b|\bt\s*&\s*co\s*packag(?:ing|ed?)?\b', 'official tiffany', t)
+    # "Tiffany numbered" / "numbered Tiffany" — the 130-piece T&Co × Rolex collab was serialised
+    t = re.sub(r'\btiff(?:any)?\s*number(?:ed)?\b|\bnumber(?:ed)?\s*(?:edition\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\bt\s*&\s*co\s*number(?:ed)?\b', 'official tiffany', t)
+    # "Tiffany at 6 o'clock" / "Tiffany 6 o'clock" — the T&Co stamp sits at 6 on the dial
+    t = re.sub(r'\btiff(?:any)?\s*at\s*6\s*o[\'\`]?[-\s]?clock\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*6\s*o[\'\`]?[-\s]?clock\b', 'official tiffany', t)
+    t = re.sub(r'\bt\s*&\s*co\s*(?:at\s*)?6\s*o[\'\`]?[-\s]?clock\b', 'official tiffany', t)
+    # "T&Co serial" / "T&Co registration" — T&Co registered watches = OTB provenance
+    t = re.sub(r'\bt\s*&\s*co\s*(?:serial|reg(?:istration|istered)?|number(?:ed)?)\b', 'official tiffany', t)
+    # "seen at Tiffany" / "spotted at Tiffany" = observed for sale at T&Co = OTB
+    t = re.sub(r'\b(?:seen|spotted|found|observed|listed)\s*(?:at|in|by)\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bunofficiale?\s*tiff(?:any)?\b|\baftermarket\s*tiff(?:any)?\b|\breplica\s*tiff(?:any)?\b', 'tiffany', t)  # aftermarket/replica = plain tiffany, NOT official
     # Reverse-order parenthetical OTB: "Tiffany (official)", "TB (otb)", "Tiff (auth)", etc.
     t = re.sub(r'\btiff(?:any)?\s*\((?:orig(?:inal)?|auth(?:entic)?|genuine|real|off?(?:icial)?|stamp(?:ed)?|otb|t\.?co|t\s*&\s*co)\)', 'official tiffany', t)
@@ -2408,7 +2422,15 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\bdial\s*(?:says?|reads?|has|with)\s*tiff(?:any)?\b'
                    r'|\btiff(?:any)?\s*on\s*(?:the\s*)?dial\b'  # "tiffany on (the) dial" not "tiffany dial"
                    r'|\bpurchas(?:ed?)\s*(?:at|from|through)\s*tiff(?:any)?\b'
-                   r'|\bcame?\s*from\s*tiff(?:any)?\b', t):
+                   r'|\bcame?\s*from\s*tiff(?:any)?\b'
+                   r'|\btiff(?:any)?\s*box(?:ed)?\b|\btiff(?:any)?\s*packag(?:ing|ed?)?\b'
+                   r'|\bt\s*&\s*co\s*box(?:ed)?\b|\bt\s*&\s*co\s*packag(?:ing|ed?)?\b'
+                   r'|\btiff(?:any)?\s*number(?:ed)?\b|\bnumber(?:ed)?\s*(?:edition\s*)?tiff(?:any)?\b'
+                   r'|\bt\s*&\s*co\s*number(?:ed)?\b'
+                   r'|\btiff(?:any)?\s*(?:at\s*)?6\s*o[\'\`]?[-\s]?clock\b'
+                   r'|\bt\s*&\s*co\s*(?:at\s*)?6\s*o[\'\`]?[-\s]?clock\b'
+                   r'|\bt\s*&\s*co\s*(?:serial|reg(?:istration|istered)?)\b'
+                   r'|\b(?:seen|spotted|found|observed)\s*(?:at|in)\s*tiff(?:any)?\b', t):
         # Official Tiffany Blue = Tiffany & Co stamped dial (massive premium vs plain TB)
         # DD refs (128/228) don't carry OTB — remap to their actual Turquoise dial.
         # Also 336238 (new-gen DJ36 YG) and 126200 (DJ36 SS) only offer Turquoise, not OTB.
