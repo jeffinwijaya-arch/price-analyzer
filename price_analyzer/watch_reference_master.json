@@ -1,1 +1,831 @@
-{}
+{
+  "version": "1.0",
+  "generated": "2026-04-10",
+  "suffix_codes": {
+    "rolex": {
+      "BLNR": {
+        "meaning": "Blue/Black ceramic bezel",
+        "nickname": "Batman/Batgirl",
+        "dial": "Black",
+        "families": [
+          "GMT-Master II"
+        ]
+      },
+      "BLRO": {
+        "meaning": "Blue/Red ceramic bezel",
+        "nickname": "Pepsi",
+        "dial": "Black",
+        "families": [
+          "GMT-Master II"
+        ]
+      },
+      "GRNR": {
+        "meaning": "Grey/Black ceramic bezel",
+        "nickname": "Bruce Wayne/Sprite",
+        "dial": "Black",
+        "families": [
+          "GMT-Master II"
+        ]
+      },
+      "CHNR": {
+        "meaning": "Brown/Black ceramic bezel",
+        "nickname": "Root Beer",
+        "dial": "Black",
+        "families": [
+          "GMT-Master II"
+        ]
+      },
+      "VTNR": {
+        "meaning": "Violet/Black ceramic bezel",
+        "nickname": "Joker",
+        "dial": "Black",
+        "families": [
+          "GMT-Master II"
+        ]
+      },
+      "LN": {
+        "meaning": "Lunette Noire (Black bezel)",
+        "dial": "Black",
+        "families": [
+          "Submariner",
+          "Daytona"
+        ]
+      },
+      "LV": {
+        "meaning": "Lunette Verte (Green bezel)",
+        "nickname": "Kermit/Starbucks",
+        "dial": "Green",
+        "families": [
+          "Submariner"
+        ]
+      },
+      "LB": {
+        "meaning": "Lunette Bleue (Blue bezel)",
+        "dial": "Blue",
+        "families": [
+          "Submariner"
+        ]
+      },
+      "G": {
+        "meaning": "Diamond hour markers (set by Rolex)",
+        "dial_modifier": "Diamond",
+        "families": [
+          "Datejust",
+          "Day-Date",
+          "Daytona"
+        ]
+      },
+      "NG": {
+        "meaning": "Diamond hour markers + MOP dial",
+        "dial": "MOP",
+        "families": [
+          "Datejust",
+          "Day-Date"
+        ]
+      },
+      "A": {
+        "meaning": "Baguette diamond hour markers",
+        "dial_modifier": "Baguette Diamond",
+        "families": [
+          "Day-Date",
+          "Datejust"
+        ]
+      },
+      "VI": {
+        "meaning": "Roman numeral hour markers",
+        "dial_modifier": "Roman",
+        "families": [
+          "Datejust",
+          "Day-Date"
+        ]
+      },
+      "RBR": {
+        "meaning": "Rainbow bezel (sapphire-set)",
+        "nickname": "Rainbow",
+        "families": [
+          "Datejust",
+          "Daytona",
+          "Submariner"
+        ]
+      },
+      "PN": {
+        "meaning": "Paul Newman dial variant",
+        "dial": "Paul Newman",
+        "families": [
+          "Daytona"
+        ]
+      },
+      "SA": {
+        "meaning": "Sapphire-set (rainbow)",
+        "dial": "Black",
+        "families": [
+          "GMT-Master II",
+          "Daytona"
+        ]
+      },
+      "SATS": {
+        "meaning": "Sapphires (rainbow) bezel",
+        "dial": "Black",
+        "families": [
+          "Daytona"
+        ]
+      },
+      "SABR": {
+        "meaning": "Sapphire baguette",
+        "dial": "Black",
+        "families": [
+          "Submariner"
+        ]
+      },
+      "SN": {
+        "meaning": "Sapphire Noir",
+        "dial": "Black",
+        "families": [
+          "GMT-Master II"
+        ]
+      },
+      "DB": {
+        "meaning": "D-Blue gradient",
+        "dial": "D-Blue",
+        "families": [
+          "Sea-Dweller"
+        ]
+      }
+    },
+    "rolex_materials": {
+      "00": "Stainless Steel (Oystersteel)",
+      "03": "Two-Tone Steel/Yellow Gold",
+      "05": "Everose Gold",
+      "06": "Platinum",
+      "08": "Yellow Gold",
+      "09": "White Gold",
+      "10": "Stainless Steel",
+      "13": "Two-Tone Steel/Yellow Gold",
+      "15": "Everose Gold",
+      "18": "Yellow Gold",
+      "19": "White Gold",
+      "20": "Two-Tone Steel/Everose Gold",
+      "21": "Two-Tone Steel/Everose Gold",
+      "23": "Two-Tone Steel/Yellow Gold",
+      "25": "Everose Gold",
+      "27": "Everose Gold/Steel",
+      "28": "Yellow Gold",
+      "29": "White Gold",
+      "31": "Two-Tone Steel/Everose Gold",
+      "33": "Two-Tone Steel/Yellow Gold",
+      "34": "Stainless Steel (Fluted)",
+      "35": "Everose Gold",
+      "38": "Yellow Gold",
+      "39": "White Gold",
+      "45": "Everose Gold (gem-set)",
+      "48": "Yellow Gold (gem-set)",
+      "49": "White Gold (gem-set)",
+      "55": "Everose Gold (Oysterflex)",
+      "58": "Yellow Gold (Oysterflex)",
+      "59": "White Gold (Oysterflex)",
+      "60": "Platinum",
+      "68": "Yellow Gold (gem-set)",
+      "71": "Steel/Everose + Diamond",
+      "74": "Steel + Diamond bezel",
+      "78": "Yellow Gold + Diamond",
+      "79": "White Gold + Diamond",
+      "81": "Steel/Everose/Diamond",
+      "83": "Steel/Yellow Gold/Diamond",
+      "84": "Steel/Diamond",
+      "85": "Everose/Diamond",
+      "88": "Yellow Gold/Diamond",
+      "89": "White Gold/Diamond",
+      "95": "Everose Gold (gem-set pave)",
+      "96": "Platinum (gem-set)",
+      "98": "Yellow Gold (gem-set pave)",
+      "99": "Sapphire/Diamond"
+    },
+    "patek_materials": {
+      "A": "Steel",
+      "R": "Rose Gold",
+      "G": "White Gold",
+      "J": "Yellow Gold",
+      "P": "Platinum",
+      "S": "Steel/Rose Gold"
+    },
+    "ap_materials": {
+      "ST": "Stainless Steel",
+      "SR": "Steel/Rose Gold",
+      "OR": "Rose Gold",
+      "OA": "Yellow Gold",
+      "BC": "White Gold",
+      "CE": "Ceramic",
+      "IP": "Titanium/Platinum",
+      "TI": "Titanium",
+      "KB": "Frosted Gold"
+    }
+  },
+  "rolex_families": {
+    "124": {
+      "060": "Submariner No-Date",
+      "270": "Explorer I",
+      "300": "Explorer I 40"
+    },
+    "126": {
+      "000": "Oyster Perpetual 36",
+      "200": "Datejust 36",
+      "231": "Datejust 36 TT RG",
+      "233": "Datejust 36 TT YG",
+      "234": "Datejust 36 Steel",
+      "281": "Datejust 36 RBR",
+      "283": "Datejust 36 RBR TT YG",
+      "284": "Datejust 36 RBR Steel",
+      "300": "Datejust 41",
+      "331": "Datejust 41 TT RG",
+      "333": "Datejust 41 TT YG",
+      "334": "Datejust 41 Steel",
+      "500": "Daytona",
+      "515": "Daytona RG",
+      "518": "Daytona YG",
+      "519": "Daytona WG",
+      "525": "Daytona RG Pave",
+      "528": "Daytona YG Oysterflex",
+      "529": "Daytona WG Oysterflex",
+      "579": "Daytona WG Gem",
+      "589": "Daytona WG Gem",
+      "598": "Daytona Rainbow",
+      "600": "Sea-Dweller",
+      "603": "Sea-Dweller TT",
+      "610": "Submariner Date",
+      "613": "Submariner TT",
+      "618": "Submariner Gold",
+      "619": "Submariner WG",
+      "655": "Yacht-Master 40 RG",
+      "660": "Deepsea",
+      "710": "GMT-Master II Steel",
+      "711": "GMT-Master II TT RG",
+      "713": "GMT-Master II TT YG",
+      "715": "GMT-Master II RG",
+      "718": "GMT-Master II YG",
+      "719": "GMT-Master II WG",
+      "720": "GMT-Master II Left-Hand",
+      "729": "GMT-Master II WG New",
+      "755": "Yacht-Master 40 WG Gem",
+      "900": "Air-King"
+    },
+    "127": {
+      "234": "1908 39mm Steel",
+      "235": "1908 39mm WG",
+      "236": "1908 39mm Platinum",
+      "334": "1908 39mm YG",
+      "335": "1908 39mm RG"
+    },
+    "128": {
+      "235": "Day-Date 36 RG",
+      "238": "Day-Date 36 YG",
+      "239": "Day-Date 36 WG",
+      "345": "Day-Date 36 RG Gem",
+      "349": "Day-Date 36 WG Gem"
+    },
+    "134": {
+      "300": "Oyster Perpetual 34"
+    },
+    "136": {
+      "660": "Deepsea",
+      "668": "Deepsea TT"
+    },
+    "224": {
+      "270": "Explorer I 40"
+    },
+    "226": {
+      "570": "Yacht-Master 42 Ti",
+      "659": "Yacht-Master 42 WG",
+      "668": "Yacht-Master 42 TT"
+    },
+    "228": {
+      "206": "Day-Date 40 Platinum",
+      "235": "Day-Date 40 RG",
+      "236": "Day-Date 40 Platinum",
+      "238": "Day-Date 40 YG",
+      "239": "Day-Date 40 WG",
+      "345": "Day-Date 40 RG Gem",
+      "349": "Day-Date 40 WG Gem"
+    },
+    "278": {
+      "271": "Datejust 31 TT RG",
+      "273": "Datejust 31 TT YG",
+      "274": "Datejust 31 Steel",
+      "275": "Datejust 31 RG",
+      "278": "Datejust 31 YG"
+    },
+    "279": {
+      "135": "Lady-Datejust 28 RG Gem",
+      "161": "Lady-Datejust 28 TT RG",
+      "171": "Lady-Datejust 28 TT YG",
+      "173": "Lady-Datejust 28 TT YG Gem",
+      "174": "Lady-Datejust 28 Steel",
+      "175": "Lady-Datejust 28 RG",
+      "178": "Lady-Datejust 28 YG"
+    },
+    "336": {
+      "934": "Sky-Dweller Steel",
+      "935": "Sky-Dweller TT RG",
+      "938": "Sky-Dweller YG"
+    }
+  },
+  "nicknames": {
+    "batman": "126710BLNR",
+    "batgirl": "126710BLNR",
+    "pepsi": "126710BLRO",
+    "coke": "126710BLRO",
+    "sprite": "126710GRNR",
+    "bruce wayne": "126710GRNR",
+    "destro": "126720VTNR",
+    "root beer": "126711CHNR",
+    "joker": "126720VTNR",
+    "hulk": "116610LV",
+    "kermit": "126610LV",
+    "starbucks": "126610LV",
+    "smurf": "116619LB",
+    "cookie monster": "116613LB",
+    "panda": {
+      "ref": "126500LN",
+      "dial": "White"
+    },
+    "reverse panda": {
+      "ref": "126500LN",
+      "dial": "Black"
+    },
+    "john mayer": {
+      "ref": "126508",
+      "dial": "Green"
+    },
+    "paul newman": {
+      "ref": "6239",
+      "dial": "Paul Newman"
+    },
+    "rainbow": "126598",
+    "wimbledon": {
+      "ref": "126334",
+      "dial": "Wimbledon"
+    },
+    "palm": {
+      "ref": "126234",
+      "dial": "Green Palm"
+    },
+    "fluted motif": {
+      "ref": "126234",
+      "dial": "Green Fluted"
+    },
+    "azzurro": {
+      "ref": "126234",
+      "dial": "Blue"
+    },
+    "mint": {
+      "ref": "126234",
+      "dial": "Mint Green"
+    },
+    "president": "228238",
+    "sky dweller": "336934",
+    "polar": {
+      "ref": "226570",
+      "dial": "White"
+    },
+    "james cameron": {
+      "ref": "136660DB",
+      "dial": "D-Blue"
+    },
+    "deepsea": "126660",
+    "royal oak": "15510ST",
+    "jumbo": "15202ST",
+    "nautilus": "5711/1A",
+    "aquanaut": "5167A",
+    "tiffany nautilus": {
+      "ref": "5711/1A",
+      "dial": "Tiffany Blue"
+    }
+  },
+  "dial_aliases": {
+    "Black": [
+      "Nero",
+      "Noir",
+      "Blk",
+      "Negro"
+    ],
+    "White": [
+      "Blanc",
+      "Bianco",
+      "Wht",
+      "Ivory",
+      "Lacquer White"
+    ],
+    "Blue": [
+      "Bleu",
+      "Azzurro",
+      "Azzuro",
+      "Blu",
+      "Navy"
+    ],
+    "Green": [
+      "Vert",
+      "Verde",
+      "Racing Green"
+    ],
+    "Olive Green": [
+      "Olive",
+      "Olv",
+      "Olv Grn",
+      "Verde Oliva"
+    ],
+    "Grey": [
+      "Slate",
+      "Rhodium",
+      "Steel",
+      "Anthracite",
+      "Ruthenium",
+      "Dark Rhodium",
+      "Gray"
+    ],
+    "Champagne": [
+      "Gold",
+      "Golden",
+      "Sundust Champagne"
+    ],
+    "MOP": [
+      "Mother of Pearl",
+      "White MOP",
+      "Black MOP",
+      "Pink MOP",
+      "Tahitian MOP"
+    ],
+    "Chocolate": [
+      "Brown",
+      "Cacao",
+      "Coffee",
+      "Tobacco",
+      "Havana"
+    ],
+    "Sundust": [
+      "Pink Sundust"
+    ],
+    "Silver": [
+      "Argent",
+      "Silvery",
+      "Opaline"
+    ],
+    "Pink": [
+      "Flamingo"
+    ],
+    "Ice Blue": [
+      "Glacier Blue",
+      "Ice",
+      "Platinum Blue",
+      "IB",
+      "Ice-Blue",
+      "Iceblue"
+    ],
+    "Tiffany Blue": [
+      "Tiffany",
+      "TB",
+      "Tiff",
+      "Tiff Blue",
+      "Robin's Egg Blue",
+      "Duck Egg Blue",
+      "Mint Green"
+    ],
+    "Official Tiffany Blue": [
+      "OTB",
+      "Tiffany x Rolex",
+      "T&Co Blue",
+      "Tiffany & Co"
+    ],
+    "Turquoise": [
+      "Turquoise Blue",
+      "Stella Turquoise",
+      "Turq"
+    ],
+    "Mint Green": [
+      "Mint",
+      "Celadon"
+    ],
+    "Pistachio": [
+      "Pist",
+      "Pistachio Green",
+      "Pistache"
+    ],
+    "Candy Pink": [
+      "Candy",
+      "Cotton Candy",
+      "Baby Pink",
+      "Candy P",
+      "CPK",
+      "CPNK"
+    ],
+    "Coral": [
+      "Coral Red",
+      "Stella Coral"
+    ],
+    "Yellow": [
+      "Bright Yellow",
+      "Stella Yellow",
+      "Citrus"
+    ],
+    "Red": [
+      "Stella Red",
+      "Racing Red",
+      "Burgundy"
+    ],
+    "Orange": [
+      "Stella Orange"
+    ],
+    "D-Blue": [
+      "James Cameron",
+      "Gradient Blue",
+      "Deep Blue"
+    ],
+    "Paul Newman": [
+      "PN",
+      "Exotic",
+      "Paul Newman Exotic"
+    ],
+    "Meteorite": [
+      "Meteorite Dial"
+    ],
+    "Lapis Lazuli": [
+      "Lapis"
+    ],
+    "Malachite": [
+      "Malachite Green"
+    ],
+    "Onyx": [
+      "Black Onyx"
+    ],
+    "Tiger Eye": [
+      "Tiger's Eye",
+      "Tigers Eye"
+    ],
+    "Aventurine": [
+      "Aventurine Green",
+      "Aventurine Blue"
+    ],
+    "Puzzles": [
+      "Jigsaw",
+      "Puzzle Dial",
+      "Puzzle Motif"
+    ],
+    "Celebration": [
+      "Jubilee Motif",
+      "Jubilee Dial",
+      "Celeb",
+      "Anniversary Motif"
+    ],
+    "Wimbledon": [
+      "Champ Green",
+      "Champagne Green",
+      "Wim",
+      "Wimbo",
+      "CGS"
+    ],
+    "Grossular": [
+      "Giraffe",
+      "Giraffe Dial",
+      "Grossul"
+    ],
+    "Palm": [
+      "Palm Motif",
+      "Green Palm",
+      "Jungle"
+    ],
+    "Fluted": [
+      "Fluted Motif",
+      "Green Fluted"
+    ]
+  },
+  "bracelet_aliases": {
+    "Jubilee": [
+      "Jub",
+      "Jubliee",
+      "Jubille"
+    ],
+    "Oyster": [
+      "Oys",
+      "Oyst"
+    ],
+    "President": [
+      "Pres",
+      "Presidential"
+    ],
+    "Oysterflex": [
+      "OF",
+      "Flex",
+      "Rubber"
+    ],
+    "Leather": [
+      "Leath",
+      "Strap",
+      "Alligator",
+      "Crocodile"
+    ],
+    "Pearlmaster": [
+      "PM"
+    ]
+  },
+  "dial_synonyms": {
+    "_comment": "Canonical dial → synonyms. Applied at data load + search. Use _ref_specific for per-ref overrides.",
+    "Grey": [
+      "Slate",
+      "Rhodium",
+      "Steel"
+    ],
+    "Grey Diamond": [
+      "Rhodium Diamond",
+      "Slate Diamond"
+    ],
+    "Grey Roman": [
+      "Rhodium Roman"
+    ],
+    "Grey Stick": [
+      "Rhodium Stick"
+    ],
+    "Grey Ombré": [
+      "Ombré Slate"
+    ],
+    "Champagne": [
+      "Golden",
+      "Gold"
+    ],
+    "Champagne Diamond": [
+      "Gold Diamond"
+    ],
+    "Champagne Roman": [
+      "Gold Roman"
+    ],
+    "Chocolate": [
+      "Brown"
+    ],
+    "Chocolate Diamond": [
+      "Brown Diamond"
+    ],
+    "Chocolate Roman": [
+      "Brown Roman"
+    ],
+    "Chocolate Stick": [
+      "Brown Stick"
+    ],
+    "White": [
+      "Intense white"
+    ],
+    "Blue": [
+      "Dark Blue"
+    ],
+    "Sundust Pavé": [
+      "Sundust set with diamonds"
+    ],
+    "Champagne Pavé": [
+      "Golden set with diamonds"
+    ],
+    "MOP": [
+      "White and black mother-of-pearl set with diamonds",
+      "Black and white mother-of-pearl set with diamonds"
+    ],
+    "_ref_specific": {
+      "_comment": "On these refs, Pink is a mislabel for Sundust (Everose gold models where 'pink' = sundust dial)",
+      "126505": {
+        "Pink": "Sundust"
+      },
+      "126505LN": {
+        "Pink": "Sundust"
+      },
+      "126515": {
+        "Pink": "Sundust"
+      },
+      "126515A": {
+        "Pink": "Sundust"
+      },
+      "126515LN": {
+        "Pink": "Sundust"
+      },
+      "126535": {
+        "Pink": "Sundust"
+      },
+      "128235": {
+        "Pink": "Sundust"
+      },
+      "228235": {
+        "Pink": "Sundust"
+      },
+      "_comment2": "On fluted DJ41 (126334), Azzurro Blue = Blue Roman (same dial)",
+      "126334": {
+        "Azzurro Blue": "Blue Roman"
+      },
+      "_comment3": "On OP refs, 'Pink' is a mislabel for Candy Pink",
+      "126000": {
+        "Pink": "Candy Pink"
+      },
+      "134300": {
+        "Pink": "Candy Pink"
+      },
+      "277200": {
+        "Pink": "Candy Pink"
+      },
+      "276200": {
+        "Pink": "Candy Pink"
+      },
+      "124200": {
+        "Pink": "Candy Pink"
+      },
+      "278274": {
+        "Pink Diamond": "Pink",
+        "Black Diamond": "Black",
+        "Blue Diamond": "Blue",
+        "Grey Diamond": "Grey",
+        "Silver Diamond": "Silver",
+        "White Diamond": "White",
+        "Green Diamond": "Green",
+        "Champagne Diamond": "Champagne",
+        "Chocolate Diamond": "Chocolate"
+      },
+      "279174": {
+        "Pink Diamond": "Pink",
+        "Black Diamond": "Black",
+        "Blue Diamond": "Blue",
+        "Grey Diamond": "Grey",
+        "Silver Diamond": "Silver",
+        "White Diamond": "White",
+        "Green Diamond": "Green",
+        "Champagne Diamond": "Champagne",
+        "Chocolate Diamond": "Chocolate"
+      },
+      "279384RBR": {
+        "Pink Diamond": "Pink",
+        "Black Diamond": "Black",
+        "Blue Diamond": "Blue",
+        "Grey Diamond": "Grey",
+        "Silver Diamond": "Silver",
+        "White Diamond": "White",
+        "Green Diamond": "Green",
+        "Champagne Diamond": "Champagne",
+        "Chocolate Diamond": "Chocolate"
+      },
+      "278384RBR": {
+        "Pink Diamond": "Pink",
+        "Black Diamond": "Black",
+        "Blue Diamond": "Blue",
+        "Grey Diamond": "Grey",
+        "Silver Diamond": "Silver",
+        "White Diamond": "White",
+        "Green Diamond": "Green",
+        "Champagne Diamond": "Champagne",
+        "Chocolate Diamond": "Chocolate"
+      }
+    }
+  },
+  "ref_specific_dial_overrides": {
+    "126505": {
+      "Pink": "Sundust"
+    },
+    "126515LN": {
+      "Pink": "Sundust"
+    },
+    "126525LN": {
+      "Pink": "Sundust"
+    },
+    "126528LN": {
+      "Pink": "Sundust"
+    },
+    "228235": {
+      "Pink": "Sundust"
+    },
+    "228345": {
+      "Pink": "Sundust"
+    },
+    "128235": {
+      "Pink": "Sundust"
+    },
+    "228206": {
+      "Blue": "Ice Blue"
+    },
+    "128236": {
+      "Blue": "Ice Blue"
+    },
+    "126506": {
+      "Blue": "Ice Blue"
+    },
+    "278274": {
+      "Pink Diamond": "Pink",
+      "Black Diamond": "Black"
+    },
+    "278271": {
+      "Pink Diamond": "Pink"
+    },
+    "126200": {
+      "Tiffany Blue": "Turquoise",
+      "Tiffany": "Turquoise"
+    }
+  },
+  "stats": {
+    "rolex_retail_refs": 146,
+    "rolex_dial_map_refs": 310,
+    "chrono24_catalog_refs": 6854,
+    "tudor_refs": 126,
+    "cartier_refs": 193,
+    "iwc_refs": 47,
+    "rm_refs": 22,
+    "ap_patek_dial_catalog_refs": 63
+  }
+}
