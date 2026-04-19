@@ -1668,6 +1668,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bomber\b', 'ombre', t)        # "omber" = alternate English spelling of ombré
     t = re.sub(r'\bcornel(?:ian)?\b|\bcornerian\b', 'carnelian', t)  # Cornelian = Carnelian
     t = re.sub(r'\biron\s*flint\b|\bflint\s*(?:stone\s*)?dial\b', 'eisenkiesel', t)  # Iron Flint
+    t = re.sub(r'\bonx\b', 'onyx', t)           # "onx" = Onyx shorthand (Asian dealers)
+    t = re.sub(r'\blazuli\b', 'lapis', t)         # "lazuli" alone = Lapis Lazuli
     t = re.sub(r'\bcotton\s*candy\b', 'candy pink', t)  # Cotton Candy = Candy Pink dial
     # Additional shade/hue shorthands used by dealers globally
     t = re.sub(r'\blemon(?:\s*yellow)?\b', 'yellow', t)         # Lemon/Lemon Yellow = Yellow OP/DJ dial
@@ -1857,6 +1859,12 @@ def extract_dial(text, ref='', raw_ref=''):
                                '116515','116518','116518LN','116528'}
     if _sd_ref_base in _DAYTONA_TURQ_TB_BASES:
         t = re.sub(r'\btb\b', 'turquoise', t)
+    # Lime/Neon/Electric/Vivid/Chartreuse → Bright Green on Day-Date refs (Rolex official name)
+    # Global → generic Green; on DD these are all the same Bright Green lacquer dial
+    if _sd_ref_base[:3] in ('228', '128', '118'):
+        t = re.sub(r'\blime(?:\s*green)?\b', 'bright green', t)
+        t = re.sub(r'\bneon\s*green\b|\belectric\s*green\b|\bvivid\s*green\b', 'bright green', t)
+        t = re.sub(r'\bchartreuse(?:\s*green)?\b', 'bright green', t)
     # ── Additional dial synonym normalizations ──
     # Champagne synonyms (dealer terms for warm cream/ivory dials; Rolex official = champagne)
     t = re.sub(r'\bivory\b|\bivoire\b|\becru\b|\bstraw\b|\bbutterscotch\b', 'champagne', t)
@@ -2110,7 +2118,9 @@ def extract_dial(text, ref='', raw_ref=''):
     # Aventurine (also catches normalized "aventurine" from "aventurin"/"adventurine")
     if re.search(r'\baventurine\b', t): return 'Aventurine'
     # Carnelian (also catches normalized "carnelian" from "cornelian"/"cornerian")
-    if re.search(r'\bcarnelian\b', t): return 'Carnelian'
+    if re.search(r'\bcarnelian\b', t):
+        if re.search(r'\bbaguette\b', t): return 'Carnelian Baguette'
+        return 'Carnelian'
     # Onyx
     if re.search(r'\bonyx\b', t): return 'Onyx'
     # Sodalite
@@ -2123,9 +2133,16 @@ def extract_dial(text, ref='', raw_ref=''):
     # Lapis Lazuli
     if re.search(r'\blapis\b', t): return 'Lapis Lazuli'
     # Malachite
-    if re.search(r'\bmalachite\b', t): return 'Malachite'
+    if re.search(r'\bmalachite\b', t):
+        if re.search(r'\bbaguette\b', t): return 'Malachite Baguette'
+        return 'Malachite'
     # Opal
     if re.search(r'\bopal\b', t): return 'Opal'
+    # Ruby (Day-Date 36 RG — 218235; prev-gen DD40 YG — 116139; stone dial, significant premium)
+    _RUBY_REFS = {'218235', '116139'}
+    if re.search(r'\bruby\b', t) and (_ref_base_norm in _RUBY_REFS or not ref): return 'Ruby'
+    # Commemorative (Day-Date 36 RG — 118206, 50th anniversary special dial)
+    if re.search(r'\bcommemorat(?:ive|ion)?\b|\bcommem\b', t): return 'Commemorative'
     # Grossular / Giraffe (same stone — Rolex official name is "Grossular")
     if re.search(r'\bgrossular\b|\bgiraffe\b|\bgrossul\b', t): return 'Grossular'
     # Leopard (Yacht-Master 37 / Day-Date exotic stone dial)
@@ -2246,17 +2263,29 @@ def extract_dial(text, ref='', raw_ref=''):
         if re.search(r'\bsundust\b', t): return 'Sundust Diamond'
         if re.search(r'\bslate\b', t): return 'Slate Diamond'
         if re.search(r'\baubergine\b|\bviolet\b', t): return 'Aubergine Diamond'
+        if re.search(r'\bolive\b', t): return 'Olive Diamond'
         if re.search(r'\bred\b', t): return 'Red Diamond'
         if re.search(r'\bgold\b|\bgolden\b', t): return 'Champagne Diamond'
         # Diamond mentioned but no color — just "Diamond"
         return 'Diamond'
     
-    # Baguette dial variants — "black baguette", etc.
+    # Baguette dial variants — "ice blue baguette", "salmon baguette", etc.
     has_baguette_dial = bool(re.search(r'\bbaguette\b|\bbag\b', t))
     if has_baguette_dial and not is_baguette:
+        if re.search(r'\bice\s*blue\b', t): return 'Ice Blue Baguette'
         if re.search(r'\bblack\b', t): return 'Black Baguette'
+        if re.search(r'\bbright\s*blue\b', t): return 'Bright Blue Baguette'
         if re.search(r'\bblue\b', t): return 'Blue Baguette'
         if re.search(r'\bchampagne\b', t): return 'Champagne Baguette'
+        if re.search(r'\bwhite\b', t): return 'White Baguette'
+        if re.search(r'\bsilver\b', t): return 'Silver Baguette'
+        if re.search(r'\bsalmon\b', t): return 'Salmon Baguette'
+        if re.search(r'\bmint\s*green\b', t): return 'Mint Green Baguette'
+        if re.search(r'\bgreen\b', t): return 'Green Baguette'
+        if re.search(r'\bcarnelian\b', t): return 'Carnelian Baguette'
+        if re.search(r'\bpink\b', t): return 'Pink Baguette'
+        if re.search(r'\bsundust\b', t): return 'Sundust Baguette'
+        if re.search(r'\bchocolate\b', t): return 'Chocolate Baguette'
     
     # ── Index type detection for Datejust family ──
     # Detect Roman/Stick/Fluted Motif/Palm index types — only for DJ refs

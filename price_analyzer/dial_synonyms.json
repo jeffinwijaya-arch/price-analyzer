@@ -1005,5 +1005,84 @@
         "Z Blue Dial",
         "Blue Z",
         "Lightning Blue"
+    ],
+    "Wave": [
+        "Wave Dial",
+        "Wave Motif",
+        "Wave Pattern",
+        "Wave Lacquer",
+        "Wavy Dial",
+        "Wavy Motif"
+    ],
+    "Zebra": [
+        "Zebra Dial",
+        "Zebra Print",
+        "Zebra Stripe",
+        "Zebra Stripes",
+        "Zebra Motif",
+        "Zebra Pattern",
+        "Zebra Stone"
+    ],
+    "Ruby": [
+        "Ruby Red",
+        "Ruby Dial",
+        "Ruby Stone",
+        "Deep Red Stone"
+    ],
+    "Commemorative": [
+        "Commem",
+        "Commemoration",
+        "Commem Dial",
+        "Anniversary Dial",
+        "50th Anniversary",
+        "Anniv Dial"
+    ],
+    "Opal": [
+        "Opal Dial",
+        "Opal Stone",
+        "Opalescent"
+    ],
+    "Olive Diamond": [
+        "Olive Dia",
+        "Olive Diam",
+        "Olive with Diamonds"
+    ],
+    "Ice Blue Baguette": [
+        "IB Baguette",
+        "Ice Blue Bag",
+        "Baguette Ice Blue"
+    ],
+    "Salmon Baguette": [
+        "Baguette Salmon",
+        "Salmon Bag"
+    ],
+    "Green Baguette": [
+        "Baguette Green",
+        "Green Bag"
+    ],
+    "Chocolate Baguette": [
+        "Baguette Chocolate",
+        "Choco Baguette",
+        "Chocolate Bag"
+    ],
+    "Pink Baguette": [
+        "Baguette Pink",
+        "Pink Bag"
+    ],
+    "Sundust Baguette": [
+        "Baguette Sundust",
+        "Sundust Bag"
+    ],
+    "Mint Green Baguette": [
+        "Baguette Mint Green",
+        "Mint Baguette"
+    ],
+    "White Baguette": [
+        "Baguette White",
+        "White Bag"
+    ],
+    "Silver Baguette": [
+        "Baguette Silver",
+        "Silver Bag"
     ]
 }
