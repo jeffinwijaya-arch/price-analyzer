@@ -205,7 +205,12 @@
         "Jade",
         "Jade Dial",
         "Egg Dial",
-        "Ciel Dial"
+        "Ciel Dial",
+        "Seafoam",
+        "Seafoam Green",
+        "Sea Foam",
+        "Sea Foam Green",
+        "Jade Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -362,7 +367,14 @@
         "TB Six",
         "T/Co",
         "TiffCo",
-        "Tiff/Co"
+        "Tiff/Co",
+        "Tiffany Limited Edition",
+        "Limited Edition Tiffany",
+        "Tiffany Limited",
+        "Tiffany Rolex",
+        "Rolex Tiffany",
+        "Tiff Rolex",
+        "Rolex Tiff"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -449,7 +461,12 @@
         "Wimedo",
         "Wimdon",
         "Wimdo",
-        "WMDN"
+        "WMDN",
+        "CGSL",
+        "WMB",
+        "CGS Dial",
+        "Champ Green Slate",
+        "Green Champ Slate"
     ],
     "Med Blue": [
         "Mediterranean Blue",
@@ -601,7 +618,10 @@
         "Sndk",
         "Sdst",
         "Sdt",
-        "Sndst"
+        "Sndst",
+        "Sol",
+        "Soleil",
+        "Snk"
     ],
     "Pistachio": [
         "Pistachio Green",
@@ -637,7 +657,10 @@
         "Turqouise",
         "Turquiose",
         "Turqois",
-        "Turkoise"
+        "Turkoise",
+        "Tur",
+        "Tuq",
+        "Turko"
     ],
     "Turquoise Beach": [
         "Turq Beach",

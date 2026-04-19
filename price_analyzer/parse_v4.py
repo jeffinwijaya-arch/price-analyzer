@@ -1639,12 +1639,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bsliver\b', 'silver', t)
     # Turquoise misspellings (dealer typos — all map to canonical "turquoise")
     t = re.sub(r'\bturqoise\b|\bturquois\b|\bturqouise\b|\bturquiose\b|\bturqois\b|\bturkoise\b|\bturkois\b', 'turquoise', t)
+    t = re.sub(r'\btur\b', 'turquoise', t)  # "tur" shorthand = turquoise (HK/Asia watch dealers)
     t = re.sub(r'\bwhe\b', 'white', t)
     t = re.sub(r'\blvory\b', 'ivory', t)  # typo: lvory → ivory
     t = re.sub(r'\biceblue\b', 'ice blue', t)  # "iceblue" (no space) → "ice blue"
     t = re.sub(r'\begg\s+shell\b', 'eggshell', t)  # "egg shell" two-word form → "eggshell" for TB detection
     t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
     t = re.sub(r'\btiff[-_]blue\b', 'tiffany', t)   # "Tiff-Blue" / "Tiff_Blue" hyphenated
+    t = re.sub(r'\bseafoam(?:\s*green)?\b', 'tiffany', t)  # Seafoam/Seafoam Green ≈ Tiffany Blue (OP refs → Tiffany; DD refs → Turquoise via later remap)
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
     t = re.sub(r'\btifany\b', 'tiffany', t)  # common single-f spelling variant (tifany → tiffany)
     t = re.sub(r'\bt-b\b', 'tiffany', t)             # T-B hyphenated = Tiffany Blue shorthand
@@ -1740,6 +1742,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?[-_]co\b|\bt[-_]co\b', 'official tiffany', t)  # "Tiffany-co"/"T-co" hyphen variant = T&Co = OTB
     t = re.sub(r'\bt\/co\b', 'official tiffany', t)  # "T/Co" slash variant = T&Co = OTB
     t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*limited\s*edition\b|\blimited\s*edition\s*tiff(?:any)?\b', 'official tiffany', t)  # "Tiffany Limited Edition" = the 2022 T&Co × Rolex collab = OTB
+    t = re.sub(r'\btiff(?:any)?\s+rolex\b|\brolex\s+tiff(?:any)?\b', 'official tiffany', t)  # "Tiffany Rolex" / "Rolex Tiffany" = sold through T&Co = OTB
     t = re.sub(r'\bunofficiale?\s*tiff(?:any)?\b|\baftermarket\s*tiff(?:any)?\b|\breplica\s*tiff(?:any)?\b', 'tiffany', t)  # aftermarket/replica = plain tiffany, NOT official
     # Reverse-order parenthetical OTB: "Tiffany (official)", "TB (otb)", "Tiff (auth)", etc.
     t = re.sub(r'\btiff(?:any)?\s*\((?:orig(?:inal)?|auth(?:entic)?|genuine|real|off?(?:icial)?|stamp(?:ed)?|otb|t\.?co|t\s*&\s*co)\)', 'official tiffany', t)
@@ -1825,6 +1829,10 @@ def extract_dial(text, ref='', raw_ref=''):
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '136659', '116600', '126660', '136668'}:
         t = re.sub(r'\bsd\b', 'sundust', t)
+    # "sol" = Sundust shorthand used by Malaysian/Singapore Daytona Everose dealers
+    _SUNDUST_SOL_REFS = {'116515','126515','116595','126595','116505','126505','126515LN','116515LN'}
+    if _sd_ref_base in _SUNDUST_SOL_REFS:
+        t = re.sub(r'\bsol\b', 'sundust', t)
     # ── Milgauss-specific dial normalizations ──
     # 116400GV: "blue" always means Z-Blue (no plain blue exists for GV).
     # "green" on GV listings refers to the green sapphire crystal, NOT the dial color — strip it.
@@ -2258,7 +2266,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # "G/C" or "C/G" (Green/Champagne slash) on known Wimbledon refs = Wimbledon
     if re.search(r'\bg\s*/\s*c\b|\bc\s*/\s*g\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
     # "CGS" (Champagne-Green-Slate) dealer abbreviation
-    if re.search(r'\bcgs\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
+    if re.search(r'\bcgs\b|\bcgsl\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
 
     # Diamond dial variants — "blue diamond", "diamond blue", "grey diamond", etc.
     # These are dials with diamond hour markers + specific color (common on DJ/DD)
