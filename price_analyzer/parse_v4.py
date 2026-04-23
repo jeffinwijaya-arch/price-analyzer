@@ -118,6 +118,12 @@ SUFFIX_DIAL = {
 _PREMIUM_REF_MAP = {
     "Tiffany Blue": [
         "124300", "126000", "277200", "279160", "279177",
+        # Datejust 31 (2024 release)
+        "278289",
+        # New OP41 (2024 release, also sold as 134300)
+        "134300",
+        # DD36 YG — baguette/stone variants
+        "118208", "118238",
     ],
     "Paul Newman": [
         "6239", "6241", "6263", "6265",
@@ -146,6 +152,8 @@ _PREMIUM_REF_MAP = {
     "Tiger Eye": [
         "18038", "18238", "118238",
         "128238", "228238",
+        # Daytona WG Sapphire dial variants
+        "116589", "116589SACI",
     ],
     "Lapis Lazuli": [
         "18038", "18238",
@@ -162,11 +170,33 @@ _PREMIUM_REF_MAP = {
     ],
     "Ombre":        ["228235"],
     "Ombre Slate":  ["228235"],
+    # Red Ombré — Datejust 31 special dial
+    "Red Ombré":    ["278289", "278288"],
+    # Green Ombré — Datejust 31 special dial
+    "Green Ombré":  ["278288"],
     "Eisenkiesel":  ["228235", "228238", "228239"],
     "D-Blue":       ["126660"],
     "Candy Pink":   ["124300", "126000", "277200"],
     "Apple Green":  ["124300", "126000"],
     "Coral Red":    ["124300", "126000", "277200", "279160"],
+    # Stone dials — new for 2023-2025 catalog
+    "Sodalite": [
+        "116589", "116589SACI", "126589",
+    ],
+    "Malachite": [
+        "278288", "278289",
+    ],
+    "Opal": [
+        "118208", "118238",
+    ],
+    # Bright Green — Day-Date 40 special stone/lacquer dial
+    "Bright Green": [
+        "228345", "228349",
+    ],
+    # Rainbow — Daytona diamond-set bezel variants
+    "Rainbow": [
+        "116505", "116595RBOW", "126595RBOW", "116599RBOW",
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -208,8 +238,10 @@ _PREMIUM_PATTERNS = [
     # D-Blue (Deepsea 126660)
     (re.compile(r"\bd[\s\-]?blue\b",               re.I),      "D-Blue",          100),
     (re.compile(r"\bjames\s+cameron\b",            re.I),      "D-Blue",          100),
-    # Ombre (Day-Date 40 Everose)
+    # Ombré variants — specific before generic
     (re.compile(r"\bombr[eE\xe9]\s+slate\b",       re.I),      "Ombre Slate",     100),
+    (re.compile(r"\bred\s+ombr[eE\xe9]\b",         re.I),      "Red Ombré",       100),
+    (re.compile(r"\bgreen\s+ombr[eE\xe9]\b",       re.I),      "Green Ombré",     100),
     (re.compile(r"\bombr[eE\xe9]\b",               re.I),      "Ombre",           100),
     # Stone dials — Turquoise Stone before plain turquoise
     (re.compile(r"\bturquoise\s*(?:stone|dial)\b", re.I),      "Turquoise Stone", 100),
@@ -220,6 +252,14 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\blapis\s+lazuli\b",             re.I),      "Lapis Lazuli",    100),
     (re.compile(r"\blapis\b",                      re.I),      "Lapis Lazuli",     90),
     (re.compile(r"\btiger'?s?\s*eye\b",            re.I),      "Tiger Eye",       100),
+    # Additional stone/special dials (2023-2025 catalog additions)
+    (re.compile(r"\bsodalite\b",                   re.I),      "Sodalite",        100),
+    (re.compile(r"\bmalachite\b",                  re.I),      "Malachite",       100),
+    (re.compile(r"\bopal\b",                       re.I),      "Opal",            100),
+    # Bright Green lacquer (Day-Date 40 special)
+    (re.compile(r"\bbright\s*green\b|\bavocado\b", re.I),      "Bright Green",     90),
+    # Rainbow (Daytona diamond bezel)
+    (re.compile(r"\brainbow\b",                    re.I),      "Rainbow",          95),
     # Candy Pink / Apple Green / Coral Red (OP special colours)
     (re.compile(r"\bcandy\s*pink\b",               re.I),      "Candy Pink",      100),
     (re.compile(r"\bapple\s*green\b",              re.I),      "Apple Green",     100),
@@ -270,6 +310,15 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bbatman\b|\bbatgirl\b",                         re.I), "Blue Black"),
     (re.compile(r"\bsprite\b",                                     re.I), "Green Black"),
     (re.compile(r"\bcoke\b",                                       re.I), "Black Red"),
+    # Colors missing from original list — added to resolve wholesale data gaps
+    (re.compile(r"\bred\b",                                        re.I), "Red"),
+    (re.compile(r"\bskeleton(?:ized)?\b|\bopenwork(?:ed)?\b|\bopen\s*heart\b", re.I), "Skeletonized"),
+    (re.compile(r"\bbeige\b",                                      re.I), "Beige"),
+    (re.compile(r"\borange\b|\btangerine\b",                       re.I), "Orange"),
+    (re.compile(r"\btaupe\b",                                      re.I), "Taupe"),
+    (re.compile(r"\blavender\b|\blilac\b",                         re.I), "Lavender"),
+    (re.compile(r"\bburgund(?:y)?\b",                              re.I), "Burgundy"),
+    (re.compile(r"\bazzurro\b",                                    re.I), "Bright Blue"),
 ]
 
 # Looks for a colour token in the neighbourhood of the word "dial" / "colour"
@@ -299,6 +348,20 @@ _CTX_REJECT = frozenset({
 })
 # Canonical colour names from _COLOR_PATTERNS — used in stage-4 known-check
 _ALL_COLOR_CANONICALS = frozenset(c for _, c in _COLOR_PATTERNS)
+
+# Composite dial pattern — "Base Color + Modifier" (e.g. "Black Baguette", "Silver Diamond")
+# Catches dealer dial labels that Stage 5 validation would reject because they aren't
+# in the simple color list; returns the full composite name rather than just the base.
+_COMPOSITE_DIAL_RE = re.compile(
+    r"\b(black|white|silver|blue|green|red|pink|champagne|chocolate|gr[ae]y|gold|"
+    r"brown|olive|salmon|sundust|aubergine|ivory|yellow|mint\s+green|olive\s+green|"
+    r"bright\s+blue|coral|turquoise|meteorite|lavender|beige|orange|tiffany\s+blue|"
+    r"ice\s+blue|bright\s+green)"
+    r"\s+(baguette\s+diamond|stick\s+roman\s+vi\s+ix\s+diamond|stick\s+diamond|"
+    r"roman\s+vi\s+ix\s+diamond|roman\s+vi|roman|baguette|stick|diamond|"
+    r"pav[e\xe9\xc9]|mop|omber|ombr[e\xe9])\b",
+    re.I,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -448,7 +511,22 @@ def extract_dial(text, ref=None):
                 })
                 return result
 
+    # Stage 4.5 — Composite dial: "Base Color + Modifier" (e.g. "Black Baguette")
+    # Runs before the single-token color scan to preserve the full composite name.
+    m_comp = _COMPOSITE_DIAL_RE.search(text)
+    if m_comp:
+        composite = " ".join(m_comp.group(0).split()).title()
+        # Restore Roman numerals that title() lowercases (VI→Vi, IX→Ix, etc.)
+        composite = re.sub(r'\b(Vi|Ix|Xi|Xiv|Iv|Iii|Ii)\b', lambda x: x.group().upper(), composite)
+        result.update({
+            "dial":       composite,
+            "confidence": 0.80,
+            "method":     "composite_dial",
+        })
+        return result
+
     # Stage 5 — Colour token scan
+    _color_fallback = None  # first unvalidated match; used in Stage 5b
     for pattern, canonical in _COLOR_PATTERNS:
         if not pattern.search(text):
             continue
@@ -469,6 +547,9 @@ def extract_dial(text, ref=None):
                         "method":     "color_pattern_partial",
                     })
                     return result
+            # Color matched but not in validated list — remember as low-confidence fallback
+            if _color_fallback is None:
+                _color_fallback = canonical
         else:
             result.update({
                 "dial":       canonical,
@@ -476,6 +557,16 @@ def extract_dial(text, ref=None):
                 "method":     "color_pattern_unvalidated",
             })
             return result
+
+    # Stage 5b — Color fallback: pattern matched but ref validation rejected it.
+    # Return with very low confidence so downstream can filter if needed.
+    if _color_fallback:
+        result.update({
+            "dial":       _color_fallback,
+            "confidence": 0.45,
+            "method":     "color_fallback",
+        })
+        return result
 
     # Stage 6 — Synonym dictionary full-text scan
     text_lower = text.lower()

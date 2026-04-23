@@ -195,5 +195,51 @@
   "127234": ["Intense White", "White", "Silver"],
   "126234G": ["Mint Green"],
 
-  "268622": ["Dark", "Slate", "Rhodium"]
+  "268622": ["Dark", "Slate", "Rhodium"],
+
+  "278289": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Red", "Tiffany Blue", "Pink", "Salmon",
+    "MOP", "Ombré", "Red Ombré", "Grey Roman VI",
+    "Pink Roman VI", "Blue Diamond", "Black Diamond",
+    "Aubergine Roman VI"
+  ],
+  "278288": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Green", "MOP", "Ombré", "Malachite",
+    "Green Ombré", "Green Roman VI", "Green Diamond",
+    "Grey Diamond", "Grey Roman VI", "Silver Diamond"
+  ],
+
+  "134300": [
+    "Black", "White", "Silver", "Blue", "Beige",
+    "Tiffany Blue", "Green", "Yellow", "Coral Red"
+  ],
+
+  "128158": [
+    "Orange", "Pavé", "Chocolate", "Blue", "Silver", "Black"
+  ],
+
+  "116589": [
+    "Tiger Eye", "MOP", "Sodalite", "Black Diamond",
+    "White Diamond", "Meteorite", "Pavé", "White"
+  ],
+  "116589SACI": [
+    "White", "Sodalite", "Black Baguette", "MOP"
+  ],
+
+  "228345": [
+    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
+    "Bright Green"
+  ],
+  "228349": [
+    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
+    "Black Baguette", "Silver Diamond", "Blue Diamond",
+    "Black Diamond", "Silver", "Black"
+  ],
+
+  "118208": [
+    "Champagne", "Green", "Tiffany Blue", "White",
+    "Opal", "Tiffany Blue Baguette"
+  ]
 }

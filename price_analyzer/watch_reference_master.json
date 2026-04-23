@@ -297,6 +297,38 @@
       "size_mm": 40,
       "material": "Steel",
       "nicknames": ["milgauss", "milg", "lightning bolt"]
+    },
+    "Oyster Perpetual 41 New": {
+      "refs": ["134300"],
+      "series": "OP",
+      "size_mm": 41,
+      "material": "Steel",
+      "nicknames": ["op41 new", "134300"],
+      "premium_dials": ["Tiffany Blue"]
+    },
+    "Datejust 31": {
+      "refs": ["278289", "278288"],
+      "series": "DJ",
+      "size_mm": 31,
+      "material": "Steel",
+      "nicknames": ["dj31", "datejust 31", "278289", "278288"],
+      "premium_dials": ["Tiffany Blue", "Red Ombré", "Green Ombré", "Malachite", "MOP"]
+    },
+    "Day-Date 36 Special YG": {
+      "refs": ["128158"],
+      "series": "DD36",
+      "size_mm": 36,
+      "material": "Yellow Gold",
+      "nicknames": ["dd36 special", "128158"],
+      "premium_dials": ["Orange", "Pavé"]
+    },
+    "Daytona WG Sapphire": {
+      "refs": ["116589", "116589SACI"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["daytona wg sapphire", "116589"],
+      "premium_dials": ["Tiger Eye", "Sodalite", "MOP", "Meteorite"]
     }
   },
 
@@ -350,7 +382,13 @@
     "126900": "Air-King",
     "116900": "Air-King",
     "116400": "Milgauss",
-    "116400GV": "Milgauss"
+    "116400GV": "Milgauss",
+    "134300": "Oyster Perpetual 41 New",
+    "278289": "Datejust 31",
+    "278288": "Datejust 31",
+    "128158": "Day-Date 36 Special YG",
+    "116589": "Daytona WG Sapphire",
+    "116589SACI": "Daytona WG Sapphire"
   },
 
   "nicknames": {
@@ -372,6 +410,9 @@
     "starbucks":    {"refs": ["126610LV", "116610LV"], "note": "green sub slang"},
     "lightning bolt":{"refs": ["116400GV"], "note": "Milgauss GV"},
     "black bay":    {"refs": [], "note": "Tudor — not Rolex"},
-    "white ice pepsi":{"refs": ["126719BLRO"], "dial": "Meteorite"}
+    "white ice pepsi":{"refs": ["126719BLRO"], "dial": "Meteorite"},
+    "sodalite":       {"refs": ["116589", "116589SACI", "126589"], "dial": "Sodalite", "note": "rare stone dial Daytona"},
+    "malachite":      {"refs": ["278288", "278289"], "dial": "Malachite", "note": "stone dial Datejust 31"},
+    "rainbow":        {"refs": ["116595RBOW", "126595RBOW", "116576", "116599RBOW"], "note": "diamond rainbow bezel Daytona"}
   }
 }

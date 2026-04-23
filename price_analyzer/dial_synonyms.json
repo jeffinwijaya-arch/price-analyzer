@@ -230,5 +230,62 @@
   "celebration dial":   "Celebration",
   "puzzle dial":        "Puzzle",
   "jubilee motif":      "Jubilee Motif",
-  "jubilee dial":       "Jubilee Motif"
+  "jubilee dial":       "Jubilee Motif",
+
+  "skeleton":           "Skeletonized",
+  "skeletonized":       "Skeletonized",
+  "openwork":           "Skeletonized",
+  "open work":          "Skeletonized",
+  "openworked":         "Skeletonized",
+  "open heart":         "Skeletonized",
+
+  "rainbow":            "Rainbow",
+  "rainbow dial":       "Rainbow",
+
+  "beige":              "Beige",
+  "beige dial":         "Beige",
+
+  "orange":             "Orange",
+  "tangerine":          "Orange",
+  "orange dial":        "Orange",
+
+  "taupe":              "Taupe",
+  "taupe dial":         "Taupe",
+
+  "lavender":           "Lavender",
+  "lilac":              "Lavender",
+  "lavender dial":      "Lavender",
+
+  "bright green":       "Bright Green",
+  "avocado":            "Bright Green",
+  "avocado green":      "Bright Green",
+
+  "sodalite":           "Sodalite",
+  "sodalite stone":     "Sodalite",
+  "sodalite dial":      "Sodalite",
+
+  "malachite":          "Malachite",
+  "malachite stone":    "Malachite",
+  "malachite dial":     "Malachite",
+
+  "opal":               "Opal",
+  "opal stone":         "Opal",
+  "opal dial":          "Opal",
+
+  "burgundy":           "Burgundy",
+  "wine":               "Burgundy",
+  "wine red":           "Burgundy",
+
+  "azzurro":            "Bright Blue",
+  "azzurro blue":       "Bright Blue",
+
+  "red ombrã©":         "Red Ombré",
+  "red ombre":          "Red Ombré",
+  "green ombre":        "Green Ombré",
+  "green ombrã©":       "Green Ombré",
+
+  "beach":              "Turquoise Stone",
+
+  "red":                "Red",
+  "red dial":           "Red"
 }
