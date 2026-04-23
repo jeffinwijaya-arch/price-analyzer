@@ -6,7 +6,13 @@
         "Steel",
         "Grau",
         "Gris",
-        "Grigio"
+        "Grigio",
+        "Gunmetal",
+        "Anthracite",
+        "Charcoal",
+        "Smoky Quartz",
+        "Ruthenium",
+        "Ardoise"
     ],
     "Grey Diamond": [
         "Rhodium Diamond",
@@ -53,7 +59,12 @@
         "Cappuccino",
         "Latte",
         "Choco",
-        "Cho"
+        "Cho",
+        "Walnut",
+        "Chestnut",
+        "Clove",
+        "Rust Brown",
+        "Rust"
     ],
     "Chocolate Diamond": [
         "Brown Diamond"
@@ -70,7 +81,13 @@
         "Bianco",
         "Blanc",
         "Arctic White",
-        "Polar White"
+        "Polar White",
+        "Opaline",
+        "Opal White",
+        "Satin White",
+        "White Satin",
+        "White Lacquer",
+        "Lacquer White"
     ],
     "Yellow": [
         "Lemon",
@@ -95,7 +112,11 @@
         "Bleu",
         "Blau",
         "Cerulean",
-        "Azurean"
+        "Azurean",
+        "Denim",
+        "Denim Blue",
+        "Petrol",
+        "Petrol Blue"
     ],
     "Black": [
         "Noir",
@@ -514,7 +535,8 @@
         "Amethyst",
         "Ametrine",
         "Bordeaux",
-        "Burgundy"
+        "Burgundy",
+        "Maroon"
     ],
     "Lavender": [
         "Lilac",
@@ -746,6 +768,31 @@
         "Gradient Dial",
         "Smoke Dial"
     ],
+    "Tropical": [
+        "Tropique",
+        "Tropicale",
+        "Tropic Dial",
+        "Tropical Brown",
+        "Tropical Black",
+        "Tropical Grey",
+        "Tropical Chocolate",
+        "Faded Dial",
+        "Patina Dial",
+        "Gilt Tropical",
+        "Double Swiss Tropical",
+        "Tropical Gilt"
+    ],
+    "Gilt": [
+        "Gilt Dial",
+        "Gilt Chapter",
+        "Gilt Text",
+        "Gilt Indices",
+        "Gilt Chapter Ring",
+        "Gilt Print",
+        "Gold Print",
+        "Gold Text Dial",
+        "Swiss T Swiss"
+    ],
     "_ref_specific": {
         "_comment": "On these refs, Pink is a mislabel for Sundust (Everose gold models where 'pink' = sundust dial)",
         "126505": {
@@ -877,6 +924,10 @@
         "Coral Red",
         "Coral Red Dial",
         "Red Coral",
-        "Coral Orange"
+        "Coral Orange",
+        "Carrot"
+    ],
+    "Orange": [
+        "Tangerine"
     ]
 }

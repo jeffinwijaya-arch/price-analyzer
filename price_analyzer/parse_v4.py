@@ -1641,6 +1641,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff[-_]blue\b', 'tiffany', t)   # "Tiff-Blue" / "Tiff_Blue" hyphenated
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
     t = re.sub(r'\btifany\b', 'tiffany', t)  # common single-f spelling variant (tifany → tiffany)
+    t = re.sub(r'\btfb\b', 'tiffany', t)       # "TFB" = Tiffany Blue abbreviation (dealer chat shorthand)
+    t = re.sub(r'\bt\.f\.b\.?\b', 'tiffany', t)  # "T.F.B." dotted abbreviation → Tiffany Blue
     t = re.sub(r'\bt-b\b', 'tiffany', t)             # T-B hyphenated = Tiffany Blue shorthand
     t = re.sub(r'\bice[-]blue\b', 'ice blue', t)  # "ice-blue" hyphenated
     t = re.sub(r'\bice\s*bl\b', 'ice blue', t)    # "ice bl" abbreviation → "ice blue"
@@ -1749,6 +1751,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpurchas(?:ed?|ing)?\s*(?:at|from|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
     # "came from Tiffany" = provenance = OTB
     t = re.sub(r'\bcame?\s*from\s*tiff(?:any)?\b', 'official tiffany', t)
+    # "Tiffany original" — reversed word order of "original Tiffany" (already caught above)
+    t = re.sub(r'\btiff(?:any)?\s*orig(?:inal)?\b', 'official tiffany', t)
+    # "Tiff/Rolex" or "Rolex/Tiff" slash-form collaboration signal = OTB
+    t = re.sub(r'\btiff(?:any)?\s*/\s*rolex\b|\brolex\s*/\s*tiff(?:any)?\b', 'official tiffany', t)
+    # "T.&.Co" dotted-ampersand variant of T&Co notation = OTB
+    t = re.sub(r'\bt\s*\.\s*&\s*\.\s*c[o0]\b', 'official tiffany', t)
+    # "OTB dial" — dealer explicitly labels the dial as OTB
+    t = re.sub(r'\botb\s+dial\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -2168,7 +2178,8 @@ def extract_dial(text, ref='', raw_ref=''):
                            '127286','127386','228396','128396',
                            '116576',   # prev-gen DD 36 Platinum (fluted) — Ice Blue
                            '279174',   # Lady DJ 28 TT — Ice Blue option per catalog
-                           '127336'}  # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
+                           '127336',   # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
+                           '116506A'}  # Daytona Platinum Baguette — single Ice Blue dial
     # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
     if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
     # \bib\b (Ice Blue shorthand) is ref-gated: only fires for known IB-capable refs.
