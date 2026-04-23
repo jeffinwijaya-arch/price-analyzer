@@ -1620,6 +1620,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwmb\b', 'wimbledon', t)  # "Wmb" = Wimbledon (dealer abbreviation)
     # Wimbledon slash-form shorthands: "champ/grn", "grn/champ", "G/C", "C/G" (HK/SG dealer notation)
     t = re.sub(r'\bchamp(?:agne)?\s*/\s*g(?:r(?:n|een)?)?\b|\bg(?:r(?:n|een)?)?\s*/\s*champ(?:agne)?\b', 'wimbledon', t)
+    # Wimbledon hyphenated forms: "champ-grn", "champ-green", "grn-champ" (common in typed shorthand)
+    t = re.sub(r'\bchamp(?:agne)?[-–]\s*(?:slate[-–]\s*)?(?:green|grn)\b', 'wimbledon', t)
+    t = re.sub(r'\b(?:green|grn)[-–]\s*champ(?:agne)?\b', 'wimbledon', t)
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
     t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
     t = re.sub(r'\bchocolates?\b|\bchoco?\b', 'chocolate', t)
@@ -1710,6 +1713,12 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
     t = re.sub(r'\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b|\binscrip?t(?:ion)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
+    # Hyphenated OTB forms: "tiffany-stamped", "tiff-signed", "tiff-engraved" (hyphen between words)
+    t = re.sub(r'\btiff(?:any)?[-–]\s*stamp(?:ed)?\b|\bstamp(?:ed)?[-–]\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?[-–]\s*sign(?:ed)?\b|\bsign(?:ed)?[-–]\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?[-–]\s*engrav(?:ed)?\b|\btiff(?:any)?[-–]\s*inscrib(?:ed)?\b', 'official tiffany', t)
+    # T&Co stamp/certified/verified/branded — missing from original T&Co signal set
+    t = re.sub(r'\bt\s*&\s*co\s*(?:stamp(?:ed)?|certif(?:ied)?|verif(?:ied)?|brand(?:ed)?)\b', 'official tiffany', t)
     # "Tiffany Edition" / "Tiffany Special Edition" / "Tiffany Exclusive" = OTB
     t = re.sub(r'\btiff(?:any)?\s*(?:special\s*)?edition\b|\btiff(?:any)?\s*exclusive\b', 'official tiffany', t)
     # "Tiffany Numbered Edition" / "Tiffany Limited" / "Tiffany No.123" = OTB (numbered/limited releases)
@@ -1764,6 +1773,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bt\s*\.\s*&\s*\.\s*c[o0]\b', 'official tiffany', t)
     # "OTB dial" — dealer explicitly labels the dial as OTB
     t = re.sub(r'\botb\s+dial\b', 'official tiffany', t)
+    # Co-branded / dual-signed provenance signals = T&Co x Rolex collaboration piece = OTB
+    t = re.sub(r'\bco[-–]?brand(?:ed|ing)?\b|\bcobranded?\b', 'official tiffany', t)
+    t = re.sub(r'\bdual[-–]?\s*sign(?:ed|ing)?\b|\bdouble[-–]?\s*sign(?:ed|ing)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiffanyco\b', 'official tiffany', t)  # "TiffanyCo" glued form (common in Asian dealer chat)
+    # "Tiffany branded" / "branded by Tiffany" / "Tiffany branding" = physical T&Co branding = OTB
+    t = re.sub(r'\btiff(?:any)?\s*brand(?:ed|ing)?\b|\bbrand(?:ed|ing)?\s*(?:by\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    # "Rolex Tiffany" bare juxtaposition (no x/&/slash) — common in HK/Asia dealer shorthand
+    t = re.sub(r'\brolex\s+tiffany\b|\btiffany\s+rolex\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1855,7 +1872,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # otherwise \bt\.b\. would consume "t.b." inside "c.t.b." → "c.tiffany" (wrong)
     t = re.sub(r'\bc\.t\.b\.?\b', 'ctb', t)   # C.T.B. = Celebration Tiffany Blue abbreviation
     t = re.sub(r'\bceleb[-\.]tb\b', 'ctb', t)  # "celeb-tb" / "celeb.tb" hyphenated/dotted CTB
-    t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck\s*egg(?:\s*blue)?\b", 'tiffany', t)
+    t = re.sub(r"\brobin(?:\'?s?)?\s*egg(?:\s*blue)?\b|\bduck(?:\'?s?)?\s*egg(?:\s*blue)?\b", 'tiffany', t)
     t = re.sub(r'\bceleste\b', 'tiffany', t)        # "celeste" = Tiffany Blue in watch market
     t = re.sub(r'\bflamingo\s*blue\b|\bcandy\s*blue\b', 'tiffany', t)
     t = re.sub(r'\bt[/-]blue\b|\bt\/b\b|\bt\.b\.?|\bt\.blue\b|\bt\s+blue\b', 'tiffany', t)  # T-blue / T/blue / T/B / T.B. / T.B / T.Blue / T Blue
@@ -2106,7 +2123,7 @@ def extract_dial(text, ref='', raw_ref=''):
                          '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
+    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bp-n\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
@@ -2216,12 +2233,20 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\bofficial\s*tb\b|\boff\.?\s*tiff(?:any)?\b'
                    r'|\btiffany\s*stamp(?:ed)?\b|\btiff\s*stamp(?:ed)?\b'
                    r'|\bstamped\s*tiff(?:any)?\b'
+                   r'|\btiff(?:any)?[-–]\s*stamp(?:ed)?\b|\bstamp(?:ed)?[-–]\s*tiff(?:any)?\b'
+                   r'|\btiff(?:any)?[-–]\s*sign(?:ed)?\b|\bsign(?:ed)?[-–]\s*tiff(?:any)?\b'
                    r'|\bcertif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\btiff(?:any)?\s*certif(?:ied)?\b'
                    r'|\bverif(?:ied)?\s*by\s*tiff(?:any)?\b|\bauth(?:enticated)?\s*by\s*tiff(?:any)?\b'
                    r'|\blegit\s*tiff(?:any)?\b'
                    r'|\bverif(?:ied)?\s*tiff(?:any)?\b'
                    r'|\bconfirm(?:ed)?\s*tiff(?:any)?\b'
                    r'|\btiff(?:any)?\s*[x×]\s*rolex\b|\brolex\s*[x×]\s*tiff(?:any)?\b'
+                   r'|\brolex\s+tiffany\b|\btiffany\s+rolex\b'
+                   r'|\bco[-–]?brand(?:ed|ing)?\b|\bcobranded?\b'
+                   r'|\bdual[-–]?\s*sign(?:ed|ing)?\b|\bdouble[-–]?\s*sign(?:ed|ing)?\b'
+                   r'|\btiffanyco\b'
+                   r'|\btiff(?:any)?\s*brand(?:ed|ing)?\b|\bbrand(?:ed|ing)?\s*(?:by\s*)?tiff(?:any)?\b'
+                   r'|\bt\s*&\s*co\s*(?:stamp(?:ed)?|certif(?:ied)?|verif(?:ied)?|brand(?:ed)?)\b'
                    r'|\btiff(?:any)?\s*n\s*co\b'
                    r'|\btiffany\s*&\s*co\b|\btiff\s*&\s*co\b|\bt\s*&\s*co\b'
                    r'|\btiffany\s*and\s*co\b|\btiff\s*co\b|\btiffany\s*co\b'
@@ -2232,7 +2257,7 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\btiff(?:any)?\s*(?:case)?back\b'
                    r'|\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b'
                    r'|\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b'
-                   r'|\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?)\b'
+                   r'|\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?|mark(?:ed)?|stamp(?:ed)?)\b'
                    r'|\btiff(?:any)?\s*(?:special\s*)?edition\b|\btiff(?:any)?\s*exclusive\b'
                    r'|\bretail(?:ed)?\s*(?:at|by|through|via)\s*(?:tiff(?:any)?|t\.?co)\b'
                    r'|\bsold\s*(?:at|by|through|via)\s*tiff(?:any)?\b'

@@ -199,7 +199,11 @@
         "Seafoam Green",
         "Glacier",
         "Glacé Blue",
-        "Glace Blue"
+        "Glace Blue",
+        "Duck's Egg Blue",
+        "Duck's Egg",
+        "Ducks Egg Blue",
+        "Ducks Egg"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -351,7 +355,28 @@
         "Auth by Tiffany",
         "Certified Tiff",
         "Tiffany Auth",
-        "Tiff Auth"
+        "Tiff Auth",
+        "Co-branded",
+        "Co-brand",
+        "Cobrand",
+        "Co Branded",
+        "Dual Signed",
+        "Dual-Signed",
+        "Double Signed",
+        "Double-Signed",
+        "TiffanyCo",
+        "Tiffany Branded",
+        "Branded Tiffany",
+        "Branded by Tiffany",
+        "Rolex Tiffany",
+        "Tiffany Rolex",
+        "T&Co Stamped",
+        "T&Co Certified",
+        "T&Co Verified",
+        "T&Co Branded",
+        "Tiffany-Stamped",
+        "Tiffany-Signed",
+        "Tiffany-Engraved"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -382,7 +407,10 @@
         "Newman Dial",
         "PNM",
         "P.N.M.",
-        "PN.M"
+        "PN.M",
+        "P-N",
+        "P-N Daytona",
+        "P-N Dial"
     ],
     "Wimbledon": [
         "Wimble",
@@ -438,7 +466,13 @@
         "Wimedo",
         "Wimdon",
         "Wimdo",
-        "WMDN"
+        "WMDN",
+        "Champ-Grn",
+        "Champ-Green",
+        "Grn-Champ",
+        "Green-Champ",
+        "Champ–Grn",
+        "Grn–Champ"
     ],
     "Med Blue": [
         "Mediterranean Blue",
