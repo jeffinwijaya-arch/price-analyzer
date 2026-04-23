@@ -189,7 +189,15 @@
         "Tif Dial",
         "Tifany",
         "Teal",
-        "Teal Blue"
+        "Teal Blue",
+        "Seafoam",
+        "Sea Foam",
+        "Sea Foam Blue",
+        "Seafoam Blue",
+        "Seafoam Green",
+        "Glacier",
+        "Glacé Blue",
+        "Glace Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -543,7 +551,25 @@
         "Lilas",
         "Mauve",
         "Lavande",
-        "Lavanda"
+        "Lavanda",
+        "Violet Blue",
+        "Wisteria",
+        "Lav",
+        "Lave"
+    ],
+    "Beige": [
+        "Cream",
+        "Sand",
+        "Warm White",
+        "Off White",
+        "Off-White",
+        "Natural",
+        "Wheat",
+        "Nude",
+        "Bisque",
+        "Linen",
+        "Taupe",
+        "Pebble"
     ],
     "Mint Green": [
         "Celadon",
@@ -563,7 +589,10 @@
         "Pistachio Grn",
         "Pist",
         "Pist Green",
-        "Pistacchio"
+        "Pistacchio",
+        "Pistacho",
+        "Pistaccho",
+        "Pistace"
     ],
     "Ice Blue": [
         "Glacier Blue",
@@ -697,7 +726,12 @@
         "Brt Green",
         "Brt Grn",
         "Emerald Green",
-        "Emerald"
+        "Emerald",
+        "Kelly Green",
+        "Apple Green",
+        "Grass Green",
+        "BG",
+        "Brt Grn DD"
     ],
     "Carnelian": [
         "Cornelian",

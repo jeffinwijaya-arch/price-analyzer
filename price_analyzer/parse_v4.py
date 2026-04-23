@@ -1627,6 +1627,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
     t = re.sub(r'\bslvr\b|\bsilv\b', 'silver', t)  # "slvr"/"silv" = silver shorthand
+    t = re.sub(r'\bmed\s*bl\b', 'med blue', t)  # "Med Bl" = Mediterranean Blue shorthand
     t = re.sub(r'\btiger\s*iron\b', '__tigeriron__', t)  # protect before generic tiger→tiger eye
     t = re.sub(r'\btiger\b', 'tiger eye', t)
     t = re.sub(r'__tigeriron__', 'tiger iron', t)
@@ -1654,6 +1655,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bomber\b', 'ombre', t)        # "omber" = alternate English spelling of ombré
     t = re.sub(r'\bcornel(?:ian)?\b|\bcornerian\b', 'carnelian', t)  # Cornelian = Carnelian
     t = re.sub(r'\biron\s*flint\b|\bflint\s*(?:stone\s*)?dial\b', 'eisenkiesel', t)  # Iron Flint
+    t = re.sub(r'\beisen\b', 'eisenkiesel', t)  # standalone "eisen" (German dealer shorthand)
     t = re.sub(r'\bcotton\s*candy\b', 'candy pink', t)  # Cotton Candy = Candy Pink dial
     # Additional shade/hue shorthands used by dealers globally
     t = re.sub(r'\blemon(?:\s*yellow)?\b', 'yellow', t)         # Lemon/Lemon Yellow = Yellow OP/DJ dial
@@ -1696,7 +1698,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbruce\s*wayne\b', 'black', t)  # Bruce Wayne = black dial GMT Sprite GRNR
     t = re.sub(r'\bcoke\b', 'black', t)   # Coke = black dial GMT (vintage 16710 red/black bezel)
     t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
-    t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
+    t = re.sub(r'\bpistach[eo]?\b', 'pistachio', t)  # dealer shorthand; catches pistacho/pistache typos
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*(?:tiff(?:any)?|tb)\b|\bgenuine\s*(?:tiff(?:any)?|tb)\b|\bauth(?:entic)?\s*(?:tiff(?:any)?|tb)\b|\breal\s*(?:tiff(?:any)?|tb)\b|\bgen(?:uine)?\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
@@ -1790,6 +1792,12 @@ def extract_dial(text, ref='', raw_ref=''):
                           '116520','126520','116528','126528','116515','126515'}
     if _sd_ref_base in _YML_DAYTONA_BASES:
         t = re.sub(r'\bym\b(?!\s*(?:lacquer|mineral|lac|ii\b))', 'yml', t)
+    # Lime/Neon Green on Day-Date refs = Bright Green (Rolex official term for casino/emerald green)
+    # These refs carry "Bright Green" as their official dial name; "lime" is a dealer colour description
+    _BRIGHT_GREEN_ALT_REFS = {'228235','228238','228239','228348','228345','228349','228398',
+                              '128235','128238','128239','128349','128398','228396','128395'}
+    if _sd_ref_base in _BRIGHT_GREEN_ALT_REFS:
+        t = re.sub(r'\blime(?:\s*green)?\b|\bneon\s*green\b', 'bright green', t)
     # "tb" on Day-Date refs (128/228/118) = Turquoise dial — NOT Tiffany Blue.
     # DDs have a "Turquoise" dial option; dealers write "TB" for "Turquoise Blue" not "Tiffany Blue".
     # Must normalise BEFORE the tiffany/OTB detection block so the turquoise path fires instead.
@@ -1805,6 +1813,11 @@ def extract_dial(text, ref='', raw_ref=''):
     if _sd_ref_base in _DAYTONA_TURQ_TB_BASES:
         t = re.sub(r'\btb\b', 'turquoise', t)
     # ── Additional dial synonym normalizations ──
+    # On OP refs, "ecru"/"cream" describe the Beige dial (Rolex official name), not Champagne.
+    # Must precede the global ecru→champagne normalization below.
+    _BEIGE_OP_REFS = {'126000','126031','124300','277200','276200','124200','134300','126034'}
+    if _sd_ref_base in _BEIGE_OP_REFS:
+        t = re.sub(r'\becru\b|\bcream\b', 'beige', t)
     # Champagne synonyms (dealer terms for warm cream/ivory dials; Rolex official = champagne)
     t = re.sub(r'\bivory\b|\bivoire\b|\becru\b|\bstraw\b|\bbutterscotch\b', 'champagne', t)
     # Chocolate synonyms (dealers use coffee/mocha/cognac/havana for brown Daytona/DD dials)
@@ -1827,6 +1840,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bverde\b|\bvert\b', 'green', t)                  # IT+ES/FR green
     t = re.sub(r'\bmarron\b|\bbraun\b', 'chocolate', t)            # FR/DE brown
     t = re.sub(r'\blilac\b|\blilas\b|\bmauve\b', 'lavender', t)   # English/FR lilac/mauve → Lavender
+    t = re.sub(r'\blavand[ae]?\b', 'lavender', t)                 # FR/IT lavande/lavanda → Lavender
     t = re.sub(r'\bceladon\b', 'mint green', t)                    # Celadon = pale grey-green → Mint Green
     t = re.sub(r'\beau\s*de\s*nil\b|\beau\s*nil\b', 'tiffany', t)  # Eau de nil = pale blue-green → Tiffany on OP refs
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
@@ -1854,6 +1868,7 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bteal(?:\s*blue)?\b', 'tiffany', t)  # "teal"/"teal blue" = Tiffany Blue hue on OP refs
         t = re.sub(r'\beggshell(?:\s*blue)?\b', 'tiffany', t)  # "eggshell"/"eggshell blue" = Tiffany Blue (no "Blue" suffix in prior synonyms)
         t = re.sub(r'\bciel(?:\s*blue)?\b', 'tiffany', t)  # "ciel"/"ciel blue" = French sky-blue (common among French/Euro dealers)
+        t = re.sub(r'\bseafoam\b|\bsea\s*foam\b', 'tiffany', t)  # seafoam = pale blue-green ≈ Tiffany Blue on OP refs
         # Standalone "candy" on OP refs = Candy Pink (Rolex official) — guard to avoid "candy blue"→Tiffany collision
         t = re.sub(r'\bcandy\b(?!\s*(?:blue|p(?:ink)?\b))', 'candy pink', t)
     # "DB" shorthand on Deepsea refs = D-Blue gradient dial (not "Dark Blue")
