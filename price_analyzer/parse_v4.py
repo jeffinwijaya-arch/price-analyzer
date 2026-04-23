@@ -1662,6 +1662,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bcanary(?:\s*yellow)?\b', 'yellow', t)        # Canary/Canary Yellow = Yellow dial
     t = re.sub(r'\bsaffron\b', 'yellow', t)                     # Saffron = warm yellow
     t = re.sub(r'\bbuttercup(?:\s*yellow)?\b', 'yellow', t)     # Buttercup Yellow = Yellow
+    t = re.sub(r'\bylw\b', 'yellow', t)                          # "ylw" = Yellow shorthand (HK/Asia dealers)
     t = re.sub(r'\bforest\s*green\b', 'green', t)               # Forest Green = Green
     t = re.sub(r'\bsage\s*green\b', 'olive', t)                 # Sage Green ≈ Olive (muted green; ref-gated → Olive Green or Olive)
     t = re.sub(r'\barctic\s*white\b', 'white', t)               # Arctic White = White (Explorer II polar)
@@ -1698,7 +1699,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbruce\s*wayne\b', 'black', t)  # Bruce Wayne = black dial GMT Sprite GRNR
     t = re.sub(r'\bcoke\b', 'black', t)   # Coke = black dial GMT (vintage 16710 red/black bezel)
     t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
-    t = re.sub(r'\bpistach[eo]?\b', 'pistachio', t)  # dealer shorthand; catches pistacho/pistache typos
+    t = re.sub(r'\bpistac+h(?:io|[eo])?\b', 'pistachio', t)  # catches pistacho/pistache/pistacchio (double-c Italian)
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
     t = re.sub(r'\borig(?:inal)?\s*(?:tiff(?:any)?|tb)\b|\bgenuine\s*(?:tiff(?:any)?|tb)\b|\bauth(?:entic)?\s*(?:tiff(?:any)?|tb)\b|\breal\s*(?:tiff(?:any)?|tb)\b|\bgen(?:uine)?\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
@@ -1711,12 +1712,14 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
     # "Tiffany Edition" / "Tiffany Special Edition" / "Tiffany Exclusive" = OTB
     t = re.sub(r'\btiff(?:any)?\s*(?:special\s*)?edition\b|\btiff(?:any)?\s*exclusive\b', 'official tiffany', t)
+    # "Tiffany Numbered Edition" / "Tiffany Limited" / "Tiffany No.123" = OTB (numbered/limited releases)
+    t = re.sub(r'\btiff(?:any)?\s*(?:numb(?:er(?:ed)?)?|no\.?\s*\d+|limited(?:\s*ed(?:ition)?)?)\b', 'official tiffany', t)
     # "Retailed at Tiffany" / "sold by/through Tiffany" = sold through T&Co = OTB
     t = re.sub(r'\bretail(?:ed)?\s*(?:at|by|through|via)\s*(?:tiff(?:any)?|t\.?co)\b', 'official tiffany', t)
     t = re.sub(r'\bsold\s*(?:at|by|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
     # Tiffany & Co collaboration / sole-agent retailer = Official Tiffany Blue
     t = re.sub(r'\btiff(?:any)?\s*collab(?:oration)?\b|\bcollab(?:oration)?\s*tiff(?:any)?\b', 'official tiffany', t)
-    t = re.sub(r'\btiff(?:any)?[-_]co\b|\bt[-_]co\b', 'official tiffany', t)  # "Tiffany-co"/"T-co" hyphen variant = T&Co = OTB
+    t = re.sub(r'\btiff(?:any)?[/_-]co\b|\bt[/_-]co\b', 'official tiffany', t)  # "Tiffany-co"/"T/co"/"T_co" = T&Co = OTB
     t = re.sub(r'\btiff(?:any)?\s*sole\s*(?:agent|seller|retail(?:er)?)?\b|\bsole\s*(?:agent|seller)\s*(?:for\s*)?tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bunofficiale?\s*tiff(?:any)?\b|\baftermarket\s*tiff(?:any)?\b|\breplica\s*tiff(?:any)?\b', 'tiffany', t)  # aftermarket/replica = plain tiffany, NOT official
     # Reverse-order parenthetical OTB: "Tiffany (official)", "TB (otb)", "Tiff (auth)", etc.
@@ -1798,6 +1801,7 @@ def extract_dial(text, ref='', raw_ref=''):
                               '128235','128238','128239','128349','128398','228396','128395'}
     if _sd_ref_base in _BRIGHT_GREEN_ALT_REFS:
         t = re.sub(r'\blime(?:\s*green)?\b|\bneon\s*green\b', 'bright green', t)
+        t = re.sub(r'\bbg\b', 'bright green', t)  # "BG" = Bright Green shorthand on Day-Date refs
     # "tb" on Day-Date refs (128/228/118) = Turquoise dial — NOT Tiffany Blue.
     # DDs have a "Turquoise" dial option; dealers write "TB" for "Turquoise Blue" not "Tiffany Blue".
     # Must normalise BEFORE the tiffany/OTB detection block so the turquoise path fires instead.
@@ -1891,7 +1895,7 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bmet\b', 'meteorite', t)
     # ── Ref-gated Pink → Candy Pink (OP/31 refs where only Candy Pink exists, not plain Pink) ──
     # For these refs dealers say "pink" but Rolex's official name is "Candy Pink"
-    _ONLY_CANDY_PINK_REFS = {'124300', '277200', '276200', '134300'}
+    _ONLY_CANDY_PINK_REFS = {'124300', '277200', '276200', '134300', '126000', '124200'}
     if _ref_base_norm in _ONLY_CANDY_PINK_REFS:
         t = re.sub(r'\bpink\b', 'candy pink', t)
     # Separate color glued to ref: "116508green" → "116508 green"
@@ -2207,7 +2211,7 @@ def extract_dial(text, ref='', raw_ref=''):
         dial = 'Ice Blue'
     elif re.search(r'\bmediterranean\b|\bmed\s*blue\b', t): dial = 'Med Blue'
     elif re.search(r'\botb\b|\bot\/b\b|\botbl\b|\bofficialtb\b'
-                   r'|\btco\b|\bt\.co\b'
+                   r'|\btco\b|\bt\.co\b|\bt[/_-]co\b'
                    r'|\bofficial\s*tiff(?:any)?\b|\btiff(?:any)?\s*official\b'
                    r'|\bofficial\s*tb\b|\boff\.?\s*tiff(?:any)?\b'
                    r'|\btiffany\s*stamp(?:ed)?\b|\btiff\s*stamp(?:ed)?\b'
@@ -2240,7 +2244,8 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\bdial\s*(?:says?|reads?|has|with)\s*tiff(?:any)?\b'
                    r'|\btiff(?:any)?\s*on\s*(?:the\s*)?dial\b'  # "tiffany on (the) dial" not "tiffany dial"
                    r'|\bpurchas(?:ed?)\s*(?:at|from|through)\s*tiff(?:any)?\b'
-                   r'|\bcame?\s*from\s*tiff(?:any)?\b', t):
+                   r'|\bcame?\s*from\s*tiff(?:any)?\b'
+                   r'|\btiff(?:any)?\s*(?:numb(?:er(?:ed)?)?|no\.?\s*\d+|limited(?:\s*ed(?:ition)?)?)\b', t):
         # Official Tiffany Blue = Tiffany & Co stamped dial (massive premium vs plain TB)
         # DD refs (128/228) don't carry OTB — remap to their actual Turquoise dial.
         # Also 336238 (new-gen DJ36 YG) and 126200 (DJ36 SS) only offer Turquoise, not OTB.

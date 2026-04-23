@@ -96,7 +96,9 @@
         "Canary Yellow",
         "Saffron",
         "Buttercup",
-        "Buttercup Yellow"
+        "Buttercup Yellow",
+        "YLW",
+        "Ylw"
     ],
     "Green": [
         "Verde",
@@ -221,6 +223,10 @@
         "Official Tiffany",
         "Tiffany Official",
         "OTB",
+        "T/Co",
+        "T/co",
+        "T / Co",
+        "Tiffany/Co",
         "Tiffany Collab",
         "Tiffany Collaboration",
         "Collab Tiffany",
@@ -233,6 +239,10 @@
         "Tiff Stamped",
         "Stamped Tiff",
         "Stamped Tiffany",
+        "Tiffany Numbered Edition",
+        "Tiffany Limited Edition",
+        "Tiffany Limited",
+        "Tiffany Numbered",
         "Legit Tiff",
         "Legit Tiffany",
         "Verified Tiff",
@@ -592,7 +602,9 @@
         "Pistacchio",
         "Pistacho",
         "Pistaccho",
-        "Pistace"
+        "Pistace",
+        "Pistaccho",
+        "Pistacch"
     ],
     "Ice Blue": [
         "Glacier Blue",
