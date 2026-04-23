@@ -203,7 +203,11 @@
         "Duck's Egg Blue",
         "Duck's Egg",
         "Ducks Egg Blue",
-        "Ducks Egg"
+        "Ducks Egg",
+        "TFB",
+        "T.F.B.",
+        "T.F.B",
+        "Tf Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -376,7 +380,18 @@
         "T&Co Branded",
         "Tiffany-Stamped",
         "Tiffany-Signed",
-        "Tiffany-Engraved"
+        "Tiffany-Engraved",
+        "Tiffany text",
+        "Tiffany written",
+        "T&Co at 6",
+        "T&Co @ 6",
+        "Tiffany at six",
+        "Tiffany laser",
+        "Laser Tiffany",
+        "With Tiffany",
+        "With T&Co",
+        "T&Co number",
+        "Tiffany dial text"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -625,7 +640,8 @@
         "Sund",
         "Sun Dial",
         "Suntone",
-        "Sun Dust"
+        "Sun Dust",
+        "Stardust"
     ],
     "Pistachio": [
         "Pistachio Green",

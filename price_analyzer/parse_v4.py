@@ -1541,6 +1541,11 @@ FIXED_DIAL = {
     '52506':'Ice Blue',  # Cellini Cymation Platinum — Ice Blue only
     '126619':'Black',      # WG Sub bare ref — always Black dial, blue ceramic bezel, regardless of LB suffix omission
     '126679SABR':'Black',  # Sea-Dweller 43 SABR (sapphire bezel Rainbow) — always Black dial
+    # Additional single-dial models confirmed from catalog
+    '126535':'Sundust',   # Daytona 40 Everose YG (no suffix) — single Sundust dial only
+    '116621':'Chocolate', # Yacht-Master 40 Yellow Gold — single Chocolate dial
+    '128458':'Turquoise', # Day-Date 36 (specific platinum config) — Turquoise only
+    '226635':'Black',     # Yacht-Master 37 Oystersteel — Black dial only
 }
 
 def extract_dial(text, ref='', raw_ref=''):
@@ -1684,8 +1689,9 @@ def extract_dial(text, ref='', raw_ref=''):
     # Don't match "sunshine", "sunset", "sunburst", "sundust" (already correct)
     t = re.sub(r'\bsun\b(?!\s*(?:dust|shine|set|burst|ray|light|day))', 'sundust', t)
     t = re.sub(r'\bsund\b', 'sundust', t)  # "sund" shorthand for Sundust (HK/Asia dealers)
-    t = re.sub(r'\bpikachu\b', 'yml', t)  # Pikachu = YML (same dial)
+    t = re.sub(r'\bstardust\b', 'sundust', t)  # "Stardust" = dealer confusion/alternate term for the warm Sundust color
     # Yellow Mineral Lacquer longhand phrases → yml (for dealers who write the full name)
+    # NOTE: pikachu→yml is gated below after _YML_DAYTONA_BASES is defined
     t = re.sub(r'\byellow\s*mineral(?:\s*lacquer)?\b|\byellow\s*lacquer\b|\bmineral\s*(?:lacquer\s*)?yellow\b|\blac(?:quer)?\s*yellow\b|\bym\s*lacquer\b', 'yml', t)
     t = re.sub(r'\bjubilee\s*(?:motif|dial|pattern)\b', 'celebration', t)  # Jubilee Motif = Celebration dial
     t = re.sub(r'\bbarbie\b', 'pink', t)  # Barbie = pink dial Daytona
@@ -1781,6 +1787,18 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*brand(?:ed|ing)?\b|\bbrand(?:ed|ing)?\s*(?:by\s*)?tiff(?:any)?\b', 'official tiffany', t)
     # "Rolex Tiffany" bare juxtaposition (no x/&/slash) — common in HK/Asia dealer shorthand
     t = re.sub(r'\brolex\s+tiffany\b|\btiffany\s+rolex\b', 'official tiffany', t)
+    # "Tiffany text" / "Tiffany written" = the Tiffany & Co name printed on the dial face
+    t = re.sub(r'\btiff(?:any)?\s*text\b|\btext\s*tiff(?:any)?\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*written\b|\bwritten\s*(?:by\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    # "T&Co at/@ 6" = T&Co name positioned at 6 o'clock on dial (hallmark of OTB pieces)
+    t = re.sub(r'\bt\s*&\s*co\s*(?:at|@)\s*(?:6|six)\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*at\s*six\s*o.?\s*clock\b', 'official tiffany', t)
+    # "Tiffany laser" = laser-engraved T&Co on caseback (authentication mark on OTB watches)
+    t = re.sub(r'\btiff(?:any)?\s*laser\b|\blaser\s*(?:engrav(?:ed?)?\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    # "with Tiffany" (short provenance statement) = watch sold through / endorsed by T&Co
+    t = re.sub(r'\bwith\s+tiff(?:any)?\s*(?:&\s*co|co\.?)?\b', 'official tiffany', t)
+    # "T&Co number" / "Tiffany number" = serial/edition number specific to OTB batch
+    t = re.sub(r'\bt\s*&\s*co\s*(?:numb(?:er(?:ed)?)?|no\.?\s*\d+)\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1812,6 +1830,9 @@ def extract_dial(text, ref='', raw_ref=''):
                           '116520','126520','116528','126528','116515','126515'}
     if _sd_ref_base in _YML_DAYTONA_BASES:
         t = re.sub(r'\bym\b(?!\s*(?:lacquer|mineral|lac|ii\b))', 'yml', t)
+        # "Pikachu" = nickname for YML Daytona YG (126508/116508) — gate here so it only
+        # fires on actual YML-capable Daytona refs and not on Day-Date/DJ listings.
+        t = re.sub(r'\bpikachu\b', 'yml', t)
     # Lime/Neon Green on Day-Date refs = Bright Green (Rolex official term for casino/emerald green)
     # These refs carry "Bright Green" as their official dial name; "lime" is a dealer colour description
     _BRIGHT_GREEN_ALT_REFS = {'228235','228238','228239','228348','228345','228349','228398',
@@ -2123,7 +2144,11 @@ def extract_dial(text, ref='', raw_ref=''):
                          '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bp-n\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
+    # Unambiguous long-form PN signals — fire on any ref (self-evident in watch context)
+    if re.search(r'\bpaul\s*newman\b|\bpaul\s*n\.\b|\bp\.n\.\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
+    # Weak 2–3 char shorthands (\bpn\b, \bp/n\b, \bp-n\b) — gate to Daytona refs only to
+    # prevent false positives from "PN" appearing in non-dial contexts (product notes, etc.)
+    if re.search(r'\bpn\b|\bp/n\b|\bp-n\b', t) and (_rb_pn in _DAYTONA_PN_BASES or not ref): return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Black'
@@ -2270,7 +2295,14 @@ def extract_dial(text, ref='', raw_ref=''):
                    r'|\btiff(?:any)?\s*on\s*(?:the\s*)?dial\b'  # "tiffany on (the) dial" not "tiffany dial"
                    r'|\bpurchas(?:ed?)\s*(?:at|from|through)\s*tiff(?:any)?\b'
                    r'|\bcame?\s*from\s*tiff(?:any)?\b'
-                   r'|\btiff(?:any)?\s*(?:numb(?:er(?:ed)?)?|no\.?\s*\d+|limited(?:\s*ed(?:ition)?)?)\b', t):
+                   r'|\btiff(?:any)?\s*(?:numb(?:er(?:ed)?)?|no\.?\s*\d+|limited(?:\s*ed(?:ition)?)?)\b'
+                   r'|\btiff(?:any)?\s*text\b|\btext\s*tiff(?:any)?\b'
+                   r'|\btiff(?:any)?\s*written\b|\bwritten\s*(?:by\s*)?tiff(?:any)?\b'
+                   r'|\bt\s*&\s*co\s*(?:at|@)\s*(?:6|six)\b'
+                   r'|\btiff(?:any)?\s*at\s*six\s*o.?\s*clock\b'
+                   r'|\btiff(?:any)?\s*laser\b|\blaser\s*(?:engrav(?:ed?)?\s*)?tiff(?:any)?\b'
+                   r'|\bwith\s+tiff(?:any)?\s*(?:&\s*co|co\.?)?\b'
+                   r'|\bt\s*&\s*co\s*(?:numb(?:er(?:ed)?)?|no\.?\s*\d+)\b', t):
         # Official Tiffany Blue = Tiffany & Co stamped dial (massive premium vs plain TB)
         # DD refs (128/228) don't carry OTB — remap to their actual Turquoise dial.
         # Also 336238 (new-gen DJ36 YG) and 126200 (DJ36 SS) only offer Turquoise, not OTB.
