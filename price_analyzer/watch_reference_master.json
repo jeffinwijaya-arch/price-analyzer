@@ -1,0 +1,357 @@
+{
+  "_comment": "Rolex model master: nicknames, ref-to-model mapping, premium dial registry.",
+
+  "models": {
+    "Oyster Perpetual 41": {
+      "refs": ["124300"],
+      "series": "OP",
+      "size_mm": 41,
+      "material": "Steel",
+      "nicknames": ["op41", "op 41"],
+      "premium_dials": ["Tiffany Blue", "Candy Pink", "Apple Green", "Coral Red"]
+    },
+    "Oyster Perpetual 36": {
+      "refs": ["126000"],
+      "series": "OP",
+      "size_mm": 36,
+      "material": "Steel",
+      "nicknames": ["op36", "op 36"],
+      "premium_dials": ["Tiffany Blue", "Candy Pink", "Apple Green", "Coral Red"]
+    },
+    "Oyster Perpetual 28": {
+      "refs": ["277200"],
+      "series": "OP",
+      "size_mm": 28,
+      "material": "Steel",
+      "nicknames": ["op28", "op 28"],
+      "premium_dials": ["Tiffany Blue", "Coral Red", "Candy Pink"]
+    },
+    "Oyster Perpetual 26": {
+      "refs": ["279160", "279177"],
+      "series": "OP",
+      "size_mm": 26,
+      "material": "Steel",
+      "nicknames": ["op26", "op 26"],
+      "premium_dials": ["Tiffany Blue", "Coral Red"]
+    },
+    "Datejust 36 Steel": {
+      "refs": ["126200"],
+      "series": "DJ",
+      "size_mm": 36,
+      "material": "Steel",
+      "nicknames": ["dj36", "dj 36", "datejust 36"],
+      "premium_dials": []
+    },
+    "Datejust 36 WG": {
+      "refs": ["126234"],
+      "series": "DJ",
+      "size_mm": 36,
+      "material": "White Gold",
+      "nicknames": ["dj36 wg"],
+      "premium_dials": ["Mint Green", "Wimbledon"]
+    },
+    "Datejust 36 YG": {
+      "refs": ["126238"],
+      "series": "DJ",
+      "size_mm": 36,
+      "material": "Yellow Gold",
+      "nicknames": ["dj36 yg"],
+      "premium_dials": ["Wimbledon"]
+    },
+    "Datejust 41 Steel": {
+      "refs": ["126300"],
+      "series": "DJ",
+      "size_mm": 41,
+      "material": "Steel",
+      "nicknames": ["dj41", "dj 41", "datejust 41"]
+    },
+    "Datejust 41 WG": {
+      "refs": ["126334"],
+      "series": "DJ",
+      "size_mm": 41,
+      "material": "White Gold",
+      "nicknames": ["dj41 wg"],
+      "premium_dials": ["Wimbledon", "Meteorite"]
+    },
+    "Datejust 41 TT YG": {
+      "refs": ["126333"],
+      "series": "DJ",
+      "size_mm": 41,
+      "material": "TT YG",
+      "nicknames": ["dj41 tt yg"],
+      "premium_dials": ["Wimbledon", "Meteorite"]
+    },
+    "Submariner No-Date": {
+      "refs": ["124060"],
+      "series": "Sub",
+      "size_mm": 41,
+      "material": "Steel",
+      "nicknames": ["sub nd", "sub no date", "nodate sub", "124060"]
+    },
+    "Submariner Date Steel Black": {
+      "refs": ["126610LN"],
+      "series": "Sub",
+      "size_mm": 41,
+      "material": "Steel",
+      "nicknames": ["sub date", "sub ln", "126610ln"]
+    },
+    "Submariner Date Kermit": {
+      "refs": ["126610LV"],
+      "series": "Sub",
+      "size_mm": 41,
+      "material": "Steel",
+      "nicknames": ["kermit", "sub lv", "126610lv", "green sub"]
+    },
+    "Submariner Date Hulk": {
+      "refs": ["116610LV"],
+      "series": "Sub",
+      "size_mm": 40,
+      "material": "Steel",
+      "nicknames": ["hulk", "116610lv", "green sub"]
+    },
+    "Sea-Dweller": {
+      "refs": ["126600"],
+      "series": "SD",
+      "size_mm": 43,
+      "material": "Steel",
+      "nicknames": ["sea dweller", "sd50", "126600"]
+    },
+    "Deepsea": {
+      "refs": ["126660"],
+      "series": "DS",
+      "size_mm": 44,
+      "material": "Steel",
+      "nicknames": ["deepsea", "ds", "126660"],
+      "premium_dials": ["D-Blue"]
+    },
+    "GMT-Master II Batman": {
+      "refs": ["126710BLNR"],
+      "series": "GMT",
+      "size_mm": 40,
+      "material": "Steel",
+      "nicknames": ["batman", "blnr", "126710blnr"]
+    },
+    "GMT-Master II Pepsi": {
+      "refs": ["126710BLRO"],
+      "series": "GMT",
+      "size_mm": 40,
+      "material": "Steel",
+      "nicknames": ["pepsi", "blro", "126710blro"]
+    },
+    "GMT-Master II WG Pepsi": {
+      "refs": ["126719BLRO"],
+      "series": "GMT",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["white ice pepsi", "wg pepsi", "126719blro"],
+      "premium_dials": ["Meteorite"]
+    },
+    "GMT-Master II Rootbeer": {
+      "refs": ["126711CHNR"],
+      "series": "GMT",
+      "size_mm": 40,
+      "material": "TT RG",
+      "nicknames": ["rootbeer", "chnr", "126711chnr"]
+    },
+    "GMT-Master II Sprite": {
+      "refs": ["126713GRNR"],
+      "series": "GMT",
+      "size_mm": 40,
+      "material": "TT YG",
+      "nicknames": ["sprite", "grnr", "126713grnr"]
+    },
+    "Daytona Steel": {
+      "refs": ["126500LN", "116500LN"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "Steel",
+      "nicknames": ["daytona steel", "ceramic daytona", "panda", "reverse panda"]
+    },
+    "Daytona Yellow Gold": {
+      "refs": ["126508", "116508"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "Yellow Gold",
+      "nicknames": ["daytona yg", "daytona gold"],
+      "premium_dials": ["Paul Newman", "Green", "Meteorite"]
+    },
+    "Daytona White Gold": {
+      "refs": ["126519LN", "116519LN", "116509"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["daytona wg", "daytona white gold"],
+      "premium_dials": ["Meteorite"]
+    },
+    "Day-Date 40 Everose": {
+      "refs": ["228235"],
+      "series": "DD40",
+      "size_mm": 40,
+      "material": "Everose Gold",
+      "nicknames": ["dd40 rg", "dd40 everose", "228235"],
+      "premium_dials": ["Ombre", "Ombre Slate", "Eisenkiesel", "Meteorite", "MOP", "Pave"]
+    },
+    "Day-Date 40 Yellow Gold": {
+      "refs": ["228238"],
+      "series": "DD40",
+      "size_mm": 40,
+      "material": "Yellow Gold",
+      "nicknames": ["dd40 yg", "228238"],
+      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli"]
+    },
+    "Day-Date 40 White Gold": {
+      "refs": ["228239"],
+      "series": "DD40",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["dd40 wg", "228239"],
+      "premium_dials": ["Onyx", "MOP", "Pave", "Meteorite"]
+    },
+    "Day-Date 40 Platinum": {
+      "refs": ["228206"],
+      "series": "DD40",
+      "size_mm": 40,
+      "material": "Platinum",
+      "nicknames": ["dd40 plat", "228206"],
+      "premium_dials": ["Ice Blue"]
+    },
+    "Day-Date 36 Yellow Gold": {
+      "refs": ["128238"],
+      "series": "DD36",
+      "size_mm": 36,
+      "material": "Yellow Gold",
+      "nicknames": ["dd36 yg", "128238"],
+      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli"]
+    },
+    "Day-Date 36 Everose": {
+      "refs": ["128235"],
+      "series": "DD36",
+      "size_mm": 36,
+      "material": "Everose Gold",
+      "nicknames": ["dd36 rg", "128235"],
+      "premium_dials": ["MOP", "Pave", "Meteorite"]
+    },
+    "Day-Date 36 White Gold": {
+      "refs": ["128239"],
+      "series": "DD36",
+      "size_mm": 36,
+      "material": "White Gold",
+      "nicknames": ["dd36 wg", "128239"],
+      "premium_dials": ["MOP", "Pave", "Onyx"]
+    },
+    "Day-Date 36 Platinum": {
+      "refs": ["128236"],
+      "series": "DD36",
+      "size_mm": 36,
+      "material": "Platinum",
+      "nicknames": ["dd36 plat", "128236"],
+      "premium_dials": ["Ice Blue"]
+    },
+    "Sky-Dweller Steel": {
+      "refs": ["326934"],
+      "series": "Sky",
+      "size_mm": 42,
+      "material": "Steel",
+      "nicknames": ["skydweller", "sky dweller steel", "326934"]
+    },
+    "Explorer I": {
+      "refs": ["124270", "214270", "114270"],
+      "series": "Exp",
+      "size_mm": 40,
+      "material": "Steel",
+      "nicknames": ["explorer", "exp1", "exp i"]
+    },
+    "Explorer II": {
+      "refs": ["226570", "216570"],
+      "series": "Exp",
+      "size_mm": 42,
+      "material": "Steel",
+      "nicknames": ["explorer 2", "exp2", "polar", "exp ii"]
+    },
+    "Air-King": {
+      "refs": ["126900", "116900"],
+      "series": "AK",
+      "size_mm": 40,
+      "material": "Steel",
+      "nicknames": ["air king", "ak", "126900"]
+    },
+    "Milgauss": {
+      "refs": ["116400", "116400GV"],
+      "series": "Milg",
+      "size_mm": 40,
+      "material": "Steel",
+      "nicknames": ["milgauss", "milg", "lightning bolt"]
+    }
+  },
+
+  "ref_to_model": {
+    "124300": "Oyster Perpetual 41",
+    "126000": "Oyster Perpetual 36",
+    "277200": "Oyster Perpetual 28",
+    "279160": "Oyster Perpetual 26",
+    "279177": "Oyster Perpetual 26",
+    "126200": "Datejust 36 Steel",
+    "126234": "Datejust 36 WG",
+    "126238": "Datejust 36 YG",
+    "126300": "Datejust 41 Steel",
+    "126334": "Datejust 41 WG",
+    "126333": "Datejust 41 TT YG",
+    "126331": "Datejust 41 TT YG",
+    "124060": "Submariner No-Date",
+    "126610LN": "Submariner Date Steel Black",
+    "126610LV": "Submariner Date Kermit",
+    "116610LV": "Submariner Date Hulk",
+    "126600": "Sea-Dweller",
+    "126660": "Deepsea",
+    "126710BLNR": "GMT-Master II Batman",
+    "126710BLRO": "GMT-Master II Pepsi",
+    "126719BLRO": "GMT-Master II WG Pepsi",
+    "126711CHNR": "GMT-Master II Rootbeer",
+    "126713GRNR": "GMT-Master II Sprite",
+    "126500LN": "Daytona Steel",
+    "116500LN": "Daytona Steel",
+    "126508": "Daytona Yellow Gold",
+    "116508": "Daytona Yellow Gold",
+    "126519LN": "Daytona White Gold",
+    "116519LN": "Daytona White Gold",
+    "228206": "Day-Date 40 Platinum",
+    "228235": "Day-Date 40 Everose",
+    "228238": "Day-Date 40 Yellow Gold",
+    "228239": "Day-Date 40 White Gold",
+    "128236": "Day-Date 36 Platinum",
+    "128235": "Day-Date 36 Everose",
+    "128238": "Day-Date 36 Yellow Gold",
+    "128239": "Day-Date 36 White Gold",
+    "326934": "Sky-Dweller Steel",
+    "124270": "Explorer I",
+    "214270": "Explorer I",
+    "226570": "Explorer II",
+    "216570": "Explorer II",
+    "126900": "Air-King",
+    "116900": "Air-King",
+    "116400": "Milgauss",
+    "116400GV": "Milgauss"
+  },
+
+  "nicknames": {
+    "pepsi":        {"refs": ["126710BLRO", "116710BLRO"], "note": "blue/red GMT bezel"},
+    "batman":       {"refs": ["126710BLNR", "116710BLNR"], "note": "blue/black GMT bezel"},
+    "batgirl":      {"refs": ["126710BLNR"], "note": "Jubilee-bracelet Batman"},
+    "kermit":       {"refs": ["126610LV"], "dial": "Black", "note": "green bezel sub"},
+    "hulk":         {"refs": ["116610LV"], "dial": "Green", "note": "green dial + bezel"},
+    "tiffany":      {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue"},
+    "paul newman":  {"refs": ["6239", "6241", "6263", "6265", "126508", "116508"], "dial": "Paul Newman"},
+    "panda":        {"refs": ["126500LN", "116500LN", "116509", "116519LN"], "dial": "White"},
+    "reverse panda":{"refs": ["126500LN", "116500LN"], "dial": "Black"},
+    "polar":        {"refs": ["226570", "216570"], "dial": "White"},
+    "rootbeer":     {"refs": ["126711CHNR", "16713"], "note": "champagne/black GMT bezel"},
+    "sprite":       {"refs": ["126713GRNR"], "note": "green/black GMT bezel"},
+    "wimbledon":    {"refs": ["126334", "126331", "126333", "126238"], "dial": "Wimbledon"},
+    "meteorite":    {"refs": ["126719BLRO", "228235", "228238", "126334", "116509"], "dial": "Meteorite"},
+    "ice blue":     {"refs": ["228206", "128236"], "dial": "Ice Blue", "note": "platinum only"},
+    "starbucks":    {"refs": ["126610LV", "116610LV"], "note": "green sub slang"},
+    "lightning bolt":{"refs": ["116400GV"], "note": "Milgauss GV"},
+    "black bay":    {"refs": [], "note": "Tudor — not Rolex"},
+    "white ice pepsi":{"refs": ["126719BLRO"], "dial": "Meteorite"}
+  }
+}

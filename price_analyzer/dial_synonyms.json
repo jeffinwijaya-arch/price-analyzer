@@ -1,0 +1,183 @@
+{
+  "_comment": "Flat map: raw/informal text -> canonical dial name. Keys must be lowercase.",
+
+  "tiff":               "Tiffany Blue",
+  "tiffany":            "Tiffany Blue",
+  "tiff blue":          "Tiffany Blue",
+  "tiffany blue":       "Tiffany Blue",
+  "turq":               "Tiffany Blue",
+  "turquoise blue":     "Tiffany Blue",
+  "robin egg":          "Tiffany Blue",
+  "robins egg":         "Tiffany Blue",
+  "robin's egg":        "Tiffany Blue",
+  "robin egg blue":     "Tiffany Blue",
+  "robins egg blue":    "Tiffany Blue",
+  "robin's egg blue":   "Tiffany Blue",
+  "tb":                 "Tiffany Blue",
+  "light tiffany":      "Tiffany Blue",
+
+  "pn":                 "Paul Newman",
+  "paul newman":        "Paul Newman",
+  "paul n":             "Paul Newman",
+  "exotic":             "Paul Newman",
+  "exotic dial":        "Paul Newman",
+
+  "mete":               "Meteorite",
+  "met":                "Meteorite",
+  "meteor":             "Meteorite",
+  "meteorite":          "Meteorite",
+  "meteo":              "Meteorite",
+
+  "wim":                "Wimbledon",
+  "wimb":               "Wimbledon",
+  "wimbo":              "Wimbledon",
+  "wimbledon":          "Wimbledon",
+
+  "ib":                 "Ice Blue",
+  "ice":                "Ice Blue",
+  "ice blue":           "Ice Blue",
+  "iceblue":            "Ice Blue",
+
+  "d-blue":             "D-Blue",
+  "dblue":              "D-Blue",
+  "d blue":             "D-Blue",
+  "james cameron":      "D-Blue",
+  "deepsea blue":       "D-Blue",
+
+  "champ":              "Champagne",
+  "cham":               "Champagne",
+  "chp":                "Champagne",
+  "champagne":          "Champagne",
+
+  "choco":              "Chocolate",
+  "cho":                "Chocolate",
+  "chocolate":          "Chocolate",
+  "choc":               "Chocolate",
+
+  "aub":                "Aubergine",
+  "purp":               "Aubergine",
+  "purple":             "Aubergine",
+  "aubergine":          "Aubergine",
+  "eggplant":           "Aubergine",
+
+  "gg":                 "Green",
+  "starbucks":          "Green",
+  "hulk":               "Green",
+  "kermit":             "Green",
+  "grn":                "Green",
+  "grn dial":           "Green",
+
+  "bb":                 "Bright Blue",
+  "bright blue":        "Bright Blue",
+
+  "sd":                 "Sundust",
+  "sun":                "Sundust",
+  "sundust":            "Sundust",
+
+  "benz":               "Silver",
+  "slvr":               "Silver",
+  "slv":                "Silver",
+
+  "ghost":              "Grey",
+  "gr":                 "Grey",
+  "gray":               "Grey",
+  "grey":               "Grey",
+
+  "blk":                "Black",
+  "bk":                 "Black",
+  "blck":               "Black",
+
+  "wht":                "White",
+
+  "blu":                "Blue",
+
+  "og":                 "Olive Green",
+  "olive":              "Olive Green",
+  "olive green":        "Olive Green",
+
+  "palm":               "Palm Green",
+  "palm green":         "Palm Green",
+  "palmgreen":          "Palm Green",
+
+  "mint":               "Mint Green",
+  "mint green":         "Mint Green",
+  "minty":              "Mint Green",
+
+  "apple":              "Apple Green",
+  "apple green":        "Apple Green",
+  "applegreen":         "Apple Green",
+
+  "candy pink":         "Candy Pink",
+  "candypink":          "Candy Pink",
+
+  "coral":              "Coral Red",
+  "coral red":          "Coral Red",
+
+  "salmon":             "Salmon",
+
+  "panda":              "Panda",
+  "rp":                 "Reverse Panda",
+  "rev panda":          "Reverse Panda",
+  "reverse panda":      "Reverse Panda",
+
+  "pepsi":              "Blue Red",
+  "blue red":           "Blue Red",
+
+  "batman":             "Blue Black",
+  "batgirl":            "Blue Black",
+  "blue black":         "Blue Black",
+
+  "sprite":             "Green Black",
+  "green black":        "Green Black",
+
+  "coke":               "Black Red",
+  "black red":          "Black Red",
+
+  "ombre":              "Ombre",
+  "ombré":              "Ombre",
+  "ombre slate":        "Ombre Slate",
+  "ombré slate":        "Ombre Slate",
+
+  "meteorite":          "Meteorite",
+  "mop":                "MOP",
+  "mother of pearl":    "MOP",
+  "mop dial":           "MOP",
+
+  "pave":               "Pave",
+  "pavé":               "Pave",
+  "diamond pave":       "Pave",
+  "diamond pavé":       "Pave",
+
+  "aventurine":         "Aventurine",
+  "grossular":          "Grossular",
+  "giraffe":            "Grossular",
+  "onyx":               "Onyx",
+  "lapis":              "Lapis Lazuli",
+  "lapis lazuli":       "Lapis Lazuli",
+  "tiger eye":          "Tiger Eye",
+  "tigers eye":         "Tiger Eye",
+  "tiger's eye":        "Tiger Eye",
+  "turquoise stone":    "Turquoise Stone",
+  "turquoise dial":     "Turquoise Stone",
+
+  "eisenkiesel":        "Eisenkiesel",
+  "eisen":              "Eisenkiesel",
+
+  "puzzle":             "Puzzle",
+  "celebration":        "Celebration",
+  "jubilee motif":      "Jubilee Motif",
+
+  "rhodium":            "Rhodium",
+  "rhodium dial":       "Rhodium",
+  "slate":              "Slate",
+  "ivory":              "Ivory",
+  "yellow":             "Yellow",
+  "brown":              "Brown",
+  "gold":               "Gold",
+  "pink":               "Pink",
+  "rose":               "Pink",
+
+  "int white":          "White",
+  "intense white":      "White",
+  "bright white":       "White"
+}
