@@ -6,13 +6,7 @@
         "Steel",
         "Grau",
         "Gris",
-        "Grigio",
-        "Gunmetal",
-        "Anthracite",
-        "Charcoal",
-        "Smoky Quartz",
-        "Ruthenium",
-        "Ardoise"
+        "Grigio"
     ],
     "Grey Diamond": [
         "Rhodium Diamond",
@@ -34,7 +28,12 @@
         "Ivory",
         "Ivoire",
         "Butterscotch",
-        "Straw"
+        "Straw",
+        "Honey",
+        "Honey Gold",
+        "Cream",
+        "Warm Gold",
+        "Crème"
     ],
     "Champagne Diamond": [
         "Gold Diamond",
@@ -59,12 +58,7 @@
         "Cappuccino",
         "Latte",
         "Choco",
-        "Cho",
-        "Walnut",
-        "Chestnut",
-        "Clove",
-        "Rust Brown",
-        "Rust"
+        "Cho"
     ],
     "Chocolate Diamond": [
         "Brown Diamond"
@@ -81,13 +75,7 @@
         "Bianco",
         "Blanc",
         "Arctic White",
-        "Polar White",
-        "Opaline",
-        "Opal White",
-        "Satin White",
-        "White Satin",
-        "White Lacquer",
-        "Lacquer White"
+        "Polar White"
     ],
     "Yellow": [
         "Lemon",
@@ -96,9 +84,7 @@
         "Canary Yellow",
         "Saffron",
         "Buttercup",
-        "Buttercup Yellow",
-        "YLW",
-        "Ylw"
+        "Buttercup Yellow"
     ],
     "Green": [
         "Verde",
@@ -115,15 +101,17 @@
         "Blau",
         "Cerulean",
         "Azurean",
-        "Denim",
-        "Denim Blue",
-        "Petrol",
-        "Petrol Blue"
+        "Azul",
+        "Azzurro",
+        "Blu"
     ],
     "Black": [
         "Noir",
         "Nero",
-        "Schwarz"
+        "Schwarz",
+        "Sable",
+        "Sable Noir",
+        "Jet Black"
     ],
     "Sundust Diamond": [
         "Sundust set with diamonds"
@@ -191,23 +179,7 @@
         "Tif Dial",
         "Tifany",
         "Teal",
-        "Teal Blue",
-        "Seafoam",
-        "Sea Foam",
-        "Sea Foam Blue",
-        "Seafoam Blue",
-        "Seafoam Green",
-        "Glacier",
-        "Glacé Blue",
-        "Glace Blue",
-        "Duck's Egg Blue",
-        "Duck's Egg",
-        "Ducks Egg Blue",
-        "Ducks Egg",
-        "TFB",
-        "T.F.B.",
-        "T.F.B",
-        "Tf Blue"
+        "Teal Blue"
     ],
     "Celebration Tiffany Blue": [
         "CTB",
@@ -231,10 +203,6 @@
         "Official Tiffany",
         "Tiffany Official",
         "OTB",
-        "T/Co",
-        "T/co",
-        "T / Co",
-        "Tiffany/Co",
         "Tiffany Collab",
         "Tiffany Collaboration",
         "Collab Tiffany",
@@ -247,10 +215,6 @@
         "Tiff Stamped",
         "Stamped Tiff",
         "Stamped Tiffany",
-        "Tiffany Numbered Edition",
-        "Tiffany Limited Edition",
-        "Tiffany Limited",
-        "Tiffany Numbered",
         "Legit Tiff",
         "Legit Tiffany",
         "Verified Tiff",
@@ -359,39 +323,7 @@
         "Auth by Tiffany",
         "Certified Tiff",
         "Tiffany Auth",
-        "Tiff Auth",
-        "Co-branded",
-        "Co-brand",
-        "Cobrand",
-        "Co Branded",
-        "Dual Signed",
-        "Dual-Signed",
-        "Double Signed",
-        "Double-Signed",
-        "TiffanyCo",
-        "Tiffany Branded",
-        "Branded Tiffany",
-        "Branded by Tiffany",
-        "Rolex Tiffany",
-        "Tiffany Rolex",
-        "T&Co Stamped",
-        "T&Co Certified",
-        "T&Co Verified",
-        "T&Co Branded",
-        "Tiffany-Stamped",
-        "Tiffany-Signed",
-        "Tiffany-Engraved",
-        "Tiffany text",
-        "Tiffany written",
-        "T&Co at 6",
-        "T&Co @ 6",
-        "Tiffany at six",
-        "Tiffany laser",
-        "Laser Tiffany",
-        "With Tiffany",
-        "With T&Co",
-        "T&Co number",
-        "Tiffany dial text"
+        "Tiff Auth"
     ],
     "Paul Newman": [
         "PN Daytona",
@@ -422,10 +354,7 @@
         "Newman Dial",
         "PNM",
         "P.N.M.",
-        "PN.M",
-        "P-N",
-        "P-N Daytona",
-        "P-N Dial"
+        "PN.M"
     ],
     "Wimbledon": [
         "Wimble",
@@ -481,13 +410,7 @@
         "Wimedo",
         "Wimdon",
         "Wimdo",
-        "WMDN",
-        "Champ-Grn",
-        "Champ-Green",
-        "Grn-Champ",
-        "Green-Champ",
-        "Champ–Grn",
-        "Grn–Champ"
+        "WMDN"
     ],
     "Med Blue": [
         "Mediterranean Blue",
@@ -536,7 +459,12 @@
     "Bright Blue": [
         "BB",
         "Bright Bl",
-        "Electric Blue"
+        "Electric Blue",
+        "BBL",
+        "Brt Blue",
+        "Brt Bl",
+        "Brt Blue Dial",
+        "Cobalt Blue"
     ],
     "Candy Pink": [
         "Candy",
@@ -603,32 +531,16 @@
         "Ametrine",
         "Bordeaux",
         "Burgundy",
-        "Maroon"
+        "Morado",
+        "Violeta",
+        "Viola"
     ],
     "Lavender": [
         "Lilac",
         "Lilas",
         "Mauve",
         "Lavande",
-        "Lavanda",
-        "Violet Blue",
-        "Wisteria",
-        "Lav",
-        "Lave"
-    ],
-    "Beige": [
-        "Cream",
-        "Sand",
-        "Warm White",
-        "Off White",
-        "Off-White",
-        "Natural",
-        "Wheat",
-        "Nude",
-        "Bisque",
-        "Linen",
-        "Taupe",
-        "Pebble"
+        "Lavanda"
     ],
     "Mint Green": [
         "Celadon",
@@ -640,8 +552,7 @@
         "Sund",
         "Sun Dial",
         "Suntone",
-        "Sun Dust",
-        "Stardust"
+        "Sun Dust"
     ],
     "Pistachio": [
         "Pistachio Green",
@@ -649,12 +560,7 @@
         "Pistachio Grn",
         "Pist",
         "Pist Green",
-        "Pistacchio",
-        "Pistacho",
-        "Pistaccho",
-        "Pistace",
-        "Pistaccho",
-        "Pistacch"
+        "Pistacchio"
     ],
     "Ice Blue": [
         "Glacier Blue",
@@ -669,7 +575,12 @@
         "Ice Bleue",
         "Eisblau",
         "Bleu Glace",
-        "Azzurro Ghiaccio"
+        "Azzurro Ghiaccio",
+        "Icy",
+        "Icy Blue",
+        "Icy Bl",
+        "Ice Bleu",
+        "Ghiaccio"
     ],
     "Turquoise": [
         "Turquoise Blue",
@@ -788,12 +699,7 @@
         "Brt Green",
         "Brt Grn",
         "Emerald Green",
-        "Emerald",
-        "Kelly Green",
-        "Apple Green",
-        "Grass Green",
-        "BG",
-        "Brt Grn DD"
+        "Emerald"
     ],
     "Carnelian": [
         "Cornelian",
@@ -863,31 +769,6 @@
         "Smokey",
         "Gradient Dial",
         "Smoke Dial"
-    ],
-    "Tropical": [
-        "Tropique",
-        "Tropicale",
-        "Tropic Dial",
-        "Tropical Brown",
-        "Tropical Black",
-        "Tropical Grey",
-        "Tropical Chocolate",
-        "Faded Dial",
-        "Patina Dial",
-        "Gilt Tropical",
-        "Double Swiss Tropical",
-        "Tropical Gilt"
-    ],
-    "Gilt": [
-        "Gilt Dial",
-        "Gilt Chapter",
-        "Gilt Text",
-        "Gilt Indices",
-        "Gilt Chapter Ring",
-        "Gilt Print",
-        "Gold Print",
-        "Gold Text Dial",
-        "Swiss T Swiss"
     ],
     "_ref_specific": {
         "_comment": "On these refs, Pink is a mislabel for Sundust (Everose gold models where 'pink' = sundust dial)",
@@ -1020,10 +901,6 @@
         "Coral Red",
         "Coral Red Dial",
         "Red Coral",
-        "Coral Orange",
-        "Carrot"
-    ],
-    "Orange": [
-        "Tangerine"
+        "Coral Orange"
     ]
 }
