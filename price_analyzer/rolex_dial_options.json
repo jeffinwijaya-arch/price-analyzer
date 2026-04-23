@@ -28,7 +28,8 @@
   ],
   "126201": [
     "Black", "White", "Silver", "Blue", "Chocolate",
-    "Champagne", "Olive Green", "Salmon", "Wimbledon"
+    "Champagne", "Olive Green", "Salmon", "Wimbledon",
+    "Mint Green", "Rhodium"
   ],
   "126203": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -56,7 +57,8 @@
   ],
   "126301": [
     "Black", "White", "Silver", "Blue", "Chocolate",
-    "Champagne", "Olive Green", "Wimbledon"
+    "Champagne", "Olive Green", "Wimbledon", "Mint Green",
+    "Salmon", "Rhodium"
   ],
   "126303": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -136,6 +138,7 @@
     "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli"
   ],
 
+  "127236": ["Ice Blue"],
   "128236": ["Ice Blue"],
   "128235": [
     "Olive Green", "Champagne", "Chocolate", "Pink",

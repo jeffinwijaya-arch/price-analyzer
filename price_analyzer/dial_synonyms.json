@@ -5,6 +5,8 @@
   "tiffany":            "Tiffany Blue",
   "tiff blue":          "Tiffany Blue",
   "tiffany blue":       "Tiffany Blue",
+  "tiffany dial":       "Tiffany Blue",
+  "light tiffany blue": "Tiffany Blue",
   "turq":               "Tiffany Blue",
   "turquoise blue":     "Tiffany Blue",
   "robin egg":          "Tiffany Blue",
@@ -37,6 +39,8 @@
   "ice":                "Ice Blue",
   "ice blue":           "Ice Blue",
   "iceblue":            "Ice Blue",
+  "icy blue":           "Ice Blue",
+  "icy":                "Ice Blue",
 
   "d-blue":             "D-Blue",
   "dblue":              "D-Blue",
@@ -157,6 +161,7 @@
   "tiger eye":          "Tiger Eye",
   "tigers eye":         "Tiger Eye",
   "tiger's eye":        "Tiger Eye",
+  "turquoise":          "Turquoise Stone",
   "turquoise stone":    "Turquoise Stone",
   "turquoise dial":     "Turquoise Stone",
 
@@ -179,5 +184,51 @@
 
   "int white":          "White",
   "intense white":      "White",
-  "bright white":       "White"
+  "bright white":       "White",
+
+  "pistachio":          "Mint Green",
+  "pistachio green":    "Mint Green",
+  "pistach":            "Mint Green",
+
+  "mocha":              "Chocolate",
+  "cacao":              "Chocolate",
+  "choc dial":          "Chocolate",
+
+  "cherry":             "Coral Red",
+  "cherry red":         "Coral Red",
+
+  "pav":                "Pave",
+  "pave dial":          "Pave",
+  "diamond set":        "Pave",
+
+  "aventurine stone":   "Aventurine",
+  "aventurine dial":    "Aventurine",
+
+  "jungle green":       "Green",
+  "forest green":       "Green",
+  "army green":         "Green",
+  "racing green":       "Green",
+
+  "electric blue":      "Bright Blue",
+  "cobalt blue":        "Bright Blue",
+
+  "sky blue":           "Blue",
+  "marine blue":        "Blue",
+  "navy":               "Blue",
+  "navy blue":          "Blue",
+
+  "champagne dial":     "Champagne",
+  "sundust dial":       "Sundust",
+  "sunny":              "Sundust",
+
+  "noir":               "Black",
+  "blanc":              "White",
+  "gris":               "Grey",
+  "argente":            "Silver",
+  "argenté":            "Silver",
+
+  "celebration dial":   "Celebration",
+  "puzzle dial":        "Puzzle",
+  "jubilee motif":      "Jubilee Motif",
+  "jubilee dial":       "Jubilee Motif"
 }

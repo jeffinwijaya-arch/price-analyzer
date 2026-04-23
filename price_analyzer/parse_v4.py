@@ -77,6 +77,8 @@ FIXED_DIAL = {
     "228206":     "Ice Blue",
     # Day-Date 36 Platinum
     "128236":     "Ice Blue",
+    # Day-Date 36 Platinum (Oyster bracelet)
+    "127236":     "Ice Blue",
     # Milgauss
     "116400GV":   "Black",
     "116400":     "Black",
@@ -122,7 +124,7 @@ _PREMIUM_REF_MAP = {
         "116508", "126508",
     ],
     "Meteorite": [
-        "116509", "116519", "116519LN",
+        "116508", "116509", "116519", "116519LN",
         "126509", "126519", "126519LN",
         "228235", "228238", "228239", "228206",
         "128238", "128235", "128239",
@@ -132,6 +134,7 @@ _PREMIUM_REF_MAP = {
     "Wimbledon": [
         "126334", "126331", "126333", "126238",
         "116334", "116331",
+        "126201", "126301",
     ],
     "Ice Blue": [
         "228206", "128236", "127236", "228396TBR", "128396TBR",
@@ -159,6 +162,7 @@ _PREMIUM_REF_MAP = {
     ],
     "Ombre":        ["228235"],
     "Ombre Slate":  ["228235"],
+    "Eisenkiesel":  ["228235", "228238", "228239"],
     "D-Blue":       ["126660"],
     "Candy Pink":   ["124300", "126000", "277200"],
     "Apple Green":  ["124300", "126000"],
@@ -180,6 +184,9 @@ _PREMIUM_PATTERNS = [
     # Handled in detect_premium_dial() with ref-aware penalty; included here
     # so the pattern fires at all — mismatch will drop confidence below threshold
     (re.compile(r"\btb\b",                         re.I),      "Tiffany Blue",     85),
+    # Plain "turquoise" — Tiffany Blue for OP refs (allowed passes), Turquoise Stone
+    # for DD/other refs via stage-5 color scan (_COLOR_PATTERNS) after this is rejected
+    (re.compile(r"\bturquoise\b",                  re.I),      "Tiffany Blue",     75),
     # Paul Newman (Daytona exotic)
     (re.compile(r"\bpaul\s+newman\b",              re.I),      "Paul Newman",     100),
     (re.compile(r"\bpaul\s*n\b",                   re.I),      "Paul Newman",      90),
@@ -214,10 +221,10 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\blapis\b",                      re.I),      "Lapis Lazuli",     90),
     (re.compile(r"\btiger'?s?\s*eye\b",            re.I),      "Tiger Eye",       100),
     # Candy Pink / Apple Green / Coral Red (OP special colours)
-    (re.compile(r"\bcandy\s+pink\b",               re.I),      "Candy Pink",      100),
+    (re.compile(r"\bcandy\s*pink\b",               re.I),      "Candy Pink",      100),
     (re.compile(r"\bapple\s*green\b",              re.I),      "Apple Green",     100),
     (re.compile(r"\bcoral\s+red\b",                re.I),      "Coral Red",       100),
-    (re.compile(r"\bcoral\b",                      re.I),      "Coral Red",        75),
+    (re.compile(r"\bcoral\b|\bcherry\s+red\b",     re.I),      "Coral Red",        75),
     # Pave / MOP
     (re.compile(r"\bpav[eE\xe9]\b",               re.I),      "Pave",            100),
     (re.compile(r"\bmother\s+of\s+pearl\b",        re.I),      "MOP",             100),
@@ -237,9 +244,12 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bwhite\b|\bwht\b|\bwh\b",                       re.I), "White"),
     (re.compile(r"\bbright\s+blue\b|\bbb\b",                       re.I), "Bright Blue"),
     (re.compile(r"\bblue\b|\bblu\b",                               re.I), "Blue"),
+    (re.compile(r"\bturquoise\b",                                   re.I), "Turquoise Stone"),
+    (re.compile(r"\bpistachio\s*(?:green)?\b",                     re.I), "Mint Green"),
     (re.compile(r"\bmint\s*(?:green)?\b|\bminty\b",               re.I), "Mint Green"),
     (re.compile(r"\bolive\s*(?:green)?\b|\bog\b",                 re.I), "Olive Green"),
     (re.compile(r"\bpalm\s*(?:green)?\b",                          re.I), "Palm Green"),
+    (re.compile(r"\bapple\s*green\b",                              re.I), "Apple Green"),
     (re.compile(r"\bgreen\b|\bgrn\b|\bgg\b|\bstarbucks\b|\bhulk\b|\bkermit\b", re.I), "Green"),
     (re.compile(r"\bsilver\b|\bslvr\b|\bslv\b|\bbenz\b",          re.I), "Silver"),
     (re.compile(r"\bchampagne\b|\bchamp\b|\bcham\b|\bchp\b",      re.I), "Champagne"),
@@ -268,6 +278,27 @@ _DIAL_CONTEXT_RE = re.compile(
     r"([a-z][a-z0-9 '\-]{1,40}?)(?:\s*[,;/|]|$)",
     re.I,
 )
+# "with a <colour> dial" / "with <colour> dial"
+_WITH_DIAL_RE = re.compile(
+    r"with\s+(?:an?\s+)?([a-z][a-z0-9 '\-]{1,30}?)\s+(?:colou?r(?:ed)?\s+)?dial\b",
+    re.I,
+)
+# "featuring/features a <colour> dial"
+_FEATURING_DIAL_RE = re.compile(
+    r"featur(?:es?|ing)\s+(?:an?\s+)?([a-z][a-z0-9 '\-]{1,30}?)\s+dial\b",
+    re.I,
+)
+# Used to guard 'sd'/'sun' synonyms in Sea-Dweller context
+_SEA_DWELLER_CTX_RE = re.compile(r"sea[\s\-]?dwell|126600|116600", re.I)
+# Guard words rejected in context scans (module-level for reuse)
+_CTX_REJECT = frozenset({
+    "complete", "box", "papers", "set", "with", "and", "or", "only",
+    "full", "sticker", "warranty", "card", "tag", "inner", "outer",
+    "new", "mint", "watch", "rolex", "ref", "model", "serial",
+    "service", "unworn", "lightly", "worn", "used", "excellent",
+})
+# Canonical colour names from _COLOR_PATTERNS — used in stage-4 known-check
+_ALL_COLOR_CANONICALS = frozenset(c for _, c in _COLOR_PATTERNS)
 
 
 # ---------------------------------------------------------------------------
@@ -401,29 +432,21 @@ def extract_dial(text, ref=None):
     if result["dial"]:
         return result
 
-    # Stage 4 — Contextual extraction (text near "dial:" / "colour:" keywords)
-    _CTX_REJECT = {
-        "complete", "box", "papers", "set", "with", "and", "or", "only",
-        "full", "sticker", "warranty", "card", "tag", "inner", "outer",
-        "new", "mint", "watch", "rolex", "ref", "model", "serial",
-        "service", "unworn", "lightly", "worn", "used", "excellent",
-    }
-    for raw_ctx in _DIAL_CONTEXT_RE.findall(text):
-        stripped = raw_ctx.strip().lower()
-        if stripped in _CTX_REJECT or len(stripped) < 3:
-            continue
-        normalised = normalize_dial(stripped, ref)
-        # Only trust the context hit if it resolves to a known synonym or colour
-        known = stripped in _DIAL_SYNONYMS or normalised in (
-            c for _, c in _COLOR_PATTERNS
-        )
-        if normalised and known:
-            result.update({
-                "dial":       normalised,
-                "confidence": 0.85,
-                "method":     "context_match",
-            })
-            return result
+    # Stage 4 — Contextual extraction: "dial: X", "colour: X", "with X dial", "featuring X dial"
+    for ctx_re in (_DIAL_CONTEXT_RE, _WITH_DIAL_RE, _FEATURING_DIAL_RE):
+        for raw_ctx in ctx_re.findall(text):
+            stripped = raw_ctx.strip().lower()
+            if stripped in _CTX_REJECT or len(stripped) < 3:
+                continue
+            normalised = normalize_dial(stripped, ref)
+            known = stripped in _DIAL_SYNONYMS or normalised in _ALL_COLOR_CANONICALS
+            if normalised and known:
+                result.update({
+                    "dial":       normalised,
+                    "confidence": 0.85,
+                    "method":     "context_match",
+                })
+                return result
 
     # Stage 5 — Colour token scan
     for pattern, canonical in _COLOR_PATTERNS:
@@ -456,7 +479,15 @@ def extract_dial(text, ref=None):
 
     # Stage 6 — Synonym dictionary full-text scan
     text_lower = text.lower()
+    _is_sea_dweller = bool(_SEA_DWELLER_CTX_RE.search(text))
+    _has_sunray = bool(re.search(r"\bsun(?:ray|burst|shine)\b", text_lower))
     for raw_key, canonical in _DIAL_SYNONYMS.items():
+        # Guard: 'sd'/'sun' must not resolve to Sundust in Sea-Dweller listings
+        if raw_key == "sd" and _is_sea_dweller:
+            continue
+        # Guard: 'sun' must not resolve to Sundust when 'sunray'/'sunburst' is present
+        if raw_key == "sun" and (_is_sea_dweller or _has_sunray):
+            continue
         if re.search(r"\b" + re.escape(raw_key) + r"\b", text_lower):
             result.update({
                 "dial":       canonical,

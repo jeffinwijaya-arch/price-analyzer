@@ -192,12 +192,28 @@
       "premium_dials": ["Ombre", "Ombre Slate", "Eisenkiesel", "Meteorite", "MOP", "Pave"]
     },
     "Day-Date 40 Yellow Gold": {
-      "refs": ["228238"],
+      "refs": ["228238", "228348"],
       "series": "DD40",
       "size_mm": 40,
       "material": "Yellow Gold",
-      "nicknames": ["dd40 yg", "228238"],
+      "nicknames": ["dd40 yg", "228238", "228348"],
       "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli"]
+    },
+    "Day-Date 40 RG Stone Dials": {
+      "refs": ["228345"],
+      "series": "DD40",
+      "size_mm": 40,
+      "material": "Everose Gold",
+      "nicknames": ["dd40 rg stone", "228345"],
+      "premium_dials": ["Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli"]
+    },
+    "Day-Date 40 WG Stone Dials": {
+      "refs": ["228349"],
+      "series": "DD40",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["dd40 wg stone", "228349"],
+      "premium_dials": ["Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli"]
     },
     "Day-Date 40 White Gold": {
       "refs": ["228239"],
@@ -240,11 +256,11 @@
       "premium_dials": ["MOP", "Pave", "Onyx"]
     },
     "Day-Date 36 Platinum": {
-      "refs": ["128236"],
+      "refs": ["128236", "127236"],
       "series": "DD36",
       "size_mm": 36,
       "material": "Platinum",
-      "nicknames": ["dd36 plat", "128236"],
+      "nicknames": ["dd36 plat", "128236", "127236"],
       "premium_dials": ["Ice Blue"]
     },
     "Sky-Dweller Steel": {
@@ -317,7 +333,11 @@
     "228206": "Day-Date 40 Platinum",
     "228235": "Day-Date 40 Everose",
     "228238": "Day-Date 40 Yellow Gold",
+    "228345": "Day-Date 40 RG Stone Dials",
+    "228348": "Day-Date 40 Yellow Gold",
+    "228349": "Day-Date 40 WG Stone Dials",
     "228239": "Day-Date 40 White Gold",
+    "127236": "Day-Date 36 Platinum",
     "128236": "Day-Date 36 Platinum",
     "128235": "Day-Date 36 Everose",
     "128238": "Day-Date 36 Yellow Gold",
@@ -348,7 +368,7 @@
     "sprite":       {"refs": ["126713GRNR"], "note": "green/black GMT bezel"},
     "wimbledon":    {"refs": ["126334", "126331", "126333", "126238"], "dial": "Wimbledon"},
     "meteorite":    {"refs": ["126719BLRO", "228235", "228238", "126334", "116509"], "dial": "Meteorite"},
-    "ice blue":     {"refs": ["228206", "128236"], "dial": "Ice Blue", "note": "platinum only"},
+    "ice blue":     {"refs": ["228206", "128236", "127236"], "dial": "Ice Blue", "note": "platinum only"},
     "starbucks":    {"refs": ["126610LV", "116610LV"], "note": "green sub slang"},
     "lightning bolt":{"refs": ["116400GV"], "note": "Milgauss GV"},
     "black bay":    {"refs": [], "note": "Tudor — not Rolex"},
