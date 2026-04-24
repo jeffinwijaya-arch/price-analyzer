@@ -55,7 +55,7 @@ FIXED_DIAL = {
     "126619LB":   "Blue",
     # Legacy Submariner
     "116610LN":   "Black",
-    "116610LV":   "Black",
+    "116610LV":   "Green",   # Hulk: green dial + green bezel (NOT Kermit)
     "116613LN":   "Black",
     "116613LB":   "Blue",
     "116618LN":   "Black",
@@ -216,6 +216,23 @@ _PREMIUM_REF_MAP = {
         "126334", "126333", "126300", "126301",
         "116234", "116200",
     ],
+    # Stella — 1970s-80s lacquer Day-Date, extremely collectible
+    "Stella": [
+        "1803", "1804", "1807", "1808",
+        "18038", "18238", "18039", "18239",
+        "18039", "18348",
+    ],
+    # Panda / Reverse Panda — white/black Daytona dials; promote to premium so Stage 3
+    # can override the suffix-inferred 'Black' that Stage 2 sets for LN-suffix refs.
+    "Panda": [
+        "126500LN", "116500LN",
+        "116509", "126509",
+        "116519LN", "126519LN",
+        "116503", "116505",
+    ],
+    "Reverse Panda": [
+        "126500LN", "116500LN",
+    ],
     # Pave — full diamond dial across Day-Date and high-jewellery Datejust
     "Pave": [
         "228235", "228239", "228345", "228349",
@@ -312,6 +329,13 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bjubilee\s+(?:motif|dial)\b",   re.I),      "Jubilee Motif",    95),
     # Pave shorthand 'pv' — HK/Asia dealer abbreviation
     (re.compile(r"\bpv\b",                         re.I),      "Pave",             70),
+    # Stella — 1970s-80s vintage Day-Date lacquer dial (extreme collector premium)
+    (re.compile(r"\bstella\b",                     re.I),      "Stella",          100),
+    # Panda / Reverse Panda / Tuxedo — white-dial Daytonas command a premium over black.
+    # Promoted to premium so Stage 3 can override the LN suffix-inferred 'Black' (Stage 2).
+    (re.compile(r"\breverse\s*panda\b|\brev\s*panda\b", re.I), "Reverse Panda",   85),
+    (re.compile(r"\btuxedo\b",                     re.I),      "Panda",            80),
+    (re.compile(r"\bpanda\b",                      re.I),      "Panda",            80),
 ]
 
 # ---------------------------------------------------------------------------
@@ -327,7 +351,9 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bturq\b",                                       re.I), "Turquoise Stone"),
     (re.compile(r"\bturquoise\b",                                   re.I), "Turquoise Stone"),
     (re.compile(r"\bpistachio\s*(?:green)?\b",                     re.I), "Mint Green"),
-    (re.compile(r"\bmint\s*(?:green)?\b|\bminty\b",               re.I), "Mint Green"),
+    # "mint green" or "minty" only — standalone "mint" excluded to avoid "mint condition" FP
+    (re.compile(r"\bmint\s+green\b|\bminty\b",                    re.I), "Mint Green"),
+    (re.compile(r"\bsage\s+green\b|\bseafoam\s+green\b|\bseafoam\b|\bsage\b", re.I), "Mint Green"),
     (re.compile(r"\bolive\s*(?:green)?\b|\bog\b",                 re.I), "Olive Green"),
     (re.compile(r"\bpalm\s*(?:green)?\b",                          re.I), "Palm Green"),
     (re.compile(r"\bapple\s*green\b",                              re.I), "Apple Green"),
@@ -335,9 +361,9 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bsilver\b|\bslvr\b|\bslv\b|\bbenz\b",          re.I), "Silver"),
     (re.compile(r"\bchampagne\b|\bchamp\b|\bcham\b|\bchp\b",      re.I), "Champagne"),
     (re.compile(r"\bchocolate\b|\bchoco\b|\bcho\b",                re.I), "Chocolate"),
-    (re.compile(r"\bgr[ae]y\b|\bghost\b",                          re.I), "Grey"),
+    (re.compile(r"\bgr[ae]y\b|\bghost\b|\bpewter\b|\bcharcoal\b", re.I), "Grey"),
     (re.compile(r"\bsalmon\b",                                     re.I), "Salmon"),
-    (re.compile(r"\baubergine\b|\baub\b|\bpurp(?:le)?\b",         re.I), "Aubergine"),
+    (re.compile(r"\baubergine\b|\baub\b|\bpurp(?:le)?\b|\bgrape\b|\bplum\b", re.I), "Aubergine"),
     (re.compile(r"\bsundust\b|\bsd\b",                             re.I), "Sundust"),
     (re.compile(r"\bpink\b",                                       re.I), "Pink"),
     (re.compile(r"\bslate\b",                                      re.I), "Slate"),
@@ -619,6 +645,11 @@ def extract_dial(text, ref=None):
             continue
         # Guard: 'sun' must not resolve to Sundust when 'sunray'/'sunburst' is present
         if raw_key == "sun" and (_is_sea_dweller or _has_sunray):
+            continue
+        # Guard: 'mint' must not resolve to Mint Green when used as a condition descriptor
+        if raw_key == "mint" and re.search(
+            r"\bmint\s+(?:condition|unworn|state|box|set|complete)\b", text_lower
+        ):
             continue
         if not re.search(r"\b" + re.escape(raw_key) + r"\b", text_lower):
             continue

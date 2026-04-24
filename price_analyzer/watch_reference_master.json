@@ -35,11 +35,11 @@
       "premium_dials": ["Tiffany Blue", "Coral Red"]
     },
     "Datejust 36 Steel": {
-      "refs": ["126200"],
+      "refs": ["126200", "126230"],
       "series": "DJ",
       "size_mm": 36,
       "material": "Steel",
-      "nicknames": ["dj36", "dj 36", "datejust 36"],
+      "nicknames": ["dj36", "dj 36", "datejust 36", "126230"],
       "premium_dials": []
     },
     "Datejust 36 TT RG": {
@@ -184,12 +184,12 @@
       "premium_dials": ["Paul Newman", "Green", "Meteorite"]
     },
     "Daytona White Gold": {
-      "refs": ["126519LN", "116519LN", "116509"],
+      "refs": ["126519LN", "126519", "126509", "116519LN", "116509"],
       "series": "Daytona",
       "size_mm": 40,
       "material": "White Gold",
-      "nicknames": ["daytona wg", "daytona white gold"],
-      "premium_dials": ["Meteorite"]
+      "nicknames": ["daytona wg", "daytona white gold", "126509", "126519"],
+      "premium_dials": ["Meteorite", "Panda"]
     },
     "Day-Date 40 Everose": {
       "refs": ["228235"],
@@ -348,6 +348,7 @@
     "279160": "Oyster Perpetual 26",
     "279177": "Oyster Perpetual 26",
     "126200": "Datejust 36 Steel",
+    "126230": "Datejust 36 Steel",
     "126234": "Datejust 36 WG",
     "126238": "Datejust 36 YG",
     "126300": "Datejust 41 Steel",
@@ -369,6 +370,8 @@
     "116500LN": "Daytona Steel",
     "126508": "Daytona Yellow Gold",
     "116508": "Daytona Yellow Gold",
+    "126509": "Daytona White Gold",
+    "126519": "Daytona White Gold",
     "126519LN": "Daytona White Gold",
     "116519LN": "Daytona White Gold",
     "228206": "Day-Date 40 Platinum",

@@ -24,12 +24,17 @@
   "126200": [
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Olive Green", "Palm Green", "Rhodium",
-    "Bright Blue", "Mint Green", "Salmon"
+    "Bright Blue", "Mint Green", "Salmon", "Sundust"
   ],
   "126201": [
     "Black", "White", "Silver", "Blue", "Chocolate",
     "Champagne", "Olive Green", "Salmon", "Wimbledon",
-    "Mint Green", "Rhodium"
+    "Mint Green", "Rhodium", "Sundust"
+  ],
+  "126230": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Olive Green", "Palm Green", "Rhodium",
+    "Bright Blue", "Mint Green", "Salmon", "Sundust"
   ],
   "126203": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -53,12 +58,12 @@
   "126300": [
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Olive Green", "Palm Green", "Rhodium",
-    "Bright Blue", "Slate"
+    "Bright Blue", "Slate", "Sundust"
   ],
   "126301": [
     "Black", "White", "Silver", "Blue", "Chocolate",
     "Champagne", "Olive Green", "Wimbledon", "Mint Green",
-    "Salmon", "Rhodium"
+    "Salmon", "Rhodium", "Sundust"
   ],
   "126303": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -86,7 +91,7 @@
   "126618LB": ["Blue"],
   "126619LB": ["Blue"],
   "116610LN": ["Black"],
-  "116610LV": ["Black"],
+  "116610LV": ["Green"],
   "116610": ["Black", "Green"],
 
   "126500LN": ["Black", "White"],
@@ -98,6 +103,8 @@
   "116509": ["Black", "White", "Panda", "Meteorite", "Champagne"],
   "116519": ["Black", "White", "Meteorite", "Champagne"],
   "116519LN": ["Black", "White", "Panda", "Meteorite"],
+  "126509": ["Black", "White", "Panda", "Meteorite", "Champagne"],
+  "126519": ["Black", "White", "Meteorite", "Champagne"],
   "126519LN": ["Black", "White", "Panda", "Meteorite"],
 
   "126710BLNR": ["Black"],
@@ -161,7 +168,7 @@
 
   "126231": [
     "Black", "White", "Silver", "Blue", "Champagne",
-    "Chocolate", "Pink", "Salmon", "Olive Green", "Mint Green", "Rhodium"
+    "Chocolate", "Pink", "Salmon", "Olive Green", "Mint Green", "Rhodium", "Sundust"
   ],
   "126235": [
     "Black", "White", "Silver", "Blue", "Chocolate",
@@ -226,13 +233,13 @@
   "278289": [
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Red", "Tiffany Blue", "Pink", "Salmon",
-    "MOP", "Ombré", "Red Ombré", "Grey Roman VI",
+    "MOP", "Ombre", "Red Ombré", "Grey Roman VI",
     "Pink Roman VI", "Blue Diamond", "Black Diamond",
     "Aubergine Roman VI"
   ],
   "278288": [
     "Black", "White", "Silver", "Blue", "Champagne",
-    "Chocolate", "Green", "MOP", "Ombré", "Malachite",
+    "Chocolate", "Green", "MOP", "Ombre", "Malachite",
     "Green Ombré", "Green Roman VI", "Green Diamond",
     "Grey Diamond", "Grey Roman VI", "Silver Diamond"
   ],
