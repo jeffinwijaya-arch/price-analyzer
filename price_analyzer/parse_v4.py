@@ -159,6 +159,8 @@ _PREMIUM_REF_MAP = {
         "126599",
         # Sky-Dweller Tiffany (confirmed secondary market; wholesale data confirms 336238)
         "336238", "336934", "336935", "326934", "326935",
+        # OP34 Tiffany Blue (2022+ catalog)
+        "124200",
     ],
     "Paul Newman": [
         "6239", "6241", "6262", "6263", "6264", "6265",
@@ -196,6 +198,10 @@ _PREMIUM_REF_MAP = {
         "116300", "126200",
         # DJ36 WG — Wimbledon in official dial_options
         "126234",
+        # DJ41 steel — Wimbledon confirmed in wholesale data
+        "126300",
+        # DJ36 steel — Wimbledon confirmed
+        "126231",
     ],
     "Ice Blue": [
         "228206", "128236", "127236", "228396TBR", "128396TBR",
@@ -225,12 +231,18 @@ _PREMIUM_REF_MAP = {
         "118346",
         # DD36 Platinum (Ice Blue Baguette in dial_options)
         "128236",
+        # YM42 Platinum — Ice Blue Baguette confirmed in dial_options
+        "126506", "116506",
     ],
     "Turquoise Stone": [
         "228345", "228235", "228238", "228239", "228349",
         "128345", "128235", "128238", "128239",
         # DD36 gem-set stone bracelet and additional refs (in dial_options)
         "128395", "118238", "128398", "128159",
+        # DD36 WG baguette (128396) — confirmed wholesale
+        "128396",
+        # WG Daytona dealer-special Turquoise/Beach (confirmed wholesale)
+        "116519", "116519LN", "116509",
     ],
     "Tiger Eye": [
         "18038", "18238", "118238",
@@ -265,6 +277,8 @@ _PREMIUM_REF_MAP = {
         "228235", "228238", "228239",
         # Day-Date 40 Platinum and additional variants
         "228236", "218239", "118239",
+        # DD40 gem-set and stone-bracelet variants (confirmed wholesale)
+        "228348", "228345", "228349", "228398",
     ],
     "Ombre": [
         "228235",
@@ -272,12 +286,15 @@ _PREMIUM_REF_MAP = {
         "128235", "128238", "128239",
         # Datejust 31 offers special Ombré dials
         "278288", "278289",
-        # Day-Date 40 additional variants
-        "228236", "228349",
+        # Day-Date 40 additional variants (confirmed wholesale)
+        "228236", "228349", "228238", "228239", "228348", "228398",
+        "228345",
         # Day-Date 36 platinum/baguette variants
         "128399", "128349",
+        # Rolex Date (15210) Ombré special dials
+        "15210",
     ],
-    "Ombre Slate":  ["228235"],
+    "Ombre Slate":  ["228235", "228345", "228238", "128235", "128238"],
     # Red Ombré — Datejust 31 + gem-set variants (278278: 98 listings in wholesale)
     "Red Ombré":    ["278289", "278288", "278278", "128238"],
     # Green Ombré — DD36/DD40 variants (high wholesale volume: 82/33/36 listings)
@@ -288,15 +305,19 @@ _PREMIUM_REF_MAP = {
         "128235", "128238", "128239", "128395", "128345",
     ],
     "D-Blue":       ["126660"],
-    "Candy Pink":   ["124300", "126000", "277200", "134300"],
-    "Apple Green":  ["124300", "126000"],
-    "Coral Red":    ["124300", "126000", "277200", "279160"],
+    "Candy Pink":   ["124300", "124200", "126000", "277200", "134300"],
+    "Apple Green":  ["124300", "124200", "126000"],
+    "Coral Red":    ["124300", "124200", "126000", "277200", "279160"],
     # Stone dials — new for 2023-2025 catalog
     "Sodalite": [
         "116589", "116589SACI", "126589",
+        # WG Daytona dealer-special Sodalite (confirmed wholesale)
+        "116519", "116519LN", "116509",
     ],
     "Malachite": [
         "278288", "278289",
+        # DD36 YG — confirmed in wholesale data
+        "128238", "128235",
     ],
     "Opal": [
         "118208", "118238",
@@ -326,6 +347,10 @@ _PREMIUM_REF_MAP = {
         "128238",
         # DD36 WG (128239) catalogued with Rainbow dial (in dial_options)
         "128239",
+        # DD36 Everose (128235) confirmed in dial_options and wholesale
+        "128235",
+        # Gem-set Daytona (116599) rainbow variant
+        "116599",
         # Miscellaneous gem-set refs
         "268655", "279458",
     ],
@@ -335,6 +360,8 @@ _PREMIUM_REF_MAP = {
         "128235", "128238", "128239", "128158",
         # Legacy Day-Date
         "118238", "118208", "18038", "18238",
+        # OP36/OP31/OP41 special Celebration dials (confirmed wholesale)
+        "126000", "277200", "134300", "124300", "124200",
     ],
     # Puzzle — Day-Date 40 abstract segmented dial
     "Puzzle": [
@@ -382,6 +409,15 @@ _PREMIUM_REF_MAP = {
         "268655", "126755",
         # Yacht-Master Platinum/gem-set Pave
         "116695", "116695SATS", "116655",
+        # Additional Day-Date 40 variants with Pave (confirmed wholesale)
+        "228348", "228238", "228236", "228396", "228398",
+        # Additional gem-set and Daytona variants
+        "116588", "116599", "226668", "226679",
+        "116509", "116505", "126506", "116506",
+        # Datejust / Sea-Master / DJ baguette Pave
+        "126539", "128396",
+        # Rolex Date / Sky-Dweller Pave
+        "15210", "279171",
     ],
 }
 
@@ -437,6 +473,9 @@ _PREMIUM_PATTERNS = [
     # D-Blue (Deepsea 126660)
     (re.compile(r"\bd[\s\-]?blue\b",               re.I),      "D-Blue",          100),
     (re.compile(r"\bjames\s+cameron\b",            re.I),      "D-Blue",          100),
+    # "blue" alone for 126660 — dealers often label the D-Blue dial as just "blue"
+    # For non-126660 refs: eff = max(85-45,10)=40 < threshold → no-op
+    (re.compile(r"\bblue\b",                       re.I),      "D-Blue",           85),
     # Ombré variants — specific before generic
     (re.compile(r"\bombr[eE\xe9]\s+slate\b",       re.I),      "Ombre Slate",     100),
     (re.compile(r"\bred\s+ombr[eE\xe9]\b",         re.I),      "Red Ombré",       100),
@@ -620,6 +659,13 @@ _COMPOSITE_DIAL_RE = re.compile(
 
 def _ref_clean(ref):
     return ref.upper().strip().replace(" ", "") if ref else None
+
+
+def _norm_dial(s):
+    """Accent-insensitive lowercase for dial comparisons (é→e, etc.)."""
+    return (s.replace('é', 'e').replace('è', 'e').replace('ê', 'e')
+              .replace('É', 'E').replace('È', 'E').replace('Ê', 'E')
+              .lower())
 
 
 def _premium_allowed(premium, ref):
@@ -810,13 +856,18 @@ def extract_dial(text, ref=None):
             continue
         if rc and rc in _DIAL_OPTIONS:
             valid = _DIAL_OPTIONS[rc]
-            if canonical in valid:
-                is_p = _check_premium(canonical, ref)
+            # Exact match — also accent-insensitive (Pavé == Pave, Ombré == Ombre)
+            _canon_n = _norm_dial(canonical)
+            _exact = canonical if canonical in valid else next(
+                (v for v in valid if _norm_dial(v) == _canon_n), None
+            )
+            if _exact:
+                is_p = _check_premium(_exact, ref)
                 result.update({
-                    "dial":         canonical,
+                    "dial":         _exact,
                     "confidence":   0.82,
                     "is_premium":   is_p,
-                    "premium_type": canonical if is_p else None,
+                    "premium_type": _exact if is_p else None,
                     "method":       "color_pattern_validated",
                 })
                 return result
@@ -895,8 +946,10 @@ def extract_dial(text, ref=None):
         if rc and rc in _DIAL_OPTIONS:
             valid = _DIAL_OPTIONS[rc]
             canon_l = canonical.lower()
+            _canon_n = _norm_dial(canonical)
             if canonical not in valid and not any(
-                canon_l in v.lower() or v.lower() in canon_l for v in valid
+                _norm_dial(v) == _canon_n or canon_l in v.lower() or v.lower() in canon_l
+                for v in valid
             ):
                 continue
         is_p = _check_premium(canonical, ref)
