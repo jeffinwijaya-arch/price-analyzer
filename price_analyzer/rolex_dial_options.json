@@ -146,20 +146,20 @@
     "Pave", "MOP", "Pink", "Meteorite", "Champagne",
     "Celebration", "Puzzle",
     "Turquoise Stone", "Aventurine", "Lapis Lazuli", "Onyx",
-    "Carnelian"
+    "Carnelian", "Bright Green", "Green Ombré"
   ],
   "228238": [
     "Olive Green", "Green", "Champagne", "Black", "Blue",
     "Silver", "Eisenkiesel", "Turquoise Stone", "Tiger Eye",
     "Onyx", "Meteorite", "Lapis Lazuli", "Aventurine",
     "Celebration", "Puzzle",
-    "Carnelian", "Yellow"
+    "Carnelian", "Yellow", "Bright Green"
   ],
   "228239": [
     "Olive Green", "White", "Silver", "Onyx", "MOP",
     "Pave", "Meteorite", "Champagne", "Eisenkiesel",
     "Turquoise Stone", "Celebration", "Puzzle",
-    "Carnelian"
+    "Carnelian", "Bright Green"
   ],
   "228345": [
     "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
@@ -354,15 +354,36 @@
   "116595":  ["Black", "White", "Rainbow", "Chocolate", "Aubergine", "Pavé"],
   "116595RBOW": ["Rainbow", "Pavé"],
   "126595RBOW": ["Rainbow", "Pavé"],
-  "126599":  ["Black", "Blue", "Rainbow"],
-
   "128395":  ["Turquoise Stone", "Pavé", "Aventurine", "Rainbow", "Eisenkiesel", "Lapis Lazuli"],
   "228348":  [
     "Champagne", "Champagne Baguette", "White Diamond", "Green Diamond",
-    "Salmon Baguette", "Black", "Blue", "Olive Green", "Silver"
+    "Salmon Baguette", "Black", "Blue", "Olive Green", "Silver",
+    "Bright Green", "Green Ombré", "Ombré", "Black Baguette",
+    "MOP", "Onyx", "Black Diamond", "Pavé", "Blue Diamond"
   ],
   "126579":  ["MOP"],
   "126589":  ["MOP"],
+
+  "228398":  [
+    "Black", "Black Baguette", "Champagne", "Champagne Baguette",
+    "Green", "MOP", "Onyx", "Pavé", "Black Diamond",
+    "Bright Green", "Green Ombré", "Red", "Red Diamond", "Pink", "Grey"
+  ],
+
+  "278278":  [
+    "Green Roman VI IX Diamond", "Black Diamond", "White", "Champagne",
+    "MOP", "Green", "Rhodium Diamond", "White Roman", "Silver",
+    "Grey Roman VI IX Diamond", "Champagne Roman VI IX Diamond",
+    "Red Ombré", "Red", "Silver Diamond", "Green Diamond",
+    "Green Pavé", "Salmon", "Champagne Diamond", "Green Roman", "Green Ombré"
+  ],
+
+  "126518LN":  [
+    "Black", "Champagne", "Paul Newman", "Meteorite", "White",
+    "Tiger Eye", "Pink Diamond", "Salmon", "Blue", "Green",
+    "MOP", "Black Baguette", "Black Diamond", "Chocolate",
+    "Diamond", "Pavé", "Tiffany Blue", "Blue Diamond", "Yellow"
+  ],
 
   "278341":  [
     "Black", "White", "Silver", "Blue", "Champagne", "Chocolate",
@@ -378,9 +399,6 @@
   ],
   "278275":  [
     "MOP", "White Diamond", "Pink Diamond", "Silver", "Blue"
-  ],
-  "278278":  [
-    "Green Roman VI IX Diamond", "Black Diamond", "White", "Champagne"
   ],
   "278281":  [
     "Silver Diamond", "Champagne Diamond", "White Diamond", "MOP", "Black"

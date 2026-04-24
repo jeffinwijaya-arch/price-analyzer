@@ -136,7 +136,7 @@ _PREMIUM_REF_MAP = {
         # DD36 YG — baguette/stone variants
         "118208", "118238",
         # OP34 / OP28 secondary sizes (confirmed secondary market)
-        "124200", "276200", "15210", "52508", "52509",
+        "124200", "276200", "15210", "52506", "52508", "52509",
         # Lady-Datejust Tiffany Blue (confirmed catalog)
         "279135", "279136",
         # Daytona WG — Tiffany x Rolex collaboration / dealer-commissioned
@@ -149,12 +149,16 @@ _PREMIUM_REF_MAP = {
         "126538", "126535", "126506",
         # Daytona WG Pave (ultra-rare)
         "116576",
+        # Daytona WG Sapphire/gem-set (2024 catalog)
+        "126599",
         # Sky-Dweller Tiffany (confirmed secondary market)
         "336238", "336935", "326934", "326935",
     ],
     "Paul Newman": [
         "6239", "6241", "6262", "6263", "6264", "6265",
         "116508", "126508",
+        # Daytona YG leather strap variants (77 Paul Newman listings in wholesale)
+        "116518", "126518LN",
     ],
     "Meteorite": [
         "116508", "116509", "116519", "116519LN",
@@ -163,6 +167,8 @@ _PREMIUM_REF_MAP = {
         "228235", "228238", "228239",
         "128238", "128235",
         "126334", "126333", "126331",
+        # Legacy DJ41 Datejust variants with Meteorite
+        "116334", "116331",
         "126719BLRO",
         # Additional Day-Date and gem-set refs offering Meteorite
         "228349", "228396", "228236",
@@ -170,6 +176,8 @@ _PREMIUM_REF_MAP = {
         # Daytona WG/YG Sapphire & Pave — Meteorite dial catalogued option
         "116576", "116598",
         "116589", "116589SACI",
+        # Daytona RG/YG leather & additional Daytona variants (in dial_options)
+        "116505", "116515", "116518", "116528",
     ],
     "Wimbledon": [
         "126334", "126331", "126333", "126238",
@@ -180,6 +188,8 @@ _PREMIUM_REF_MAP = {
         "126283", "126203",
         # Legacy steel Datejust (vintage Wimbledon motif)
         "116300", "126200",
+        # DJ36 WG — Wimbledon in official dial_options
+        "126234",
     ],
     "Ice Blue": [
         "228206", "128236", "127236", "228396TBR", "128396TBR",
@@ -195,14 +205,26 @@ _PREMIUM_REF_MAP = {
         "128396", "228396",
         # Daytona WG Pave / Sapphire (rare but catalogued)
         "116576", "116598",
+        # DD36 Everose (Ice Blue in dial_options)
+        "128235",
+        # Day-Date II Platinum (Ice Blue in dial_options)
+        "218206",
+        # DD36 Platinum baguette variant
+        "127385",
+        # Rolex 1908 Platinum (Ice Blue confirmed)
+        "52506",
     ],
     "Ice Blue Baguette": [
         "127286", "127386", "128396", "228396", "228396TBR", "128396TBR",
         "118346",
+        # DD36 Platinum (Ice Blue Baguette in dial_options)
+        "128236",
     ],
     "Turquoise Stone": [
         "228345", "228235", "228238", "228239", "228349",
         "128345", "128235", "128238", "128239",
+        # DD36 gem-set stone bracelet and additional refs (in dial_options)
+        "128395", "118238", "128398", "128159",
     ],
     "Tiger Eye": [
         "18038", "18238", "118238",
@@ -221,6 +243,8 @@ _PREMIUM_REF_MAP = {
         "128345", "228235", "228238", "228349",
         # 228345 (all-stone bracelet DD40) and 228349 gem-set also offer Aventurine
         "228345",
+        # DD36 Everose — Aventurine confirmed in dial_options
+        "128235",
     ],
     "Grossular": [
         "126555", "118338", "118348",
@@ -248,17 +272,17 @@ _PREMIUM_REF_MAP = {
         "128399", "128349",
     ],
     "Ombre Slate":  ["228235"],
-    # Red Ombré — Datejust 31 special dial
-    "Red Ombré":    ["278289", "278288"],
-    # Green Ombré — Datejust 31 special dial
-    "Green Ombré":  ["278288"],
+    # Red Ombré — Datejust 31 + gem-set variants (278278: 98 listings in wholesale)
+    "Red Ombré":    ["278289", "278288", "278278", "128238"],
+    # Green Ombré — DD36/DD40 variants (high wholesale volume: 82/33/36 listings)
+    "Green Ombré":  ["278288", "228348", "228398", "228235", "128238", "128239", "128235", "128398"],
     "Eisenkiesel": [
         "228235", "228238", "228239",
         # Day-Date 36 variants (all precious-metal DD36 can be ordered with Eisenkiesel)
         "128235", "128238", "128239", "128395", "128345",
     ],
     "D-Blue":       ["126660"],
-    "Candy Pink":   ["124300", "126000", "277200"],
+    "Candy Pink":   ["124300", "126000", "277200", "134300"],
     "Apple Green":  ["124300", "126000"],
     "Coral Red":    ["124300", "126000", "277200", "279160"],
     # Stone dials — new for 2023-2025 catalog
@@ -271,9 +295,15 @@ _PREMIUM_REF_MAP = {
     "Opal": [
         "118208", "118238",
     ],
-    # Bright Green — Day-Date 40 special stone/lacquer dial
+    # Bright Green — Day-Date 40/36 lacquer dial (2023-2025 catalog; high wholesale volume)
     "Bright Green": [
         "228345", "228349",
+        # DD40 solid-gold variants (confirmed in wholesale: 266/151/91/75 listings)
+        "228238", "228235", "228239", "228348", "228398",
+        # DD40 Platinum / baguette variants
+        "228236",
+        # DD36 variants (in dial_options)
+        "128235", "128238", "128239",
     ],
     # Rainbow — Daytona diamond-set bezel and Day-Date stone variants
     "Rainbow": [
@@ -286,6 +316,8 @@ _PREMIUM_REF_MAP = {
         "128395", "128345", "228349", "228345",
         # DD36 YG/RG (128238) catalogued with Rainbow dial
         "128238",
+        # DD36 WG (128239) catalogued with Rainbow dial (in dial_options)
+        "128239",
         # Miscellaneous gem-set refs
         "268655", "279458",
     ],
@@ -417,6 +449,8 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bopal\b",                       re.I),      "Opal",            100),
     # Carnelian — reddish semi-precious stone dial; Day-Date exclusive
     (re.compile(r"\bcarnelian\b",                  re.I),      "Carnelian",       100),
+    # Carnelian typo variants — common manual-entry errors in dealer listings
+    (re.compile(r"\bcarneilian\b|\bcarnilian\b|\bcarnelion\b|\bcarnelean\b", re.I), "Carnelian", 90),
     (re.compile(r"\bcarn\b",                       re.I),      "Carnelian",        72),
     # Bright Green lacquer (Day-Date 40 special)
     (re.compile(r"\bbright\s*green\b|\bavocado\b", re.I),      "Bright Green",     90),
