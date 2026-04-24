@@ -191,9 +191,13 @@ _PREMIUM_REF_MAP = {
     "Lapis Lazuli": [
         "18038", "18238",
         "128238", "228238", "228235",
+        # 228345/128345 stone-bracelet DD40/36 also offer Lapis Lazuli
+        "228345", "128345",
     ],
     "Aventurine": [
         "128345", "228235", "228238", "228349",
+        # 228345 (all-stone bracelet DD40) and 228349 gem-set also offer Aventurine
+        "228345",
     ],
     "Grossular": [
         "126555", "118338", "118348",
@@ -251,6 +255,8 @@ _PREMIUM_REF_MAP = {
         "126599",
         # Day-Date 36 stone dial with rainbow
         "128395", "128345", "228349", "228345",
+        # DD36 YG/RG (128238) catalogued with Rainbow dial
+        "128238",
         # Miscellaneous gem-set refs
         "268655", "279458",
     ],
@@ -320,6 +326,8 @@ _PREMIUM_PATTERNS = [
     # T&Co / Tiffany & Co dealer shorthands — highest priority
     (re.compile(r"\btiffany\s*&\s*co\b",           re.I),      "Tiffany Blue",    100),
     (re.compile(r"\bt\s*&\s*co\b",                 re.I),      "Tiffany Blue",    100),
+    # "tco" — shorthand without ampersand used in HK/Asia dealer listings
+    (re.compile(r"\btco\b",                        re.I),      "Tiffany Blue",     90),
     (re.compile(r"\btiff(?:any)?(?:\s+blue)?\b",   re.I),      "Tiffany Blue",    100),
     (re.compile(r"\bturquoise\s+blue\b",           re.I),      "Tiffany Blue",    100),
     (re.compile(r"\brobin'?s?\s+egg\s*blue?\b",    re.I),      "Tiffany Blue",    100),
@@ -343,7 +351,7 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bmeteor(?:ite)?\b",             re.I),      "Meteorite",       100),
     (re.compile(r"\bmeteo\b",                      re.I),      "Meteorite",        90),
     (re.compile(r"\bmete\b",                       re.I),      "Meteorite",        85),
-    (re.compile(r"\bmet\b",                        re.I),      "Meteorite",        55),
+    (re.compile(r"\bmet\b",                        re.I),      "Meteorite",        68),
     # Wimbledon
     (re.compile(r"\bwimbledon\b",                  re.I),      "Wimbledon",       100),
     (re.compile(r"\bwimbo\b",                      re.I),      "Wimbledon",        90),
@@ -569,6 +577,13 @@ def detect_premium_dial(text, ref=None):
     return best
 
 
+def _check_premium(canonical, ref=None):
+    """True when canonical is a documented premium dial valid for this ref."""
+    if not canonical or canonical not in _PREMIUM_REF_MAP:
+        return False
+    return _premium_allowed(canonical, ref)
+
+
 # ---------------------------------------------------------------------------
 # Core extractor
 # ---------------------------------------------------------------------------
@@ -599,10 +614,14 @@ def extract_dial(text, ref=None):
 
     # Stage 1 — FIXED_DIAL
     if rc and rc in FIXED_DIAL:
+        fixed = FIXED_DIAL[rc]
+        is_fp = _check_premium(fixed, ref)
         result.update({
-            "dial":       FIXED_DIAL[rc],
-            "confidence": 1.0,
-            "method":     "fixed_dial",
+            "dial":         fixed,
+            "confidence":   1.0,
+            "is_premium":   is_fp,
+            "premium_type": fixed if is_fp else None,
+            "method":       "fixed_dial",
         })
         premium = detect_premium_dial(text, ref)
         if premium and premium["confidence"] >= 0.80:
@@ -651,10 +670,13 @@ def extract_dial(text, ref=None):
             normalised = normalize_dial(stripped, ref)
             known = stripped in _DIAL_SYNONYMS or normalised in _ALL_COLOR_CANONICALS
             if normalised and known:
+                is_p = _check_premium(normalised, ref)
                 result.update({
-                    "dial":       normalised,
-                    "confidence": 0.85,
-                    "method":     "context_match",
+                    "dial":         normalised,
+                    "confidence":   0.85,
+                    "is_premium":   is_p,
+                    "premium_type": normalised if is_p else None,
+                    "method":       "context_match",
                 })
                 return result
 
@@ -665,10 +687,13 @@ def extract_dial(text, ref=None):
         composite = " ".join(m_comp.group(0).split()).title()
         # Restore Roman numerals that title() lowercases (VI→Vi, IX→Ix, etc.)
         composite = re.sub(r'\b(Vi|Ix|Xi|Xiv|Iv|Iii|Ii)\b', lambda x: x.group().upper(), composite)
+        is_p = _check_premium(composite, ref)
         result.update({
-            "dial":       composite,
-            "confidence": 0.80,
-            "method":     "composite_dial",
+            "dial":         composite,
+            "confidence":   0.80,
+            "is_premium":   is_p,
+            "premium_type": composite if is_p else None,
+            "method":       "composite_dial",
         })
         return result
 
@@ -680,38 +705,50 @@ def extract_dial(text, ref=None):
         if rc and rc in _DIAL_OPTIONS:
             valid = _DIAL_OPTIONS[rc]
             if canonical in valid:
+                is_p = _check_premium(canonical, ref)
                 result.update({
-                    "dial":       canonical,
-                    "confidence": 0.82,
-                    "method":     "color_pattern_validated",
+                    "dial":         canonical,
+                    "confidence":   0.82,
+                    "is_premium":   is_p,
+                    "premium_type": canonical if is_p else None,
+                    "method":       "color_pattern_validated",
                 })
                 return result
             for v in valid:
                 if canonical.lower() in v.lower() or v.lower() in canonical.lower():
+                    is_p = _check_premium(v, ref)
                     result.update({
-                        "dial":       v,
-                        "confidence": 0.72,
-                        "method":     "color_pattern_partial",
+                        "dial":         v,
+                        "confidence":   0.72,
+                        "is_premium":   is_p,
+                        "premium_type": v if is_p else None,
+                        "method":       "color_pattern_partial",
                     })
                     return result
             # Color matched but not in validated list — remember as low-confidence fallback
             if _color_fallback is None:
                 _color_fallback = canonical
         else:
+            is_p = _check_premium(canonical, ref)
             result.update({
-                "dial":       canonical,
-                "confidence": 0.60,
-                "method":     "color_pattern_unvalidated",
+                "dial":         canonical,
+                "confidence":   0.60,
+                "is_premium":   is_p,
+                "premium_type": canonical if is_p else None,
+                "method":       "color_pattern_unvalidated",
             })
             return result
 
     # Stage 5b — Color fallback: pattern matched but ref validation rejected it.
     # Return with very low confidence so downstream can filter if needed.
     if _color_fallback:
+        is_p = _check_premium(_color_fallback, ref)
         result.update({
-            "dial":       _color_fallback,
-            "confidence": 0.45,
-            "method":     "color_fallback",
+            "dial":         _color_fallback,
+            "confidence":   0.45,
+            "is_premium":   is_p,
+            "premium_type": _color_fallback if is_p else None,
+            "method":       "color_fallback",
         })
         return result
 
@@ -737,10 +774,22 @@ def extract_dial(text, ref=None):
         # This prevents e.g. "turq" → Tiffany Blue firing on a Day-Date listing.
         if canonical in _PREMIUM_REF_MAP and rc and not _premium_allowed(canonical, rc):
             continue
+        # Guard: when the ref has known dial options, skip synonyms that resolve to
+        # a dial not offered on that ref. Prevents "mint" → Mint Green on a DJ41 steel.
+        if rc and rc in _DIAL_OPTIONS:
+            valid = _DIAL_OPTIONS[rc]
+            canon_l = canonical.lower()
+            if canonical not in valid and not any(
+                canon_l in v.lower() or v.lower() in canon_l for v in valid
+            ):
+                continue
+        is_p = _check_premium(canonical, ref)
         result.update({
-            "dial":       canonical,
-            "confidence": 0.65,
-            "method":     "synonym_scan",
+            "dial":         canonical,
+            "confidence":   0.65,
+            "is_premium":   is_p,
+            "premium_type": canonical if is_p else None,
+            "method":       "synonym_scan",
         })
         return result
 

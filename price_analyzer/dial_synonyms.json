@@ -495,5 +495,33 @@
   "sundust yachtmaster": "Sundust",
 
   "land dweller":       "Ice Blue",
-  "land-dweller":       "Ice Blue"
+  "land-dweller":       "Ice Blue",
+
+  "tco":                "Tiffany Blue",
+  "tiff & co":          "Tiffany Blue",
+  "tiffco":             "Tiffany Blue",
+  "bleu tiffany":       "Tiffany Blue",
+  "tiffany turquoise":  "Tiffany Blue",
+  "tiffany egg":        "Tiffany Blue",
+  "turq blue dial":     "Tiffany Blue",
+
+  "met dial":           "Meteorite",
+  "mete dial":          "Meteorite",
+  "meteo dial":         "Meteorite",
+
+  "ib dial":            "Ice Blue",
+  "iceblue dial":       "Ice Blue",
+
+  "bb dial":            "Bright Blue",
+  "gg dial":            "Green",
+  "aub dial":           "Aubergine",
+  "wim green":          "Wimbledon",
+  "wimbledon green dial": "Wimbledon",
+
+  "daytona panda":      "Panda",
+  "daytona reverse panda": "Reverse Panda",
+  "daytona rp":         "Reverse Panda",
+
+  "ombre green":        "Green Ombré",
+  "ombre red":          "Red Ombré"
 }
