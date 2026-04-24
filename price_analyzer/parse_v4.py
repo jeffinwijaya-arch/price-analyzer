@@ -92,9 +92,13 @@ FIXED_DIAL = {
     # Yacht-Master Oystersteel/Platinum (Slate only)
     "126622":     "Slate",
     "116622":     "Slate",
-    # Yacht-Master Oystersteel/Everose
-    "126621":     "Black",
-    "116621":     "Black",
+    # Yacht-Master Oystersteel/Everose — multiple dial options; removed from fixed
+    # "126621" and "116621" handled by color scan + dial_options
+    # Yacht-Master 42 Everose — exactly one dial (Sundust)
+    "126595":     "Sundust",
+    # Daytona WG Sapphire 2020s generation — one catalogued dial
+    "126579":     "MOP",
+    "126589":     "MOP",
 }
 
 # ---------------------------------------------------------------------------
@@ -137,14 +141,41 @@ _PREMIUM_REF_MAP = {
         "128238", "128235",
         "126334", "126333", "126331",
         "126719BLRO",
+        # Additional Day-Date and gem-set refs offering Meteorite
+        "228349", "228396", "228236",
+        "118235", "118206",
+        # Daytona WG/YG Sapphire & Pave — Meteorite dial catalogued option
+        "116576", "116598",
+        "116589", "116589SACI",
     ],
     "Wimbledon": [
         "126334", "126331", "126333", "126238",
         "116334", "116331",
         "126201", "126301",
+        # Additional Datejust variants where Wimbledon is offered
+        "126303", "126233", "126231",
+        "126283", "126203",
+        # Legacy steel Datejust (vintage Wimbledon motif)
+        "116300", "126200",
     ],
     "Ice Blue": [
         "228206", "128236", "127236", "228396TBR", "128396TBR",
+        # Yacht-Master 42 Platinum (116/126 generation)
+        "116506", "116506A", "126506",
+        # Day-Date 40 Platinum variant
+        "228236",
+        # Legacy Day-Date Platinum / gem-set variants
+        "118206", "118346", "118366",
+        # Land-Dweller Platinum variants
+        "127286", "127336", "127386",
+        # Day-Date 36/40 with Ice Blue baguette variants
+        "128396", "228396",
+        # Daytona WG Pave / Sapphire (rare but catalogued)
+        "116576", "116598",
+    ],
+    "Ice Blue Baguette": [
+        "127286", "127386", "128396", "228396", "228396TBR", "128396TBR",
+        "118346",
     ],
     "Turquoise Stone": [
         "228345", "228235", "228238", "228239", "228349",
@@ -153,8 +184,9 @@ _PREMIUM_REF_MAP = {
     "Tiger Eye": [
         "18038", "18238", "118238",
         "128238", "228238",
-        # Daytona WG Sapphire dial variants
-        "116589", "116589SACI",
+        # Daytona WG/YG Sapphire and gem-set variants
+        "116589", "116589SACI", "116598", "116588", "116518",
+        "228345", "128345",
     ],
     "Lapis Lazuli": [
         "18038", "18238",
@@ -168,14 +200,30 @@ _PREMIUM_REF_MAP = {
     ],
     "Onyx": [
         "228235", "228238", "228239",
+        # Day-Date 40 Platinum and additional variants
+        "228236", "218239", "118239",
     ],
-    "Ombre":        ["228235"],
+    "Ombre": [
+        "228235",
+        # Day-Date 36 variants (Everose, WG, YG) also offer Ombré dials
+        "128235", "128238", "128239",
+        # Datejust 31 offers special Ombré dials
+        "278288", "278289",
+        # Day-Date 40 additional variants
+        "228236", "228349",
+        # Day-Date 36 platinum/baguette variants
+        "128399", "128349",
+    ],
     "Ombre Slate":  ["228235"],
     # Red Ombré — Datejust 31 special dial
     "Red Ombré":    ["278289", "278288"],
     # Green Ombré — Datejust 31 special dial
     "Green Ombré":  ["278288"],
-    "Eisenkiesel":  ["228235", "228238", "228239"],
+    "Eisenkiesel": [
+        "228235", "228238", "228239",
+        # Day-Date 36 variants (all precious-metal DD36 can be ordered with Eisenkiesel)
+        "128235", "128238", "128239", "128395", "128345",
+    ],
     "D-Blue":       ["126660"],
     "Candy Pink":   ["124300", "126000", "277200"],
     "Apple Green":  ["124300", "126000"],
@@ -194,9 +242,17 @@ _PREMIUM_REF_MAP = {
     "Bright Green": [
         "228345", "228349",
     ],
-    # Rainbow — Daytona diamond-set bezel variants
+    # Rainbow — Daytona diamond-set bezel and Day-Date stone variants
     "Rainbow": [
         "116505", "116595RBOW", "126595RBOW", "116599RBOW",
+        # Additional Daytona gem-set models with rainbow bezel
+        "116576", "116598", "116520", "116509",
+        "116595", "116759",
+        "126599",
+        # Day-Date 36 stone dial with rainbow
+        "128395", "128345", "228349", "228345",
+        # Miscellaneous gem-set refs
+        "268655", "279458",
     ],
     # Celebration — Day-Date ornate precious-stone dial (all DD36/DD40 gold/plat)
     "Celebration": [
@@ -234,12 +290,23 @@ _PREMIUM_REF_MAP = {
     "Reverse Panda": [
         "126500LN", "116500LN",
     ],
-    # Pave — full diamond dial across Day-Date and high-jewellery Datejust
+    # Pave — full diamond dial across Day-Date, Daytona gem-set, and high-jewellery Datejust
     "Pave": [
         "228235", "228239", "228345", "228349",
-        "128235", "128239", "128345",
-        "118208", "118238",
+        "128235", "128238", "128239", "128345",
+        "118208", "118238", "118348",
         "116589", "126589",
+        # Day-Date 36 stone/special refs
+        "128158", "128159", "128395",
+        # Daytona WG/YG Pave and Sapphire
+        "116576", "116578", "116578SACO", "116579",
+        # High-jewellery gem-set models (Datejust/YM diamond)
+        "126679", "126281", "279458", "279381", "278381",
+        "279138", "116659", "116243",
+        "116595", "116758",
+        "268655", "126755",
+        # Yacht-Master Platinum/gem-set Pave
+        "116695", "116695SATS", "116655",
     ],
 }
 
@@ -281,6 +348,9 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bwimbledon\b",                  re.I),      "Wimbledon",       100),
     (re.compile(r"\bwimbo\b",                      re.I),      "Wimbledon",        90),
     (re.compile(r"\bwimb?\b",                      re.I),      "Wimbledon",        85),
+    # Ice Blue Baguette / Stick composite — must precede plain Ice Blue to win priority
+    (re.compile(r"\bice\s*blue\s+baguette\b",      re.I),      "Ice Blue Baguette", 105),
+    (re.compile(r"\bib\s+baguette\b",              re.I),      "Ice Blue Baguette",  90),
     # Ice Blue (platinum models only)
     (re.compile(r"\bice\s*blue\b",                 re.I),      "Ice Blue",        100),
     (re.compile(r"\biceblue\b",                    re.I),      "Ice Blue",        100),
@@ -486,7 +556,7 @@ def detect_premium_dial(text, ref=None):
         m = pattern.search(text)
         if not m:
             continue
-        eff = priority if _premium_allowed(canonical, ref) else max(priority - 40, 10)
+        eff = priority if _premium_allowed(canonical, ref) else max(priority - 45, 10)
         if eff > best_priority:
             best_priority = eff
             best = {

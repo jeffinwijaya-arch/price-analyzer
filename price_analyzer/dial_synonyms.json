@@ -436,5 +436,64 @@
   "malachite stone dial":"Malachite",
 
   "opal white":         "Opal",
-  "fire opal":          "Opal"
+  "fire opal":          "Opal",
+
+  "ice blue stick":     "Ice Blue",
+  "ice blue arabic":    "Ice Blue",
+  "ib stick":           "Ice Blue",
+  "ice blue baguette":  "Ice Blue Baguette",
+  "ib baguette":        "Ice Blue Baguette",
+  "ice baguette":       "Ice Blue Baguette",
+
+  "meteorite roman vi ix diamond": "Meteorite",
+  "meteorite roman":    "Meteorite",
+
+  "sundust stick":      "Sundust",
+  "silver stick":       "Silver",
+  "blue stick":         "Blue",
+  "champagne stick":    "Champagne",
+  "black stick":        "Black",
+  "white stick":        "White",
+
+  "green pavé":         "Pavé",
+  "green pave":         "Pavé",
+  "black pavé":         "Pavé",
+  "black pave":         "Pavé",
+  "white pavé":         "Pavé",
+
+  "salmon baguette":    "Salmon",
+  "blue baguette":      "Blue",
+  "green baguette":     "Green",
+  "black baguette":     "Black",
+  "white baguette":     "White",
+
+  "pink diamond":       "Pink",
+  "olive diamond":      "Olive Green",
+  "pink roman vi":      "Pink",
+  "grey roman vi":      "Grey",
+  "aubergine roman vi": "Aubergine",
+  "green roman vi":     "Green",
+  "grey diamond":       "Grey",
+  "white diamond":      "White",
+  "blue diamond":       "Blue",
+  "black diamond":      "Black",
+  "champagne diamond":  "Champagne",
+  "silver diamond":     "Silver",
+  "green diamond":      "Green",
+  "mop diamond":        "MOP",
+
+  "diamond":            "Pave",
+  "diamond dial":       "Pave",
+  "full diamond dial":  "Pave",
+  "diamond set":        "Pave",
+  "diamond set dial":   "Pave",
+
+  "ceramic":            "Black",
+
+  "ym":                 "Slate",
+  "ym42":               "Slate",
+  "sundust yachtmaster": "Sundust",
+
+  "land dweller":       "Ice Blue",
+  "land-dweller":       "Ice Blue"
 }

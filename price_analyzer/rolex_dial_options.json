@@ -160,17 +160,17 @@
   "128236": ["Ice Blue"],
   "128235": [
     "Olive Green", "Champagne", "Chocolate", "Pink",
-    "MOP", "Pave", "Meteorite",
+    "MOP", "Pave", "Meteorite", "Ombre", "Eisenkiesel",
     "Turquoise Stone", "Celebration", "Puzzle"
   ],
   "128238": [
     "Olive Green", "Champagne", "Black", "Blue", "Silver",
     "Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite",
-    "Lapis Lazuli", "Celebration", "Puzzle"
+    "Lapis Lazuli", "Celebration", "Puzzle", "Ombre", "Rainbow"
   ],
   "128239": [
     "White", "Silver", "MOP", "Pave", "Onyx",
-    "Turquoise Stone", "Celebration", "Puzzle"
+    "Turquoise Stone", "Celebration", "Puzzle", "Ombre"
   ],
   "128345": [
     "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
@@ -178,9 +178,9 @@
   ],
 
   "126622": ["Slate"],
-  "126621": ["Black"],
+  "126621": ["Black", "Chocolate", "Blue", "White"],
   "116622": ["Slate"],
-  "116621": ["Black", "Silver"],
+  "116621": ["Black", "Silver", "Chocolate"],
 
   "126231": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -300,5 +300,81 @@
   "18238": ["Stella", "White", "Silver", "Champagne", "Ivory", "Celebration", "Puzzle", "Tiger Eye", "Lapis Lazuli"],
   "18039": ["Stella", "White", "Silver"],
   "18239": ["Stella", "White", "Silver"],
-  "18348": ["Stella", "White", "Silver", "Champagne"]
+  "18348": ["Stella", "White", "Silver", "Champagne"],
+
+  "116506":  ["Ice Blue", "Ice Blue Stick", "Chocolate"],
+  "116506A": ["Ice Blue", "Blue"],
+  "126506":  ["Ice Blue", "Ice Blue Stick", "Black", "White", "Champagne"],
+
+  "228236":  ["Ice Blue", "Blue", "Bright Green", "Onyx", "Olive Green", "Black Baguette", "Chocolate"],
+
+  "118206":  ["Ice Blue", "Blue", "Diamond", "Meteorite"],
+  "118346":  ["Ice Blue", "Ice Blue Baguette", "Blue", "Blue Baguette"],
+  "118348":  ["Pavé", "Champagne", "Aubergine", "Champagne Baguette", "Champagne Diamond"],
+  "118366":  ["Ice Blue", "Blue", "Black", "Silver", "Silver Diamond"],
+
+  "127286":  ["Ice Blue", "Ice Blue Baguette"],
+  "127336":  ["Ice Blue", "Blue", "Chocolate"],
+  "127386":  ["Ice Blue", "Ice Blue Baguette"],
+
+  "128396":  ["Ice Blue", "Ice Blue Baguette", "Blue Baguette", "Salmon", "MOP", "Champagne"],
+  "228396":  ["Ice Blue", "Ice Blue Baguette", "Blue", "Champagne", "Black", "Green"],
+
+  "126595":  ["Sundust"],
+  "116595":  ["Black", "White", "Rainbow", "Chocolate", "Aubergine", "Pavé"],
+  "116595RBOW": ["Rainbow", "Pavé"],
+  "126595RBOW": ["Rainbow", "Pavé"],
+  "126599":  ["Black", "Blue", "Rainbow"],
+
+  "128395":  ["Turquoise Stone", "Pavé", "Aventurine", "Rainbow", "Eisenkiesel", "Lapis Lazuli"],
+  "228348":  [
+    "Champagne", "Champagne Baguette", "White Diamond", "Green Diamond",
+    "Salmon Baguette", "Black", "Blue", "Olive Green", "Silver"
+  ],
+  "126579":  ["MOP"],
+  "126589":  ["MOP"],
+
+  "278341":  [
+    "Black", "White", "Silver", "Blue", "Champagne", "Chocolate",
+    "Aubergine Roman VI", "Salmon", "MOP"
+  ],
+  "278271":  [
+    "Pink Roman VI", "Grey Roman VI", "Blue Diamond", "Silver Diamond",
+    "Champagne Diamond", "White", "Black", "MOP"
+  ],
+  "278273":  [
+    "Champagne Stick Diamond", "Silver Stick Diamond", "Blue Diamond",
+    "White", "Black", "MOP"
+  ],
+  "278275":  [
+    "MOP", "White Diamond", "Pink Diamond", "Silver", "Blue"
+  ],
+  "278278":  [
+    "Green Roman VI IX Diamond", "Black Diamond", "White", "Champagne"
+  ],
+  "278281":  [
+    "Silver Diamond", "Champagne Diamond", "White Diamond", "MOP", "Black"
+  ],
+  "278283":  [
+    "Champagne Diamond", "Blue Diamond", "White", "Silver"
+  ],
+  "278285":  [
+    "MOP", "Black Diamond", "White Diamond", "Silver"
+  ],
+  "278381":  [
+    "Pink Roman VI", "Grey Roman VI", "Blue Diamond", "Silver Diamond",
+    "Champagne Diamond", "White", "Black", "MOP"
+  ],
+  "278383":  [
+    "Grey Roman VI", "Silver Diamond", "Champagne", "White"
+  ],
+  "278384":  [
+    "Grey Stick Diamond", "Silver Stick", "Champagne", "White", "Black"
+  ],
+
+  "126281":  ["Grey Diamond", "White Diamond", "Champagne Diamond", "Blue Diamond", "Silver Diamond"],
+  "126283":  ["Champagne Diamond", "Blue Diamond", "White Diamond", "Silver Diamond"],
+  "126284":  ["Ice Blue Roman VI", "Pink Roman VI", "Grey Diamond", "White"],
+  "126285":  ["Blue Diamond", "White Diamond", "Silver Diamond", "MOP Diamond"],
+  "126289":  ["Black Diamond", "White Diamond", "Blue Diamond", "MOP Diamond"]
 }
