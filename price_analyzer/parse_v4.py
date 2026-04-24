@@ -100,12 +100,18 @@ FIXED_DIAL = {
     "126595":     "Sundust",
     # Yacht-Master 40 Everose — exactly one dial (Chocolate)
     "126655":     "Chocolate",
+    # Daytona RG Rainbow — all listings are Rainbow bezel/dial combination
+    "116285BBR":  "Rainbow",
     # Day-Date TBR gem-set bracelet variants — Ice Blue only
     "228396TBR":  "Ice Blue",
     "128396TBR":  "Ice Blue",
     # Daytona WG Sapphire 2020s generation — one catalogued dial
     "126579":     "MOP",
     "126589":     "MOP",
+    # Sky-Dweller 336259 gem-set diamond — Pave is the only offered dial
+    "336259":     "Pave",
+    # DD36 WG Diamond (118365) — Ice Blue Baguette is the canonical catalogued dial
+    "118365":     "Ice Blue Baguette",
 }
 
 # ---------------------------------------------------------------------------
@@ -151,8 +157,8 @@ _PREMIUM_REF_MAP = {
         "116576",
         # Daytona WG Sapphire/gem-set (2024 catalog)
         "126599",
-        # Sky-Dweller Tiffany (confirmed secondary market)
-        "336238", "336935", "326934", "326935",
+        # Sky-Dweller Tiffany (confirmed secondary market; wholesale data confirms 336238)
+        "336238", "336934", "336935", "326934", "326935",
     ],
     "Paul Newman": [
         "6239", "6241", "6262", "6263", "6264", "6265",
@@ -312,6 +318,8 @@ _PREMIUM_REF_MAP = {
         "116576", "116598", "116520", "116509",
         "116595", "116759",
         "126599",
+        # Daytona RG Rainbow — dedicated rainbow-bezel reference (wholesale: 15/15 listings)
+        "116285BBR", "116285",
         # Day-Date 36 stone dial with rainbow
         "128395", "128345", "228349", "228345",
         # DD36 YG/RG (128238) catalogued with Rainbow dial
@@ -744,9 +752,17 @@ def extract_dial(text, ref=None):
         })
         return result
 
-    # If stage 2 found a dial already, return it (premium scan found nothing)
+    # Stage 2 result handling:
+    # · Single-option ref (suffix uniquely determines dial) → return now.
+    # · Multi-option ref → explicit colour text in listing should override the
+    #   suffix guess; fall through to Stages 4-6 so the text can be read.
+    #   Stage 2's result stays in `result` as a fallback: if Stages 4-6 find
+    #   nothing, the final `return result` will use it.
     if result["dial"]:
-        return result
+        _single_option = not (rc and rc in _DIAL_OPTIONS and len(_DIAL_OPTIONS[rc]) > 1)
+        if _single_option:
+            return result
+        # else: multi-option ref → fall through to Stages 4-6
 
     # Stage 4 — Contextual extraction: "dial: X", "colour: X", "with X dial", "featuring X dial"
     for ctx_re in (_DIAL_CONTEXT_RE, _WITH_DIAL_RE, _FEATURING_DIAL_RE):
@@ -830,17 +846,23 @@ def extract_dial(text, ref=None):
             return result
 
     # Stage 5b — Color fallback: pattern matched but ref validation rejected it.
-    # Return with very low confidence so downstream can filter if needed.
+    # Guard: if the ref has KNOWN dial options and the colour isn't among them,
+    # suppress the result rather than return a likely-wrong classification.
+    # Only emit when the ref is uncharted (not in dial_options) — in that case
+    # 0.45-confidence is better than nothing.
     if _color_fallback:
-        is_p = _check_premium(_color_fallback, ref)
-        result.update({
-            "dial":         _color_fallback,
-            "confidence":   0.45,
-            "is_premium":   is_p,
-            "premium_type": _color_fallback if is_p else None,
-            "method":       "color_fallback",
-        })
-        return result
+        if rc and rc in _DIAL_OPTIONS:
+            pass  # Ref is known; wrong colour → skip, fall through to Stage 6
+        else:
+            is_p = _check_premium(_color_fallback, ref)
+            result.update({
+                "dial":         _color_fallback,
+                "confidence":   0.45,
+                "is_premium":   is_p,
+                "premium_type": _color_fallback if is_p else None,
+                "method":       "color_fallback",
+            })
+            return result
 
     # Stage 6 — Synonym dictionary full-text scan
     text_lower = text.lower()

@@ -489,5 +489,36 @@
   "127385":  ["Ice Blue", "Ice Blue Baguette", "Blue Baguette", "Diamond"],
   "226679":  ["MOP", "Green", "Black", "Blue", "Diamond", "White", "Pavé", "Champagne"],
   "218239":  ["White", "Silver", "MOP", "Ice Blue Baguette", "Blue", "Black Diamond", "Champagne"],
-  "116506":  ["Ice Blue", "Ice Blue Stick", "Chocolate", "Black", "Blue Diamond", "Green", "Salmon", "White", "Blue", "Beige"]
+  "116506":  ["Ice Blue", "Ice Blue Stick", "Chocolate", "Black", "Blue Diamond", "Green", "Salmon", "White", "Blue", "Beige"],
+
+  "_comment_336xxx": "--- Sky-Dweller 336-generation (2023+) refs: sourced from wholesale data ---",
+
+  "336238":  ["Black", "Green", "White", "Champagne", "Tiffany Blue", "Blue", "Silver"],
+  "336239":  ["Black", "White", "Blue", "Silver", "Champagne", "Green"],
+  "336259":  ["Pave", "Black Diamond", "White Diamond", "Champagne Diamond", "MOP", "Diamond", "Black"],
+  "336933":  ["Black", "Champagne", "White", "Green", "Chocolate", "Blue"],
+  "336934":  ["Blue", "Green", "Black", "White", "Champagne", "Tiffany Blue"],
+  "336935":  ["Blue", "Grey", "Green", "Black", "Chocolate", "Tiffany Blue"],
+  "336938":  ["Green", "Black", "Champagne", "White", "Blue", "Silver"],
+
+  "_comment_326xxx": "--- Sky-Dweller 326-generation refs: sourced from wholesale data ---",
+
+  "326135":  ["White", "Chocolate", "Grey", "Sundust", "Green", "Blue", "Silver"],
+  "326138":  ["Champagne", "Sundust", "White", "Silver", "Black", "Blue"],
+  "326139":  ["Black", "White", "Green", "Blue", "Silver"],
+  "326933":  ["Black", "White", "Champagne", "Green", "Chocolate", "Blue"],
+  "326939":  ["White", "Black", "Blue", "Silver", "Champagne"],
+
+  "_comment_misc": "--- Additional refs missing from original dataset ---",
+
+  "116285BBR": ["Rainbow", "Pave"],
+  "116285":    ["Rainbow", "White", "Champagne", "Black", "Pave"],
+  "118365":    ["Ice Blue Baguette", "Pave", "Diamond", "Black Diamond"],
+  "279171":    [
+    "Green", "Chocolate", "Aubergine", "MOP", "Pink", "Silver",
+    "White", "Black", "Blue", "Salmon", "Rhodium", "Champagne",
+    "Chocolate Roman VI", "Pink Roman VI", "Grey Roman VI", "Sundust"
+  ],
+  "216570":    ["White", "Black"],
+  "226570":    ["White", "Black"]
 }
