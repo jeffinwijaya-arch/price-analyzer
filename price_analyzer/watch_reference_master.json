@@ -42,6 +42,14 @@
       "nicknames": ["dj36", "dj 36", "datejust 36"],
       "premium_dials": []
     },
+    "Datejust 36 TT RG": {
+      "refs": ["126231"],
+      "series": "DJ",
+      "size_mm": 36,
+      "material": "TT RG",
+      "nicknames": ["dj36 tt rg", "dj36 rose", "126231"],
+      "premium_dials": []
+    },
     "Datejust 36 WG": {
       "refs": ["126234"],
       "series": "DJ",
@@ -71,7 +79,7 @@
       "size_mm": 41,
       "material": "White Gold",
       "nicknames": ["dj41 wg"],
-      "premium_dials": ["Wimbledon", "Meteorite"]
+      "premium_dials": ["Wimbledon", "Meteorite", "Jubilee Motif"]
     },
     "Datejust 41 TT YG": {
       "refs": ["126333"],
@@ -189,7 +197,7 @@
       "size_mm": 40,
       "material": "Everose Gold",
       "nicknames": ["dd40 rg", "dd40 everose", "228235"],
-      "premium_dials": ["Ombre", "Ombre Slate", "Eisenkiesel", "Meteorite", "MOP", "Pave"]
+      "premium_dials": ["Ombre", "Ombre Slate", "Eisenkiesel", "Meteorite", "MOP", "Pave", "Celebration", "Puzzle"]
     },
     "Day-Date 40 Yellow Gold": {
       "refs": ["228238", "228348"],
@@ -197,7 +205,7 @@
       "size_mm": 40,
       "material": "Yellow Gold",
       "nicknames": ["dd40 yg", "228238", "228348"],
-      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli"]
+      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli", "Celebration", "Puzzle"]
     },
     "Day-Date 40 RG Stone Dials": {
       "refs": ["228345"],
@@ -333,6 +341,7 @@
   },
 
   "ref_to_model": {
+    "126231": "Datejust 36 TT RG",
     "124300": "Oyster Perpetual 41",
     "126000": "Oyster Perpetual 36",
     "277200": "Oyster Perpetual 28",

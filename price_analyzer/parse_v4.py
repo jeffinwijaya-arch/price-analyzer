@@ -197,6 +197,32 @@ _PREMIUM_REF_MAP = {
     "Rainbow": [
         "116505", "116595RBOW", "126595RBOW", "116599RBOW",
     ],
+    # Celebration — Day-Date ornate precious-stone dial (all DD36/DD40 gold/plat)
+    "Celebration": [
+        "228235", "228238", "228239", "228345", "228349",
+        "128235", "128238", "128239", "128158",
+        # Legacy Day-Date
+        "118238", "118208", "18038", "18238",
+    ],
+    # Puzzle — Day-Date 40 abstract segmented dial
+    "Puzzle": [
+        "228235", "228238", "228239", "228345", "228349",
+        "128235", "128238", "128239",
+        "118238", "18038", "18238",
+    ],
+    # Jubilee Motif — Datejust special-order dial with jubilee pattern
+    "Jubilee Motif": [
+        "126234", "126238", "126233", "126200", "126201",
+        "126334", "126333", "126300", "126301",
+        "116234", "116200",
+    ],
+    # Pave — full diamond dial across Day-Date and high-jewellery Datejust
+    "Pave": [
+        "228235", "228239", "228345", "228349",
+        "128235", "128239", "128345",
+        "118208", "118238",
+        "116589", "126589",
+    ],
 }
 
 # ---------------------------------------------------------------------------
@@ -206,9 +232,13 @@ _PREMIUM_REF_MAP = {
 # ---------------------------------------------------------------------------
 _PREMIUM_PATTERNS = [
     # Tiffany Blue / Turquoise Blue (OP models)
-    (re.compile(r"\btiff(?:any)?(?:\s+blue)?\b", re.I),      "Tiffany Blue",    100),
-    (re.compile(r"\bturquoise\s+blue\b",          re.I),      "Tiffany Blue",    100),
-    (re.compile(r"\brobin'?s?\s+egg\s*blue?\b",   re.I),      "Tiffany Blue",    100),
+    # T&Co / Tiffany & Co dealer shorthands — highest priority
+    (re.compile(r"\btiffany\s*&\s*co\b",           re.I),      "Tiffany Blue",    100),
+    (re.compile(r"\bt\s*&\s*co\b",                 re.I),      "Tiffany Blue",    100),
+    (re.compile(r"\btiff(?:any)?(?:\s+blue)?\b",   re.I),      "Tiffany Blue",    100),
+    (re.compile(r"\bturquoise\s+blue\b",           re.I),      "Tiffany Blue",    100),
+    (re.compile(r"\brobin'?s?\s+egg\s*blue?\b",    re.I),      "Tiffany Blue",    100),
+    (re.compile(r"\bofficial\s+tiff(?:any)?\b",    re.I),      "Tiffany Blue",    100),
     (re.compile(r"\bturq\b",                       re.I),      "Tiffany Blue",     90),
     # tb = Tiffany Blue shorthand — only credible for OP references
     # Handled in detect_premium_dial() with ref-aware penalty; included here
@@ -222,6 +252,8 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bpaul\s*n\b",                   re.I),      "Paul Newman",      90),
     (re.compile(r"\bpn\b",                         re.I),      "Paul Newman",      75),
     (re.compile(r"\bexotic\s*(?:dial|face)?\b",    re.I),      "Paul Newman",      70),
+    # "Newman" standalone — lower confidence, requires Daytona context for full value
+    (re.compile(r"\bnewman\b",                     re.I),      "Paul Newman",      65),
     # Meteorite
     (re.compile(r"\bmeteor(?:ite)?\b",             re.I),      "Meteorite",       100),
     (re.compile(r"\bmeteo\b",                      re.I),      "Meteorite",        90),
@@ -274,6 +306,12 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bcelebration\b",                re.I),      "Celebration",     100),
     (re.compile(r"\beisenk(?:iesel)?\b",           re.I),      "Eisenkiesel",     100),
     (re.compile(r"\beisen\b",                      re.I),      "Eisenkiesel",      90),
+    # "eisk" — ultra-short Eisenkiesel abbreviation used in HK/Asia dealer listings
+    (re.compile(r"\beisk\b",                       re.I),      "Eisenkiesel",      85),
+    # Jubilee Motif dial (special Day-Date / Datejust dial pattern)
+    (re.compile(r"\bjubilee\s+(?:motif|dial)\b",   re.I),      "Jubilee Motif",    95),
+    # Pave shorthand 'pv' — HK/Asia dealer abbreviation
+    (re.compile(r"\bpv\b",                         re.I),      "Pave",             70),
 ]
 
 # ---------------------------------------------------------------------------
@@ -284,6 +322,9 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bwhite\b|\bwht\b|\bwh\b",                       re.I), "White"),
     (re.compile(r"\bbright\s+blue\b|\bbb\b",                       re.I), "Bright Blue"),
     (re.compile(r"\bblue\b|\bblu\b",                               re.I), "Blue"),
+    # "turq" shorthand — maps to Turquoise Stone here (Stage 5) for DD/non-OP refs.
+    # For OP refs, Stage 3 premium scan intercepts turq → Tiffany Blue before Stage 5 runs.
+    (re.compile(r"\bturq\b",                                       re.I), "Turquoise Stone"),
     (re.compile(r"\bturquoise\b",                                   re.I), "Turquoise Stone"),
     (re.compile(r"\bpistachio\s*(?:green)?\b",                     re.I), "Mint Green"),
     (re.compile(r"\bmint\s*(?:green)?\b|\bminty\b",               re.I), "Mint Green"),
@@ -579,13 +620,18 @@ def extract_dial(text, ref=None):
         # Guard: 'sun' must not resolve to Sundust when 'sunray'/'sunburst' is present
         if raw_key == "sun" and (_is_sea_dweller or _has_sunray):
             continue
-        if re.search(r"\b" + re.escape(raw_key) + r"\b", text_lower):
-            result.update({
-                "dial":       canonical,
-                "confidence": 0.65,
-                "method":     "synonym_scan",
-            })
-            return result
+        if not re.search(r"\b" + re.escape(raw_key) + r"\b", text_lower):
+            continue
+        # Guard: if this synonym resolves to a premium dial, validate it against the ref.
+        # This prevents e.g. "turq" → Tiffany Blue firing on a Day-Date listing.
+        if canonical in _PREMIUM_REF_MAP and rc and not _premium_allowed(canonical, rc):
+            continue
+        result.update({
+            "dial":       canonical,
+            "confidence": 0.65,
+            "method":     "synonym_scan",
+        })
+        return result
 
     return result
 

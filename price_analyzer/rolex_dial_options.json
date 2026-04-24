@@ -159,6 +159,32 @@
   "116622": ["Slate"],
   "116621": ["Black", "Silver"],
 
+  "126231": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Pink", "Salmon", "Olive Green", "Mint Green", "Rhodium"
+  ],
+  "126235": [
+    "Black", "White", "Silver", "Blue", "Chocolate",
+    "Champagne", "Olive Green", "Salmon"
+  ],
+
+  "116334": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Meteorite", "Wimbledon"
+  ],
+  "116331": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Meteorite", "Wimbledon"
+  ],
+  "116234": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Mint Green", "Rhodium"
+  ],
+  "116200": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Olive Green", "Salmon", "Rhodium"
+  ],
+
   "226659": ["White"],
   "226658": ["Black", "White", "Champagne"],
   "226657": ["Black", "White", "Chocolate"],

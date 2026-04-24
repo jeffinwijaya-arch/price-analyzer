@@ -17,10 +17,17 @@
   "robin's egg blue":   "Tiffany Blue",
   "tb":                 "Tiffany Blue",
   "light tiffany":      "Tiffany Blue",
+  "t&co":               "Tiffany Blue",
+  "t & co":             "Tiffany Blue",
+  "tiffany&co":         "Tiffany Blue",
+  "tiffany & co":       "Tiffany Blue",
+  "official tiffany":   "Tiffany Blue",
+  "tiffany co":         "Tiffany Blue",
 
   "pn":                 "Paul Newman",
   "paul newman":        "Paul Newman",
   "paul n":             "Paul Newman",
+  "newman":             "Paul Newman",
   "exotic":             "Paul Newman",
   "exotic dial":        "Paul Newman",
 
@@ -167,6 +174,7 @@
 
   "eisenkiesel":        "Eisenkiesel",
   "eisen":              "Eisenkiesel",
+  "eisk":               "Eisenkiesel",
 
   "puzzle":             "Puzzle",
   "celebration":        "Celebration",
@@ -174,6 +182,8 @@
 
   "rhodium":            "Rhodium",
   "rhodium dial":       "Rhodium",
+  "rhodi":              "Rhodium",
+  "rhodie":             "Rhodium",
   "slate":              "Slate",
   "ivory":              "Ivory",
   "yellow":             "Yellow",
@@ -189,10 +199,15 @@
   "pistachio":          "Mint Green",
   "pistachio green":    "Mint Green",
   "pistach":            "Mint Green",
+  "celadon":            "Mint Green",
+  "celadon green":      "Mint Green",
 
   "mocha":              "Chocolate",
   "cacao":              "Chocolate",
   "choc dial":          "Chocolate",
+  "coffee":             "Chocolate",
+  "walnut":             "Chocolate",
+  "cognac":             "Chocolate",
 
   "cherry":             "Coral Red",
   "cherry red":         "Coral Red",
@@ -206,8 +221,11 @@
 
   "jungle green":       "Green",
   "forest green":       "Green",
+  "forest":             "Green",
+  "hunter green":       "Green",
   "army green":         "Green",
   "racing green":       "Green",
+  "military green":     "Green",
 
   "electric blue":      "Bright Blue",
   "cobalt blue":        "Bright Blue",
@@ -218,8 +236,12 @@
   "navy blue":          "Blue",
 
   "champagne dial":     "Champagne",
+  "vanilla":            "Champagne",
+  "almond":             "Champagne",
   "sundust dial":       "Sundust",
   "sunny":              "Sundust",
+  "warm sand":          "Sundust",
+  "sandy":              "Sundust",
 
   "noir":               "Black",
   "blanc":              "White",
@@ -230,6 +252,7 @@
   "celebration dial":   "Celebration",
   "puzzle dial":        "Puzzle",
   "jubilee motif":      "Jubilee Motif",
+  "jubilee motif dial": "Jubilee Motif",
   "jubilee dial":       "Jubilee Motif",
 
   "skeleton":           "Skeletonized",
