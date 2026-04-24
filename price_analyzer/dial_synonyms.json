@@ -5,6 +5,7 @@
   "tiffany":            "Tiffany Blue",
   "tiff blue":          "Tiffany Blue",
   "tiffany blue":       "Tiffany Blue",
+  "tiffanyblue":        "Tiffany Blue",
   "tiffany dial":       "Tiffany Blue",
   "light tiffany blue": "Tiffany Blue",
   "turq":               "Tiffany Blue",
@@ -15,6 +16,8 @@
   "robin egg blue":     "Tiffany Blue",
   "robins egg blue":    "Tiffany Blue",
   "robin's egg blue":   "Tiffany Blue",
+  "robinegg":           "Tiffany Blue",
+  "egg blue":           "Tiffany Blue",
   "tb":                 "Tiffany Blue",
   "light tiffany":      "Tiffany Blue",
   "t&co":               "Tiffany Blue",
@@ -30,17 +33,22 @@
   "newman":             "Paul Newman",
   "exotic":             "Paul Newman",
   "exotic dial":        "Paul Newman",
+  "pn dial":            "Paul Newman",
 
   "mete":               "Meteorite",
   "met":                "Meteorite",
   "meteor":             "Meteorite",
   "meteorite":          "Meteorite",
   "meteo":              "Meteorite",
+  "meteor dial":        "Meteorite",
 
   "wim":                "Wimbledon",
   "wimb":               "Wimbledon",
   "wimbo":              "Wimbledon",
   "wimbledon":          "Wimbledon",
+  "wimbledon dial":     "Wimbledon",
+  "wimbledon green":    "Wimbledon",
+  "green wimbledon":    "Wimbledon",
 
   "ib":                 "Ice Blue",
   "ice":                "Ice Blue",
@@ -48,6 +56,7 @@
   "iceblue":            "Ice Blue",
   "icy blue":           "Ice Blue",
   "icy":                "Ice Blue",
+  "ice dial":           "Ice Blue",
 
   "d-blue":             "D-Blue",
   "dblue":              "D-Blue",
@@ -353,5 +362,79 @@
   "sunray white":       "White",
   "sunburst silver":    "Silver",
   "sunburst blue":      "Blue",
-  "sunburst black":     "Black"
+  "sunburst black":     "Black",
+
+  "banana":             "Yellow",
+  "banana dial":        "Yellow",
+  "lemon":              "Yellow",
+  "lemon yellow":       "Yellow",
+
+  "starbucks dial":     "Green",
+  "starbucks green":    "Green",
+
+  "wimbledon motif":    "Wimbledon",
+  "wim dial":           "Wimbledon",
+
+  "paul newman exotic": "Paul Newman",
+  "exotic newman":      "Paul Newman",
+
+  "ombre dial":         "Ombre",
+  "ombre gradient":     "Ombre",
+  "slate ombre":        "Ombre Slate",
+
+  "stella lacquer":     "Stella",
+  "lacquer stella":     "Stella",
+
+  "turquoise blue":     "Tiffany Blue",
+
+  "light blue tiffany": "Tiffany Blue",
+  "tiffany light blue": "Tiffany Blue",
+
+  "jubilee motif dial": "Jubilee Motif",
+
+  "celebration motif":  "Celebration",
+  "puzzle motif":       "Puzzle",
+
+  "panda white":        "Panda",
+  "white panda":        "Panda",
+  "black panda":        "Reverse Panda",
+  "rev panda":          "Reverse Panda",
+
+  "d blue":             "D-Blue",
+  "deepsea blue":       "D-Blue",
+
+  "grossular garnet":   "Grossular",
+  "giraffe dial":       "Grossular",
+
+  "eisenkiesel grey":   "Eisenkiesel",
+  "eisenkiesel stone":  "Eisenkiesel",
+
+  "aventurine green":   "Aventurine",
+
+  "lapis blue":         "Lapis Lazuli",
+
+  "tiger eye stone":    "Tiger Eye",
+  "tigers eye stone":   "Tiger Eye",
+
+  "rainbow bezel":      "Rainbow",
+  "rainbow diamond":    "Rainbow",
+
+  "candy pink dial":    "Candy Pink",
+  "apple green dial":   "Apple Green",
+  "coral red dial":     "Coral Red",
+
+  "mop dial":           "MOP",
+  "mother of pearl dial": "MOP",
+
+  "pave diamond":       "Pave",
+  "full diamond":       "Pave",
+
+  "sodalite blue":      "Sodalite",
+  "sodalite stone dial":"Sodalite",
+
+  "malachite green":    "Malachite",
+  "malachite stone dial":"Malachite",
+
+  "opal white":         "Opal",
+  "fire opal":          "Opal"
 }

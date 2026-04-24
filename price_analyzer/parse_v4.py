@@ -132,8 +132,9 @@ _PREMIUM_REF_MAP = {
     "Meteorite": [
         "116508", "116509", "116519", "116519LN",
         "126509", "126519", "126519LN",
-        "228235", "228238", "228239", "228206",
-        "128238", "128235", "128239",
+        # 228206 (DD40 Platinum) excluded: FIXED_DIAL Ice Blue only
+        "228235", "228238", "228239",
+        "128238", "128235",
         "126334", "126333", "126331",
         "126719BLRO",
     ],
@@ -334,8 +335,17 @@ _PREMIUM_PATTERNS = [
     # Panda / Reverse Panda / Tuxedo — white-dial Daytonas command a premium over black.
     # Promoted to premium so Stage 3 can override the LN suffix-inferred 'Black' (Stage 2).
     (re.compile(r"\breverse\s*panda\b|\brev\s*panda\b", re.I), "Reverse Panda",   85),
+    # 'rp' — Reverse Panda shorthand used by HK/Asia dealers and online listings.
+    # Low priority (70) so it only fires when ref-validated; penalty drops it to 30
+    # for non-RP refs, well below the 0.60 threshold.
+    (re.compile(r"\brp\b",                         re.I),      "Reverse Panda",    70),
     (re.compile(r"\btuxedo\b",                     re.I),      "Panda",            80),
     (re.compile(r"\bpanda\b",                      re.I),      "Panda",            80),
+    # Tiffany Blue — no-space variant ("tiffanyblue") and egg-blue abbreviation
+    (re.compile(r"\btiffanyblue\b",                re.I),      "Tiffany Blue",    100),
+    (re.compile(r"\begg\s*blue\b",                 re.I),      "Tiffany Blue",     85),
+    # Wimbledon — sellers sometimes write "wimbledon green" or "green wimbledon"
+    (re.compile(r"\bwimbledon\s*green\b|\bgreen\s*wimbledon\b", re.I), "Wimbledon", 95),
 ]
 
 # ---------------------------------------------------------------------------

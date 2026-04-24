@@ -11,7 +11,7 @@
   ],
   "277200": [
     "Black", "White", "Coral Red", "Blue", "Yellow",
-    "Tiffany Blue", "Pink", "Silver"
+    "Tiffany Blue", "Candy Pink", "Pink", "Silver"
   ],
   "279160": [
     "Black", "White", "Coral Red", "Blue", "Silver",
@@ -24,12 +24,13 @@
   "126200": [
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Olive Green", "Palm Green", "Rhodium",
-    "Bright Blue", "Mint Green", "Salmon", "Sundust"
+    "Bright Blue", "Mint Green", "Salmon", "Sundust",
+    "Jubilee Motif"
   ],
   "126201": [
     "Black", "White", "Silver", "Blue", "Chocolate",
     "Champagne", "Olive Green", "Salmon", "Wimbledon",
-    "Mint Green", "Rhodium", "Sundust"
+    "Mint Green", "Rhodium", "Sundust", "Jubilee Motif"
   ],
   "126230": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -41,10 +42,12 @@
     "Chocolate", "Olive Green"
   ],
   "126233": [
-    "Black", "White", "Silver", "Blue", "Champagne", "Chocolate"
+    "Black", "White", "Silver", "Blue", "Champagne", "Chocolate",
+    "Jubilee Motif"
   ],
   "126234": [
-    "Mint Green", "Pink", "Silver", "White", "Wimbledon"
+    "Mint Green", "Pink", "Silver", "White", "Wimbledon",
+    "Jubilee Motif"
   ],
   "126235": [
     "Black", "White", "Silver", "Blue", "Chocolate",
@@ -52,18 +55,18 @@
   ],
   "126238": [
     "Black", "White", "Silver", "Blue", "Champagne",
-    "Chocolate", "Wimbledon"
+    "Chocolate", "Wimbledon", "Jubilee Motif"
   ],
 
   "126300": [
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Olive Green", "Palm Green", "Rhodium",
-    "Bright Blue", "Slate", "Sundust"
+    "Bright Blue", "Slate", "Sundust", "Jubilee Motif"
   ],
   "126301": [
     "Black", "White", "Silver", "Blue", "Chocolate",
     "Champagne", "Olive Green", "Wimbledon", "Mint Green",
-    "Salmon", "Rhodium", "Sundust"
+    "Salmon", "Rhodium", "Sundust", "Jubilee Motif"
   ],
   "126303": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -75,11 +78,11 @@
   ],
   "126333": [
     "Black", "White", "Silver", "Blue", "Champagne",
-    "Chocolate", "Meteorite", "Wimbledon"
+    "Chocolate", "Meteorite", "Wimbledon", "Jubilee Motif"
   ],
   "126334": [
     "Black", "Blue", "Green", "Silver", "Champagne",
-    "White", "Meteorite", "Wimbledon"
+    "White", "Meteorite", "Wimbledon", "Jubilee Motif"
   ],
 
   "124060": ["Black"],
@@ -94,12 +97,12 @@
   "116610LV": ["Green"],
   "116610": ["Black", "Green"],
 
-  "126500LN": ["Black", "White"],
-  "116500LN": ["Black", "White"],
-  "116503": ["Black", "White", "Champagne"],
-  "116505": ["Black", "White", "Chocolate", "Champagne"],
-  "116508": ["Green", "Champagne", "White", "Black", "Meteorite"],
-  "126508": ["Green", "Champagne", "White", "Black", "Paul Newman"],
+  "126500LN": ["Black", "White", "Panda", "Reverse Panda"],
+  "116500LN": ["Black", "White", "Panda", "Reverse Panda"],
+  "116503": ["Black", "White", "Champagne", "Panda"],
+  "116505": ["Black", "White", "Chocolate", "Champagne", "Panda", "Rainbow"],
+  "116508": ["Green", "Champagne", "White", "Black", "Meteorite", "Paul Newman"],
+  "126508": ["Green", "Champagne", "White", "Black", "Paul Newman", "Meteorite"],
   "116509": ["Black", "White", "Panda", "Meteorite", "Champagne"],
   "116519": ["Black", "White", "Meteorite", "Champagne"],
   "116519LN": ["Black", "White", "Panda", "Meteorite"],
@@ -127,38 +130,51 @@
   "228235": [
     "Olive Green", "Green", "Ombre Slate", "Ombre",
     "Chocolate", "Sundust", "Mint Green", "Eisenkiesel",
-    "Pave", "MOP", "Pink", "Meteorite", "Champagne"
+    "Pave", "MOP", "Pink", "Meteorite", "Champagne",
+    "Celebration", "Puzzle",
+    "Turquoise Stone", "Aventurine", "Lapis Lazuli", "Onyx"
   ],
   "228238": [
     "Olive Green", "Green", "Champagne", "Black", "Blue",
     "Silver", "Eisenkiesel", "Turquoise Stone", "Tiger Eye",
-    "Onyx", "Meteorite"
+    "Onyx", "Meteorite", "Lapis Lazuli", "Aventurine",
+    "Celebration", "Puzzle"
   ],
   "228239": [
     "Olive Green", "White", "Silver", "Onyx", "MOP",
-    "Pave", "Meteorite", "Champagne", "Eisenkiesel"
+    "Pave", "Meteorite", "Champagne", "Eisenkiesel",
+    "Turquoise Stone", "Celebration", "Puzzle"
   ],
   "228345": [
-    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli"
+    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
+    "Bright Green", "Celebration", "Puzzle", "Pave"
   ],
   "228349": [
-    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli"
+    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
+    "Black Baguette", "Silver Diamond", "Blue Diamond",
+    "Black Diamond", "Silver", "Black",
+    "Bright Green", "Celebration", "Puzzle", "Pave"
   ],
 
   "127236": ["Ice Blue"],
   "128236": ["Ice Blue"],
   "128235": [
     "Olive Green", "Champagne", "Chocolate", "Pink",
-    "MOP", "Pave", "Meteorite"
+    "MOP", "Pave", "Meteorite",
+    "Turquoise Stone", "Celebration", "Puzzle"
   ],
   "128238": [
     "Olive Green", "Champagne", "Black", "Blue", "Silver",
     "Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite",
-    "Lapis Lazuli"
+    "Lapis Lazuli", "Celebration", "Puzzle"
   ],
-  "128239": ["White", "Silver", "MOP", "Pave", "Onyx"],
+  "128239": [
+    "White", "Silver", "MOP", "Pave", "Onyx",
+    "Turquoise Stone", "Celebration", "Puzzle"
+  ],
   "128345": [
-    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli"
+    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
+    "Pave"
   ],
 
   "126622": ["Slate"],
@@ -177,7 +193,7 @@
 
   "116334": [
     "Black", "White", "Silver", "Blue", "Champagne",
-    "Chocolate", "Meteorite", "Wimbledon"
+    "Chocolate", "Meteorite", "Wimbledon", "Jubilee Motif"
   ],
   "116331": [
     "Black", "White", "Silver", "Blue", "Champagne",
@@ -185,11 +201,12 @@
   ],
   "116234": [
     "Black", "White", "Silver", "Blue", "Champagne",
-    "Chocolate", "Mint Green", "Rhodium"
+    "Chocolate", "Mint Green", "Rhodium", "Jubilee Motif"
   ],
   "116200": [
     "Black", "White", "Silver", "Blue", "Champagne",
-    "Chocolate", "Olive Green", "Salmon", "Rhodium"
+    "Chocolate", "Olive Green", "Salmon", "Rhodium",
+    "Jubilee Motif"
   ],
 
   "226659": ["White"],
@@ -235,12 +252,12 @@
     "Chocolate", "Red", "Tiffany Blue", "Pink", "Salmon",
     "MOP", "Ombre", "Red Ombré", "Grey Roman VI",
     "Pink Roman VI", "Blue Diamond", "Black Diamond",
-    "Aubergine Roman VI"
+    "Aubergine Roman VI", "Malachite"
   ],
   "278288": [
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Green", "MOP", "Ombre", "Malachite",
-    "Green Ombré", "Green Roman VI", "Green Diamond",
+    "Green Ombré", "Red Ombré", "Green Roman VI", "Green Diamond",
     "Grey Diamond", "Grey Roman VI", "Silver Diamond"
   ],
 
@@ -250,29 +267,38 @@
   ],
 
   "128158": [
-    "Orange", "Pavé", "Chocolate", "Blue", "Silver", "Black"
+    "Orange", "Pavé", "Pave", "Chocolate", "Blue", "Silver", "Black",
+    "Celebration"
   ],
 
   "116589": [
     "Tiger Eye", "MOP", "Sodalite", "Black Diamond",
-    "White Diamond", "Meteorite", "Pavé", "White"
+    "White Diamond", "Meteorite", "Pavé", "Pave", "White"
   ],
   "116589SACI": [
-    "White", "Sodalite", "Black Baguette", "MOP"
+    "White", "Sodalite", "Black Baguette", "MOP", "Tiger Eye"
   ],
 
-  "228345": [
-    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
-    "Bright Green"
-  ],
-  "228349": [
-    "Turquoise Stone", "Aventurine", "Tiger Eye", "Lapis Lazuli",
-    "Black Baguette", "Silver Diamond", "Blue Diamond",
-    "Black Diamond", "Silver", "Black"
-  ],
 
   "118208": [
     "Champagne", "Green", "Tiffany Blue", "White",
-    "Opal", "Tiffany Blue Baguette"
-  ]
+    "Opal", "Tiffany Blue Baguette", "Pave", "Celebration"
+  ],
+
+  "126555": [
+    "Grossular", "Black", "Green", "Brown"
+  ],
+
+  "228396TBR": ["Ice Blue"],
+  "128396TBR": ["Ice Blue"],
+
+  "1803":  ["Stella", "White", "Silver", "Champagne", "Ivory"],
+  "1804":  ["Stella", "White", "Silver", "Champagne"],
+  "1807":  ["Stella", "White", "Silver"],
+  "1808":  ["Stella", "White", "Silver", "Champagne"],
+  "18038": ["Stella", "White", "Silver", "Champagne", "Ivory", "Celebration", "Puzzle", "Tiger Eye", "Lapis Lazuli"],
+  "18238": ["Stella", "White", "Silver", "Champagne", "Ivory", "Celebration", "Puzzle", "Tiger Eye", "Lapis Lazuli"],
+  "18039": ["Stella", "White", "Silver"],
+  "18239": ["Stella", "White", "Silver"],
+  "18348": ["Stella", "White", "Silver", "Champagne"]
 }

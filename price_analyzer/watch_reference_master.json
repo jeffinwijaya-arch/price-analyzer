@@ -78,16 +78,40 @@
       "series": "DJ",
       "size_mm": 41,
       "material": "White Gold",
-      "nicknames": ["dj41 wg"],
+      "nicknames": ["dj41 wg", "126334"],
       "premium_dials": ["Wimbledon", "Meteorite", "Jubilee Motif"]
     },
     "Datejust 41 TT YG": {
-      "refs": ["126333"],
+      "refs": ["126333", "126331"],
       "series": "DJ",
       "size_mm": 41,
       "material": "TT YG",
-      "nicknames": ["dj41 tt yg"],
+      "nicknames": ["dj41 tt yg", "126333", "126331"],
       "premium_dials": ["Wimbledon", "Meteorite"]
+    },
+    "Datejust 41 TT RG": {
+      "refs": ["126303", "126301"],
+      "series": "DJ",
+      "size_mm": 41,
+      "material": "TT RG",
+      "nicknames": ["dj41 tt rg", "dj41 rose", "126303", "126301"],
+      "premium_dials": ["Wimbledon"]
+    },
+    "Datejust 36 TT YG": {
+      "refs": ["126203", "126201"],
+      "series": "DJ",
+      "size_mm": 36,
+      "material": "TT YG",
+      "nicknames": ["dj36 tt yg", "dj36 yg", "126203", "126201"],
+      "premium_dials": ["Wimbledon", "Jubilee Motif"]
+    },
+    "Datejust 36 Everose": {
+      "refs": ["126235"],
+      "series": "DJ",
+      "size_mm": 36,
+      "material": "Everose",
+      "nicknames": ["dj36 rg", "dj36 rose", "126235"],
+      "premium_dials": []
     },
     "Submariner No-Date": {
       "refs": ["124060"],
@@ -355,6 +379,11 @@
     "126334": "Datejust 41 WG",
     "126333": "Datejust 41 TT YG",
     "126331": "Datejust 41 TT YG",
+    "126303": "Datejust 41 TT RG",
+    "126301": "Datejust 41 TT RG",
+    "126203": "Datejust 36 TT YG",
+    "126201": "Datejust 36 TT YG",
+    "126235": "Datejust 36 Everose",
     "124060": "Submariner No-Date",
     "126610LN": "Submariner Date Steel Black",
     "126610LV": "Submariner Date Kermit",
@@ -389,6 +418,8 @@
     "326934": "Sky-Dweller Steel",
     "124270": "Explorer I",
     "214270": "Explorer I",
+    "114270": "Explorer I",
+    "116509": "Daytona White Gold",
     "226570": "Explorer II",
     "216570": "Explorer II",
     "126900": "Air-King",
@@ -425,6 +456,13 @@
     "white ice pepsi":{"refs": ["126719BLRO"], "dial": "Meteorite"},
     "sodalite":       {"refs": ["116589", "116589SACI", "126589"], "dial": "Sodalite", "note": "rare stone dial Daytona"},
     "malachite":      {"refs": ["278288", "278289"], "dial": "Malachite", "note": "stone dial Datejust 31"},
-    "rainbow":        {"refs": ["116595RBOW", "126595RBOW", "116576", "116599RBOW"], "note": "diamond rainbow bezel Daytona"}
+    "rainbow":        {"refs": ["116595RBOW", "126595RBOW", "116576", "116599RBOW"], "note": "diamond rainbow bezel Daytona"},
+    "stella":         {"refs": ["1803", "1804", "1807", "1808", "18038", "18238", "18039", "18239", "18348"], "dial": "Stella", "note": "1970s-80s vintage lacquer Day-Date; extreme collector premium"},
+    "grossular":      {"refs": ["126555", "118338", "118348"], "dial": "Grossular", "note": "rare stone dial Day-Date"},
+    "giraffe":        {"refs": ["126555"], "dial": "Grossular", "note": "Grossular stone dial variant, nicknamed giraffe"},
+    "banana":         {"refs": ["228238", "128238", "18038", "18238"], "dial": "Yellow", "note": "yellow lacquer Day-Date"},
+    "wimbledon green":{"refs": ["126334", "126331", "126333", "126238", "116334", "116331"], "dial": "Wimbledon", "note": "green-tone Wimbledon motif dial"},
+    "reverse panda":  {"refs": ["126500LN", "116500LN"], "dial": "Black"},
+    "egg blue":       {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue", "note": "robin's egg blue informal shorthand"}
   }
 }
