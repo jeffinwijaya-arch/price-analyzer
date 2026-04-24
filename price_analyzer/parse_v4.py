@@ -190,6 +190,8 @@ _PREMIUM_REF_MAP = {
         "116508", "126508",
         # Daytona YG leather strap variants (77 Paul Newman listings in wholesale)
         "116518", "126518LN",
+        # Daytona YG (116528) — Paul Newman variant confirmed in wholesale data
+        "116528",
     ],
     "Meteorite": [
         "116508", "116509", "116519", "116519LN",
@@ -209,6 +211,10 @@ _PREMIUM_REF_MAP = {
         "116589", "116589SACI",
         # Daytona RG/YG leather & additional Daytona variants (in dial_options)
         "116505", "116515", "116518", "116528",
+        # Rolex 1908 Everose (52509) — Meteorite confirmed in wholesale data
+        "52509",
+        # Sky-Dweller WG gem-set (326259) — Meteorite confirmed in wholesale data
+        "326259",
     ],
     "Wimbledon": [
         "126334", "126331", "126333", "126238",
@@ -225,6 +231,8 @@ _PREMIUM_REF_MAP = {
         "126300",
         # DJ36 steel — Wimbledon confirmed
         "126231",
+        # Legacy Datejust 36/34 (ref 15000 series) — Wimbledon confirmed in wholesale
+        "15000", "15010", "15050",
     ],
     "Ice Blue": [
         "228206", "128236", "127236", "228396TBR", "128396TBR",
@@ -286,6 +294,10 @@ _PREMIUM_REF_MAP = {
         "228345",
         # DD36 Everose — Aventurine confirmed in dial_options
         "128235",
+        # DD36 WG baguette and gem-set bracelet (confirmed wholesale + catalog)
+        "128395", "128158",
+        # YM42 gem-set platinum (wholesale confirmed)
+        "116506",
     ],
     "Grossular": [
         "126555", "118338", "118348",
@@ -302,6 +314,8 @@ _PREMIUM_REF_MAP = {
         "228236", "218239", "118239",
         # DD40 gem-set and stone-bracelet variants (confirmed wholesale)
         "228348", "228345", "228349", "228398",
+        # Legacy Datejust (15000 series) — Onyx confirmed in wholesale data
+        "15000", "15010",
     ],
     "Ombre": [
         "228235",
@@ -448,6 +462,14 @@ _PREMIUM_REF_MAP = {
         "126539", "128396",
         # Rolex Date / Sky-Dweller Pave
         "15210", "279171",
+        # Daytona Rainbow gem-set (116759SANR) — Pave confirmed
+        "116759SANR", "116759",
+        # Lady-Datejust gem-set (278243, 278344) — Pave confirmed in wholesale
+        "278243", "278344",
+        # Sky-Dweller WG gem-set (326259) — Pave in wholesale data
+        "326259",
+        # AP Royal Oak Offshore gem-set (15510ST) — Pave in wholesale data
+        "15510ST",
     ],
 }
 
@@ -731,7 +753,13 @@ def _premium_allowed(premium, ref):
     if allowed is None or ref is None:
         return True
     rc = _ref_clean(ref)
-    return any(rc.startswith(r.upper()) for r in allowed)
+    if any(rc.startswith(r.upper()) for r in allowed):
+        return True
+    # Override: if the ref's dial_options explicitly list this dial, trust the catalog.
+    # Prevents _PREMIUM_REF_MAP gaps from blocking legitimate dials (e.g. Aventurine on 128395).
+    if rc in _DIAL_OPTIONS and premium in _DIAL_OPTIONS[rc]:
+        return True
+    return False
 
 
 def normalize_dial(raw, ref=None):

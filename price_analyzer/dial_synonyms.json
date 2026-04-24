@@ -996,5 +996,143 @@
   "d-blue deepsea dial":          "D-Blue",
 
   "1908 ice blue":                "Ice Blue",
-  "rolex 1908 platinum":          "Ice Blue"
+  "rolex 1908 platinum":          "Ice Blue",
+
+  "_comment_batch_2026f": "--- Accuracy fixes: composite dials, missing variants, Lady-DJ gem-set ---",
+
+  "candy pink diamond":           "Candy Pink",
+  "candy pink baguette":          "Candy Pink",
+  "candy pink roman vi":          "Candy Pink",
+  "apple green diamond":          "Apple Green",
+  "apple green baguette":         "Apple Green",
+  "coral red diamond":            "Coral Red",
+
+  "olive roman vi":               "Olive Green",
+  "olive roman vi ix":            "Olive Green",
+  "olive roman vi ix diamond":    "Olive Green",
+  "olive diamond":                "Olive Green",
+  "olive palm diamond":           "Olive Green",
+  "olive baguette diamond":       "Olive Green",
+
+  "mint green roman vi":          "Mint Green",
+  "mint green roman vi ix":       "Mint Green",
+  "mint green stick roman vi":    "Mint Green",
+  "mint green stick roman vi ix": "Mint Green",
+
+  "blue roman vi":                "Blue",
+  "blue roman vi ix diamond":     "Blue",
+  "blue stick roman vi":          "Blue",
+
+  "green stick roman vi":         "Green",
+  "green stick roman vi ix":      "Green",
+  "green stick diamond":          "Green",
+
+  "pink roman vi ix":             "Pink",
+  "pink roman vi ix diamond":     "Pink",
+  "pink stick roman vi":          "Pink",
+  "pink stick roman vi ix":       "Pink",
+  "pink stick diamond":           "Pink",
+
+  "grey roman vi diamond":        "Grey",
+  "grey roman":                   "Grey",
+  "grey roman vi ix diamond":     "Grey",
+
+  "salmon diamond":               "Salmon",
+  "salmon roman vi ix":           "Salmon",
+  "salmon roman vi ix diamond":   "Salmon",
+
+  "aubergine diamond":            "Aubergine",
+  "aubergine roman vi ix":        "Aubergine",
+
+  "rhodium diamond":              "Rhodium",
+  "rhodium roman vi ix diamond":  "Rhodium",
+  "rhodium roman vi ix":          "Rhodium",
+
+  "brown diamond":                "Chocolate",
+  "brown roman vi":               "Chocolate",
+
+  "grey stick":                   "Grey",
+  "grey stick roman vi":          "Grey",
+  "grey stick roman vi ix":       "Grey",
+
+  "slate stick":                  "Slate",
+  "grey stick diamond":           "Grey",
+
+  "chocolate stick diamond":      "Chocolate",
+
+  "green stick roman":            "Green",
+  "mint green diamond":           "Mint Green",
+
+  "silver roman vi ix diamond":   "Silver",
+  "silver stick roman vi ix":     "Silver",
+  "silver stick diamond":         "Silver",
+
+  "white roman vi ix":            "White",
+  "white roman vi ix diamond":    "White",
+  "white stick diamond":          "White",
+
+  "black roman vi ix diamond":    "Black",
+  "black stick roman vi":         "Black",
+  "black stick roman vi ix":      "Black",
+
+  "champagne roman vi ix diamond":"Champagne",
+  "champagne stick roman vi ix":  "Champagne",
+
+  "mop roman vi ix":              "MOP",
+  "mop roman vi ix diamond":      "MOP",
+  "mop stick roman vi":           "MOP",
+  "white mop roman vi":           "MOP",
+
+  "blue stick diamond":           "Blue",
+  "blue roman vi ix":             "Blue",
+
+  "ombré slate":                  "Ombre Slate",
+
+  "paul newman daytona":          "Paul Newman",
+  "newman daytona":               "Paul Newman",
+
+  "meteorite gmt":                "Meteorite",
+  "meteorite pepsi":              "Meteorite",
+
+  "wimbledon green dj":           "Wimbledon",
+  "wimbledon dj":                 "Wimbledon",
+  "wimbledon datejust":           "Wimbledon",
+
+  "grey roman":                   "Grey",
+  "grey roman vi":                "Grey",
+
+  "pavé dial":                    "Pave",
+  "full pavé":                    "Pave",
+
+  "bright green lacquer":         "Bright Green",
+  "bright green dial":            "Bright Green",
+
+  "ice blue roman vi ix":         "Ice Blue",
+  "ice blue stick roman vi":      "Ice Blue",
+
+  "chocolate roman vi ix diamond":"Chocolate",
+  "chocolate roman vi ix":        "Chocolate",
+
+  "pink baguette diamond":        "Pink",
+  "sundust roman vi":             "Sundust",
+
+  "black baguette diamond":       "Black",
+
+  "olive palm diamond":           "Olive Green",
+  "olive palm roman vi":          "Olive Green",
+  "palm olive diamond":           "Olive Green",
+
+  "gold":                         "Champagne",
+  "gold dial":                    "Champagne",
+  "champagne gold dial":          "Champagne",
+  "yellow gold dial":             "Champagne",
+
+  "green stick":                  "Green",
+  "green stick roman vi":         "Green",
+  "mint green roman vi":          "Mint Green",
+  "aubergine roman vi ix":        "Aubergine",
+  "aubergine roman vi":           "Aubergine",
+
+  "ombre":                        "Ombre",
+  "ombrã©":                       "Ombre"
 }
