@@ -385,6 +385,14 @@
     "Grey Stick Diamond", "Silver Stick", "Champagne", "White", "Black"
   ],
 
+  "116619LB": ["Blue"],
+  "116619":   ["Blue"],
+
+  "116576": ["Pave", "Ice Blue", "Rainbow"],
+  "116598": ["Pave", "Tiger Eye", "Rainbow"],
+
+  "118338": ["Grossular", "Green", "Black", "Champagne"],
+
   "126281":  ["Grey Diamond", "White Diamond", "Champagne Diamond", "Blue Diamond", "Silver Diamond"],
   "126283":  ["Champagne Diamond", "Blue Diamond", "White Diamond", "Silver Diamond"],
   "126284":  ["Ice Blue Roman VI", "Pink Roman VI", "Grey Diamond", "White"],

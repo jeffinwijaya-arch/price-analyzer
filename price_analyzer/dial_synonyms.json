@@ -573,5 +573,93 @@
   "slate ym":           "Slate",
 
   "jubilee motif dial": "Jubilee Motif",
-  "wimbledon green motif": "Wimbledon"
+  "wimbledon green motif": "Wimbledon",
+
+  "_comment_new_2024": "--- additions: multilingual, informal aliases, new dealer shorthands ---",
+
+  "celeste":              "Tiffany Blue",
+  "tiffany celeste":      "Tiffany Blue",
+  "azzurro chiaro":       "Tiffany Blue",
+  "bleu turquoise":       "Tiffany Blue",
+  "azul tiffany":         "Tiffany Blue",
+  "light tiffany blue":   "Tiffany Blue",
+
+  "turchese":             "Turquoise Stone",
+  "teal":                 "Turquoise Stone",
+  "aqua":                 "Turquoise Stone",
+  "aqua blue":            "Turquoise Stone",
+  "aqua green":           "Turquoise Stone",
+
+  "powder blue":          "Blue",
+  "baby blue":            "Blue",
+  "pastel blue":          "Blue",
+  "pale blue":            "Blue",
+  "sky blue":             "Blue",
+
+  "smurf":                "Blue",
+  "smurf blue":           "Blue",
+
+  "lacquer dial":         "Stella",
+  "vintage lacquer":      "Stella",
+  "lacquer stella":       "Stella",
+
+  "jade":                 "Green",
+  "jade green":           "Green",
+  "emerald":              "Green",
+  "emerald green":        "Green",
+  "forest dial":          "Green",
+
+  "verte":                "Green",
+  "vert":                 "Green",
+  "noire":                "Black",
+  "bleue":                "Blue",
+  "grise":                "Grey",
+  "argent":               "Silver",
+  "rouge dial":           "Red",
+  "blanche":              "White",
+
+  "champagne sunray":     "Champagne",
+  "blue sunray":          "Blue",
+  "black sunray":         "Black",
+  "green sunray":         "Green",
+  "silver sunray":        "Silver",
+  "white sunray":         "White",
+
+  "blue arabic":          "Blue",
+  "black arabic":         "Black",
+  "silver arabic":        "Silver",
+  "champagne arabic":     "Champagne",
+  "white arabic":         "White",
+  "chocolate arabic":     "Chocolate",
+
+  "blue roman":           "Blue",
+  "black roman":          "Black",
+  "silver roman":         "Silver",
+  "white roman":          "White",
+  "champagne roman":      "Champagne",
+
+  "green lacquer":        "Green",
+  "blue lacquer":         "Blue",
+  "black lacquer":        "Black",
+
+  "intense blue":         "Bright Blue",
+  "deep blue dial":       "Blue",
+  "midnight blue":        "Blue",
+  "ocean blue":           "Blue",
+
+  "rich green":           "Green",
+  "deep green":           "Green",
+  "bottle green":         "Green",
+
+  "stone dial":           "Meteorite",
+  "space rock":           "Meteorite",
+  "granite":              "Meteorite",
+
+  "pink mop":             "MOP",
+  "white mop":            "MOP",
+  "blue mop":             "MOP",
+
+  "full pave":            "Pave",
+  "all diamond":          "Pave",
+  "diamond paved":        "Pave"
 }

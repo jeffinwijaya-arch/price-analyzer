@@ -463,6 +463,13 @@
     "banana":         {"refs": ["228238", "128238", "18038", "18238"], "dial": "Yellow", "note": "yellow lacquer Day-Date"},
     "wimbledon green":{"refs": ["126334", "126331", "126333", "126238", "116334", "116331"], "dial": "Wimbledon", "note": "green-tone Wimbledon motif dial"},
     "reverse panda":  {"refs": ["126500LN", "116500LN"], "dial": "Black"},
-    "egg blue":       {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue", "note": "robin's egg blue informal shorthand"}
+    "egg blue":       {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue", "note": "robin's egg blue informal shorthand"},
+    "smurf":          {"refs": ["116619LB", "126619LB"], "dial": "Blue", "note": "White-gold Submariner blue-dial nickname"},
+    "celeste":        {"refs": ["124300", "126000", "277200", "279160", "134300"], "dial": "Tiffany Blue", "note": "Italian/Spanish informal for Tiffany Blue on OP models"},
+    "teal":           {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue", "note": "casual Tiffany Blue shorthand; Turquoise Stone for DD refs"},
+    "aqua":           {"refs": ["228238", "228345", "128238", "128345"], "dial": "Turquoise Stone", "note": "informal for Turquoise Stone on DD models"},
+    "jade":           {"refs": ["228235", "228238", "126555"], "dial": "Green", "note": "informal green stone dial description"},
+    "light blue":     {"refs": ["124300", "126000", "277200", "279160"], "dial": "Tiffany Blue", "note": "most common informal name for OP Tiffany Blue in private listings"},
+    "powder blue":    {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue", "note": "informal Tiffany Blue alias used by private/non-expert sellers"}
   }
 }

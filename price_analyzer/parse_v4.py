@@ -53,6 +53,7 @@ FIXED_DIAL = {
     "126618LB":   "Blue",
     # Submariner Date White Gold
     "126619LB":   "Blue",
+    "116619LB":   "Blue",   # Legacy WG Submariner Date (predecessor to 126619LB)
     # Legacy Submariner
     "116610LN":   "Black",
     "116610LV":   "Green",   # Hulk: green dial + green bezel (NOT Kermit)
@@ -434,6 +435,15 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\begg\s*blue\b",                 re.I),      "Tiffany Blue",     85),
     # Wimbledon — sellers sometimes write "wimbledon green" or "green wimbledon"
     (re.compile(r"\bwimbledon\s*green\b|\bgreen\s*wimbledon\b", re.I), "Wimbledon", 95),
+    # Informal Tiffany Blue descriptors — widely used in European/Asian dealer listings.
+    # Priority 70-80 → eff ≥ 0.60 for OP refs (Tiffany Blue allowed) → returns Tiffany Blue.
+    # For non-OP refs eff = 25-35 (<0.60 threshold) → falls through to Stage 5 → plain Blue.
+    (re.compile(r"\blight\s*blue\b|\bpowder\s*blue\b|\bbaby\s*blue\b|\bpastel\s*blue\b", re.I), "Tiffany Blue", 70),
+    # "celeste" — Italian/Spanish for "sky/heavenly blue"; standard term in EU market for OP Tiffany
+    (re.compile(r"\bceleste\b",                                 re.I),      "Tiffany Blue",    80),
+    # "teal" / "aqua" — casual descriptors used by private sellers for the OP Tiffany colour;
+    # also used for Turquoise Stone (DD refs) which Stage 5 catches after Stage 3 rejects here.
+    (re.compile(r"\bteal\b|\baqua(?:\s*blue)?\b",              re.I),      "Tiffany Blue",    65),
 ]
 
 # ---------------------------------------------------------------------------
@@ -484,6 +494,13 @@ _COLOR_PATTERNS = [
     (re.compile(r"\blavender\b|\blilac\b",                         re.I), "Lavender"),
     (re.compile(r"\bburgund(?:y)?\b",                              re.I), "Burgundy"),
     (re.compile(r"\bazzurro\b",                                    re.I), "Bright Blue"),
+    # Teal / aqua → Turquoise Stone for DD/non-OP refs (Stage 3 intercepts for OP as Tiffany Blue)
+    (re.compile(r"\bteal\b|\baqua(?:\s*blue)?\b",               re.I), "Turquoise Stone"),
+    # Jade — informal for green dials (Day-Date stone and lacquer)
+    (re.compile(r"\bjade(?:\s*green)?\b",                       re.I), "Green"),
+    # Celeste — Italian/Spanish for "sky blue"; Stage 3 intercepts for OP refs as Tiffany Blue;
+    # for all other refs (DD, DJ, etc.) falls here as plain Blue.
+    (re.compile(r"\bceleste\b",                                 re.I), "Blue"),
 ]
 
 # Looks for a colour token in the neighbourhood of the word "dial" / "colour"
@@ -680,6 +697,9 @@ def extract_dial(text, ref=None):
             normalised = normalize_dial(stripped, ref)
             known = stripped in _DIAL_SYNONYMS or normalised in _ALL_COLOR_CANONICALS
             if normalised and known:
+                # Guard: premium dial not catalogued for this ref → skip to next match
+                if normalised in _PREMIUM_REF_MAP and rc and not _premium_allowed(normalised, rc):
+                    continue
                 is_p = _check_premium(normalised, ref)
                 result.update({
                     "dial":         normalised,
