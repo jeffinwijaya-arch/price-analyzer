@@ -135,6 +135,22 @@ _PREMIUM_REF_MAP = {
         "134300",
         # DD36 YG — baguette/stone variants
         "118208", "118238",
+        # OP34 / OP28 secondary sizes (confirmed secondary market)
+        "124200", "276200", "15210", "52508", "52509",
+        # Lady-Datejust Tiffany Blue (confirmed catalog)
+        "279135", "279136",
+        # Daytona WG — Tiffany x Rolex collaboration / dealer-commissioned
+        "116509", "116519", "116519LN", "126509", "126519", "126519LN",
+        # Daytona YG Tiffany
+        "126508", "116508",
+        # Daytona RG/YG leather strap Tiffany
+        "116505", "116515", "116518",
+        # Daytona WG newer generation
+        "126538", "126535", "126506",
+        # Daytona WG Pave (ultra-rare)
+        "116576",
+        # Sky-Dweller Tiffany (confirmed secondary market)
+        "336238", "336935", "326934", "326935",
     ],
     "Paul Newman": [
         "6239", "6241", "6262", "6263", "6264", "6265",
@@ -208,6 +224,12 @@ _PREMIUM_REF_MAP = {
     ],
     "Grossular": [
         "126555", "118338", "118348",
+    ],
+    # Carnelian — reddish-brown semi-precious stone dial (Day-Date 36/40)
+    "Carnelian": [
+        "128238", "128239", "128235", "128345", "128398",
+        "228238", "228235", "228239", "228349", "228345",
+        "118238", "118235",
     ],
     "Onyx": [
         "228235", "228238", "228239",
@@ -393,6 +415,9 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bsodalite\b",                   re.I),      "Sodalite",        100),
     (re.compile(r"\bmalachite\b",                  re.I),      "Malachite",       100),
     (re.compile(r"\bopal\b",                       re.I),      "Opal",            100),
+    # Carnelian — reddish semi-precious stone dial; Day-Date exclusive
+    (re.compile(r"\bcarnelian\b",                  re.I),      "Carnelian",       100),
+    (re.compile(r"\bcarn\b",                       re.I),      "Carnelian",        72),
     # Bright Green lacquer (Day-Date 40 special)
     (re.compile(r"\bbright\s*green\b|\bavocado\b", re.I),      "Bright Green",     90),
     # Rainbow (Daytona diamond bezel)
@@ -494,6 +519,7 @@ _COLOR_PATTERNS = [
     (re.compile(r"\blavender\b|\blilac\b",                         re.I), "Lavender"),
     (re.compile(r"\bburgund(?:y)?\b",                              re.I), "Burgundy"),
     (re.compile(r"\bazzurro\b",                                    re.I), "Bright Blue"),
+    (re.compile(r"\bcarnelian\b",                                  re.I), "Carnelian"),
     # Teal / aqua → Turquoise Stone for DD/non-OP refs (Stage 3 intercepts for OP as Tiffany Blue)
     (re.compile(r"\bteal\b|\baqua(?:\s*blue)?\b",               re.I), "Turquoise Stone"),
     # Jade — informal for green dials (Day-Date stone and lacquer)
@@ -538,9 +564,9 @@ _COMPOSITE_DIAL_RE = re.compile(
     r"\b(black|white|silver|blue|green|red|pink|champagne|chocolate|gr[ae]y|gold|"
     r"brown|olive|salmon|sundust|aubergine|ivory|yellow|mint\s+green|olive\s+green|"
     r"bright\s+blue|coral|turquoise|meteorite|lavender|beige|orange|tiffany\s+blue|"
-    r"ice\s+blue|bright\s+green)"
+    r"ice\s+blue|bright\s+green|rhodium|carnelian)"
     r"\s+(baguette\s+diamond|stick\s+roman\s+vi\s+ix\s+diamond|stick\s+diamond|"
-    r"roman\s+vi\s+ix\s+diamond|roman\s+vi|roman|baguette|stick|diamond|"
+    r"roman\s+vi\s+ix\s+diamond|roman\s+vi\s+ix|roman\s+vi|roman|baguette|stick|diamond|"
     r"pav[e\xe9\xc9]|mop|omber|ombr[e\xe9])\b",
     re.I,
 )

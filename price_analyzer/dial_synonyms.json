@@ -661,5 +661,134 @@
 
   "full pave":            "Pave",
   "all diamond":          "Pave",
-  "diamond paved":        "Pave"
+  "diamond paved":        "Pave",
+
+  "_comment_batch_2025": "--- batch 2 additions: composites, new stone dials, dealer codes ---",
+
+  "puzzles":              "Puzzle",
+  "puzzles dial":         "Puzzle",
+
+  "carnelian":            "Carnelian",
+  "carnelian stone":      "Carnelian",
+  "carnelian dial":       "Carnelian",
+  "carnelian red":        "Carnelian",
+  "carn":                 "Carnelian",
+
+  "yml":                  "Yellow",
+
+  "blue diamond":         "Blue",
+  "blue roman vi":        "Blue",
+  "blue roman vi ix":     "Blue",
+  "blue baguette stick":  "Blue",
+
+  "chocolate roman vi":           "Chocolate",
+  "chocolate roman vi ix":        "Chocolate",
+  "chocolate roman vi ix diamond":"Chocolate",
+  "chocolate roman":              "Chocolate",
+  "chocolate diamond":            "Chocolate",
+  "chocolate baguette":           "Chocolate",
+
+  "grey stick":                   "Grey",
+  "grey roman vi ix":             "Grey",
+  "grey roman vi ix diamond":     "Grey",
+  "grey roman":                   "Grey",
+  "grey stick diamond":           "Grey",
+  "gray stick":                   "Grey",
+  "gray roman vi ix":             "Grey",
+  "gray roman vi ix diamond":     "Grey",
+  "gray stick diamond":           "Grey",
+
+  "pink roman":                   "Pink",
+  "pink stick":                   "Pink",
+  "pink stick diamond":           "Pink",
+  "pink roman vi ix diamond":     "Pink",
+  "pink baguette":                "Pink",
+
+  "silver roman vi":              "Silver",
+  "silver roman vi ix":           "Silver",
+  "silver roman vi ix diamond":   "Silver",
+
+  "white roman vi":               "White",
+  "white roman vi ix":            "White",
+  "white roman vi ix diamond":    "White",
+
+  "aubergine diamond":            "Aubergine",
+  "aubergine roman vi ix":        "Aubergine",
+  "aubergine roman vi ix diamond":"Aubergine",
+
+  "green roman vi ix":            "Green",
+  "green roman vi ix diamond":    "Green",
+  "green stick diamond":          "Green",
+  "green stick":                  "Green",
+  "green beach":                  "Turquoise Stone",
+
+  "sundust baguette":             "Sundust",
+  "sundust diamond":              "Sundust",
+
+  "red diamond":                  "Red",
+
+  "mint green diamond":           "Mint Green",
+  "mint green stick diamond":     "Mint Green",
+  "mint green baguette":          "Mint Green",
+  "mint green stick":             "Mint Green",
+
+  "champagne stick diamond":      "Champagne",
+  "champagne roman vi":           "Champagne",
+  "champagne baguette":           "Champagne",
+
+  "rhodium diamond":              "Rhodium",
+  "rhodium roman vi":             "Rhodium",
+  "rhodium stick":                "Rhodium",
+
+  "black roman vi":               "Black",
+  "black roman vi ix":            "Black",
+
+  "chocolate stick":              "Chocolate",
+
+  "mop baguette":                 "MOP",
+
+  "meteorite baguette":           "Meteorite",
+  "meteorite roman vi ix":        "Meteorite",
+
+  "med blue":                     "Blue",
+  "medium blue":                  "Blue",
+
+  "olive roman vi":               "Olive Green",
+  "olive roman vi ix":            "Olive Green",
+  "olive baguette":               "Olive Green",
+
+  "champagne roman vi ix":        "Champagne",
+  "champagne roman vi ix diamond":"Champagne",
+
+  "turquoise roman vi ix diamond":"Turquoise Stone",
+  "turquoise roman vi ix":        "Turquoise Stone",
+  "turquoise roman vi":           "Turquoise Stone",
+
+  "ice blue diamond":             "Ice Blue",
+  "ice blue roman vi":            "Ice Blue",
+  "ice blue roman vi ix diamond": "Ice Blue Baguette",
+
+  "meteorite stick":              "Meteorite",
+  "meteorite diamond":            "Meteorite",
+
+  "mop roman vi":                 "MOP",
+  "mop stick":                    "MOP",
+  "mop diamond":                  "MOP",
+
+  "salmon roman vi":              "Salmon",
+  "salmon stick":                 "Salmon",
+  "salmon diamond":               "Salmon",
+
+  "orange roman vi":              "Orange",
+  "orange diamond":               "Orange",
+  "orange baguette":              "Orange",
+
+  "lavender roman vi":            "Lavender",
+  "lavender diamond":             "Lavender",
+
+  "opal white":                   "Opal",
+  "opal mop":                     "MOP",
+
+  "green pavé":                   "Green",
+  "green pave dial":              "Green"
 }

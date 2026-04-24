@@ -221,7 +221,7 @@
       "size_mm": 40,
       "material": "Everose Gold",
       "nicknames": ["dd40 rg", "dd40 everose", "228235"],
-      "premium_dials": ["Ombre", "Ombre Slate", "Eisenkiesel", "Meteorite", "MOP", "Pave", "Celebration", "Puzzle"]
+      "premium_dials": ["Ombre", "Ombre Slate", "Eisenkiesel", "Meteorite", "MOP", "Pave", "Celebration", "Puzzle", "Carnelian"]
     },
     "Day-Date 40 Yellow Gold": {
       "refs": ["228238", "228348"],
@@ -229,7 +229,7 @@
       "size_mm": 40,
       "material": "Yellow Gold",
       "nicknames": ["dd40 yg", "228238", "228348"],
-      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli", "Celebration", "Puzzle"]
+      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli", "Celebration", "Puzzle", "Carnelian"]
     },
     "Day-Date 40 RG Stone Dials": {
       "refs": ["228345"],
@@ -264,12 +264,12 @@
       "premium_dials": ["Ice Blue"]
     },
     "Day-Date 36 Yellow Gold": {
-      "refs": ["128238"],
+      "refs": ["128238", "128398"],
       "series": "DD36",
       "size_mm": 36,
       "material": "Yellow Gold",
-      "nicknames": ["dd36 yg", "128238"],
-      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli"]
+      "nicknames": ["dd36 yg", "128238", "128398"],
+      "premium_dials": ["Turquoise Stone", "Tiger Eye", "Onyx", "Meteorite", "Lapis Lazuli", "Carnelian", "Malachite", "Green Ombré"]
     },
     "Day-Date 36 Everose": {
       "refs": ["128235"],
@@ -277,7 +277,7 @@
       "size_mm": 36,
       "material": "Everose Gold",
       "nicknames": ["dd36 rg", "128235"],
-      "premium_dials": ["MOP", "Pave", "Meteorite"]
+      "premium_dials": ["MOP", "Pave", "Meteorite", "Carnelian", "Aventurine"]
     },
     "Day-Date 36 White Gold": {
       "refs": ["128239"],
@@ -285,7 +285,7 @@
       "size_mm": 36,
       "material": "White Gold",
       "nicknames": ["dd36 wg", "128239"],
-      "premium_dials": ["MOP", "Pave", "Onyx"]
+      "premium_dials": ["MOP", "Pave", "Onyx", "Carnelian"]
     },
     "Day-Date 36 Platinum": {
       "refs": ["128236", "127236"],
@@ -361,6 +361,110 @@
       "material": "White Gold",
       "nicknames": ["daytona wg sapphire", "116589"],
       "premium_dials": ["Tiger Eye", "Sodalite", "MOP", "Meteorite"]
+    },
+    "Daytona YG Leather": {
+      "refs": ["116518", "126518LN"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "Yellow Gold",
+      "nicknames": ["daytona yg leather", "116518"],
+      "premium_dials": ["Tiger Eye", "Paul Newman", "Meteorite", "MOP", "Tiffany Blue"]
+    },
+    "Daytona RG Leather": {
+      "refs": ["116515", "126515LN"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "Everose Gold",
+      "nicknames": ["daytona rg leather", "116515"],
+      "premium_dials": ["Grossular", "Meteorite", "MOP", "Tiffany Blue"]
+    },
+    "Daytona YG Diamond": {
+      "refs": ["116588"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "Yellow Gold",
+      "nicknames": ["daytona yg diamond", "116588"],
+      "premium_dials": ["Tiger Eye", "MOP", "Pavé"]
+    },
+    "Daytona WG Diamond": {
+      "refs": ["116579"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["daytona wg diamond", "116579"],
+      "premium_dials": ["MOP", "Pavé"]
+    },
+    "Daytona YG Pave": {
+      "refs": ["116578", "116578SACO"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "Yellow Gold",
+      "nicknames": ["daytona yg pave", "116578"],
+      "premium_dials": ["Pavé", "Green Pavé"]
+    },
+    "Daytona WG Pave": {
+      "refs": ["116576", "126576"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["daytona wg pave", "116576"],
+      "premium_dials": ["Pavé", "Ice Blue", "Rainbow", "Tiffany Blue"]
+    },
+    "Daytona Platinum": {
+      "refs": ["126506"],
+      "series": "Daytona",
+      "size_mm": 40,
+      "material": "Platinum",
+      "nicknames": ["daytona plat", "126506"],
+      "premium_dials": ["Ice Blue", "Pavé"]
+    },
+    "Yacht-Master 40 WG": {
+      "refs": ["226679"],
+      "series": "YM",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["ym40 wg", "226679"],
+      "premium_dials": ["MOP", "Pavé", "Diamond"]
+    },
+    "Yacht-Master 37 HJ": {
+      "refs": ["226668"],
+      "series": "YM",
+      "size_mm": 37,
+      "material": "White Gold",
+      "nicknames": ["ym37 wg hj", "226668"],
+      "premium_dials": ["Pavé", "Black Diamond"]
+    },
+    "GMT-Master II Full Diamond": {
+      "refs": ["126755"],
+      "series": "GMT",
+      "size_mm": 40,
+      "material": "Yellow Gold",
+      "nicknames": ["gmt diamond", "126755"],
+      "premium_dials": ["MOP", "Pavé", "Diamond"]
+    },
+    "GMT-Master II WG Pave": {
+      "refs": ["116758", "126758"],
+      "series": "GMT",
+      "size_mm": 40,
+      "material": "White Gold",
+      "nicknames": ["gmt wg pave", "116758"],
+      "premium_dials": ["Pavé", "Green Pavé"]
+    },
+    "Day-Date II YG": {
+      "refs": ["218238"],
+      "series": "DD40",
+      "size_mm": 41,
+      "material": "Yellow Gold",
+      "nicknames": ["dd2 yg", "218238"],
+      "premium_dials": ["Ice Blue Baguette", "Champagne Baguette", "Pavé"]
+    },
+    "Day-Date II Platinum": {
+      "refs": ["218206"],
+      "series": "DD40",
+      "size_mm": 41,
+      "material": "Platinum",
+      "nicknames": ["dd2 plat", "218206"],
+      "premium_dials": ["Ice Blue", "Ice Blue Baguette"]
     }
   },
 
@@ -431,7 +535,23 @@
     "278288": "Datejust 31",
     "128158": "Day-Date 36 Special YG",
     "116589": "Daytona WG Sapphire",
-    "116589SACI": "Daytona WG Sapphire"
+    "116589SACI": "Daytona WG Sapphire",
+    "116518": "Daytona YG Leather",
+    "126518LN": "Daytona YG Leather",
+    "116515": "Daytona RG Leather",
+    "116588": "Daytona YG Diamond",
+    "116579": "Daytona WG Diamond",
+    "116578": "Daytona YG Pave",
+    "116578SACO": "Daytona YG Pave",
+    "116576": "Daytona WG Pave",
+    "126506": "Daytona Platinum",
+    "226679": "Yacht-Master 40 WG",
+    "226668": "Yacht-Master 37 HJ",
+    "126755": "GMT-Master II Full Diamond",
+    "116758": "GMT-Master II WG Pave",
+    "218238": "Day-Date II YG",
+    "218206": "Day-Date II Platinum",
+    "128398": "Day-Date 36 Yellow Gold"
   },
 
   "nicknames": {
@@ -470,6 +590,11 @@
     "aqua":           {"refs": ["228238", "228345", "128238", "128345"], "dial": "Turquoise Stone", "note": "informal for Turquoise Stone on DD models"},
     "jade":           {"refs": ["228235", "228238", "126555"], "dial": "Green", "note": "informal green stone dial description"},
     "light blue":     {"refs": ["124300", "126000", "277200", "279160"], "dial": "Tiffany Blue", "note": "most common informal name for OP Tiffany Blue in private listings"},
-    "powder blue":    {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue", "note": "informal Tiffany Blue alias used by private/non-expert sellers"}
+    "powder blue":    {"refs": ["124300", "126000", "277200"], "dial": "Tiffany Blue", "note": "informal Tiffany Blue alias used by private/non-expert sellers"},
+    "carnelian":      {"refs": ["128238", "128239", "128235", "128398", "228238", "228235", "228239", "228349", "228345", "118238"], "dial": "Carnelian", "note": "reddish semi-precious stone dial exclusive to Day-Date models"},
+    "puzzles":        {"refs": ["128238", "128239", "128235", "228238", "228235", "228239", "228349"], "dial": "Puzzle", "note": "plural variant of Puzzle special dial"},
+    "yml":            {"refs": ["124300", "126000", "126508", "116518", "228238"], "dial": "Yellow", "note": "dealer shorthand, likely Yellow dial (HK/Asia market)"},
+    "green pave":     {"refs": ["116578", "116578SACO", "116595", "116759", "116508", "116505", "126538"], "dial": "Green Pavé", "note": "green-toned dial with pavé/diamond markers"},
+    "green pavé":     {"refs": ["116578", "116578SACO", "116595", "116759", "116508", "116505", "126538"], "dial": "Green Pavé", "note": "green-toned dial with pavé/diamond markers"}
   }
 }
