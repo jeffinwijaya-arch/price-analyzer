@@ -63,6 +63,7 @@ FIXED_DIAL = {
     # Sea-Dweller / Deepsea (standard black; D-Blue is a premium override)
     "126600":     "Black",
     "116660":     "Black",
+    "126660":     "Black",   # Modern Deepsea (D-Blue triggers premium_override at Stage 1)
     # GMT-Master II — dial is always Black unless noted otherwise
     "126710BLNR": "Black",   # Batman
     "126710BLRO": "Black",   # Pepsi steel
@@ -96,6 +97,11 @@ FIXED_DIAL = {
     # "126621" and "116621" handled by color scan + dial_options
     # Yacht-Master 42 Everose — exactly one dial (Sundust)
     "126595":     "Sundust",
+    # Yacht-Master 40 Everose — exactly one dial (Chocolate)
+    "126655":     "Chocolate",
+    # Day-Date TBR gem-set bracelet variants — Ice Blue only
+    "228396TBR":  "Ice Blue",
+    "128396TBR":  "Ice Blue",
     # Daytona WG Sapphire 2020s generation — one catalogued dial
     "126579":     "MOP",
     "126589":     "MOP",
@@ -130,7 +136,7 @@ _PREMIUM_REF_MAP = {
         "118208", "118238",
     ],
     "Paul Newman": [
-        "6239", "6241", "6263", "6265",
+        "6239", "6241", "6262", "6263", "6264", "6265",
         "116508", "126508",
     ],
     "Meteorite": [
@@ -329,6 +335,8 @@ _PREMIUM_PATTERNS = [
     # "tco" — shorthand without ampersand used in HK/Asia dealer listings
     (re.compile(r"\btco\b",                        re.I),      "Tiffany Blue",     90),
     (re.compile(r"\btiff(?:any)?(?:\s+blue)?\b",   re.I),      "Tiffany Blue",    100),
+    # Tiffany Blue typo variants — dealer manual-input errors; common in secondary market
+    (re.compile(r"\btifffany\b|\btifanny\b|\btifany\b", re.I), "Tiffany Blue",    90),
     (re.compile(r"\bturquoise\s+blue\b",           re.I),      "Tiffany Blue",    100),
     (re.compile(r"\brobin'?s?\s+egg\s*blue?\b",    re.I),      "Tiffany Blue",    100),
     (re.compile(r"\bofficial\s+tiff(?:any)?\b",    re.I),      "Tiffany Blue",    100),
@@ -393,6 +401,8 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bapple\s*green\b",              re.I),      "Apple Green",     100),
     (re.compile(r"\bcoral\s+red\b",                re.I),      "Coral Red",       100),
     (re.compile(r"\bcoral\b|\bcherry\s+red\b",     re.I),      "Coral Red",        75),
+    # "candy" alone → Candy Pink shorthand (OP special); non-OP refs get -45 penalty → below threshold
+    (re.compile(r"\bcandy\b",                      re.I),      "Candy Pink",       65),
     # Pave / MOP
     (re.compile(r"\bpav[eE\xe9]\b",               re.I),      "Pave",            100),
     (re.compile(r"\bmother\s+of\s+pearl\b",        re.I),      "MOP",             100),
@@ -763,9 +773,13 @@ def extract_dial(text, ref=None):
         # Guard: 'sun' must not resolve to Sundust when 'sunray'/'sunburst' is present
         if raw_key == "sun" and (_is_sea_dweller or _has_sunray):
             continue
-        # Guard: 'mint' must not resolve to Mint Green when used as a condition descriptor
+        # Guard: 'mint' must not resolve to Mint Green when used as a condition descriptor.
+        # Covers: "mint condition", "near mint", "almost mint", "mint 9/10", "mint-like new"
         if raw_key == "mint" and re.search(
-            r"\bmint\s+(?:condition|unworn|state|box|set|complete)\b", text_lower
+            r"\bmint\s+(?:condition|unworn|state|box|set|complete)\b"
+            r"|\b(?:near|almost|virtually|essentially)\s+mint\b"
+            r"|\bmint[\s\-]+(?:like\s*new|\d)",
+            text_lower
         ):
             continue
         if not re.search(r"\b" + re.escape(raw_key) + r"\b", text_lower):

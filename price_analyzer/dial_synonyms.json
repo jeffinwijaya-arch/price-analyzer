@@ -260,8 +260,6 @@
 
   "celebration dial":   "Celebration",
   "puzzle dial":        "Puzzle",
-  "jubilee motif":      "Jubilee Motif",
-  "jubilee motif dial": "Jubilee Motif",
   "jubilee dial":       "Jubilee Motif",
 
   "skeleton":           "Skeletonized",
@@ -390,8 +388,6 @@
   "light blue tiffany": "Tiffany Blue",
   "tiffany light blue": "Tiffany Blue",
 
-  "jubilee motif dial": "Jubilee Motif",
-
   "celebration motif":  "Celebration",
   "puzzle motif":       "Puzzle",
 
@@ -455,11 +451,11 @@
   "black stick":        "Black",
   "white stick":        "White",
 
-  "green pavé":         "Pavé",
-  "green pave":         "Pavé",
-  "black pavé":         "Pavé",
-  "black pave":         "Pavé",
-  "white pavé":         "Pavé",
+  "green pavé":         "Pave",
+  "green pave":         "Pave",
+  "black pavé":         "Pave",
+  "black pave":         "Pave",
+  "white pavé":         "Pave",
 
   "salmon baguette":    "Salmon",
   "blue baguette":      "Blue",
@@ -523,5 +519,59 @@
   "daytona rp":         "Reverse Panda",
 
   "ombre green":        "Green Ombré",
-  "ombre red":          "Red Ombré"
+  "ombre red":          "Red Ombré",
+
+  "candy":              "Candy Pink",
+  "candy op":           "Candy Pink",
+  "candy pink op":      "Candy Pink",
+  "apple green op":     "Apple Green",
+  "coral red op":       "Coral Red",
+
+  "tifany":             "Tiffany Blue",
+  "tifanny":            "Tiffany Blue",
+  "tifany blue":        "Tiffany Blue",
+  "tifanny blue":       "Tiffany Blue",
+  "tifffany":           "Tiffany Blue",
+  "tifffany blue":      "Tiffany Blue",
+  "tiffany egg blue":   "Tiffany Blue",
+  "tco dial":           "Tiffany Blue",
+
+  "wim motif":          "Wimbledon",
+  "wimb motif":         "Wimbledon",
+  "wimbledon motif dial":"Wimbledon",
+
+  "sunray champagne":   "Champagne",
+  "sunburst champagne": "Champagne",
+  "sunray chocolate":   "Chocolate",
+  "sunburst chocolate": "Chocolate",
+  "sunray pink":        "Pink",
+  "sunburst pink":      "Pink",
+  "sunray olive":       "Olive Green",
+  "sunburst olive":     "Olive Green",
+  "sunray salmon":      "Salmon",
+  "sunburst salmon":    "Salmon",
+  "sunray sundust":     "Sundust",
+  "sunburst sundust":   "Sundust",
+  "sunray mint green":  "Mint Green",
+  "sunburst mint green":"Mint Green",
+  "sunray red":         "Red",
+  "sunburst red":       "Red",
+
+  "mint green dial":    "Mint Green",
+  "olive green dial":   "Olive Green",
+  "palm green dial":    "Palm Green",
+  "bright blue dial":   "Bright Blue",
+  "rhodium dial":       "Rhodium",
+  "slate dial":         "Slate",
+  "sundust dial":       "Sundust",
+
+  "d-blue deepsea":     "D-Blue",
+  "deepsea d-blue":     "D-Blue",
+  "deep blue":          "D-Blue",
+
+  "chocolate ym":       "Chocolate",
+  "slate ym":           "Slate",
+
+  "jubilee motif dial": "Jubilee Motif",
+  "wimbledon green motif": "Wimbledon"
 }

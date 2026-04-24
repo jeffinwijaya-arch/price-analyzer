@@ -109,6 +109,15 @@
   "126509": ["Black", "White", "Panda", "Meteorite", "Champagne"],
   "126519": ["Black", "White", "Meteorite", "Champagne"],
   "126519LN": ["Black", "White", "Panda", "Meteorite"],
+  "116520": ["Black", "White", "Panda"],
+  "116515LN": ["Black", "White", "Champagne", "Pink", "MOP"],
+  "116523": ["Black", "White", "Champagne"],
+  "6239": ["White", "Black", "Paul Newman"],
+  "6241": ["Black", "Paul Newman"],
+  "6262": ["White", "Black", "Paul Newman"],
+  "6263": ["White", "Black", "Paul Newman"],
+  "6264": ["White", "Black", "Paul Newman"],
+  "6265": ["White", "Black", "Paul Newman"],
 
   "126710BLNR": ["Black"],
   "126710BLRO": ["Black"],
@@ -207,6 +216,10 @@
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Olive Green", "Salmon", "Rhodium",
     "Jubilee Motif"
+  ],
+  "116300": [
+    "Black", "White", "Silver", "Blue", "Champagne",
+    "Chocolate", "Olive Green", "Rhodium", "Salmon"
   ],
 
   "226659": ["White"],
