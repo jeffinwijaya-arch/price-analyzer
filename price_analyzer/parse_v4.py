@@ -1847,7 +1847,20 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bverde\b|\bvert\b', 'green', t)                  # IT+ES/FR green
     t = re.sub(r'\bmarron\b|\bbraun\b', 'chocolate', t)            # FR/DE brown
     t = re.sub(r'\blilac\b|\blilas\b|\bmauve\b', 'lavender', t)   # English/FR lilac/mauve → Lavender
+    # ── Blue-Grey compound protection — MUST precede individual language subs ──
+    # "bleu gris"/"blu-grigio"/"blue grey"/"blue-grey" → protected token before
+    # the individual "bleu"→blue / "gris"→grey replacements fracture the compound.
+    # Four forms: "blue grey/gray", "blue-grey/gray", "blu-grey/gray" (after grigio→grey fires),
+    # "blu-grigio" (before), and "bleu gris" (French).
+    t = re.sub(r'\bblue[\s-]?gr[ae]y\b|\bblu[\s-]?gr[ae]y\b|\bblu[\s-]?grigio\b|\bbleu\s*gris\b', 'blue-grey', t)
     t = re.sub(r'\bceladon\b', 'mint green', t)                    # Celadon = pale grey-green → Mint Green
+    # ── AP / Patek / IWC dial terminology not found in Rolex catalog ──
+    # These are in dial_synonyms.json but were never applied by extract_dial()
+    t = re.sub(r'\banthracit[eo]?\b', 'grey', t)      # Anthracite → Grey (AP Royal Oak standard grey dial)
+    t = re.sub(r'\bopalin[eo]?\b', 'silver', t)        # Opaline/opalin → Silver (French AP/Patek term)
+    t = re.sub(r'\bnacr[eé]?\b', 'mop', t)            # Nacre/nacré → MOP (French mother-of-pearl)
+    t = re.sub(r'\bruthenium\b', 'black', t)            # Ruthenium → Black (AP/IWC dark-PVD dial coating)
+    t = re.sub(r'\bbanana\b(?!\s*(?:republic|skin|bread))', 'yellow', t)  # Banana → Yellow
     t = re.sub(r'\beau\s*de\s*nil\b|\beau\s*nil\b', 'tiffany', t)  # Eau de nil = pale blue-green → Tiffany on OP refs
     t = re.sub(r'\bjames\s*cameron\b', 'd-blue', t) # James Cameron = D-Blue Deepsea
     t = re.sub(r'\bdblue\b|\bd[\-\s]blue\b|\bgradient\s*blue\b|\bdeepsea\s*blue\b', 'd-blue', t)  # normalise d-blue variants
@@ -1983,7 +1996,10 @@ def extract_dial(text, ref='', raw_ref=''):
     is_g_suffix = False  # G suffix = diamond hour markers
     if base_digits:
         suffix = ref_upper[len(base_digits.group(1)):]
-        if suffix == 'G':
+        # G-suffix = diamond HOUR MARKERS for Rolex only (5-6 digit refs).
+        # Patek/AP use single-letter case-material codes (G=gold, R=rose gold) — NOT diamond.
+        _is_rolex_digits = len(base_digits.group(1)) >= 5
+        if suffix == 'G' and _is_rolex_digits:
             is_g_suffix = True  # Will append "Diamond" to color later
 
     # "vi" / "viix" / "vixi" prefix = diamond markers (VI/IX Roman numeral diamond hour markers)
@@ -2008,6 +2024,11 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bd-blue\b', t): return 'D-Blue'
     # Puzzles (DD special)
     if re.search(r'\bpuzzle', t): return 'Puzzles'
+    # Skeletonized / Openwork dial — RM, AP ROO, JLC, Hublot, Cellini skeleton models.
+    # "skeleton"/"openwork"/"open heart"/"squelette" in a listing almost exclusively means
+    # the movement/dial is skeletonized; safe to fire on all refs without gating.
+    if re.search(r'\bskeleton(?:ized)?\b|\bopen[\s-]?work(?:ed)?\b|\bopen\s*heart\b|\bsquelette\b', t):
+        return 'Skeletonized'
     # Celebration Tiffany Blue (CTB/CLTB) — MUST precede generic Celebration check
     # so "Celebration Tiffany" is not swallowed into plain "Celebration".
     # Gate to OP refs only — CTB is exclusively a Oyster Perpetual special dial.
@@ -2375,6 +2396,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '336934','336238',  # new-gen DJ41/DJ36 refs with Bright Blue
         '228239',           # Day-Date 40 Platinum — offers Bright Blue dial
     }: dial = 'Bright Blue'
+    elif re.search(r'\bblue-grey\b|\bblue-gray\b', t): dial = 'Blue-Grey'  # AP Aquanaut/Offshore compound
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
     elif re.search(r'\bblack\b|\bblk\b', t): dial = 'Black'
     elif re.search(r'\bblue\b|\bblu\b', t): dial = 'Blue'
@@ -2397,6 +2419,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bgold\b|\bgolden\b', t): dial = 'Gold'
     elif re.search(r'\byellow\b', t): dial = 'Yellow'
     elif re.search(r'\bbrown\b', t): dial = 'Brown'
+    elif re.search(r'\btaupe\b', t): dial = 'Taupe'
     elif re.search(r'\bpurple\b|\bviolet\b', t): dial = 'Aubergine'
     elif re.search(r'\borange\b', t): dial = 'Orange'
 
@@ -5482,8 +5505,8 @@ def cmd_parse(args):
         'Rose Gold': '',                                             # Case material, not dial
         'Golden Brown': 'Brown',                                     # Patek Nautilus
         'White/Silver': 'Silver',                                    # AP catalog
-        'Anthracite Grey': 'Grey',                                   # AP catalog
-        'Blue-Grey': 'Grey',                                         # AP catalog
+        'Anthracite Grey': 'Grey',                                   # AP catalog (catalog-path fallback → Grey)
+        # Blue-Grey preserved as distinct dial — AP Aquanaut 5164G/5164R prices differently
         'Mint green': 'Green',                                       # Case mismatch
         'Med blue': 'Med Blue',                                      # Case mismatch
         'Khaki': 'Khaki Green',                                      # AP/VC shorthand
