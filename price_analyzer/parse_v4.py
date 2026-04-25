@@ -1,2 +1,1 @@
-""" 
-parse_v4.py — Rolex & Luxury Watch Listing Parser
+from pathlib import Path; exec(Path('price_analyzer/parse_v4.py').read_text())
