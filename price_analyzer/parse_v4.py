@@ -1641,8 +1641,20 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
     t = re.sub(r'\bslvr\b|\bsilv\b', 'silver', t)  # "slvr"/"silv" = silver shorthand
     t = re.sub(r'\btiger\s*iron\b', '__tigeriron__', t)  # protect before generic tiger→tiger eye
+    t = re.sub(r'\btigers?[-_\s]*eye\b', 'tiger eye', t)  # "tigerseye"/"tigers-eye" compound
     t = re.sub(r'\btiger\b', 'tiger eye', t)
     t = re.sub(r'__tigeriron__', 'tiger iron', t)
+    # Tiger Eye shorthand "TE" + "gold/brown stone" — ref-gated to Tiger Eye-capable refs only
+    # "TE" is standard Asian-market shorthand for Tiger Eye; "golden stone"/"brown stone" = same mineral
+    _te_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+    _TIGER_EYE_SHORTHAND_REFS = {
+        '116588', '116518', '116508', '116589', '116598',
+        '228238', '228235', '228349', '128238', '128235',
+        '118238', '118239', '116518LN', '126518LN',
+    }
+    if _te_base in _TIGER_EYE_SHORTHAND_REFS:
+        t = re.sub(r'\bte\b', 'tiger eye', t)
+        t = re.sub(r'\bgold(?:en)?\s*stone\b|\bbrown\s*stone\b', 'tiger eye', t)
     # Typo/shorthand fixes
     t = re.sub(r'\bbule\b', 'blue', t)
     t = re.sub(r'\bsliver\b', 'silver', t)
@@ -1911,8 +1923,8 @@ def extract_dial(text, ref='', raw_ref=''):
                        '126719BLRO',  # GMT WG Pepsi Oysterflex — Meteorite dial option
                        # Datejust TT/WG variants with Meteorite option
                        '126331','126333','126334','116334','116331',
-                       # Daytona YG prev-gen + exotic
-                       '116528','116589',
+                       # Daytona TT RG prev-gen + YG prev-gen + exotic
+                       '116503','116528','116589',
                        # Day-Date Platinum prev-gen
                        '118206',
                        # Sky-Dweller WG
