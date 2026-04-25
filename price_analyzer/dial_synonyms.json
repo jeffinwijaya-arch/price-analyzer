@@ -699,7 +699,7 @@
   "carnelean":            "Carnelian",
   "carn":                 "Carnelian",
 
-  "yml":                  "Yellow",
+  "yml":                  "YML",
 
   "blue diamond":         "Blue",
   "blue roman vi":        "Blue",
@@ -1348,5 +1348,59 @@
   "hawk eye":                     "Tiger Eye",
   "hawkeye":                      "Tiger Eye",
   "bull eye":                     "Tiger Eye",
-  "bulls eye":                    "Tiger Eye"
+  "bulls eye":                    "Tiger Eye",
+
+  "_comment_batch_2026q": "--- Cycle improvement: cyan/OTB signals/Wimbledon typos/PN patterns ---",
+
+  "cyan":                         "Tiffany Blue",
+  "cyan blue":                    "Tiffany Blue",
+  "cyaan":                        "Tiffany Blue",
+
+  "tiffany script":               "Official Tiffany Blue",
+  "tiffany logo":                 "Official Tiffany Blue",
+  "tiffany logo on dial":         "Official Tiffany Blue",
+  "tiffany printing":             "Official Tiffany Blue",
+  "tiffany text":                 "Official Tiffany Blue",
+  "tiffany name on dial":         "Official Tiffany Blue",
+  "tiffany lettering":            "Official Tiffany Blue",
+  "tiffany inscription":          "Official Tiffany Blue",
+  "tiffany branding":             "Official Tiffany Blue",
+  "by tiffany":                   "Official Tiffany Blue",
+  "for tiffany":                  "Official Tiffany Blue",
+  "t.co":                         "Official Tiffany Blue",
+  "t.&co":                        "Official Tiffany Blue",
+  "exclusive to tiffany":         "Official Tiffany Blue",
+
+  "wbldon":                       "Wimbledon",
+  "wblden":                       "Wimbledon",
+  "wbldn":                        "Wimbledon",
+  "wimbldon green":               "Wimbledon",
+
+  "pn version":                   "Paul Newman",
+  "pn variant":                   "Paul Newman",
+  "exotic version":               "Paul Newman",
+  "exotic variant":               "Paul Newman",
+  "6263 pn":                      "Paul Newman",
+  "6265 pn":                      "Paul Newman",
+  "6239 pn":                      "Paul Newman",
+  "16508 pn":                     "Paul Newman",
+  "116508 pn":                    "Paul Newman",
+
+  "springwater":                  "Tiffany Blue",
+  "spring water blue":            "Tiffany Blue",
+  "periwinkle blue":              "Tiffany Blue",
+
+  "meteorite gmt wg":             "Meteorite",
+  "wg pepsi met":                 "Meteorite",
+  "wg pepsi meteorite":           "Meteorite",
+
+  "dd40 plat":                    "Ice Blue",
+  "dd40 platinum":                "Ice Blue",
+  "day date 40 platinum":         "Ice Blue",
+
+  "ice blue dd40":                "Ice Blue",
+  "dd40 ib":                      "Ice Blue",
+
+  "ym42 wg":                      "Black",
+  "226659 black":                 "Black"
 }

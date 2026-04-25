@@ -1490,6 +1490,7 @@ FIXED_DIAL = {
     '116680':'White',  # Yacht-Master II
     '116900':'Black',  # Explorer
     '126900':'Black',  # Air-King
+    '116400':'Black',  # Milgauss standard (non-GV clear crystal) — always Black dial (GV green-crystal has multiple dials)
     # Single-dial new refs (dealers often omit the dial color)
     '127334':'White',  # 1908 39mm YG — only comes in white lacquer
     '127235':'White',  # 1908 39mm WG — only comes in white lacquer
@@ -1544,6 +1545,14 @@ FIXED_DIAL = {
     '126679SABR':'Black',  # Sea-Dweller 43 SABR (sapphire bezel Rainbow) — always Black dial
     '126710':'Black',      # GMT-Master II (no bezel suffix) — all GMT dials are Black regardless of bezel
     '116758SANR':'Black',  # GMT-Master II YG Rainbow (SANR dealer notation) — always Black dial
+    # ── Additions: single-dial refs confirmed by official catalog ──
+    '228206':'Ice Blue',   # DD40 Platinum — Ice Blue only (prevents Green/Meteorite contamination from bracelet/bezel text)
+    '126719BLRO':'Meteorite', # GMT-Master II WG Pepsi Oysterflex — Meteorite only (black Oysterflex strap text was causing Black false positives)
+    '136660':'Black',      # Sea-Dweller Deepsea 43mm (new gen, no D-Blue suffix) — always Black
+    '226659':'Black',      # Yacht-Master 42 WG Oyster — always Black (stone-motif dial)
+    '124273':'Black',      # Explorer 36 gen-2 — always Black
+    '126715CHNR':'Black',  # GMT-Master II TT CHNR RootBeer — always Black
+    '126720VTNM':'Black',  # GMT-Master II Violet-Night bezel — always Black
 }
 
 def extract_dial(text, ref='', raw_ref=''):
@@ -1573,7 +1582,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Refs where suffix encodes bezel/bracelet but NOT uniquely the dial (multiple options exist).
     # Suffix inference is suppressed so text-based detection can pick up the correct dial.
     _MULTI_DIAL_SUFFIX_REFS = {
-        '126719BLRO', '126719',   # GMT WG Pepsi: Black or Meteorite
+        '126719',       # GMT WG Pepsi (bare ref, no bracelet suffix): Black or Meteorite; BLRO variant is Meteorite-only (in FIXED_DIAL)
         '126718GRNR', '126718',   # GMT YG Sprite: Black or Tiger Iron
     }
     if raw_ref and ref:
@@ -1620,6 +1629,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwimbeldon\b|\bwimbleton\b|\bwimbledone\b|\bwimbledun\b', 'wimbledon', t)
     t = re.sub(r'\bwimbldon\b|\bwimbledo\b|\bwimbledn\b|\bwimbelton\b|\bwimbeldan\b|\bwimbly\b|\bwimble\b', 'wimbledon', t)
     t = re.sub(r'\bwimed\b|\bwimedo\b|\bwimdon\b|\bwimdo\b|\bwmdn\b', 'wimbledon', t)
+    t = re.sub(r'\bwbldon\b|\bwblden\b|\bwbldn\b', 'wimbledon', t)  # "wbldon/wblden" = Wimbledon (extra-abbreviated dealer typo)
     t = re.sub(r'\bwmb\b', 'wimbledon', t)  # "Wmb" = Wimbledon (dealer abbreviation)
     # Wimbledon slash-form shorthands: "champ/grn", "grn/champ", "G/C", "C/G" (HK/SG dealer notation)
     t = re.sub(r'\bchamp(?:agne)?\s*/\s*g(?:r(?:n|een)?)?\b|\bg(?:r(?:n|een)?)?\s*/\s*champ(?:agne)?\b', 'wimbledon', t)
@@ -1762,6 +1772,13 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpurchas(?:ed?|ing)?\s*(?:at|from|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
     # "came from Tiffany" = provenance = OTB
     t = re.sub(r'\bcame?\s*from\s*tiff(?:any)?\b', 'official tiffany', t)
+    # "Tiffany script/logo/printing/text on dial" = physical T&Co branding on the dial face = OTB
+    t = re.sub(r'\btiff(?:any)?\s*(?:script|logo|print(?:ing)?|text|wording|branding)\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*(?:name|inscript(?:ion)?|lettering)\b', 'official tiffany', t)
+    # "T.Co" / "T.&Co" dotted variants without space = OTB
+    t = re.sub(r'\bt\.&?co\b', 'official tiffany', t)
+    # "by Tiffany" / "for Tiffany" / "exclusive to Tiffany" standalone = OTB retailer signal
+    t = re.sub(r'\bby\s*tiff(?:any)?\b|\bfor\s*tiff(?:any)?\b|\bexclusive\s*to\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1858,6 +1875,9 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\beggshell(?:\s*blue)?\b', 'tiffany', t)  # "eggshell"/"eggshell blue" = Tiffany Blue (no "Blue" suffix in prior synonyms)
         t = re.sub(r'\bciel(?:\s*blue)?\b', 'tiffany', t)  # "ciel"/"ciel blue" = French sky-blue (common among French/Euro dealers)
         t = re.sub(r'\bturq(?:uoise)?\b', 'tiffany', t)  # "turq"/"turquoise" = Tiffany Blue on OP refs (no stone dial option on OP)
+        t = re.sub(r'\bcyan(?:\s*blue)?\b', 'tiffany', t)  # "cyan"/"cyan blue" = Tiffany Blue (designers/photographers use "cyan" for this hue)
+        t = re.sub(r'\bspringwater\b|\bspring\s*water\b', 'tiffany', t)  # "spring water" = aqua/TB hue informal alias
+        t = re.sub(r'\bperiwinkle\s*blue\b', 'tiffany', t)  # "periwinkle blue" ≈ Tiffany Blue in non-expert listings
         # Standalone "candy" on OP refs = Candy Pink (Rolex official) — guard to avoid "candy blue"→Tiffany collision
         t = re.sub(r'\bcandy\b(?!\s*(?:blue|p(?:ink)?\b))', 'candy pink', t)
     # "DB" shorthand on Deepsea refs = D-Blue gradient dial (not "Dark Blue")
@@ -1894,12 +1914,15 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bpink\b', 'candy pink', t)
     # Separate color glued to ref: "116508green" → "116508 green"
     t = re.sub(r'(\d{5,6})(green|black|blue|white|grey|gray|ghost|silver|gold|pink|champagne|chocolate|meteorite|panda|ceramic|giraffe|grossular|polar|yml|tiffany|wimbledon)', r'\1 \2', t)
-    # ── Suppress tiffany/tiff/tb on Daytona refs — Daytona has no Tiffany Blue dial ──
+    # ── Suppress tiffany/tiff/tb on most Daytona refs — most have no Tiffany Blue dial ──
+    # NOTE: 116509/126509 (Daytona WG) are NOT blocked — they have a legitimate TB dial option
+    # and the wholesale data confirms 20 real TB listings at avg $128k for 116509.
+    # 116519/126519 (Daytona WG Leather) also unblocked — dial_opts confirms TB; 5 TB listings at $95k avg.
     # OTB-grade signals were already pre-normalized to "official tiffany" (lines above).
     # For remaining OTB detector-only patterns, pre-convert them here before stripping.
     _TIFFANY_BLOCKED_BASES = {
-        '126500','126503','126505','126508','126509','126515','126518','126519','126520',
-        '116500','116503','116505','116508','116509','116515','116518','116519','116520',
+        '126500','126503','126505','126508','126515','126518','126520',
+        '116500','116503','116505','116508','116515','116518','116520',
         # Datejust 36/41 — no Tiffany Blue dial option; block to prevent false positives
         '126231','126233','126238',  # DJ36 TT/YG — no Tiffany Blue (126234 WG is NOT blocked — it offers TB)
         '116231','116233','116234','116238',  # prev-gen DJ36 TT/YG variants (116234 WG has no TB option)
@@ -1935,7 +1958,8 @@ def extract_dial(text, ref='', raw_ref=''):
     raw_ref_upper = (raw_ref or '').upper().strip()
 
     # PN suffix = Paul Newman dial — return immediately
-    if raw_ref_upper.endswith('PN') and re.match(r'\d{6}PN$', raw_ref_upper):
+    # Covers vintage 4-5 digit refs (6263PN, 16508PN) and current 6-digit refs (126508PN)
+    if raw_ref_upper.endswith('PN') and re.match(r'\d{4,6}PN$', raw_ref_upper):
         return 'Paul Newman'
 
     # "A" suffix on Day-Date refs is just a variant code, NOT diamond markers
@@ -2228,7 +2252,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Standard color extraction (order matters — specific before generic)
     dial = None
     _rb_ice = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
-    _ice_blue_only_refs = {'228206','228236','128236','127236','116506','126506',
+    _ice_blue_only_refs = {'228206','228236','128236','127236','116506','116506A','126506',
                            '118206','118346','118366','118166','218206','52506',
                            '127286','127386','228396','128396',
                            '116576',   # prev-gen DD 36 Platinum (fluted) — Ice Blue
