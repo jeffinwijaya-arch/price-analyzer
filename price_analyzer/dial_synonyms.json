@@ -1282,5 +1282,71 @@
   "starbucks oyster perpetual":   "Tiffany Blue",
   "starbucks tiff":               "Tiffany Blue",
   "starbucks dial tiff":          "Tiffany Blue",
-  "op starbucks dial":            "Tiffany Blue"
+  "op starbucks dial":            "Tiffany Blue",
+
+  "_comment_batch_2026k": "--- Official Tiffany Blue: limited edition / new OTB signals ---",
+
+  "tiffany limited":              "Official Tiffany Blue",
+  "tiffany limited edition":      "Official Tiffany Blue",
+  "tiffany ltd":                  "Official Tiffany Blue",
+  "tiff limited":                 "Official Tiffany Blue",
+  "tiff ltd":                     "Official Tiffany Blue",
+  "tiffany x rolex":              "Official Tiffany Blue",
+  "rolex x tiffany":              "Official Tiffany Blue",
+  "rolex tiffany collab":         "Official Tiffany Blue",
+  "tiffany collab rolex":         "Official Tiffany Blue",
+  "tiffany co stamp":             "Official Tiffany Blue",
+  "t&co stamp":                   "Official Tiffany Blue",
+  "t&co dial":                    "Official Tiffany Blue",
+  "tco stamp":                    "Official Tiffany Blue",
+  "tiffany 6 o clock":            "Official Tiffany Blue",
+  "t co engraved":                "Official Tiffany Blue",
+  "1 of 250":                     "Official Tiffany Blue",
+  "250 pcs tiffany":              "Official Tiffany Blue",
+  "tiffany 250":                  "Official Tiffany Blue",
+  "tiffany anniversary":          "Official Tiffany Blue",
+
+  "_comment_batch_2026l": "--- Chocolate YM aliases and missing YM dial shorthands ---",
+
+  "ym everose":                   "Chocolate",
+  "ym40 everose":                 "Chocolate",
+  "yachtmaster everose":          "Chocolate",
+  "yacht master everose":         "Chocolate",
+  "126655 dial":                  "Chocolate",
+  "ym chocolate":                 "Chocolate",
+
+  "_comment_batch_2026m": "--- Paul Newman shorthands: missing variants ---",
+
+  "pnm daytona":                  "Paul Newman",
+  "newman exotic":                "Paul Newman",
+  "paul newman 126528":           "Paul Newman",
+  "126528 pn":                    "Paul Newman",
+  "126528 exotic":                "Paul Newman",
+  "PN dial":                      "Paul Newman",
+
+  "_comment_batch_2026n": "--- Wimbledon vintage DJ references ---",
+
+  "15000 wimbledon":              "Wimbledon",
+  "15050 wimbledon":              "Wimbledon",
+  "wim vintage dj":               "Wimbledon",
+  "vintage wimbledon":            "Wimbledon",
+  "wimbledon vintage":            "Wimbledon",
+
+  "_comment_batch_2026o": "--- Celebration Tiffany Blue edge cases ---",
+
+  "ctb op":                       "Celebration Tiffany Blue",
+  "ctb 126000":                   "Celebration Tiffany Blue",
+  "celebration tb":               "Celebration Tiffany Blue",
+  "celeb tiffany blue":           "Celebration Tiffany Blue",
+  "celebration tiffany op":       "Celebration Tiffany Blue",
+
+  "_comment_batch_2026p": "--- Tiger Iron and exotic stone shorthands ---",
+
+  "tiger iron dial":              "Tiger Iron",
+  "iron tiger":                   "Tiger Iron",
+  "ti dial":                      "Tiger Iron",
+  "hawk eye":                     "Tiger Eye",
+  "hawkeye":                      "Tiger Eye",
+  "bull eye":                     "Tiger Eye",
+  "bulls eye":                    "Tiger Eye"
 }

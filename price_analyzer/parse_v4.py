@@ -1451,7 +1451,7 @@ DIAL_PATS = [
 SUFFIX_DIAL = {
     'NG': 'MOP',
     'LN': 'Black', 'LV': 'Green', 'LB': 'Blue',
-    'BLNR': 'Black', 'BLRO': 'Black', 'GRNR': 'Black', 'CHNR': 'Black', 'VTNR': 'Black',
+    'BLNR': 'Black', 'BLRO': 'Black', 'GRNR': 'Black', 'CHNR': 'Black', 'VTNR': 'Black', 'VTNM': 'Black',
     'DB': 'D-Blue', 'PN': 'Paul Newman',
     'SA': 'Black', 'SATS': 'Black', 'SABR': 'Black', 'SN': 'Black',  # Rainbow/sapphire variants
 }
@@ -1469,7 +1469,7 @@ FIXED_DIAL = {
     '126613LB':'Blue','126613LN':'Black',
     '126618LB':'Blue','126618LN':'Black',
     '126619LB':'Blue',  # Super Smurf WG Sub — blue lacquer dial, blue ceramic bezel
-    '126655':'Black',
+    '126655':'Chocolate',  # YM40 Everose Oysterflex — always Chocolate dial (NOT Black)
     # 126660 (Sea-Dweller 43) has Black and occasional Blue — NOT fixed; text detection handles it
     '126710BLNR':'Black','126710BLRO':'Black','126710GRNR':'Black','126720VTNR':'Black',
     '126711CHNR':'Black','126713GRNR':'Black',
@@ -1714,8 +1714,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
     t = re.sub(r'\bsign(?:ed)?\s*(?:by\s*)?tiff(?:any)?\b|\binscrip?t(?:ion)?\s*tiff(?:any)?\b', 'official tiffany', t)
     t = re.sub(r'\bt\s*&?\s*co\s*(?:sign(?:ed)?|engrav(?:ed)?|inscrib(?:ed)?)\b', 'official tiffany', t)
-    # "Tiffany Edition" / "Tiffany Special Edition" / "Tiffany Exclusive" = OTB
-    t = re.sub(r'\btiff(?:any)?\s*(?:special\s*)?edition\b|\btiff(?:any)?\s*exclusive\b', 'official tiffany', t)
+    # "Tiffany Edition" / "Tiffany Special/Limited Edition" / "Tiffany Exclusive" / "Tiffany Ltd" = OTB
+    t = re.sub(r'\btiff(?:any)?\s*(?:limited\s*|special\s*)?edition\b|\btiff(?:any)?\s*(?:exclusive|ltd\.?)\b', 'official tiffany', t)
+    # "Tiffany limited" (standalone without "edition") = OTB
+    t = re.sub(r'\btiff(?:any)?\s*limited\b', 'official tiffany', t)
     # "Retailed at Tiffany" / "sold by/through Tiffany" = sold through T&Co = OTB
     t = re.sub(r'\bretail(?:ed)?\s*(?:at|by|through|via)\s*(?:tiff(?:any)?|t\.?co)\b', 'official tiffany', t)
     t = re.sub(r'\bsold\s*(?:at|by|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
@@ -2012,8 +2014,9 @@ def extract_dial(text, ref='', raw_ref=''):
     # Celebration (Jubilee motif) — ref-gated to models that actually offer this dial
     # Prevents false positives ("birthday celebration", "anniversary celebration" in listing text)
     _CELEBRATION_REFS = {
-        '118235','118238','124200','124300','126000','126031','126034',
-        '128235','128236','128238','128239','134300',
+        '118208','118235','118238',  # DD36 YG/RG/WG — 118208 has Celebration option
+        '124200','124300','126000','126031','126034',
+        '128158','128235','128236','128238','128239','134300',  # 128158 Pearlmaster has Celebration
         '228206','228235','228236','228238','228239','276200','277200',
     }
     _celeb_ok = (not ref) or (_ref_base_norm in _CELEBRATION_REFS)
@@ -2108,7 +2111,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # Paul Newman — no trailing \b: "Paul Newman2023Y" glued to year is still a PN dial
     # Also: standalone "newman"/"pnd" unambiguous in watch context; "exotic" ref-gated to Daytona
     _DAYTONA_PN_BASES = {'116508','116518','116519','116520','126508','126518','126519','126520',
-                         '116503','126503','116528','6239','6241','6240','6262','6263','6264','6265'}
+                         '116503','126503','116528','126528',  # 126528 YG Ceramic — has PN dial option
+                         '6239','6241','6240','6262','6263','6264','6265'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
     if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
@@ -2127,6 +2131,8 @@ def extract_dial(text, ref='', raw_ref=''):
         '126235','126239',  # DJ36 WG/Everose variants with Wimbledon
         '126283','126284','116300','116333','116334','116234',
         '116233','116200','116201','116203','116231','116238',  # prev-gen DJ36 SS/TT/YG
+        '116235','116239',  # prev-gen DJ36 WG/Everose — Wimbledon option available
+        '15000','15050',    # vintage DJ refs (per rolex_dial_options.json) with Wimbledon
     }
     _ref_base_wim = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t): return 'Wimbledon'
