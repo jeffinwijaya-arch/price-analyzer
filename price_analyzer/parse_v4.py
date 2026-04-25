@@ -1542,6 +1542,8 @@ FIXED_DIAL = {
     '226655':'Black',    # YM37 WG Oyster bracelet — always black dial
     '126619':'Black',      # WG Sub bare ref — always Black dial, blue ceramic bezel, regardless of LB suffix omission
     '126679SABR':'Black',  # Sea-Dweller 43 SABR (sapphire bezel Rainbow) — always Black dial
+    '126710':'Black',      # GMT-Master II (no bezel suffix) — all GMT dials are Black regardless of bezel
+    '116758SANR':'Black',  # GMT-Master II YG Rainbow (SANR dealer notation) — always Black dial
 }
 
 def extract_dial(text, ref='', raw_ref=''):
@@ -2119,7 +2121,20 @@ def extract_dial(text, ref='', raw_ref=''):
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b', t): return 'Reverse Panda'
-    if re.search(r'\bpanda\b', t): return 'Panda'
+    if re.search(r'\bpanda\b', t):
+        # On Daytona refs "panda" = white main dial + black sub-registers (Rolex calls it White).
+        # Returning 'Panda' for Daytona would bypass the rolex_dial_options validation and create
+        # an invalid dial name. Remap to white and fall through to standard color detection.
+        _panda_daytona = {
+            '116500','116503','116505','116506','116508','116509',
+            '116515','116518','116519','116520','116528','116529',
+            '126500','126503','126505','126506','126508','126509',
+            '126515','126518','126519','126520','126528','126529',
+        }
+        if _ref_base_norm in _panda_daytona:
+            t = re.sub(r'\bpanda\b', 'white', t)  # fall through to White detection below
+        else:
+            return 'Panda'
 
     # Wimbledon — specific dial, NOT just slate or green
     # Full-word shorthands (wimbledon/wimbo/wimb) fire on any ref; bare "wim" is ref-gated
@@ -2174,9 +2189,19 @@ def extract_dial(text, ref='', raw_ref=''):
     # Baguette dial variants — "black baguette", etc.
     has_baguette_dial = bool(re.search(r'\bbaguette\b|\bbag\b', t))
     if has_baguette_dial and not is_baguette:
+        # Specific color checks BEFORE generic "blue" to avoid "ice blue baguette" → "Blue Baguette"
+        _ib_baguette_refs = {'228206','228236','128236','127236','116506','126506','118206','118366',
+                             '218206','127286','127386','228396','128396','116576','279174','127336','127385'}
+        if re.search(r'\bice\s*blue\b', t) or (re.search(r'\bib\b', t) and _ref_base_norm in _ib_baguette_refs): return 'Ice Blue Baguette'
+        if re.search(r'\btiffany\b|\btiff\b|\botb\b|\bofficial\s*tiffany\b', t): return 'Tiffany Blue Baguette'
         if re.search(r'\bblack\b', t): return 'Black Baguette'
         if re.search(r'\bblue\b', t): return 'Blue Baguette'
         if re.search(r'\bchampagne\b', t): return 'Champagne Baguette'
+        if re.search(r'\bwhite\b', t): return 'White Baguette'
+        if re.search(r'\bgreen\b', t): return 'Green Baguette'
+        if re.search(r'\bpink\b', t): return 'Pink Baguette'
+        if re.search(r'\bgrey\b|\bgray\b', t): return 'Grey Baguette'
+        if re.search(r'\bmop\b|\bmother.of.pearl\b', t): return 'MOP Baguette'
     
     # ── Index type detection for Datejust family ──
     # Detect Roman/Stick/Fluted Motif/Palm index types — only for DJ refs
@@ -2208,7 +2233,8 @@ def extract_dial(text, ref='', raw_ref=''):
                            '127286','127386','228396','128396',
                            '116576',   # prev-gen DD 36 Platinum (fluted) — Ice Blue
                            '279174',   # Lady DJ 28 TT — Ice Blue option per catalog
-                           '127336'}  # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
+                           '127336',   # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
+                           '127385'}   # Land-Dweller Platinum — Ice Blue is the primary/default dial
     # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
     if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
     # \bib\b (Ice Blue shorthand) is ref-gated: only fires for known IB-capable refs.

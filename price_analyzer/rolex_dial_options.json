@@ -87,10 +87,6 @@
     "Wimbledon", "Jubilee Motif", "Diamond", "Pave", "Rhodium",
     "Tiffany Blue", "Sundust"
   ],
-  "126235": [
-    "Black", "White", "Silver", "Blue", "Chocolate",
-    "Champagne", "Olive Green", "Salmon"
-  ],
   "126238": [
     "Black", "White", "Silver", "Blue", "Champagne",
     "Chocolate", "Wimbledon", "Jubilee Motif"
@@ -290,7 +286,8 @@
   ],
   "126235": [
     "Black", "White", "Silver", "Blue", "Chocolate",
-    "Champagne", "Olive Green", "Salmon", "Grey", "Pink", "Green"
+    "Champagne", "Olive Green", "Salmon", "Grey", "Pink", "Green",
+    "Wimbledon", "Jubilee Motif", "Diamond", "MOP"
   ],
 
   "116334": [
@@ -705,5 +702,36 @@
   "226627":    ["Black"],
   "268622":    ["Slate"],
   "52506":     ["Ice Blue"],
-  "128458":    ["Turquoise Stone", "Onyx", "Aventurine", "Tiger Eye", "Lapis Lazuli", "Pave"]
+  "128458":    ["Turquoise Stone", "Onyx", "Aventurine", "Tiger Eye", "Lapis Lazuli", "Pave"],
+
+  "_comment_added_2025_04": "--- Added Apr 2025: missing refs causing high empty-dial rates ---",
+
+  "126239":    [
+    "Black", "White", "Silver", "Blue", "Champagne", "Chocolate",
+    "Wimbledon", "Jubilee Motif", "Olive Green", "Grey", "Pink",
+    "Salmon", "Green", "Meteorite", "Diamond"
+  ],
+  "126576":    [
+    "Pave", "Ice Blue", "Rainbow", "Black", "White", "Pink",
+    "Blue", "Diamond", "Tiffany Blue"
+  ],
+  "116713":    ["Black", "Green", "Champagne"],
+  "14000":     ["Black", "Blue", "Silver", "White", "Champagne", "Salmon", "Green"],
+  "116000":    [
+    "Black", "White", "Blue", "Silver", "Champagne",
+    "Aubergine", "Green", "Pink", "Salmon"
+  ],
+  "116613":    ["Black", "Blue", "Green", "Diamond"],
+  "126613":    ["Black", "Blue", "Green"],
+  "218235":    [
+    "Chocolate", "Pink", "Green", "Sundust", "Brown", "Black",
+    "Champagne", "Sundust Diamond", "Champagne Diamond", "Blue",
+    "Beige", "White", "Aubergine", "MOP"
+  ],
+  "218348":    [
+    "Champagne", "Black Diamond", "Red", "Champagne Diamond",
+    "White Diamond", "Blue Diamond", "Pave", "Diamond"
+  ],
+  "126710":    ["Black"],
+  "127385":    ["Ice Blue", "Ice Blue Baguette", "Blue Baguette", "Diamond"]
 }

@@ -465,6 +465,14 @@
       "material": "Platinum",
       "nicknames": ["dd2 plat", "218206"],
       "premium_dials": ["Ice Blue", "Ice Blue Baguette"]
+    },
+    "Land-Dweller": {
+      "refs": ["127385"],
+      "series": "LD",
+      "size_mm": 40,
+      "material": "Platinum",
+      "nicknames": ["land-dweller", "land dweller", "ldd", "127385"],
+      "premium_dials": ["Ice Blue", "Ice Blue Baguette", "Blue Baguette"]
     }
   },
 
@@ -551,7 +559,9 @@
     "116758": "GMT-Master II WG Pave",
     "218238": "Day-Date II YG",
     "218206": "Day-Date II Platinum",
-    "128398": "Day-Date 36 Yellow Gold"
+    "128398": "Day-Date 36 Yellow Gold",
+    "127385": "Land-Dweller",
+    "126576": "Daytona WG Pave"
   },
 
   "nicknames": {
@@ -595,6 +605,9 @@
     "puzzles":        {"refs": ["128238", "128239", "128235", "228238", "228235", "228239", "228349"], "dial": "Puzzle", "note": "plural variant of Puzzle special dial"},
     "yml":            {"refs": ["124300", "126000", "126508", "116518", "228238"], "dial": "Yellow", "note": "dealer shorthand, likely Yellow dial (HK/Asia market)"},
     "green pave":     {"refs": ["116578", "116578SACO", "116595", "116759", "116508", "116505", "126538"], "dial": "Green Pavé", "note": "green-toned dial with pavé/diamond markers"},
-    "green pavé":     {"refs": ["116578", "116578SACO", "116595", "116759", "116508", "116505", "126538"], "dial": "Green Pavé", "note": "green-toned dial with pavé/diamond markers"}
+    "green pavé":     {"refs": ["116578", "116578SACO", "116595", "116759", "116508", "116505", "126538"], "dial": "Green Pavé", "note": "green-toned dial with pavé/diamond markers"},
+    "land-dweller":   {"refs": ["127385"], "dial": "Ice Blue", "note": "2025 Rolex Land-Dweller platinum, primary dial is Ice Blue"},
+    "land dweller":   {"refs": ["127385"], "dial": "Ice Blue", "note": "2025 Rolex Land-Dweller"},
+    "ldd":            {"refs": ["127385"], "note": "dealer shorthand for Land-Dweller"}
   }
 }
