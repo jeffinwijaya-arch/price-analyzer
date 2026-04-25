@@ -539,6 +539,9 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bgreen\s+ombr[eE\xe9]\b",               re.I), "Green Ombré",  100),
     # "gradient green" / "green gradient" — Stage 3 must intercept before Stage 5 catches "green"
     (re.compile(r"\bgradient\s+green\b|\bgreen\s+gradient\b", re.I), "Green Ombré", 90),
+    # reversed-order: "ombre red" / "ombre green" — must precede plain \bombré\b so they win priority
+    (re.compile(r"\bombr[eE\xe9]\s+red\b",                 re.I), "Red Ombré",    100),
+    (re.compile(r"\bombr[eE\xe9]\s+green\b",               re.I), "Green Ombré",  100),
     (re.compile(r"\bombr[eE\xe9]\b",                       re.I), "Ombre",        100),
     # Stone dials — Turquoise Stone before plain turquoise
     (re.compile(r"\bturquoise\s*(?:stone|dial)\b", re.I),      "Turquoise Stone", 100),
@@ -556,7 +559,7 @@ _PREMIUM_PATTERNS = [
     # Carnelian — reddish semi-precious stone dial; Day-Date exclusive
     (re.compile(r"\bcarnelian\b",                  re.I),      "Carnelian",       100),
     # Carnelian typo variants — common manual-entry errors in dealer listings
-    (re.compile(r"\bcarneilian\b|\bcarnilian\b|\bcarnelion\b|\bcarnelean\b", re.I), "Carnelian", 90),
+    (re.compile(r"\bcarneilian\b|\bcarnilian\b|\bcarnelion\b|\bcarnelean\b|\bcarneleon\b", re.I), "Carnelian", 90),
     (re.compile(r"\bcarn\b",                       re.I),      "Carnelian",        72),
     # Bright Green lacquer (Day-Date 40 special)
     (re.compile(r"\bbright\s*green\b|\bavocado\b", re.I),      "Bright Green",     90),
@@ -618,6 +621,9 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bblack\b|\bblk\b|\bbk\b|\bblck\b",             re.I), "Black"),
     (re.compile(r"\bwhite\b|\bwht\b|\bwh\b",                       re.I), "White"),
     (re.compile(r"\bbright\s+blue\b|\bbb\b",                       re.I), "Bright Blue"),
+    # teal/aqua before plain 'blue'/'green' — prevents "aqua blue" partial-matching "Blue Diamond"
+    # and "aqua green" partial-matching "Bright Green" on refs that offer Turquoise Stone.
+    (re.compile(r"\bteal\b|\baqua(?:\s*(?:blue|green))?\b",        re.I), "Turquoise Stone"),
     (re.compile(r"\bblue\b|\bblu\b",                               re.I), "Blue"),
     # "turq" shorthand — maps to Turquoise Stone here (Stage 5) for DD/non-OP refs.
     # For OP refs, Stage 3 premium scan intercepts turq → Tiffany Blue before Stage 5 runs.
@@ -660,8 +666,7 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bburgund(?:y)?\b",                              re.I), "Burgundy"),
     (re.compile(r"\bazzurro\b",                                    re.I), "Bright Blue"),
     (re.compile(r"\bcarnelian\b",                                  re.I), "Carnelian"),
-    # Teal / aqua → Turquoise Stone for DD/non-OP refs (Stage 3 intercepts for OP as Tiffany Blue)
-    (re.compile(r"\bteal\b|\baqua(?:\s*blue)?\b",               re.I), "Turquoise Stone"),
+    # teal/aqua handled at top of _COLOR_PATTERNS (before blue/green) to prevent partial mismatches
     # Jade — informal for green dials (Day-Date stone and lacquer)
     (re.compile(r"\bjade(?:\s*green)?\b",                       re.I), "Green"),
     # Celeste — Italian/Spanish for "sky blue"; Stage 3 intercepts for OP refs as Tiffany Blue;
@@ -1036,7 +1041,13 @@ def extract_dial(text, ref=None):
         # Guard: if this synonym resolves to a premium dial, validate it against the ref.
         # This prevents e.g. "turq" → Tiffany Blue firing on a Day-Date listing.
         if canonical in _PREMIUM_REF_MAP and rc and not _premium_allowed(canonical, rc):
-            continue
+            # Tiffany Blue shorthands (tb/turq/tiff/tco) on DD/gem-set refs that offer
+            # Turquoise Stone → remap rather than drop, since dealers use the same
+            # shorthand for both dials depending on model context.
+            if canonical == "Tiffany Blue" and rc in _DIAL_OPTIONS and "Turquoise Stone" in _DIAL_OPTIONS[rc]:
+                canonical = "Turquoise Stone"
+            else:
+                continue
         # Guard: when the ref has known dial options, skip synonyms that resolve to
         # a dial not offered on that ref. Prevents "mint" → Mint Green on a DJ41 steel.
         if rc and rc in _DIAL_OPTIONS:

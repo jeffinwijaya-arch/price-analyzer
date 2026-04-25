@@ -1134,5 +1134,25 @@
   "aubergine roman vi":           "Aubergine",
 
   "ombre":                        "Ombre",
-  "ombrã©":                       "Ombre"
+  "ombrã©":                       "Ombre",
+
+  "_comment_batch_2026g": "--- Bug fixes: reversed ombré orders, aqua compounds, carneleon typo ---",
+
+  "carneleon":                    "Carnelian",
+  "carneleon stone":              "Carnelian",
+  "carneleon dial":               "Carnelian",
+
+  "ombre red":                    "Red Ombré",
+  "ombré red":                    "Red Ombré",
+  "ombre red dial":               "Red Ombré",
+
+  "ombre green":                  "Green Ombré",
+  "ombré green":                  "Green Ombré",
+  "ombre green dial":             "Green Ombré",
+
+  "aqua green":                   "Turquoise Stone",
+  "aqua blue dial":               "Turquoise Stone",
+  "aqua green dial":              "Turquoise Stone",
+  "aqua turquoise":               "Turquoise Stone",
+  "aquamarine":                   "Turquoise Stone"
 }
