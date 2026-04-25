@@ -1539,6 +1539,7 @@ FIXED_DIAL = {
     '326139':'Black',    # Cellini Date WG — always black
     '326138':'White',    # Cellini Date YG — always white
     '52506':'Ice Blue',  # Cellini Cymation Platinum — Ice Blue only
+    '226655':'Black',    # YM37 WG Oyster bracelet — always black dial
     '126619':'Black',      # WG Sub bare ref — always Black dial, blue ceramic bezel, regardless of LB suffix omission
     '126679SABR':'Black',  # Sea-Dweller 43 SABR (sapphire bezel Rainbow) — always Black dial
 }
@@ -1679,7 +1680,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpikachu\b', 'yml', t)  # Pikachu = YML (same dial)
     # Yellow Mineral Lacquer longhand phrases → yml (for dealers who write the full name)
     t = re.sub(r'\byellow\s*mineral(?:\s*lacquer)?\b|\byellow\s*lacquer\b|\bmineral\s*(?:lacquer\s*)?yellow\b|\blac(?:quer)?\s*yellow\b|\bym\s*lacquer\b', 'yml', t)
-    t = re.sub(r'\bjubilee\s*(?:motif|dial|pattern)\b', 'celebration', t)  # Jubilee Motif = Celebration dial
+    t = re.sub(r'\bjubilee\s*(?:motif|dial|pattern)\b', '__jubmotif__', t)  # preserve for ref-aware dispatch below
+    t = re.sub(r'\bapple\s*gr(?:n|een)?\b', 'apple green', t)  # "apple grn/gr" = Apple Green (OP shorthand)
     t = re.sub(r'\bbarbie\b', 'pink', t)  # Barbie = pink dial Daytona
     t = re.sub(r'\bbatman\b', 'black', t)  # Batman = black dial GMT
     t = re.sub(r'\bpepsi\b', 'black', t)  # Pepsi = black dial GMT (red/blue bezel)
@@ -1994,6 +1996,19 @@ def extract_dial(text, ref='', raw_ref=''):
                  r'|\bcele\s*tiff(?:any)?\b|\bcele\s*tb\b'
                  r'|\bjub\s*tiff(?:any)?\b|\bjub\s*tb\b', t):
         return 'Celebration Tiffany Blue'
+    # Jubilee Motif — official Datejust special dial (different from Celebration on OP models)
+    # "jubilee motif" was pre-normalized to __jubmotif__ above; dispatch here based on ref family.
+    _JUBILEE_MOTIF_REFS = {
+        '126200','126201','126203','126231','126233','126234','126238',
+        '126300','126301','126303','126331','126333','126334',
+        '116200','116234','116233','116300','116334','116331','116333',
+        '126235','126239',
+    }
+    if re.search(r'__jubmotif__', t):
+        if _ref_base_norm in _JUBILEE_MOTIF_REFS:
+            return 'Jubilee Motif'
+        # OP refs and unknown refs: treat as Celebration so the block below fires correctly
+        t = t.replace('__jubmotif__', 'celebration')
     # Celebration (Jubilee motif) — ref-gated to models that actually offer this dial
     # Prevents false positives ("birthday celebration", "anniversary celebration" in listing text)
     _CELEBRATION_REFS = {
@@ -2014,6 +2029,8 @@ def extract_dial(text, ref='', raw_ref=''):
     _PALM_DIAL_REFS = {'126200','126300','126334','126234'}
     if re.search(r'\bpalm\b', t) and (_ref_base_norm in _PALM_DIAL_REFS or not ref):
         if not re.search(r'\bpalm\s*(?:beach|springs|island|trees?\s*island)\b', t):
+            if 'Palm Green' in _valid_dials:
+                return 'Palm Green'
             return 'Palm'
     # Fluted (Fluted Motif — standalone named dial, not just the bezel type)
     # "fluted motif" or "fluted dial" = explicit dial reference; bare "fluted" is ambiguous
@@ -2115,7 +2132,7 @@ def extract_dial(text, ref='', raw_ref=''):
     if re.search(r'\bwimbledon\b|\bwimbo\b|\bwimb\b', t): return 'Wimbledon'
     if re.search(r'\bwim\b', t) and (_ref_base_wim in _WIM_REFS or not ref): return 'Wimbledon'
     # Standalone "wm"/"wb" = Wimbledon only on known Wimbledon-capable refs (too ambiguous otherwise)
-    if re.search(r'\bwm\b|\bwb\b|\bwbl\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
+    if re.search(r'\bwm\b|\bwb\b|\bwbl\b|\bwbr\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
     # "slate green" / "green slate" on DJ refs = Wimbledon (no plain slate-green DJ dial exists)
     if re.search(r'\bslate\s*green\b|\bgreen\s*slate\b', t) and _ref_base_wim in _WIM_REFS: return 'Wimbledon'
     # "G/C" or "C/G" (Green/Champagne slash) on known Wimbledon refs = Wimbledon
@@ -2276,6 +2293,7 @@ def extract_dial(text, ref='', raw_ref=''):
         _rb_em = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
         dial = 'Bright Green' if _rb_em[:3] in ('228', '128', '118') else 'Green'
     elif re.search(r'\bpistachio\b|\bpis\b', t): dial = 'Pistachio'
+    elif re.search(r'\bapple\s*green\b', t): dial = 'Apple Green'
     elif re.search(r'\bcandy\s*pink\b|\bcandy\s*p\b|\bbaby\s*pink\b|\bblush\s*pink\b|\bpastel\s*pink\b|\bsoft\s*pink\b', t): dial = 'Candy Pink'
     elif re.search(r'\blavender\b|\blave?\b|\blanv', t): dial = 'Lavender'
     elif re.search(r'\baubergine\b|\bviolet\b', t): dial = 'Aubergine'
@@ -2317,7 +2335,7 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\bslate\b', t): dial = 'Slate'
     elif re.search(r'\bgrey\b|\bgray\b|\bgry\b', t): dial = 'Grey'
     elif re.search(r'\bpink\b|\brose\b|\bros[eé]\b', t): dial = 'Pink'
-    elif re.search(r'\bcoral\s*red\b', t): dial = 'Coral'  # "coral red" (OP official name) → Coral before generic red
+    elif re.search(r'\bcoral\s*red\b', t): dial = 'Coral Red'  # official Rolex name; precedes generic red
     elif re.search(r'\bred\b', t): dial = 'Red'
     elif re.search(r'\bcoral\b', t): dial = 'Coral'
     elif re.search(r'\bgold\b|\bgolden\b', t): dial = 'Gold'
@@ -2360,7 +2378,9 @@ def extract_dial(text, ref='', raw_ref=''):
     if dial == 'Coral' and ref:
         _rb_coral = re.match(r'(\d+)', ref)
         if _rb_coral and _rb_coral.group(1)[:3] in ('124', '126', '277'):
-            if 'Coral' not in _valid_dials and 'Coral Red' not in _valid_dials:
+            if 'Coral Red' in _valid_dials:
+                dial = 'Coral Red'  # upgrade to official Rolex name
+            elif 'Coral' not in _valid_dials and 'Coral Red' not in _valid_dials:
                 dial = 'Red'
     # "Rhodium" → "Grey" (Rolex uses both, industry prefers Grey)
     if dial and dial.startswith('Rhodium'):

@@ -24,7 +24,11 @@
   "t & co":             "Tiffany Blue",
   "tiffany&co":         "Tiffany Blue",
   "tiffany & co":       "Tiffany Blue",
-  "official tiffany":   "Tiffany Blue",
+  "official tiffany":   "Official Tiffany Blue",
+  "official tiffany blue": "Official Tiffany Blue",
+  "otb":                "Official Tiffany Blue",
+  "ot/b":               "Official Tiffany Blue",
+  "o.t.b":              "Official Tiffany Blue",
   "tiffany co":         "Tiffany Blue",
 
   "pn":                 "Paul Newman",
@@ -45,6 +49,11 @@
   "wim":                "Wimbledon",
   "wimb":               "Wimbledon",
   "wimbo":              "Wimbledon",
+  "wm":                 "Wimbledon",
+  "wb":                 "Wimbledon",
+  "wbl":                "Wimbledon",
+  "wbr":                "Wimbledon",
+  "cgs":                "Wimbledon",
   "wimbledon":          "Wimbledon",
   "wimbledon dial":     "Wimbledon",
   "wimbledon green":    "Wimbledon",
@@ -92,6 +101,7 @@
 
   "sd":                 "Sundust",
   "sun":                "Sundust",
+  "sund":               "Sundust",
   "sundust":            "Sundust",
 
   "benz":               "Silver",
@@ -126,6 +136,9 @@
   "apple":              "Apple Green",
   "apple green":        "Apple Green",
   "applegreen":         "Apple Green",
+  "apple grn":          "Apple Green",
+  "apple gr":           "Apple Green",
+  "appgrn":             "Apple Green",
 
   "candy pink":         "Candy Pink",
   "candypink":          "Candy Pink",
@@ -187,7 +200,13 @@
 
   "puzzle":             "Puzzle",
   "celebration":        "Celebration",
+  "celeb":              "Celebration",
+  "ctb":                "Celebration Tiffany Blue",
+  "cltb":               "Celebration Tiffany Blue",
+  "celebration tiffany blue": "Celebration Tiffany Blue",
   "jubilee motif":      "Jubilee Motif",
+  "jub motif":          "Jubilee Motif",
+  "jubilee motif dial": "Jubilee Motif",
 
   "rhodium":            "Rhodium",
   "rhodium dial":       "Rhodium",
@@ -205,9 +224,10 @@
   "intense white":      "White",
   "bright white":       "White",
 
-  "pistachio":          "Mint Green",
-  "pistachio green":    "Mint Green",
-  "pistach":            "Mint Green",
+  "pist":               "Pistachio",
+  "pistachio":          "Pistachio",
+  "pistachio green":    "Pistachio",
+  "pistach":            "Pistachio",
   "celadon":            "Mint Green",
   "celadon green":      "Mint Green",
 
@@ -493,8 +513,8 @@
   "land dweller":       "Ice Blue",
   "land-dweller":       "Ice Blue",
 
-  "tco":                "Tiffany Blue",
-  "tiff & co":          "Tiffany Blue",
+  "tco":                "Official Tiffany Blue",
+  "tiff & co":          "Official Tiffany Blue",
   "tiffco":             "Tiffany Blue",
   "bleu tiffany":       "Tiffany Blue",
   "tiffany turquoise":  "Tiffany Blue",
@@ -961,9 +981,9 @@
   "green grossular":              "Grossular",
   "grossular garnet dial":        "Grossular",
 
-  "tiffany dial official":        "Tiffany Blue",
-  "official tiffany blue":        "Tiffany Blue",
-  "official tiff blue":           "Tiffany Blue",
+  "tiffany dial official":        "Official Tiffany Blue",
+  "official tiffany blue":        "Official Tiffany Blue",
+  "official tiff blue":           "Official Tiffany Blue",
 
   "wimbledon motif green":        "Wimbledon",
   "green motif wimbledon":        "Wimbledon",

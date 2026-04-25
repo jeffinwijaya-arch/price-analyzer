@@ -13,6 +13,18 @@
     "Lavender", "Pink", "Green", "Beige", "Mint Green",
     "Aubergine", "Celebration", "Red"
   ],
+  "126031": [
+    "Black", "White", "Coral Red", "Blue", "Yellow",
+    "Tiffany Blue", "Candy Pink", "Apple Green", "Silver",
+    "Lavender", "Pink", "Green", "Beige", "Mint Green",
+    "Aubergine", "Celebration", "Red"
+  ],
+  "126034": [
+    "Black", "White", "Coral Red", "Blue", "Yellow",
+    "Tiffany Blue", "Candy Pink", "Apple Green", "Silver",
+    "Orange", "Celebration", "Beige", "Lavender", "Pink",
+    "Green", "Mint Green", "Aubergine", "Red"
+  ],
   "277200": [
     "Black", "White", "Coral Red", "Blue", "Yellow",
     "Tiffany Blue", "Candy Pink", "Pink", "Silver",
@@ -151,6 +163,14 @@
   "116520": ["Black", "White", "Panda", "Green", "Blue", "Champagne"],
   "116515LN": ["Black", "White", "Champagne", "Pink", "MOP"],
   "116523": ["Black", "White", "Champagne", "Blue", "Green", "Silver", "MOP"],
+  "126503": ["White", "Champagne", "Black", "Panda", "Sundust", "MOP", "Chocolate", "Silver", "Meteorite"],
+  "126505": ["White", "Champagne", "Black", "Panda", "Sundust", "MOP", "Chocolate", "Silver", "Meteorite"],
+  "126515": ["Black", "White", "Pink", "Chocolate", "Sundust", "Champagne", "MOP", "Pink Diamond"],
+  "126515LN": ["Black", "White", "Pink", "Chocolate", "Sundust", "Champagne", "MOP"],
+  "126518": ["White", "Champagne", "Black", "Green", "YML", "Paul Newman",
+             "Meteorite", "Sundust", "Silver", "MOP", "Blue", "Chocolate", "Diamond", "Pave"],
+  "126520": ["Black", "White", "Panda", "Green", "Blue", "Champagne", "Meteorite", "Silver", "MOP"],
+  "126528": ["Black", "White", "Champagne", "Meteorite", "MOP", "Paul Newman", "Panda", "Diamond", "Pave", "Silver"],
   "6239": ["White", "Black", "Paul Newman"],
   "6241": ["Black", "Paul Newman"],
   "6262": ["White", "Black", "Paul Newman"],
@@ -163,7 +183,9 @@
   "126711CHNR": ["Black", "Champagne"],
   "126713GRNR": ["Black", "Green", "Champagne"],
   "126718GRNR": ["Black"],
+  "126718": ["Black", "Tiger Iron"],
   "126719BLRO": ["Meteorite"],
+  "126719": ["Black", "Meteorite"],
   "126720VTNM": ["Black"],
   "116710BLNR": ["Black"],
   "116710BLRO": ["Black"],
@@ -642,6 +664,8 @@
   "326135":  ["White", "Chocolate", "Grey", "Sundust", "Green", "Blue", "Silver", "Champagne", "Pink"],
   "326138":  ["Champagne", "Sundust", "White", "Silver", "Black", "Blue", "Aubergine", "Green", "Chocolate"],
   "326139":  ["Black", "White", "Green", "Blue", "Silver"],
+  "326238":  ["Black", "White", "Champagne", "Blue", "Green", "Silver", "Chocolate", "Sundust"],
+  "326239":  ["Champagne", "Sundust", "White", "Silver", "Black", "Blue", "Aubergine", "Green", "Chocolate"],
   "326933":  ["Black", "White", "Champagne", "Green", "Chocolate", "Blue"],
   "326939":  ["White", "Black", "Blue", "Silver", "Champagne"],
 
