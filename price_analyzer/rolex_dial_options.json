@@ -243,7 +243,7 @@
   ],
 
   "127236": ["Ice Blue"],
-  "128236": ["Ice Blue"],
+  "128236": ["Ice Blue", "Ice Blue Baguette", "Blue Baguette", "Diamond"],
   "128235": [
     "Olive Green", "Champagne", "Chocolate", "Pink",
     "MOP", "Pave", "Meteorite", "Ombre", "Eisenkiesel",
@@ -274,9 +274,9 @@
     "Pave"
   ],
 
-  "126622": ["Slate"],
+  "126622": ["Slate", "Grey"],
   "126621": ["Black", "Chocolate", "Blue", "White"],
-  "116622": ["Slate"],
+  "116622": ["Slate", "Grey"],
   "116621": ["Black", "Silver", "Chocolate", "Pink", "Green", "Blue", "White"],
 
   "126231": [
@@ -344,7 +344,7 @@
   "226570": ["White", "Black"],
   "216570": ["White", "Black"],
 
-  "116400GV": ["Black"],
+  "116400GV": ["Black", "White", "Green", "Blue", "Blue Stick", "MOP", "Red"],
   "116400": ["Black"],
 
   "126900": ["Black"],
