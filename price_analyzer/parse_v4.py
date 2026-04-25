@@ -1853,7 +1853,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Must normalise BEFORE the tiffany/OTB detection block so the turquoise path fires instead.
     # Also applies to 336238 (new-gen DJ36 YG) which has Turquoise but no Tiffany Blue option.
     # (_sd_ref_base computed just above; same value as _ref_base_norm which is defined later)
-    if _sd_ref_base[:3] in ('128', '228', '118') or _sd_ref_base in {'336238'}:
+    if _sd_ref_base[:3] in ('128', '228', '118'):
         t = re.sub(r'\btb\b', 'turquoise', t)
     # On Daytona refs that offer a Turquoise dial, "TB" = Turquoise Blue — remap BEFORE tiffany stripping
     # Without this, "126508 tb" would have "tb" stripped by the Tiffany blocker and return empty.
@@ -1972,8 +1972,9 @@ def extract_dial(text, ref='', raw_ref=''):
     # OTB-grade signals were already pre-normalized to "official tiffany" (lines above).
     # For remaining OTB detector-only patterns, pre-convert them here before stripping.
     _TIFFANY_BLOCKED_BASES = {
-        '126500','126503','126505','126508','126515','126518','126520',
-        '116500','116503','116505','116508','116515','116518','116520',
+        # Daytona SS/RG/base — no Tiffany Blue option (WG/YG exotic variants handled below)
+        '126500','126503','126505','126515','126518','126520',
+        '116500','116503','116520',
         # Datejust 36/41 — no Tiffany Blue dial option; block to prevent false positives
         '126231','126233','126238',  # DJ36 TT/YG — no Tiffany Blue (126234 WG is NOT blocked — it offers TB)
         '116231','116233','116234','116238',  # prev-gen DJ36 TT/YG variants (116234 WG has no TB option)
@@ -1981,19 +1982,22 @@ def extract_dial(text, ref='', raw_ref=''):
         '116300','116301','116303',           # prev-gen DJ41 SS variants
         '126331','126333','126334',           # DJ36 TT Rose Gold variants
         '116331','116333','116334',           # prev-gen DJ36 TT Rose Gold variants
-        # New-gen Datejust/Day-Date (336/326 series) — no Tiffany Blue option
-        # NOTE: 336238 intentionally excluded — it has a Turquoise dial and the code at
-        # line ~2148 remaps tiffany→Turquoise for it; blocking here would break that.
-        '336235','336934','336938','336933','336239','336259',
-        '336935',
-        '326935','326934','326938','326933','326939',
+        # New-gen Datejust/Sky-Dweller (336/326 series) — no Tiffany Blue option
+        # NOTE: 336238 (new-gen DJ36 YG) and 326934/326935/336934/336935 (Sky-Dwellers) are
+        # NOT blocked — they have confirmed Tiffany Blue dial options per rolex_dial_options.json.
+        '336235','336938','336933','336239','336259',
+        '326938','326933','326939',
         '326238','326235','326239','326259',
         '326135','326138','326139',
         # GMT/Sub/Daytona refs (already partially covered above; explicit for safety)
         '126600','126603','126660','136660','136668',  # Sea-Dweller family
         '126900',  # Air-King
     }
-    if _ref_base_norm in _TIFFANY_BLOCKED_BASES:
+    # Full-ref unblock: specific suffix variants confirmed to have TB even when their base is blocked.
+    # 126518LN/116518LN = Daytona Oysterflex (LN = Oysterflex bracelet, NOT dial color on Daytona);
+    # both confirmed TB option in rolex_dial_options.json.
+    _TIFFANY_UNBLOCK_FULL_REF = {'126518LN', '116518LN'}
+    if _ref_base_norm in _TIFFANY_BLOCKED_BASES and (ref.upper() if ref else '') not in _TIFFANY_UNBLOCK_FULL_REF:
         # Pre-convert remaining OTB signals not yet handled by lines above
         t = re.sub(r'\botb\b|\bt\.co\b|\btco\b'
                    r'|\btiffany\s*&\s*co\b|\btiffany\s*and\s*co\b|\btiff\s*&\s*co\b'
@@ -2099,10 +2103,12 @@ def extract_dial(text, ref='', raw_ref=''):
     # Celebration (Jubilee motif) — ref-gated to models that actually offer this dial
     # Prevents false positives ("birthday celebration", "anniversary celebration" in listing text)
     _CELEBRATION_REFS = {
-        '118208','118235','118238',  # DD36 YG/RG/WG — 118208 has Celebration option
+        '118208','118235','118238','118239',  # DD36 YG/RG/WG/Everose — all offer Celebration
         '124200','124300','126000','126031','126034',
         '128158','128235','128236','128238','128239','134300',  # 128158 Pearlmaster has Celebration
-        '228206','228235','228236','228238','228239','276200','277200',
+        '228206','228235','228236','228238','228239','228345','228349',  # 228345/228349 confirmed per catalog
+        '276200','277200',
+        '18038','18238',  # vintage DD36 YG/WG — Celebration offered historically
     }
     _celeb_ok = (not ref) or (_ref_base_norm in _CELEBRATION_REFS)
     if _celeb_ok and re.search(r'\bcelebration\b|\bcele\b', t):
@@ -2277,6 +2283,7 @@ def extract_dial(text, ref='', raw_ref=''):
                              '218206','127286','127386','228396','128396','116576','279174','127336','127385'}
         if re.search(r'\bice\s*blue\b', t) or (re.search(r'\bib\b', t) and _ref_base_norm in _ib_baguette_refs): return 'Ice Blue Baguette'
         if re.search(r'\btiffany\b|\btiff\b|\botb\b|\bofficial\s*tiffany\b', t): return 'Tiffany Blue Baguette'
+        if re.search(r'\bmeteorite\b|\bmeteo\b', t): return 'Meteorite Baguette'  # 228349 official dial
         if re.search(r'\bblack\b', t): return 'Black Baguette'
         if re.search(r'\bblue\b', t): return 'Blue Baguette'
         if re.search(r'\bchampagne\b', t): return 'Champagne Baguette'
@@ -2370,7 +2377,7 @@ def extract_dial(text, ref='', raw_ref=''):
         _ref_base_otb = re.match(r'(\d+)', ref) if ref else None
         _rb_otb = _ref_base_otb.group(1) if _ref_base_otb else ''
         if (_rb_otb.startswith('128') or _rb_otb.startswith('228') or _rb_otb.startswith('118')
-                or _rb_otb in {'336238', '126200'}):
+                or _rb_otb in {'126200'}):
             dial = 'Turquoise'
         else:
             dial = 'Official Tiffany Blue'
@@ -2380,15 +2387,16 @@ def extract_dial(text, ref='', raw_ref=''):
         # Turquoise and Tiffany Blue are valid dials that must be distinguished by keyword.
         dial = 'Turquoise'
     elif re.search(r'\btiffany\b|\btiff\b', t) or (
-        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126','134')):
+        re.search(r'\btb\b', t) and ref and re.match(r'(\d+)', ref) and re.match(r'(\d+)', ref).group(1)[:3] in ('277','276','124','126','134','336','326','278','279','116','118','228','128')):
         # DD/prev-DD (128xxx, 228xxx, 118xxx): dealers say "tiffany" but maps to their Turquoise dial
         _ref_base_t = re.match(r'(\d+)', ref) if ref else None
         _rb_t = _ref_base_t.group(1) if _ref_base_t else ''
         if _rb_t.startswith('128') or _rb_t.startswith('228') or _rb_t.startswith('118'):
             dial = 'Turquoise'
-        elif _rb_t in {'126200', '336238'}:
-            # DJ36 SS / new-gen DJ36 YG: Rolex official dial is "Turquoise" (no Tiffany Blue option)
+        elif _rb_t in {'126200'}:
+            # DJ36 SS: Rolex official dial is "Turquoise" (no Tiffany Blue option per catalog)
             dial = 'Turquoise'
+            # NOTE: 336238 (new-gen DJ36 YG) has confirmed Tiffany Blue — falls through to Tiffany Blue below
         else:
             # All OP/DJ/other refs: "tiffany"/"tiff"/"tb" = Tiffany Blue
             # Official Tiffany Blue (OTB/T&Co/stamp) is already caught in the OTB block above
@@ -2462,6 +2470,20 @@ def extract_dial(text, ref='', raw_ref=''):
     elif re.search(r'\btaupe\b', t): dial = 'Taupe'
     elif re.search(r'\bpurple\b|\bviolet\b', t): dial = 'Aubergine'
     elif re.search(r'\borange\b', t): dial = 'Orange'
+
+    # ── Turquoise → Turquoise Stone normalization ──
+    # Day-Date (128xxx/228xxx/118xxx) and Daytona WG leather (116519) have a mineral/stone
+    # turquoise dial. The official Rolex name is "Turquoise Stone" (vs lacquered "Turquoise").
+    # This normalization fires for both text-detected "turquoise" and the tiffany→turquoise
+    # remaps applied above for DD refs, ensuring the premium stone-dial designation is preserved.
+    _TURQ_STONE_BASES = {
+        '116519',
+        '118238', '118239',
+        '128159', '128235', '128238', '128239', '128345', '128395', '128396', '128398', '128458',
+        '228235', '228238', '228239', '228345', '228349',
+    }
+    if dial == 'Turquoise' and _ref_base_norm in _TURQ_STONE_BASES:
+        dial = 'Turquoise Stone'
 
     if not dial:
         # Check if this is a single-dial ref from catalog before returning empty
