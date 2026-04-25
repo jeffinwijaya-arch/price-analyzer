@@ -1244,5 +1244,23 @@
   "olive brown":                  "Olive Green",
 
   "eisenkiesel":                  "Eisenkiesel",
-  "eisenkiesel dial":             "Eisenkiesel"
+  "eisenkiesel dial":             "Eisenkiesel",
+
+  "_comment_batch_2026j": "--- Reverse Panda compound phrases + starbucks OP aliases (Stage 6 backup) ---",
+
+  "white black reverse":          "Reverse Panda",
+  "black white reverse":          "Reverse Panda",
+  "white and black reverse":      "Reverse Panda",
+  "black and white reverse":      "Reverse Panda",
+  "reverse black white":          "Reverse Panda",
+  "reverse white black":          "Reverse Panda",
+  "reverse panda daytona":        "Reverse Panda",
+  "daytona reverse":              "Reverse Panda",
+
+  "starbucks op36":               "Tiffany Blue",
+  "starbucks op41":               "Tiffany Blue",
+  "starbucks oyster perpetual":   "Tiffany Blue",
+  "starbucks tiff":               "Tiffany Blue",
+  "starbucks dial tiff":          "Tiffany Blue",
+  "op starbucks dial":            "Tiffany Blue"
 }

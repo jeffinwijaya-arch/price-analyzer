@@ -611,6 +611,14 @@ _PREMIUM_PATTERNS = [
     # Low priority (70) so it only fires when ref-validated; penalty drops it to 30
     # for non-RP refs, well below the 0.60 threshold.
     (re.compile(r"\brp\b",                         re.I),      "Reverse Panda",    70),
+    # "white (and) black reverse" / "black (and) white reverse" — compound phrase used by
+    # Asian dealers to describe the Reverse Panda (white subdials on black main, reversed).
+    (re.compile(
+        r"\bwhite\s+(?:and\s+)?black\s+reverse\b|\bblack\s+(?:and\s+)?white\s+reverse\b",
+        re.I), "Reverse Panda", 92),
+    # "reverse" standalone — low-priority guard; fires for known RP refs only (eff=62≥60);
+    # for all other refs eff=max(62-45,10)=17 < 60 → no-op.
+    (re.compile(r"\breverse\b",                    re.I),      "Reverse Panda",    62),
     (re.compile(r"\btuxedo\b",                     re.I),      "Panda",            80),
     (re.compile(r"\bpanda\b",                      re.I),      "Panda",            80),
     # Tiffany Blue — no-space variant ("tiffanyblue"), egg-blue, and colloquial "tiffy"
@@ -626,10 +634,13 @@ _PREMIUM_PATTERNS = [
     (re.compile(r"\bfactory\s+tiff(?:any)?\b",     re.I),      "Tiffany Blue",     90),
     # "tiff baguette" — for refs like 118208 that offer a "Tiffany Blue Baguette" dial variant
     (re.compile(r"\btiff(?:any)?\s+baguette\b",    re.I),      "Tiffany Blue",     90),
-    # "starbucks op" / "op starbucks" — HK/Asia nickname for the OP Tiffany Blue colour;
-    # must be pattern-matched at Stage 3 so it fires before the Stage 5 \bstarbucks\b→Green scan.
-    # _premium_allowed penalty drops eff to 50 for non-OP refs → below threshold → no-op.
+    # "starbucks op" / "op starbucks" — HK/Asia nickname for the OP Tiffany Blue colour.
     (re.compile(r"\bstarbucks\s+op\b|\bop\s+starbucks\b", re.I), "Tiffany Blue",  95),
+    # "starbucks" standalone — the same HK/Asia nickname without "op" qualifier.
+    # For OP refs (in _PREMIUM_REF_MAP["Tiffany Blue"]): eff=80≥60 → Tiffany Blue.
+    # For Kermit/Hulk (FIXED_DIAL): Stage-1 premium-override threshold=0.80 → no-op.
+    # For all other refs: eff=max(80-45,10)=35 < 60 → falls through to Stage 5 Green.
+    (re.compile(r"\bstarbucks\b",                  re.I),      "Tiffany Blue",     80),
     # Wimbledon — sellers sometimes write "wimbledon green" or "green wimbledon"
     (re.compile(r"\bwimbledon\s*green\b|\bgreen\s*wimbledon\b", re.I), "Wimbledon", 95),
     # Informal Tiffany Blue descriptors — widely used in European/Asian dealer listings.
