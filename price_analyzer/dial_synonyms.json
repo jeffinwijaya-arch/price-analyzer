@@ -1202,5 +1202,47 @@
   "tiffany op36":                 "Tiffany Blue",
   "tiffany op41":                 "Tiffany Blue",
   "op36 tiff":                    "Tiffany Blue",
-  "op41 tiff":                    "Tiffany Blue"
+  "op41 tiff":                    "Tiffany Blue",
+
+  "_comment_batch_2026i": "--- Multilingual gaps: German silver/blue/red; Anthracite Grey ---",
+
+  "silber":                       "Silver",
+  "silbern":                      "Silver",
+  "silber zifferblatt":           "Silver",
+
+  "bleu":                         "Blue",
+  "bleu dial":                    "Blue",
+
+  "rouge":                        "Red",
+  "rouge dial":                   "Red",
+
+  "rose":                         "Pink",
+
+  "antracit":                     "Anthracite Grey",
+  "anthracite":                   "Anthracite Grey",
+  "anthracite grey":              "Anthracite Grey",
+  "anthracite gray":              "Anthracite Grey",
+  "anthracite dial":              "Anthracite Grey",
+  "anthracite grey dial":         "Anthracite Grey",
+
+  "blu-grigio":                   "Blue-Grey",
+  "blue grey":                    "Blue-Grey",
+  "blue gray":                    "Blue-Grey",
+  "bleu gris":                    "Blue-Grey",
+
+  "nacre":                        "MOP",
+  "nacré":                        "MOP",
+  "nacre dial":                   "MOP",
+
+  "opaline":                      "Silver",
+  "opalin":                       "Silver",
+
+  "ruthenium":                    "Black",
+  "ruthenium dial":               "Black",
+
+  "brown olive":                  "Olive Green",
+  "olive brown":                  "Olive Green",
+
+  "eisenkiesel":                  "Eisenkiesel",
+  "eisenkiesel dial":             "Eisenkiesel"
 }

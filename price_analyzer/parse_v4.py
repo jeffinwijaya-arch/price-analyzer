@@ -36,6 +36,13 @@ _DIAL_SYNONYMS = _load_json("dial_synonyms.json")
 _DIAL_CATALOG = _load_json("dial_reference_catalog.json")
 _WATCH_MASTER = _load_json("watch_reference_master.json")
 
+# Merge dial_reference_catalog (AP/Patek/non-Rolex refs) into _DIAL_OPTIONS so that
+# Stage 5 color validation works for brand refs not in rolex_dial_options.json.
+for _cat_ref, _cat_suffixes in _DIAL_CATALOG.items():
+    _cat_rc = _cat_ref.upper().strip().replace(" ", "")
+    if _cat_rc not in _DIAL_OPTIONS:
+        _DIAL_OPTIONS[_cat_rc] = list(dict.fromkeys(_cat_suffixes.values()))
+
 # ---------------------------------------------------------------------------
 # FIXED_DIAL — references that ship with exactly one dial
 #              text analysis is skipped; premium override still applies
@@ -650,6 +657,8 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bteal\b|\baqua(?:\s*(?:blue|green))?\b",        re.I), "Turquoise Stone"),
     # Dark Blue — specific Day-Date dial option (228238 etc.); must precede plain Blue
     (re.compile(r"\bdark\s*blue\b",                                re.I), "Dark Blue"),
+    # Blue-Grey — Patek Aquanaut/Nautilus compound; must precede plain Blue
+    (re.compile(r"\bblue[\s\-]*gr[ae]y\b|\bbleu[\s\-]*gris\b",    re.I), "Blue-Grey"),
     (re.compile(r"\bblue\b|\bblu\b",                               re.I), "Blue"),
     # "turq" shorthand — maps to Turquoise Stone here (Stage 5) for DD/non-OP refs.
     # For OP refs, Stage 3 premium scan intercepts turq → Tiffany Blue before Stage 5 runs.
@@ -666,6 +675,8 @@ _COLOR_PATTERNS = [
     (re.compile(r"\bsilver\b|\bslvr\b|\bslv\b|\bbenz\b",          re.I), "Silver"),
     (re.compile(r"\bchampagne\b|\bchamp\b|\bcham\b|\bchp\b",      re.I), "Champagne"),
     (re.compile(r"\bchocolate\b|\bchoco\b|\bcho\b",                re.I), "Chocolate"),
+    # Anthracite Grey — Patek/AP descriptor; must precede plain Grey
+    (re.compile(r"\banthracite\s+gr[ae]y\b|\banthracite\b",       re.I), "Anthracite Grey"),
     (re.compile(r"\bgr[ae]y\b|\bghost\b|\bpewter\b|\bcharcoal\b", re.I), "Grey"),
     (re.compile(r"\bsalmon\b",                                     re.I), "Salmon"),
     (re.compile(r"\baubergine\b|\baub\b|\bpurp(?:le)?\b|\bgrape\b|\bplum\b", re.I), "Aubergine"),
