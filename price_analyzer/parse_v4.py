@@ -170,7 +170,7 @@ PATEK_REFS_DB = {
     '5726/1A': {'model': 'Nautilus Annual Cal', 'family': 'Nautilus', 'retail': 47550, 'dials': ['Blue'], 'case_mm': 40.5},
     '7118/1200R': {'model': 'Ladies Nautilus RG', 'family': 'Nautilus', 'retail': 56750, 'dials': ['Brown'], 'case_mm': 35.2},
     '7010/1G': {'model': 'Ladies Nautilus WG', 'family': 'Nautilus', 'retail': 40970, 'dials': ['Blue'], 'case_mm': 32},
-    '5968A': {'model': 'Aquanaut Chrono', 'family': 'Aquanaut', 'retail': 47550, 'dials': ['Blue', 'Green', 'Orange'], 'case_mm': 42.2},
+    '5968A': {'model': 'Aquanaut Chrono', 'family': 'Aquanaut', 'retail': 47550, 'dials': ['Anthracite Grey', 'Green', 'Orange'], 'case_mm': 42.2},
 }
 
 AP_REFS_DB = {
@@ -200,7 +200,7 @@ VC_REFS_DB = {
     '6000V/210T': {'model': 'Overseas Tourbillon Ti', 'family': 'Overseas', 'retail': 155000, 'dials': ['Blue', 'Grey'], 'case_mm': 42.5},
     '6000V/210R': {'model': 'Overseas Tourbillon RG Bracelet', 'family': 'Overseas', 'retail': 185000, 'dials': ['Blue'], 'case_mm': 42.5},
     '4500V/110A': {'model': 'Overseas SS', 'family': 'Overseas', 'retail': 27500, 'dials': ['Blue', 'Silver', 'Black', 'Green'], 'case_mm': 41},
-    '4500V/110R': {'model': 'Overseas RG', 'family': 'Overseas', 'retail': 53500, 'dials': ['Blue', 'Brown'], 'case_mm': 41},
+    '4500V/110R': {'model': 'Overseas RG', 'family': 'Overseas', 'retail': 53500, 'dials': ['Silver', 'Brown'], 'case_mm': 41},
     '4520V/110A': {'model': 'Overseas Dual Time SS', 'family': 'Overseas', 'retail': 32400, 'dials': ['Blue', 'Silver', 'Black'], 'case_mm': 41},
     '4520V/210A': {'model': 'Overseas Dual Time SS Bracelet', 'family': 'Overseas', 'retail': 32400, 'dials': ['Blue'], 'case_mm': 41},
     '5500V/110A': {'model': 'Overseas Chrono SS', 'family': 'Overseas', 'retail': 39500, 'dials': ['Blue', 'Silver', 'Black'], 'case_mm': 42.5},
@@ -213,6 +213,30 @@ VC_REFS_DB = {
     '43175/000R': {'model': 'Patrimony Retrograde Day-Date', 'family': 'Patrimony', 'retail': 48500, 'dials': ['Silver'], 'case_mm': 42.5},
 }
 VC_RETAIL = {r: d['retail'] for r, d in VC_REFS_DB.items()}
+
+# ── Brand Default Dial — fallback when no dial keyword found in text ──
+# Applied ONLY when extract_dial() returns '' AND len(valid_dials) != 1.
+# Derived from empirical distribution in rolex_wholesale.json: refs where one
+# dial dominates >85% of all detected listings, or where the catalog primary
+# SKU is overwhelmingly the standard model traded.
+BRAND_DEFAULT_DIAL = {
+    # Patek Philippe
+    '5968A':   'Anthracite Grey',  # Aquanaut Chrono — 5968A-001 Anthracite Grey composite (100 % empty; standard model)
+    '5935A':   'Blue',     # World Time SS — 5935A-001 Blue world-map dial (100 % empty)
+    '6102R':   'Black',    # Sky Moon Celestial RG — always Black astronomical dial
+    '6102P':   'Black',    # Sky Moon Celestial Platinum — always Black astronomical dial
+    '5980/1R': 'Black',    # Nautilus Chrono RG — Black dominant (40/41 detected = Black)
+    '5650G':   'Black',    # Aquanaut Jumbo WG — 5650G-001 Black composite
+    '5004P':   'Black',    # Perpetual Calendar Chrono Platinum — Black standard
+    '5160R':   'White',    # Perpetual Calendar RG — White (18/18 detected = White)
+    '5070R':   'White',    # Complications RG — White (18/18 detected = White)
+    # Audemars Piguet
+    '26400AU': 'Black',    # Royal Oak Offshore Forged Carbon — Black exclusively (29/29 = Black)
+    # Vacheron Constantin
+    '4500V/110R': 'Silver',  # Overseas RG — Silver (primary SKU 4500V/110R-B705 → Silver)
+    # Tudor
+    'M79250BA':  'Brown',  # Black Bay Bronze — Tobacco Brown standard dial (29/29 empty)
+}
 
 # ── AP/Patek Official Dial Catalog (from manufacturer websites) ──
 _dial_catalog_path = BASE_DIR / 'dial_reference_catalog.json'
@@ -1805,6 +1829,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpurp\b', 'aubergine', t)  # "purp" = purple/aubergine
     t = re.sub(r'\bcham\b|\bchm\b', 'champagne', t)  # "cham/chm" = champagne
     t = re.sub(r'\bolv(?:\s*grn?)?\b', 'olive', t)   # "olv"/"olv grn" = Olive (HK shorthand; in synonyms JSON but not in code)
+    t = re.sub(r'\bkhaki(?:\s*green)?\b|\bkaki(?:\s*green)?\b', 'khaki green', t)  # Khaki/Khaki Green (AP Royal Oak 15510ST)
+    t = re.sub(r'\bsand(?:stone)?\b(?!\s*(?:wich|al|wood|paper|bag|box|castle|storm))', 'sand', t)  # Sand (AP RO dial)
     t = re.sub(r'\bmalach\b', 'malachite', t)         # "malach" shorthand for Malachite stone dial
     t = re.sub(r'\bceleb\b', 'celebration', t)        # "celeb" = Celebration (Jubilee Motif) dial; safe — \b excludes "celebrity","celebrated"
     # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself)
@@ -2377,6 +2403,8 @@ def extract_dial(text, ref='', raw_ref=''):
         # Day-Date refs use official "Olive Green" name; other refs use generic "Olive"
         _rb_olv = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
         dial = 'Olive Green' if _rb_olv[:3] in ('228', '128', '118', '218', '279', '278') else 'Olive'
+    elif re.search(r'\bkhaki\s*green\b', t): dial = 'Khaki Green'  # AP Royal Oak 15510ST dial
+    elif re.search(r'\bsand\b', t) and not re.search(r'\bsandwich|sandal|sandalwood|sandpaper\b', t): dial = 'Sand'  # AP Royal Oak Sand dial
     elif re.search(r'\bemeraldy?\b', t):
         # "Emerald" = Bright Green on Day-Date (casino/emerald green); generic Green elsewhere
         _rb_em = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
@@ -4291,7 +4319,8 @@ def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, se
         'White': ['Silver', 'Silvered'],
         'Silver': ['White', 'Silvered'],
         'Silvered': ['White', 'Silver'],
-        'Grey': ['Rhodium', 'Slate', 'Anthracite'],
+        'Grey': ['Rhodium', 'Slate', 'Anthracite', 'Anthracite Grey'],
+        'Anthracite Grey': ['Black', 'Grey', 'Anthracite'],
         'Rhodium': ['Grey', 'Slate'],
         'Slate': ['Grey', 'Rhodium'],
     }
@@ -4309,9 +4338,17 @@ def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, se
                 if vd in syns:
                     dial = vd; matched = True; break
         if not matched:
-            dial = valid_dials[0] if len(valid_dials) == 1 else ''
-    elif not dial and len(valid_dials) == 1:
-        dial = valid_dials[0]
+            if len(valid_dials) == 1:
+                dial = valid_dials[0]
+            elif ref in BRAND_DEFAULT_DIAL:
+                dial = BRAND_DEFAULT_DIAL[ref]
+            else:
+                dial = ''
+    elif not dial:
+        if len(valid_dials) == 1:
+            dial = valid_dials[0]
+        elif ref in BRAND_DEFAULT_DIAL:
+            dial = BRAND_DEFAULT_DIAL[ref]
     year = extract_year(text)
     cond = extract_condition(text, ref, extract_year_num(year), extract_month_num(year))
     comp = extract_completeness(text)
