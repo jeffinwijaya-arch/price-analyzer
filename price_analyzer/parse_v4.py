@@ -1698,6 +1698,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
     t = re.sub(r'\bbenz\b', 'silver', t)  # "Benz" = Mercedes hands = silver/white dial in HK shorthand
     t = re.sub(r'\bslvr\b|\bsilv\b', 'silver', t)  # "slvr"/"silv" = silver shorthand
+    t = re.sub(r'\brhod[iy]e?\b|\brodium\b|\brohdium\b', 'rhodium', t)  # rhodi/rhodie/rohdium typos → rhodium
     # Pre-compute ref base for tiger/TI ref-gating (reused for TE shorthand below)
     _ti_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     t = re.sub(r'\btiger\s*iron\b', '__tigeriron__', t)  # protect before generic tiger→tiger eye
@@ -1716,10 +1717,15 @@ def extract_dial(text, ref='', raw_ref=''):
         '116588', '116518', '116508', '116589', '116598',
         '228238', '228235', '228349', '128238', '128235',
         '118238', '118239', '116518LN', '126518LN',
+        '126555',  # YM37 WG — Tiger Eye is a confirmed exotic dial option
     }
     if _te_base in _TIGER_EYE_SHORTHAND_REFS:
         t = re.sub(r'\bte\b', 'tiger eye', t)
         t = re.sub(r'\bgold(?:en)?\s*stone\b|\bbrown\s*stone\b', 'tiger eye', t)
+    # Leopard shorthand — "leop" = Leopard stone dial; gated to YM37 WG (126555) only
+    _LEOPARD_SHORTHAND_REFS = {'126555'}
+    if _ti_base in _LEOPARD_SHORTHAND_REFS:
+        t = re.sub(r'\bleop\b', 'leopard', t)
     # Typo/shorthand fixes
     t = re.sub(r'\bbule\b', 'blue', t)
     t = re.sub(r'\bsliver\b', 'silver', t)
@@ -2505,7 +2511,9 @@ def extract_dial(text, ref='', raw_ref=''):
                            '116576',   # prev-gen DD 36 Platinum (fluted) — Ice Blue
                            '279174',   # Lady DJ 28 TT — Ice Blue option per catalog
                            '127336',   # 1908 39mm TT: IB shorthand valid (3-dial ref, IB is primary)
-                           '127385'}   # Land-Dweller Platinum — Ice Blue is the primary/default dial
+                           '127385',   # Land-Dweller Platinum — Ice Blue is the primary/default dial
+                           # Day-Date WG/RG/Platinum refs where "IB" = Ice Blue (high-value dealers shorthand)
+                           '228238','228235','228345','128235','128238','228239'}  # DD40 WG/RG/Platinum
     # "bright blue" MUST precede generic blue checks — normalized from "electric blue" above
     if re.search(r'\bbright\s*blue\b', t): dial = 'Bright Blue'
     # \bib\b (Ice Blue shorthand) is ref-gated: only fires for known IB-capable refs.
