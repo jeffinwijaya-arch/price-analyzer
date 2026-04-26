@@ -23,6 +23,7 @@
   "_comment_batch_2026r": "--- Cycle improvements: Blue-Grey compound, Skeletonized, AP terms now in extract_dial ---",
   "_comment_batch_2026s": "--- Cycle improvements: Paul Newman compounds, missing Green/Chocolate shorthands, stone dial precision ---",
   "_comment_batch_2026t": "--- New-gen DJ shorthands, stone dial codes, Wimbledon compounds, Chocolate shades ---",
+  "_comment_batch_2026u": "--- YML Daytona yellow expansion, OG Olive Green, new OTB signals, Tiffany Blue mineral ---",
   "Anthracite Grey": [
     "anthracite",
     "anthracite dial",
@@ -753,7 +754,18 @@
     "tiffany printing",
     "tiffany script",
     "tiffany text",
-    "tiffany x rolex"
+    "tiffany x rolex",
+    "tiffany box",
+    "tiffany blue box",
+    "tiffany gift box",
+    "tiffany pouch",
+    "tiffany bag",
+    "tco box",
+    "t&co box",
+    "tiffany only",
+    "available at tiffany",
+    "available from tiffany",
+    "from tiffany only"
   ],
   "Olive Green": [
     "brown olive",
@@ -1228,7 +1240,14 @@
     "tiffy blue",
     "turq",
     "turq blue dial",
-    "turquoise blue"
+    "turquoise blue",
+    "mineral blue",
+    "mineral blue op",
+    "op mineral blue",
+    "aqua op",
+    "op aqua",
+    "icy blue op",
+    "fresh blue op"
   ],
   "Tiger Eye": [
     "bull eye",
@@ -1355,7 +1374,14 @@
     "wm"
   ],
   "YML": [
-    "yml"
+    "yml",
+    "yellow mineral",
+    "yellow mineral lacquer",
+    "yellow lacquer daytona",
+    "ym lacquer",
+    "pikachu dial",
+    "daytona yellow",
+    "yellow daytona"
   ],
   "Yellow": [
     "amarillo",

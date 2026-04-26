@@ -1866,6 +1866,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bt\.&?co\b', 'official tiffany', t)
     # "by Tiffany" / "for Tiffany" / "exclusive to Tiffany" standalone = OTB retailer signal
     t = re.sub(r'\bby\s*tiff(?:any)?\b|\bfor\s*tiff(?:any)?\b|\bexclusive\s*to\s*tiff(?:any)?\b', 'official tiffany', t)
+    # "Tiffany box" / "Tiffany blue box" / "Tiffany pouch" / "Tiffany bag" = T&Co retail packaging = OTB
+    # The iconic Tiffany blue box/pouch is a strong provenance signal for watches retailed through T&Co
+    t = re.sub(r'\btiff(?:any)?\s*(?:blue\s*)?(?:gift\s*)?box\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*(?:jewelry\s*)?(?:pouch|bag|packaging|package)\b', 'official tiffany', t)
+    t = re.sub(r'\bt\s*&\s*co\s*(?:blue\s*)?box\b|\btco\s*box\b', 'official tiffany', t)
+    # "available at/from/through Tiffany" = exclusively retailed through T&Co = OTB
+    t = re.sub(r'\bavail(?:able)?\s*(?:at|from|through|via|only\s*(?:at|from|through))\s*tiff(?:any)?\b', 'official tiffany', t)
+    # "tiffany only" = sold exclusively through T&Co = OTB (gate: requires "tiff" adjacent to "only")
+    t = re.sub(r'\btiff(?:any)?\s*only\b|\bonly\s*(?:at|from|through\s*)?tiff(?:any)\b', 'official tiffany', t)
     t = re.sub(r'\bbubblegum\b', 'candy pink', t)   # Bubblegum = Candy Pink (OP/Lady DJ)
     t = re.sub(r'\bcaramel\b', 'chocolate', t)       # Caramel = warm brown → Chocolate
     t = re.sub(r"\bfalcon'?s?\s*eye\b|\bflyback\s*eye\b", "falcon's eye", t)  # normalize Falcon's Eye variants
@@ -1884,6 +1893,19 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bpurp\b', 'aubergine', t)  # "purp" = purple/aubergine
     t = re.sub(r'\bcham\b|\bchm\b', 'champagne', t)  # "cham/chm" = champagne
     t = re.sub(r'\bolv(?:\s*grn?)?\b', 'olive', t)   # "olv"/"olv grn" = Olive (HK shorthand; in synonyms JSON but not in code)
+    # "og" = Olive Green (HK/Asia shorthand); gate strictly to refs where Olive Green is official
+    # to prevent false positives on refs where "og" is unrelated (e.g. vintage date refs)
+    _OG_VALID_BASES = {
+        '126200','126201','126203','126230','126231','126233','126234','126235','126238','126239',
+        '126300','126301','126303','126331','126333','126334',
+        '128235','128238','128239','228235','228238','228239','228345','228349','228236',
+        '279171','279174','279175','278284','278283',
+        '116200','116234','116300','116334','116233','116231','116238','116235','116239',
+        '336235','336238','336239',
+    }
+    _og_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+    if _og_base in _OG_VALID_BASES or not ref:
+        t = re.sub(r'\bog\b', 'olive', t)
     t = re.sub(r'\bkhaki(?:\s*green)?\b|\bkaki(?:\s*green)?\b', 'khaki green', t)  # Khaki/Khaki Green (AP Royal Oak 15510ST)
     t = re.sub(r'\bsand(?:stone)?\b(?!\s*(?:wich|al|wood|paper|bag|box|castle|storm))', 'sand', t)  # Sand (AP RO dial)
     t = re.sub(r'\bmalach\b', 'malachite', t)         # "malach" shorthand for Malachite stone dial
@@ -2018,6 +2040,8 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bjade(?:\s*blue)?\b', 'tiffany', t)  # "jade"/"jade blue" = Tiffany Blue (HK/Asia dealer term)
         t = re.sub(r'\brobin\b', 'tiffany', t)          # standalone "robin" = robin's egg = Tiffany Blue on OP
         t = re.sub(r'\bteal(?:\s*blue)?\b', 'tiffany', t)  # "teal"/"teal blue" = Tiffany Blue hue on OP refs
+        t = re.sub(r'\bmineral\s*blue\b|\bop\s*mineral\b|\bmineral\s*op\b', 'tiffany', t)  # "mineral blue" = TB dealer description on OP
+        t = re.sub(r'\bfresh\s*blue\b|\bcool\s*blue\b', 'tiffany', t)  # fresh/cool blue = TB hue on OP
         t = re.sub(r'\beggshell(?:\s*blue)?\b', 'tiffany', t)  # "eggshell"/"eggshell blue" = Tiffany Blue (no "Blue" suffix in prior synonyms)
         t = re.sub(r'\bciel(?:\s*blue)?\b', 'tiffany', t)  # "ciel"/"ciel blue" = French sky-blue (common among French/Euro dealers)
         t = re.sub(r'\bturq(?:uoise)?\b', 'tiffany', t)  # "turq"/"turquoise" = Tiffany Blue on OP refs (no stone dial option on OP)
@@ -2205,7 +2229,10 @@ def extract_dial(text, ref='', raw_ref=''):
         '126200','126201','126203','126231','126233','126234','126238',
         '126300','126301','126303','126331','126333','126334',
         '116200','116234','116233','116300','116334','116331','116333',
+        '116231','116238','116235','116239',  # prev-gen DJ36 SS/TT/YG/WG/Everose
         '126235','126239',
+        # New-gen DJ36 variants (2024+) — all confirmed to offer Jubilee Motif dial
+        '336238','336239','336235',
     }
     if re.search(r'__jubmotif__', t):
         if _ref_base_norm in _JUBILEE_MOTIF_REFS:
@@ -2540,9 +2567,15 @@ def extract_dial(text, ref='', raw_ref=''):
         else:
             dial = 'Mint Green'
     elif re.search(r'\bolive\s*green\b|\bolive\b', t):
-        # Day-Date refs use official "Olive Green" name; other refs use generic "Olive"
+        # Day-Date/Lady-DJ refs (228/128/118/218/279/278) use "Olive Green"; others use "Olive".
+        # Also escalate to "Olive Green" when the ref's valid dial list explicitly lists "Olive Green"
+        # (e.g., DJ36 WG 126234, new-gen SD 336235) — detected at parse time for accuracy.
         _rb_olv = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
-        dial = 'Olive Green' if _rb_olv[:3] in ('228', '128', '118', '218', '279', '278') else 'Olive'
+        if _rb_olv[:3] in ('228', '128', '118', '218', '279', '278') or (
+                _valid_dials and 'Olive Green' in _valid_dials and 'Olive' not in _valid_dials):
+            dial = 'Olive Green'
+        else:
+            dial = 'Olive'
     elif re.search(r'\bkhaki\s*green\b', t): dial = 'Khaki Green'  # AP Royal Oak 15510ST dial
     elif re.search(r'\bsand\b', t) and not re.search(r'\bsandwich|sandal|sandalwood|sandpaper\b', t): dial = 'Sand'  # AP Royal Oak Sand dial
     elif re.search(r'\bemeraldy?\b', t):
@@ -2669,12 +2702,24 @@ def extract_dial(text, ref='', raw_ref=''):
     if dial in ('Azzurro Blue', 'Azzurro') and _ref_base_norm in {'126334', '116334'}:
         dial = 'Blue Roman'
 
+    # ── YML normalization for Daytona refs ──
+    # Rolex's official name for the yellow lacquer Daytona dial is "YML" (Yellow Mineral Lacquer).
+    # Dealers sometimes say "yellow" which the parser correctly maps to "Yellow", but the
+    # official/canonical name stored in rolex_dial_options is "YML". Remap here to keep
+    # dial names consistent with the reference database.
+    _YML_REMAP_BASES = {
+        '116508','116518','116519','116503','116505','116515','116520','116528',
+        '126508','126518','126519','126503','126505','126515','126520','126528',
+    }
+    _ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
+    if dial == 'Yellow' and _ref_base in _YML_REMAP_BASES:
+        dial = 'YML'
+
     # ── 126300/126200 Blue dial reclassification ──
     # Rolex 126300 (DJ41 smooth bezel) has TWO official blue dials:
     #   "Azzurro Blue" = Roman numeral markers (the default "blue" in market)
     #   "Bright Blue"  = Stick/index markers (different watch, different price)
     # When dealers say just "blue" without specifying, it's almost always Azzurro (Roman).
-    _ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _ref_base in ('126300', '126200'):
         if dial == 'Blue':
             if _index_type == 'Stick':
