@@ -567,14 +567,16 @@
     "Beach",
     "Turquoise Stone",
     "Diamond",
-    "Pavé"
+    "Pavé",
+    "Paul Newman"
   ],
   "116519LN": [
     "Black",
     "White",
     "Panda",
     "Meteorite",
-    "Tiffany Blue"
+    "Tiffany Blue",
+    "Paul Newman"
   ],
   "126509": [
     "Black",
@@ -600,7 +602,8 @@
     "Diamond",
     "Pavé",
     "Grey",
-    "Blue"
+    "Blue",
+    "Paul Newman"
   ],
   "126519LN": [
     "Black",
@@ -608,7 +611,8 @@
     "Grey",
     "Panda",
     "Meteorite",
-    "Tiffany Blue"
+    "Tiffany Blue",
+    "Paul Newman"
   ],
   "116520": [
     "Black",
@@ -1400,7 +1404,6 @@
   ],
   "128158": [
     "Orange",
-    "Pavé",
     "Pavé",
     "Chocolate",
     "Blue",
@@ -2487,7 +2490,10 @@
     "Champagne",
     "Tiffany Blue",
     "Blue",
-    "Silver"
+    "Silver",
+    "Chocolate",
+    "Sundust",
+    "MOP"
   ],
   "336239": [
     "Black",
@@ -2595,7 +2601,19 @@
     "Black",
     "Blue",
     "Silver",
-    "Champagne"
+    "Champagne",
+    "Chocolate",
+    "Sundust",
+    "Salmon",
+    "MOP",
+    "Pink",
+    "Green"
+  ],
+  "226667": [
+    "Black",
+    "Meteorite",
+    "White",
+    "Grey"
   ],
   "_comment_misc": "--- Additional refs missing from original dataset ---",
   "116285BBR": [

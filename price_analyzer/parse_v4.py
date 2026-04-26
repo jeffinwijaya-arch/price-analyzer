@@ -1707,6 +1707,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bcanary(?:\s*yellow)?\b', 'yellow', t)        # Canary/Canary Yellow = Yellow dial
     t = re.sub(r'\bsaffron\b', 'yellow', t)                     # Saffron = warm yellow
     t = re.sub(r'\bbuttercup(?:\s*yellow)?\b', 'yellow', t)     # Buttercup Yellow = Yellow
+    t = re.sub(r'\bdark\s*green\b', 'green', t)                 # Dark Green = Green (generic shade descriptor)
+    t = re.sub(r'\bdeep\s*green\b', 'green', t)                 # Deep Green = Green
+    t = re.sub(r'\brich\s*green\b|\bbottle\s*green\b', 'green', t)  # Rich/Bottle Green = Green
     t = re.sub(r'\bforest\s*green\b', 'green', t)               # Forest Green = Green
     t = re.sub(r'\bsage\s*green\b', 'olive', t)                 # Sage Green ≈ Olive (muted green; ref-gated → Olive Green or Olive)
     t = re.sub(r'\barctic\s*white\b', 'white', t)               # Arctic White = White (Explorer II polar)
@@ -1714,6 +1717,10 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bindigo(?:\s*blue)?\b', 'blue', t)            # Indigo/Indigo Blue = Blue
     t = re.sub(r'\bazure(?:\s*blue)?\b', 'blue', t)             # Azure/Azure Blue = Blue
     t = re.sub(r'\bfuchsia\b|\bmagenta\b', 'pink', t)           # Fuchsia/Magenta ≈ Pink
+    t = re.sub(r'\btan\b(?!\s*(?:gen|ium|dem|k|gent))', 'champagne', t)  # "tan" dial = champagne (dealers use for cream/beige-gold)
+    t = re.sub(r'\bwarm\s*white\b|\bcream\s*white\b', 'white', t)  # Warm/Cream White = White
+    t = re.sub(r'\boff[\s-]?white\b', 'white', t)               # Off-white = White
+    t = re.sub(r'\bstone\s*grey\b|\bgrey\s*stone\b', 'eisenkiesel', t)  # Stone Grey/Grey Stone = Eisenkiesel (Day-Date stone dial)
     # Dealer nicknames → dial color
     t = re.sub(r'\bjohn\s*mayer\b', 'green', t)  # John Mayer = green Daytona
     t = re.sub(r'\bleman\b|\ble\s*mans?\b', 'black', t)  # Le Mans = black Daytona YG
@@ -1833,6 +1840,9 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bsand(?:stone)?\b(?!\s*(?:wich|al|wood|paper|bag|box|castle|storm))', 'sand', t)  # Sand (AP RO dial)
     t = re.sub(r'\bmalach\b', 'malachite', t)         # "malach" shorthand for Malachite stone dial
     t = re.sub(r'\bceleb\b', 'celebration', t)        # "celeb" = Celebration (Jubilee Motif) dial; safe — \b excludes "celebrity","celebrated"
+    t = re.sub(r'\bbrn\b', 'chocolate', t)           # "brn" = Brown → Chocolate (dealers use for brown Daytona/DD)
+    t = re.sub(r'\bnewman\s*exotic\b|\bexotic\s*newman\b', 'paul newman', t)  # "Newman exotic" / "exotic Newman"
+    t = re.sub(r'\bpn\s*exotic\b|\bexotic\s*pn\b', 'paul newman', t)         # "PN exotic" / "exotic PN"
     # "sd" = Sundust but NOT on Sea-Dweller refs (where dealers use SD for the watch itself)
     _sd_ref_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
     if _sd_ref_base not in {'126600', '126603', '136660', '136659', '116600', '126660', '136668'}:
@@ -2208,10 +2218,17 @@ def extract_dial(text, ref='', raw_ref=''):
     # Also: standalone "newman"/"pnd" unambiguous in watch context; "exotic" ref-gated to Daytona
     _DAYTONA_PN_BASES = {'116508','116518','116519','116520','126508','126518','126519','126520',
                          '116503','126503','116528','126528',  # 126528 YG Ceramic — has PN dial option
-                         '6239','6241','6240','6262','6263','6264','6265'}
+                         '6239','6241','6240','6262','6263','6264','6265',
+                         '116509','126509','116518LN','126518LN','126519LN','116519LN'}
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t): return 'Paul Newman'
-    if re.search(r'\bpaul\s*newman|\bpaul\s*n\.|\bp\.n\.|\bpn\b|\bp/n\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
+    # Full-text Paul Newman keywords are unambiguous; fire on any ref
+    if re.search(r'\bpaul\s*newman\b|\bpaul\s*n\.\b|\bp\.n\.\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t): return 'Paul Newman'
+    # "pn" / "p/n" shorthand: gate to known Paul Newman-capable refs to prevent false positives
+    # ("pn" on a Submariner or DJ listing almost always means "price negotiable" or model initials)
+    _raw_ref_base_pn = re.match(r'(\d+)', (raw_ref or '').upper()).group(1) if re.match(r'(\d+)', (raw_ref or '').upper()) else ''
+    if re.search(r'\bpn\b|\bp/n\b', t) and (_rb_pn in _DAYTONA_PN_BASES or _raw_ref_base_pn in _DAYTONA_PN_BASES or not ref):
+        return 'Paul Newman'
 
     # Panda / Reverse Panda (Daytona)
     if re.search(r'\breverse\s*panda\b|\brev\s*panda\b|\brp\s*daytona\b|\bdaytona\s*rp\b', t): return 'Reverse Panda'
