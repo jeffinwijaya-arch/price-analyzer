@@ -171,6 +171,8 @@ PATEK_REFS_DB = {
     '7118/1200R': {'model': 'Ladies Nautilus RG', 'family': 'Nautilus', 'retail': 56750, 'dials': ['Brown'], 'case_mm': 35.2},
     '7010/1G': {'model': 'Ladies Nautilus WG', 'family': 'Nautilus', 'retail': 40970, 'dials': ['Blue'], 'case_mm': 32},
     '5968A': {'model': 'Aquanaut Chrono', 'family': 'Aquanaut', 'retail': 47550, 'dials': ['Anthracite Grey', 'Green', 'Orange'], 'case_mm': 42.2},
+    '5164A': {'model': 'Aquanaut Travel Time SS', 'family': 'Aquanaut', 'retail': 61920, 'dials': ['Black', 'Khaki Green'], 'case_mm': 41},
+    '5164G': {'model': 'Aquanaut Travel Time WG', 'family': 'Aquanaut', 'retail': 109500, 'dials': ['Blue-Grey', 'Black', 'Chocolate'], 'case_mm': 41},
 }
 
 AP_REFS_DB = {
@@ -1652,6 +1654,15 @@ def extract_dial(text, ref='', raw_ref=''):
     if not hasattr(extract_dial, '_opts'):
         extract_dial._opts = _dial_options_db
     _valid_dials = _dial_options_db.get(ref, [])
+    # For Patek/AP refs not in rolex_dial_options.json, use brand DB dials as valid-dials gate
+    if not _valid_dials:
+        _pb = PATEK_REFS_DB.get(ref, {})
+        if _pb.get('dials'):
+            _valid_dials = _pb['dials']
+        else:
+            _ab = AP_REFS_DB.get(ref, {})
+            if _ab.get('dials'):
+                _valid_dials = _ab['dials']
 
     t = text.lower()
     # Separate color abbreviations glued to ref BEFORE normalization (e.g. 116508mete → 116508 mete)
@@ -2835,7 +2846,8 @@ def extract_dial(text, ref='', raw_ref=''):
                         or any(dial.lower() == v.lower() for v in _valid_dials)
                         or any(dial.lower() in v.lower() for v in _valid_dials)
                         or any(dial.lower().startswith(v.lower()) for v in _valid_dials)
-                        or any(v.lower() in dial.lower() for v in _valid_dials))  # valid is substring of detected
+                        or any(v.lower() in dial.lower() for v in _valid_dials
+                               if ' ' in v or ' ' not in dial))  # valid substr of detected — only compound v or single-word dial
             if not _matched:
                 return ''  # Dial not valid for this ref — suppress false positive
 
