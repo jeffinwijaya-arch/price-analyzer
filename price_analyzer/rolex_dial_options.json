@@ -850,7 +850,20 @@
     "D-Blue"
   ],
   "228206": [
-    "Ice Blue"
+    "Ice Blue",
+    "Meteorite",
+    "Onyx",
+    "Pavé",
+    "Olive Green",
+    "Green",
+    "Silver",
+    "MOP",
+    "Black",
+    "Grey",
+    "White",
+    "Champagne",
+    "Blue",
+    "Celebration"
   ],
   "228235": [
     "Olive Green",
@@ -1363,7 +1376,8 @@
     "Red"
   ],
   "116400": [
-    "Black"
+    "Black",
+    "White"
   ],
   "126900": [
     "Black"

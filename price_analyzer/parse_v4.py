@@ -1534,7 +1534,7 @@ FIXED_DIAL = {
     '116680':'White',  # Yacht-Master II
     '116900':'Black',  # Explorer
     '126900':'Black',  # Air-King
-    '116400':'Black',  # Milgauss standard (non-GV clear crystal) — always Black dial (GV green-crystal has multiple dials)
+    # 116400 (Milgauss standard non-GV): comes in Black AND White — NOT fixed; text detection handles it
     # Single-dial new refs (dealers often omit the dial color)
     '127334':'White',  # 1908 39mm YG — only comes in white lacquer
     '127235':'White',  # 1908 39mm WG — only comes in white lacquer
@@ -1590,7 +1590,7 @@ FIXED_DIAL = {
     '126710':'Black',      # GMT-Master II (no bezel suffix) — all GMT dials are Black regardless of bezel
     '116758SANR':'Black',  # GMT-Master II YG Rainbow (SANR dealer notation) — always Black dial
     # ── Additions: single-dial refs confirmed by official catalog ──
-    '228206':'Ice Blue',   # DD40 Platinum — Ice Blue only (prevents Green/Meteorite contamination from bracelet/bezel text)
+    # 228206 (DD40 Platinum): comes in Ice Blue, Meteorite, Onyx, Pavé, Green, etc. — NOT fixed; text detection + valid_dials handles it
     '126719BLRO':'Meteorite', # GMT-Master II WG Pepsi Oysterflex — Meteorite only (black Oysterflex strap text was causing Black false positives)
     '136660':'Black',      # Sea-Dweller Deepsea 43mm (new gen, no D-Blue suffix) — always Black
     '226659':"Falcon's Eye",  # YM40 18ct WG Oyster — always Falcon's Eye chatoyant stone dial (not "Black")
