@@ -2114,7 +2114,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # (exact, case-insensitive, or substring match — same logic as the end-of-function validator).
     # Used to gate early-return exotic/special dials so they don't fire on refs where they're invalid.
     _vd_ok = lambda d: (
-        not _valid_dials or len(_valid_dials) < 2 or
+        not _valid_dials or
         d in _valid_dials or
         any(d.lower() == v.lower() for v in _valid_dials) or
         any(d.lower() in v.lower() for v in _valid_dials) or
@@ -2610,8 +2610,9 @@ def extract_dial(text, ref='', raw_ref=''):
                 dial = 'Coral Red'  # upgrade to official Rolex name
             elif 'Coral' not in _valid_dials and 'Coral Red' not in _valid_dials:
                 dial = 'Red'
-    # "Rhodium" → "Grey" (Rolex uses both, industry prefers Grey)
-    if dial and dial.startswith('Rhodium'):
+    # "Rhodium" → "Grey" only for refs that don't explicitly list Rhodium as a valid dial
+    # Post-2020 refs (336238, 126200/126300 series etc.) list Rhodium explicitly and it must stay
+    if dial and dial.startswith('Rhodium') and 'Rhodium' not in (_valid_dials or []):
         dial = dial.replace('Rhodium', 'Grey')
     # For DJ41 fluted (126334/116334): "Azzurro"/"Azzurro Blue" is dealer shorthand for the
     # official "Blue Roman" dial (confirmed by dial_synonyms.json _ref_specific comment).
@@ -2717,7 +2718,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # For refs with a known dial list, reject base-color dials that are not valid for the ref.
     # "Compound" dials (Diamond/Stick/Roman/Baguette/Ombré variants) are exempt because
     # rolex_dial_options.json may not enumerate every variant explicitly.
-    if _valid_dials and dial and len(_valid_dials) >= 2:
+    if _valid_dials and dial and len(_valid_dials) >= 1:
         _is_compound_dial = any(s in dial for s in
             [' Diamond', ' Stick', ' Roman', ' Baguette', ' Ombré', ' Ombre', ' Pavé', ' Beach',
              'Official ',   # "Official Tiffany Blue" is a premium variant of "Tiffany Blue"
