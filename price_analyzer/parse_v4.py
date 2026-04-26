@@ -171,8 +171,6 @@ PATEK_REFS_DB = {
     '7118/1200R': {'model': 'Ladies Nautilus RG', 'family': 'Nautilus', 'retail': 56750, 'dials': ['Brown'], 'case_mm': 35.2},
     '7010/1G': {'model': 'Ladies Nautilus WG', 'family': 'Nautilus', 'retail': 40970, 'dials': ['Blue'], 'case_mm': 32},
     '5968A': {'model': 'Aquanaut Chrono', 'family': 'Aquanaut', 'retail': 47550, 'dials': ['Anthracite Grey', 'Green', 'Orange'], 'case_mm': 42.2},
-    '5164A': {'model': 'Aquanaut Travel Time SS', 'family': 'Aquanaut', 'retail': 61920, 'dials': ['Black', 'Khaki Green'], 'case_mm': 41},
-    '5164G': {'model': 'Aquanaut Travel Time WG', 'family': 'Aquanaut', 'retail': 109500, 'dials': ['Blue-Grey', 'Black', 'Chocolate'], 'case_mm': 41},
 }
 
 AP_REFS_DB = {
@@ -1654,16 +1652,6 @@ def extract_dial(text, ref='', raw_ref=''):
     if not hasattr(extract_dial, '_opts'):
         extract_dial._opts = _dial_options_db
     _valid_dials = _dial_options_db.get(ref, [])
-    # For Patek/AP refs not in rolex_dial_options.json, use brand DB dials as valid-dials gate
-    # This prevents false positives (e.g. 5164A "mint" returning Mint Green when no such option exists)
-    if not _valid_dials:
-        _pb = PATEK_REFS_DB.get(ref, {})
-        if _pb.get('dials'):
-            _valid_dials = _pb['dials']
-        else:
-            _ab = AP_REFS_DB.get(ref, {})
-            if _ab.get('dials'):
-                _valid_dials = _ab['dials']
 
     t = text.lower()
     # Separate color abbreviations glued to ref BEFORE normalization (e.g. 116508mete → 116508 mete)
@@ -1693,7 +1681,7 @@ def extract_dial(text, ref='', raw_ref=''):
     # Wimbledon slash-form shorthands: "champ/grn", "grn/champ", "G/C", "C/G" (HK/SG dealer notation)
     t = re.sub(r'\bchamp(?:agne)?\s*/\s*g(?:r(?:n|een)?)?\b|\bg(?:r(?:n|een)?)?\s*/\s*champ(?:agne)?\b', 'wimbledon', t)
     t = re.sub(r'\bchamp\b|\bchp\b', 'champagne', t)
-    t = re.sub(r'\bmete\b|\bmeteor\b', 'meteorite', t)  # mete/meteor = meteorite (not \bmet\b — too ambiguous)
+    t = re.sub(r'\bmete\b|\bmeteor\b|\bmeteo\b', 'meteorite', t)  # mete/meteor/meteo = meteorite (not \bmet\b — too ambiguous)
     t = re.sub(r'\bchocolates?\b|\bchoco?\b', 'chocolate', t)
     t = re.sub(r'\bsodalit[eo]?\b|\bsoda\b', 'sodalite', t)  # "soda" = Sodalite shorthand (in synonyms JSON, not in code until now)
     t = re.sub(r'\bgiraff?e\b', 'giraffe', t)
@@ -1738,6 +1726,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bice[-]blue\b', 'ice blue', t)  # "ice-blue" hyphenated
     t = re.sub(r'\bice\s*bl\b', 'ice blue', t)    # "ice bl" abbreviation → "ice blue"
     t = re.sub(r'\bglacier\s*blue\b|\bplatinum\s*blue\b', 'ice blue', t)  # Ice Blue synonyms
+    t = re.sub(r'\bland[-\s]*dweller\b', 'ice blue', t)  # Land-Dweller (127385 Platinum) = Ice Blue
     t = re.sub(r'\belectric\s*blue\b', 'bright blue', t)  # Electric Blue = Bright Blue (DJ/GMT)
     t = re.sub(r'\baventurin\b|\badventurine\b', 'aventurine', t)  # typo/German form
     t = re.sub(r'\baeroli(?:te|th?e?)\b', 'meteorite', t)  # "Aerolite" = meteorite
@@ -1843,6 +1832,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btb\s*\((?:orig(?:inal)?|auth(?:entic)?|genuine|real|off?(?:icial)?|stamp(?:ed)?|otb|t\.?co|t\s*&\s*co)\)', 'official tiffany', t)
     # Tiffany stamp at 6 o'clock position — "@6" and dotted "O.T.B." notations
     t = re.sub(r'\btiff(?:any)?\s*@\s*6\b|\btb\s*@\s*6\b', 'official tiffany', t)
+    t = re.sub(r'\btiff(?:any)?\s*at\s*6(?:\s*o[\s\']?clock)?\b', 'official tiffany', t)  # "tiffany at 6" / "tiffany at 6 o'clock"
+    t = re.sub(r'\btiff(?:any)?\s*6\s*o[\s\']?clock\b', 'official tiffany', t)             # "tiffany 6 o'clock"
     t = re.sub(r'\bo\.t\.b\.?\b', 'official tiffany', t)  # O.T.B. (dotted) = Official Tiffany Blue
     t = re.sub(r'\btiff(?:any)?\s*six\b', 'official tiffany', t)  # "tiff six" = T&Co stamp at 6
     # "bought at/from Tiffany" / "from Tiffany store" = watch retailed through T&Co = OTB
@@ -2089,7 +2080,7 @@ def extract_dial(text, ref='', raw_ref=''):
                        '326259'}
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
-        t = re.sub(r'\bcosmic\s*(?:dial)?\b|\bgalactic\s*(?:dial)?\b|\bspace\s*rock\b|\bouterspace\s*(?:dial)?\b', 'meteorite', t)
+        t = re.sub(r'\bcosmic\s*(?:dial)?\b|\bgalactic\s*(?:dial)?\b|\bspace\s*rock\b|\bouter[\s\-]?space\s*(?:dial)?\b', 'meteorite', t)
     # ── Ref-gated Pink → Candy Pink (OP/31 refs where only Candy Pink exists, not plain Pink) ──
     # For these refs dealers say "pink" but Rolex's official name is "Candy Pink"
     _ONLY_CANDY_PINK_REFS = {'124300', '277200', '276200', '134300'}
@@ -2105,7 +2096,8 @@ def extract_dial(text, ref='', raw_ref=''):
     # For remaining OTB detector-only patterns, pre-convert them here before stripping.
     _TIFFANY_BLOCKED_BASES = {
         # Daytona SS/RG/base — no Tiffany Blue option (WG/YG exotic variants handled below)
-        '126500','126503','126505','126515','126518','126520',
+        # NOTE: 126505 (Daytona Platinum) is NOT blocked — it has a confirmed TB dial option.
+        '126500','126503','126515','126518','126520',
         '116500','116503','116520',
         # Datejust 36/41 — no Tiffany Blue dial option; block to prevent false positives
         '126231','126233','126238',  # DJ36 TT/YG — no Tiffany Blue (126234 WG is NOT blocked — it offers TB)
@@ -2114,6 +2106,9 @@ def extract_dial(text, ref='', raw_ref=''):
         '116300','116301','116303',           # prev-gen DJ41 SS variants
         '126331','126333','126334',           # DJ36 TT Rose Gold variants
         '116331','116333','116334',           # prev-gen DJ36 TT Rose Gold variants
+        # DJ36 additional variants with no Tiffany Blue option (prevent "tiffany box" false positives)
+        '126201','126203',                   # DJ36 TT (YG crown/indices) — no TB option
+        '126230','126235','126239',           # DJ36 SS no-date / WG / Everose — no TB option
         # New-gen Datejust/Sky-Dweller (336/326 series) — no Tiffany Blue option
         # NOTE: 336238 (new-gen DJ36 YG) and 326934/326935/336934/336935 (Sky-Dwellers) are
         # NOT blocked — they have confirmed Tiffany Blue dial options per rolex_dial_options.json.
@@ -2130,17 +2125,16 @@ def extract_dial(text, ref='', raw_ref=''):
     # both confirmed TB option in rolex_dial_options.json.
     _TIFFANY_UNBLOCK_FULL_REF = {'126518LN', '116518LN'}
     if _ref_base_norm in _TIFFANY_BLOCKED_BASES and (ref.upper() if ref else '') not in _TIFFANY_UNBLOCK_FULL_REF:
-        # Pre-convert remaining OTB signals not yet handled by lines above
+        # These refs have NO Tiffany Blue dial and no Official Tiffany collab dial.
+        # Strip ALL Tiffany/OTB tokens completely so other color keywords can fire correctly.
+        # (OTB signals like "tiffany box"/"from tiffany store" are retailer provenance, not a dial type —
+        # preserving them would produce false "Official Tiffany Blue" dial classifications on these refs.)
         t = re.sub(r'\botb\b|\bt\.co\b|\btco\b'
                    r'|\btiffany\s*&\s*co\b|\btiffany\s*and\s*co\b|\btiff\s*&\s*co\b'
                    r'|\btiffany\s*[x\xd7]\s*rolex\b|\brolex\s*[x\xd7]\s*tiffany\b',
-                   '__otb__', t)
-        # Also protect "official tiffany" already written by lines 1671-1675 and reverse-parens above
-        t = re.sub(r'\bofficial\s*tiffany\b', '__otb__', t)
-        # Strip standalone tiffany/tiff/tb — contextual mention on non-TB ref
+                   ' ', t)
+        t = re.sub(r'\bofficial\s*tiffany\b', ' ', t)
         t = re.sub(r'\btiffany(?:\s*blue)?\b|\btiff\b|\btb\b', ' ', t)
-        # Restore OTB placeholder so detection block below can fire
-        t = re.sub(r'__otb__', 'official tiffany', t)
     ref_upper = ref.upper() if ref else ''
     raw_ref_upper = (raw_ref or '').upper().strip()
 
@@ -2361,7 +2355,7 @@ def extract_dial(text, ref='', raw_ref=''):
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t) and _vd_ok('Paul Newman'): return 'Paul Newman'
     # Full-text Paul Newman keywords are unambiguous on known refs; gate against refs with no PN option
-    if re.search(r'\bpaul\s*newman\b|\bpaul\s*n\.\b|\bp\.n\.\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t) and _vd_ok('Paul Newman'): return 'Paul Newman'
+    if re.search(r'\bpaul\s*newman\b|\bpaul\s*n\.?\b|\bp\.n\.?\b|\bnewman\b|\bpnd\b|\bpnm\b|\bpn\.m\b', t) and _vd_ok('Paul Newman'): return 'Paul Newman'
     # "pn" / "p/n" shorthand: gate to known Paul Newman-capable refs to prevent false positives
     # ("pn" on a Submariner or DJ listing almost always means "price negotiable" or model initials)
     _raw_ref_base_pn = re.match(r'(\d+)', (raw_ref or '').upper()).group(1) if re.match(r'(\d+)', (raw_ref or '').upper()) else ''
@@ -2841,8 +2835,7 @@ def extract_dial(text, ref='', raw_ref=''):
                         or any(dial.lower() == v.lower() for v in _valid_dials)
                         or any(dial.lower() in v.lower() for v in _valid_dials)
                         or any(dial.lower().startswith(v.lower()) for v in _valid_dials)
-                        or any(v.lower() in dial.lower() for v in _valid_dials
-                               if ' ' in v or ' ' not in dial))  # valid substr of detected — only compound v or single-word dial
+                        or any(v.lower() in dial.lower() for v in _valid_dials))  # valid is substring of detected
             if not _matched:
                 return ''  # Dial not valid for this ref — suppress false positive
 
