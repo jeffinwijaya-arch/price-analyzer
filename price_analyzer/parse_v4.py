@@ -230,10 +230,22 @@ BRAND_DEFAULT_DIAL = {
     '5004P':   'Black',    # Perpetual Calendar Chrono Platinum — Black standard
     '5160R':   'White',    # Perpetual Calendar RG — White (18/18 detected = White)
     '5070R':   'White',    # Complications RG — White (18/18 detected = White)
+    '5270P':   'Green',    # Perpetual Calendar Chrono Platinum — Green 98% (257/261 detected)
+    '5164G':   'Blue',     # Aquanaut WG/Gold — Blue 93% (120/128 detected)
+    '5119G':   'White',    # Calatrava WG — White 100% (26/26 detected)
+    '5102PR':  'Blue',     # Celestial RG — Blue 100% (6/6 detected)
+    '5124G':   'Blue',     # Gondolo RG — Blue 100% (27/27 detected)
+    '3940G':   'White',    # Grand Complications WG — White 100% (8/8 detected)
+    '5167A':   'Black',    # Aquanaut SS — Black 94% (249/265 detected)
+    '5164A':   'Black',    # Aquanaut SS — Black 92% (85/92 detected)
+    '5270R':   'White',    # Perpetual Calendar Chrono RG — White 86% (18/21 detected)
     # Audemars Piguet
     '26400AU': 'Black',    # Royal Oak Offshore Forged Carbon — Black exclusively (29/29 = Black)
+    '16202ST': 'Blue',     # Royal Oak Jumbo Extra Flat SS — Blue 95% (144/150 detected)
+    '26715OR': 'Blue',     # Royal Oak Offshore Chrono RG — Blue 100% (91/91 detected)
     # Vacheron Constantin
     '4500V/110R': 'Silver',  # Overseas RG — Silver (primary SKU 4500V/110R-B705 → Silver)
+    '6000V/210T': 'Blue',    # Overseas Tourbillon Ti — Blue 100% (55/55 detected)
     # Tudor
     'M79250BA':  'Brown',  # Black Bay Bronze — Tobacco Brown standard dial (29/29 empty)
 }
@@ -1924,7 +1936,8 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126200','126201','126203',
         '126334','126333','126331','126234','126233','126231',
         '116300','116234','116334','126238','276200','277200',
-        '336934','336935','336238','326934','326935',
+        '336934','336935','336238',
+        # 326934/326935 (prev-gen Sky-Dweller YG) excluded — opts has Tiffany Blue but NOT Bright Blue
     }
     if _sd_ref_base in _COBALT_BRIGHT_REFS:
         t = re.sub(r'\bcobalt(?:\s*blue)?\b|\bintense\s*blue\b', 'bright blue', t)
@@ -2534,10 +2547,12 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126200','126201','126203',
         '126334','126333','126331','126234','126233','126231',
         '116300','116234','116334','126238',
+        '126230',           # DJ36 (no-date) SS — opts confirms Bright Blue option
         '276200','277200',  # Lady OP 28/31 SS — offers Bright Blue
         '336934','336238',  # new-gen DJ41/DJ36 refs with Bright Blue
         '336935',           # new-gen Sky-Dweller YG — offers Bright Blue
         '228239',           # Day-Date 40 Platinum — offers Bright Blue dial
+        '128239',           # Day-Date 36 Platinum — opts confirms Bright Blue option
     }: dial = 'Bright Blue'
     elif re.search(r'\bblue-grey\b|\bblue-gray\b', t): dial = 'Blue-Grey'  # AP Aquanaut/Offshore compound
     elif re.search(r'\bdark\s*blue\b|\bdb\b', t): dial = 'Dark Blue'
