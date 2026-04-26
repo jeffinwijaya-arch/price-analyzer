@@ -1654,6 +1654,7 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bwimbldon\b|\bwimbledo\b|\bwimbledn\b|\bwimbelton\b|\bwimbeldan\b|\bwimbly\b|\bwimble\b', 'wimbledon', t)
     t = re.sub(r'\bwimed\b|\bwimedo\b|\bwimdon\b|\bwimdo\b|\bwmdn\b', 'wimbledon', t)
     t = re.sub(r'\bwbldon\b|\bwblden\b|\bwbldn\b', 'wimbledon', t)  # "wbldon/wblden" = Wimbledon (extra-abbreviated dealer typo)
+    t = re.sub(r'\bwmbldon\b|\bwmbldn\b|\bwmlb\b|\bwmbl\b', 'wimbledon', t)  # "wmbldon/wmbldn/wmlb/wmbl" compressed Wimbledon typos
     t = re.sub(r'\bwmb\b', 'wimbledon', t)  # "Wmb" = Wimbledon (dealer abbreviation)
     t = re.sub(r'\bwblg\b', 'wimbledon', t)  # "WBLG" = Wimbledon Green (ultra-abbreviated HK dealer code)
     # Wimbledon slash-form shorthands: "champ/grn", "grn/champ", "G/C", "C/G" (HK/SG dealer notation)
@@ -1695,6 +1696,8 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\biceblue\b', 'ice blue', t)  # "iceblue" (no space) → "ice blue"
     t = re.sub(r'\begg\s+shell\b', 'eggshell', t)  # "egg shell" two-word form → "eggshell" for TB detection
     t = re.sub(r'\btiffanyblue\b', 'tiffany', t)  # "TiffanyBlue" glued form
+    t = re.sub(r'\btiffblue\b|\btblu\b', 'tiffany', t)  # "tiffblue"/"tblu" compressed dealer shorthands
+    t = re.sub(r'\bt\.blu\b|\bt-blu\b', 'tiffany', t)   # "t.blu"/"t-blu" abbreviated dot/hyphen forms
     t = re.sub(r'\btiff[-_]blue\b', 'tiffany', t)   # "Tiff-Blue" / "Tiff_Blue" hyphenated
     t = re.sub(r'\btiffy\b|\btif\b', 'tiffany', t)  # single-f/y Tiffany shorthands (common in HK/Asia)
     t = re.sub(r'\btifany\b', 'tiffany', t)  # common single-f spelling variant (tifany → tiffany)
@@ -1789,6 +1792,11 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\btiff(?:any)?\s*(?:limited\s*|special\s*)?edition\b|\btiff(?:any)?\s*(?:exclusive|ltd\.?)\b', 'official tiffany', t)
     # "Tiffany limited" (standalone without "edition") = OTB
     t = re.sub(r'\btiff(?:any)?\s*limited\b', 'official tiffany', t)
+    # "Tiffany Anniversary" / "Anniversary Tiffany" = Rolex x T&Co 175th anniversary collab (2021) = OTB
+    t = re.sub(r'\btiff(?:any)?\s*anniversary\b|\banniversary\s*(?:edition\s*)?tiff(?:any)?\b', 'official tiffany', t)
+    # "1 of 250" / "250 pcs/pieces" near tiffany text = Rolex x T&Co 250-piece limited edition = OTB
+    if re.search(r'\b(?:1\s*of\s*250|250\s*pcs?|250\s*pieces?|tiffany\s*250|250\s*tiff)\b', t) and re.search(r'\btiff', t):
+        t = re.sub(r'\btiff(?:any)?(?:\s+blue)?\b', 'official tiffany', t, count=1)
     # "Retailed at Tiffany" / "sold by/through Tiffany" = sold through T&Co = OTB
     t = re.sub(r'\bretail(?:ed)?\s*(?:at|by|through|via)\s*(?:tiff(?:any)?|t\.?co)\b', 'official tiffany', t)
     t = re.sub(r'\bsold\s*(?:at|by|through|via)\s*tiff(?:any)?\b', 'official tiffany', t)
@@ -2269,7 +2277,8 @@ def extract_dial(text, ref='', raw_ref=''):
     _DAYTONA_PN_BASES = {'116508','116518','116519','116520','126508','126518','126519','126520',
                          '116503','126503','116528','126528',  # 126528 YG Ceramic — has PN dial option
                          '6239','6241','6240','6262','6263','6264','6265',
-                         '116509','126509','116518LN','126518LN','126519LN','116519LN'}
+                         '116509','126509','116518LN','126518LN','126519LN','116519LN',
+                         '278289'}  # Lady DD WG 31mm — confirmed PN exotic dial option
     _rb_pn = re.match(r'(\d+)', ref_upper).group(1) if ref and re.match(r'(\d+)', ref_upper) else ''
     if _rb_pn in _DAYTONA_PN_BASES and re.search(r'\bexotic\b', t) and _vd_ok('Paul Newman'): return 'Paul Newman'
     # Full-text Paul Newman keywords are unambiguous on known refs; gate against refs with no PN option
@@ -2310,8 +2319,8 @@ def extract_dial(text, ref='', raw_ref=''):
         '126200','126201','126203','126231','126233','126234',
         '126238',  # DJ36 YG — also offers Wimbledon
         '126235','126239',  # DJ36 WG/Everose variants with Wimbledon
-        '126283','126284','116300','116333','116334','116234',
-        '116233','116200','116201','116203','116231','116238',  # prev-gen DJ36 SS/TT/YG
+        '126283','126284','116300','116331','116333','116334','116234',
+        '116233','116200','116201','116203','116231','116238',  # prev-gen DJ36 SS/TT/YG (116331 = TT RG prev-gen)
         '116235','116239',  # prev-gen DJ36 WG/Everose — Wimbledon option available
         '15000','15050',    # vintage DJ refs (per rolex_dial_options.json) with Wimbledon
         '336238','336239','336235',  # new-gen DJ36 YG/Everose/WG (2024+) — also offer Wimbledon
