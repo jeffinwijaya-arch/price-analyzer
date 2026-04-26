@@ -239,6 +239,14 @@ BRAND_DEFAULT_DIAL = {
     '5167A':   'Black',    # Aquanaut SS — Black 94% (249/265 detected)
     '5164A':   'Black',    # Aquanaut SS — Black 92% (85/92 detected)
     '5270R':   'White',    # Perpetual Calendar Chrono RG — White 86% (18/21 detected)
+    # Patek 5711 variants (Nautilus SS family)
+    '5711/1R': 'Chocolate',     # Nautilus Rose Gold — always Chocolate brown dial
+    '5711/1P': 'Tiffany Blue',  # Nautilus Platinum bracelet = Tiffany Blue (the famous final edition)
+    '5711/1A': 'Blue',          # Standard Nautilus SS — Blue-black grooved dial (001 variant = default)
+    '5726/1A': 'Blue-Grey',     # Nautilus Annual Calendar — Blue-Grey (standard 001 dial)
+    '5726A':   'Grey',          # Nautilus Annual Calendar (bare) — Grey standard
+    '5712/1A': 'Blue',          # Nautilus Annual Calendar Moon — Blue standard
+    '5712G':   'Blue',          # Nautilus Annual Calendar Moon WG — Blue standard
     # Audemars Piguet
     '26400AU': 'Black',    # Royal Oak Offshore Forged Carbon — Black exclusively (29/29 = Black)
     '16202ST': 'Blue',     # Royal Oak Jumbo Extra Flat SS — Blue 95% (144/150 detected)
@@ -1919,8 +1927,26 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bmocha\b|\bcoffee\b|\bespresso\b|\bcognac\b|\btobacco\b|\bhavana\b|\bcappuccino\b|\blatte\b|\bwalnut\b|\bcacao\b', 'chocolate', t)
     # Cherry Red → Coral Red (before generic red stripping)
     t = re.sub(r'\bcherry\s*red\b', 'coral red', t)
+    # Burnt Orange / Orange-Red → Coral Red (vivid warm-red OP/DD dials)
+    t = re.sub(r'\bburnt\s*orange\b|\borange[\s-]red\b|\bred[\s-]orange\b', 'coral red', t)
     # Red variants used by dealers (raspberry on OP, scarlet/crimson on specials)
     t = re.sub(r'\bscarlet\b|\bcrimson\b|\bclaret\b|\braspberry\b', 'red', t)
+    # Green collector/dealer nicknames — increasing in HK/SG dealer shorthand vocabulary
+    t = re.sub(r'\bkombucha\b', 'green', t)     # "Kombucha" = green (collector nickname, esp. AP/Rolex green dials)
+    t = re.sub(r'\bmatcha\b', 'green', t)        # "Matcha" = green (Asian market dealer term)
+    t = re.sub(r'\bseaweed\b', 'green', t)       # "Seaweed" = green (collector slang)
+    t = re.sub(r'\bjungle(?:\s*green)?\b', 'green', t)  # "Jungle"/"Jungle Green" = green
+    t = re.sub(r'\bviridian\b', 'green', t)      # Viridian = mid-green mineral pigment
+    t = re.sub(r'\bpine\s*green\b', 'green', t)  # Pine Green = dark evergreen shade
+    t = re.sub(r'\bfern(?:\s*green)?\b', 'green', t)    # "Fern"/"Fern Green" = natural green
+    # Chocolate additional dealer nicknames
+    t = re.sub(r'\bcaf[eé]\b', 'chocolate', t)  # "Café" = chocolate (French/European dealers)
+    t = re.sub(r'\bsienna\b', 'chocolate', t)    # Sienna = warm reddish-brown → Chocolate
+    t = re.sub(r'\btoffee\b', 'chocolate', t)    # Toffee = caramel-brown → Chocolate
+    t = re.sub(r'\bcocoa\b', 'chocolate', t)     # Cocoa = dark brown → Chocolate
+    # Sundust additional nicknames (Rolex Sundust is a warm cream-gold dial on Daytona/Sub)
+    t = re.sub(r'\bsun(?:glow|beam|rise)\b', 'sundust', t)   # "Sunglow"/"Sunbeam"/"Sunrise" ≈ Sundust
+    t = re.sub(r'\bgoldenrod\b|\bgold\s*ray\b', 'sundust', t)  # Goldenrod/Gold Ray ≈ Sundust warm yellow
     # Aubergine/purple variants
     t = re.sub(r'\bplum\b|\bprune\b', 'aubergine', t)
     t = re.sub(r'\bamethyst\b|\bametrine\b', 'aubergine', t)       # Amethyst/Ametrine = purple stone → Aubergine
@@ -4401,7 +4427,9 @@ _BRAND_MODEL_DIAL = {
     '15551ST.ZZ.1356ST.03': 'Black', '15551ST.ZZ.1356ST.04': 'White',
     '15551ST.ZZ.1356ST.05': 'Green', '15551ST.ZZ.1356ST.06': 'Salmon',
     # Patek 5711/1A Nautilus
-    '5711/1A-001': 'White', '5711/1A-010': 'Blue', '5711/1A-011': 'Green',
+    '5711/1A-001': 'Blue',   # Standard Blue-black grooved dial (NOT white — 001 is the classic blue)
+    '5711/1A-010': 'White',  # White dial variant (limited)
+    '5711/1A-011': 'White',  # White dial with luminescent indices
     '5711/1A-014': 'Olive Green', '5711/1A-018': 'Tiffany Blue',
     # Patek 5980/1A Nautilus Chrono
     '5980/1A-001': 'Blue', '5980/1A-019': 'Black', '5980/1R-001': 'Blue',
@@ -4482,6 +4510,16 @@ def _emit_brand_listing(ref, brand, text, sender, ts, group, dc, region, out, se
         'Anthracite Grey': ['Black', 'Grey', 'Anthracite'],
         'Rhodium': ['Grey', 'Slate'],
         'Slate': ['Grey', 'Rhodium'],
+        # Turquoise → Tiffany Blue: refs like 336238 (new DJ36 YG) offer Tiffany Blue but
+        # dealers sometimes say "turquoise" which the parser resolves to "Turquoise".
+        # If the ref's valid_dials only contains "Tiffany Blue" (not "Turquoise"), remap.
+        'Turquoise': ['Tiffany Blue'],
+        # Blue → Tiffany Blue: some Patek refs only offer Tiffany Blue (e.g. 5711/1P).
+        # If valid_dials is solely ["Tiffany Blue"] and extract_dial found "Blue", promote it.
+        'Blue': ['Tiffany Blue'],
+        # Anthracite / Khaki composite → Black for Aquanaut-type refs
+        'Khaki Green': ['Black', 'Anthracite Grey'],
+        'Anthracite': ['Anthracite Grey', 'Black'],
     }
     valid_dials = info.get('dials', [])
     if dial and valid_dials and dial not in valid_dials:
