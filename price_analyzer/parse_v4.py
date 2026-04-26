@@ -1758,8 +1758,15 @@ def extract_dial(text, ref='', raw_ref=''):
     t = re.sub(r'\bbruce\s*wayne\b', 'black', t)  # Bruce Wayne = black dial GMT Sprite GRNR
     t = re.sub(r'\bcoke\b', 'black', t)   # Coke = black dial GMT (vintage 16710 red/black bezel)
     t = re.sub(r'\bgrpe\b', 'grape', t)  # HK shorthand for Grape dial
-    t = re.sub(r'\bpistach\b', 'pistachio', t)  # dealer shorthand for Pistachio
+    t = re.sub(r'\bpistach\b|\bpistache\b', 'pistachio', t)  # dealer shorthands for Pistachio
     t = re.sub(r'\bbrt\s*grn?\b', 'bright green', t)  # "brt grn"/"brt gr" = Bright Green
+    t = re.sub(r'\btuxedo\b', 'panda', t)  # Tuxedo = Panda (black dial with white sub-dials)
+    t = re.sub(r'\bsalm\b', 'salmon', t)  # "salm" = Salmon shorthand (HK dealers)
+    t = re.sub(r'\bcarn\b', 'carnelian', t)  # "carn" = Carnelian shorthand
+    t = re.sub(r'\beisk\b', 'eisenkiesel', t)  # "eisk" = Eisenkiesel shorthand
+    t = re.sub(r'\bfire\s*opal\b', 'opal', t)  # Fire Opal = Opal (stone dial variant)
+    # "verde palma" (Spanish/Italian) = Palm Green — normalize "palma" before palm detection
+    t = re.sub(r'\bpalma\b', 'palm', t)
     t = re.sub(r'\borig(?:inal)?\s*(?:tiff(?:any)?|tb)\b|\bgenuine\s*(?:tiff(?:any)?|tb)\b|\bauth(?:entic)?\s*(?:tiff(?:any)?|tb)\b|\breal\s*(?:tiff(?:any)?|tb)\b|\bgen(?:uine)?\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\blegit\s*(?:tiff(?:any)?|tb)\b|\bverif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\bconfirm(?:ed)?\s*(?:tiff(?:any)?|tb)\b|\bstamped\s*(?:tiff(?:any)?|tb)\b', 'official tiffany', t)
     t = re.sub(r'\bcertif(?:ied)?\s*(?:tiff(?:any)?|tb)\b|\btiff(?:any)?\s*certif(?:ied)?\b', 'official tiffany', t)
@@ -1874,17 +1881,35 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\btb\b', 'turquoise', t)
     # ── Additional dial synonym normalizations ──
     # Champagne synonyms (dealer terms for warm cream/ivory dials; Rolex official = champagne)
-    t = re.sub(r'\bivory\b|\bivoire\b|\becru\b|\bstraw\b|\bbutterscotch\b', 'champagne', t)
-    # Chocolate synonyms (dealers use coffee/mocha/cognac/havana for brown Daytona/DD dials)
-    t = re.sub(r'\bmocha\b|\bcoffee\b|\bespresso\b|\bcognac\b|\btobacco\b|\bhavana\b|\bcappuccino\b|\blatte\b', 'chocolate', t)
+    t = re.sub(r'\bivory\b|\bivoire\b|\becru\b|\bstraw\b|\bbutterscotch\b|\bvanilla\b|\balmond\b', 'champagne', t)
+    # Chocolate synonyms (dealers use coffee/mocha/cognac/havana/walnut/cacao for brown Daytona/DD dials)
+    t = re.sub(r'\bmocha\b|\bcoffee\b|\bespresso\b|\bcognac\b|\btobacco\b|\bhavana\b|\bcappuccino\b|\blatte\b|\bwalnut\b|\bcacao\b', 'chocolate', t)
+    # Cherry Red → Coral Red (before generic red stripping)
+    t = re.sub(r'\bcherry\s*red\b', 'coral red', t)
     # Red variants used by dealers (raspberry on OP, scarlet/crimson on specials)
     t = re.sub(r'\bscarlet\b|\bcrimson\b|\bclaret\b|\braspberry\b', 'red', t)
     # Aubergine/purple variants
     t = re.sub(r'\bplum\b|\bprune\b', 'aubergine', t)
     t = re.sub(r'\bamethyst\b|\bametrine\b', 'aubergine', t)       # Amethyst/Ametrine = purple stone → Aubergine
-    t = re.sub(r'\bbordeaux\b|\bburgund(?:y|i)?\b', 'aubergine', t)  # Bordeaux/Burgundy = deep purple → Aubergine
-    # Blue variants (cobalt/navy = standard blue in Rolex context)
-    t = re.sub(r'\bcobalt\b|\bnavy\b', 'blue', t)
+    t = re.sub(r'\bbordeaux\b|\bburgund(?:y|i)?\b|\bwine\s*red\b|\bwine\b(?!\s*(?:glass|country|list|bar|rack|cellar|bottle))', 'aubergine', t)  # Bordeaux/Burgundy/Wine = deep purple → Aubergine
+    # Seafoam/Seafoam Green → Mint Green
+    t = re.sub(r'\bseafoam(?:\s*green)?\b', 'mint green', t)
+    # Charcoal/Pewter → Grey
+    t = re.sub(r'\bcharcoal\b|\bpewter\b', 'grey', t)
+    # Tangerine → Orange
+    t = re.sub(r'\btangerine\b', 'orange', t)
+    # Blue variants — cobalt blue is Bright Blue on DJ/OP refs (not generic blue)
+    _COBALT_BRIGHT_REFS = {
+        '126300','126301','126303','126200','126201','126203',
+        '126334','126333','126331','126234','126233','126231',
+        '116300','116234','116334','126238','276200','277200',
+        '336934','336935','336238','326934','326935',
+    }
+    if _sd_ref_base in _COBALT_BRIGHT_REFS:
+        t = re.sub(r'\bcobalt(?:\s*blue)?\b|\bintense\s*blue\b', 'bright blue', t)
+    else:
+        t = re.sub(r'\bcobalt\b', 'blue', t)
+    t = re.sub(r'\bnavy\b', 'blue', t)
     t = re.sub(r'\bcerulean\b|\bazurean\b', 'blue', t)             # Cerulean/Azurean = sky-blue → Blue
     # Multilingual color normalizations (French/German/Italian/Spanish dealers)
     t = re.sub(r'\bnoir\b|\bnero\b|\bschwarz\b', 'black', t)       # FR/IT/DE black
@@ -2468,7 +2493,9 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126200','126201','126203',
         '126334','126333','126331','126234','126233','126231',
         '116300','116234','116334','126238',
+        '276200','277200',  # Lady OP 28/31 SS — offers Bright Blue
         '336934','336238',  # new-gen DJ41/DJ36 refs with Bright Blue
+        '336935',           # new-gen Sky-Dweller YG — offers Bright Blue
         '228239',           # Day-Date 40 Platinum — offers Bright Blue dial
     }: dial = 'Bright Blue'
     elif re.search(r'\bblue-grey\b|\bblue-gray\b', t): dial = 'Blue-Grey'  # AP Aquanaut/Offshore compound
@@ -2516,12 +2543,13 @@ def extract_dial(text, ref='', raw_ref=''):
         # Check if this is a single-dial ref from catalog before returning empty
         if ref:
             rolex_base = ref.upper()
-            # Remove known Rolex suffixes
+            # Strip Rolex alpha suffixes and Patek dash-suffixes
             for suffix in ['LN', 'LV', 'LB', 'BLNR', 'BLRO', 'GRNR', 'CHNR', 'VTNR', 'TBR', 'RBR']:
                 if rolex_base.endswith(suffix):
                     rolex_base = rolex_base[:-len(suffix)]
                     break
-            
+            rolex_base = re.sub(r'-\d{3}$', '', rolex_base)
+
             if rolex_base in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[rolex_base], dict):
                 rolex_dials = DIAL_REF_CATALOG[rolex_base]
                 if len(rolex_dials) == 1:
@@ -2693,7 +2721,7 @@ def extract_dial(text, ref='', raw_ref=''):
             _cs = ap_m.group(2)
             if _cb in AP_SUFFIX_DIALS and _cs in AP_SUFFIX_DIALS[_cb]:
                 dial = AP_SUFFIX_DIALS[_cb][_cs]
-        # Patek: "5711/1A-014" → base=5711/1A, suffix=014 → Olive Green
+        # Patek slash-style: "5711/1A-014" → base=5711/1A, suffix=014 → Olive Green
         if not dial:
             pk_m = re.search(r'(\d{4}/\d+[A-Z])-(\d{3})', raw_ref)
             if pk_m:
@@ -2701,21 +2729,36 @@ def extract_dial(text, ref='', raw_ref=''):
                 _cs = pk_m.group(2)
                 if _cb in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[_cb], dict):
                     dial = DIAL_REF_CATALOG[_cb].get(_cs, '')
-    
-    # ── Rolex: Single-dial fallback from catalog ──
-    # ── Rolex: Single-dial fallback from catalog ──
+        # Patek no-slash style: "5968A-001" → base=5968A, suffix=001 → Anthracite Grey
+        if not dial:
+            pk_ns = re.search(r'^(\d{4}[A-Z]+)-(\d{3})$', (raw_ref or '').upper().strip())
+            if pk_ns:
+                _cb = pk_ns.group(1)
+                _cs = pk_ns.group(2)
+                if _cb in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[_cb], dict):
+                    dial = DIAL_REF_CATALOG[_cb].get(_cs, '')
+                    if not dial and len(DIAL_REF_CATALOG[_cb]) == 1:
+                        dial = list(DIAL_REF_CATALOG[_cb].values())[0]
+
+    # ── Single-dial fallback from catalog (Rolex + other brands) ──
     if not dial and ref:
         rolex_base = ref.upper()
-        # Remove known Rolex suffixes
+        # Strip Rolex alpha suffixes and Patek dash-suffixes
         for suffix in ['LN', 'LV', 'LB', 'BLNR', 'BLRO', 'GRNR', 'CHNR', 'VTNR', 'TBR', 'RBR']:
             if rolex_base.endswith(suffix):
                 rolex_base = rolex_base[:-len(suffix)]
                 break
-        
+        # Strip Patek no-slash sub-ref ("-001", "-014" etc.) from the canonicalized ref
+        rolex_base = re.sub(r'-\d{3}$', '', rolex_base)
+
         if rolex_base in DIAL_REF_CATALOG and isinstance(DIAL_REF_CATALOG[rolex_base], dict):
             rolex_dials = DIAL_REF_CATALOG[rolex_base]
             if len(rolex_dials) == 1:
                 dial = list(rolex_dials.values())[0]
+
+    # Normalize 'Anthracite Grey' to 'Grey' so catalog-inferred and text-detected values merge
+    if dial == 'Anthracite Grey':
+        dial = 'Grey'
 
     return dial
 
