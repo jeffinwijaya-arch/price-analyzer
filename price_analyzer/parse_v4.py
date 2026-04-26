@@ -1921,7 +1921,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126300','126301','126303','126331','126333','126334',
         '128235','128238','128239','228235','228238','228239','228345','228349','228236',
         '279171','279174','279175','278284','278283',
-        '116200','116234','116300','116334','116233','116231','116238','116235','116239',
+        '116200','116201','116203','116234','116300','116301','116303','116334','116233','116231','116238','116235','116239',
         '336235','336238','336239',
     }
     _og_base = re.match(r'(\d+)', ref).group(1) if ref and re.match(r'(\d+)', ref) else ''
@@ -2006,7 +2006,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126334','126333','126331','126234','126233','126231',
         '116300','116234','116334','126238','276200','277200',
         '336934','336935','336238',
-        # 326934/326935 (prev-gen Sky-Dweller YG) excluded — opts has Tiffany Blue but NOT Bright Blue
+        # 326934/326935 (prev-gen Sky-Dweller) excluded — no Bright Blue dial option in that generation
     }
     if _sd_ref_base in _COBALT_BRIGHT_REFS:
         t = re.sub(r'\bcobalt(?:\s*blue)?\b|\bintense\s*blue\b', 'bright blue', t)
@@ -2069,6 +2069,9 @@ def extract_dial(text, ref='', raw_ref=''):
         t = re.sub(r'\bcyan(?:\s*blue)?\b', 'tiffany', t)  # "cyan"/"cyan blue" = Tiffany Blue (designers/photographers use "cyan" for this hue)
         t = re.sub(r'\bspringwater\b|\bspring\s*water\b', 'tiffany', t)  # "spring water" = aqua/TB hue informal alias
         t = re.sub(r'\bperiwinkle\s*blue\b', 'tiffany', t)  # "periwinkle blue" ≈ Tiffany Blue in non-expert listings
+        t = re.sub(r'\bhimmelblau\b', 'tiffany', t)  # German "sky blue" used by European dealers for TB OP
+        t = re.sub(r'\bacquamarin[ae]\b', 'tiffany', t)  # Italian/Spanish "acquamarina" for Tiffany Blue hue
+        t = re.sub(r'\bazul\s*(?:claro|tiffany|cielo)\b', 'tiffany', t)  # Spanish compound light/sky-blue → TB only
         # Standalone "candy" on OP refs = Candy Pink (Rolex official) — guard to avoid "candy blue"→Tiffany collision
         t = re.sub(r'\bcandy\b(?!\s*(?:blue|p(?:ink)?\b))', 'candy pink', t)
     # "DB" shorthand on Deepsea refs = D-Blue gradient dial (not "Dark Blue")
@@ -2093,8 +2096,10 @@ def extract_dial(text, ref='', raw_ref=''):
                        '116503','116528','116589',
                        # Day-Date Platinum prev-gen
                        '118206',
-                       # Sky-Dweller WG
-                       '326259'}
+                       # Sky-Dweller WG prev-gen
+                       '326259',
+                       # New-gen DJ36 WG/Everose (2024+) — confirmed Meteorite dial option per catalog
+                       '336235','336239'}
     if _ref_base_norm in _METEORITE_BASE:
         t = re.sub(r'\bmet\b', 'meteorite', t)
         t = re.sub(r'\bcosmic\s*(?:dial)?\b|\bgalactic\s*(?:dial)?\b|\bspace\s*rock\b|\bouter[\s\-]?space\s*(?:dial)?\b', 'meteorite', t)
@@ -2252,7 +2257,7 @@ def extract_dial(text, ref='', raw_ref=''):
     _JUBILEE_MOTIF_REFS = {
         '126200','126201','126203','126231','126233','126234','126238',
         '126300','126301','126303','126331','126333','126334',
-        '116200','116234','116233','116300','116334','116331','116333',
+        '116200','116201','116234','116233','116300','116301','116334','116331','116333',
         '116231','116238','116235','116239',  # prev-gen DJ36 SS/TT/YG/WG/Everose
         '126235','126239',
         # New-gen DJ36 variants (2024+) — all confirmed to offer Jubilee Motif dial
@@ -2268,8 +2273,8 @@ def extract_dial(text, ref='', raw_ref=''):
     _CELEBRATION_REFS = {
         '118208','118235','118238','118239',  # DD36 YG/RG/WG/Everose — all offer Celebration
         '124200','124300','126000','126031','126034',
-        '128158','128235','128236','128238','128239','134300',  # 128158 Pearlmaster has Celebration
-        '228206','228235','228236','228238','228239','228345','228349',  # 228345/228349 confirmed per catalog
+        '128158','128159','128235','128236','128238','128239','134300',  # 128158/128159 Pearlmaster has Celebration
+        '228206','228235','228236','228238','228239','228345','228348','228349',  # confirmed per catalog
         '276200','277200',
         '18038','18238',  # vintage DD36 YG/WG — Celebration offered historically
     }
@@ -2409,7 +2414,7 @@ def extract_dial(text, ref='', raw_ref=''):
         '126200','126201','126203','126231','126233','126234',
         '126238',  # DJ36 YG — also offers Wimbledon
         '126235','126239',  # DJ36 WG/Everose variants with Wimbledon
-        '126283','126284','116300','116331','116333','116334','116234',
+        '126283','126284','116300','116301','116331','116333','116334','116234',
         '116233','116200','116201','116203','116231','116238',  # prev-gen DJ36 SS/TT/YG (116331 = TT RG prev-gen)
         '116235','116239',  # prev-gen DJ36 WG/Everose — Wimbledon option available
         '15000','15050',    # vintage DJ refs (per rolex_dial_options.json) with Wimbledon
